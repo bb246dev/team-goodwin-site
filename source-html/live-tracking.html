@@ -1212,6 +1212,12 @@
         stopCard.classList.add("is-visible");
       };
 
+      const resetStopCard = () => {
+        stopCard.classList.remove("is-visible");
+        svg.querySelectorAll(".map-state").forEach((item) => item.classList.remove("is-active"));
+        svg.querySelectorAll(".map-stop").forEach((item, index) => item.classList.toggle("is-current", index === currentIndex));
+      };
+
       routeStops.forEach((stop, index) => {
         const point = routePoint(stop, centroids);
         if (!point) return;
@@ -1232,7 +1238,10 @@
           circle.classList.add("is-current");
           showStopCard(stop, point);
         };
-        circle.addEventListener("click", selectStop);
+        circle.addEventListener("click", (event) => {
+          event.stopPropagation();
+          selectStop();
+        });
         circle.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
@@ -1282,6 +1291,13 @@
       }
 
       mapEl.replaceChildren(svg);
+      svg.addEventListener("click", (event) => {
+        if (!event.target.closest(".map-stop")) resetStopCard();
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (!mapEl.contains(event.target)) resetStopCard();
+      });
     }
 
     async function loadMissionMap() {
