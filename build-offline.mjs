@@ -172,6 +172,27 @@ function candidates(url) {
 
 export default {
   async fetch(request, env) {
+    const requestUrl = new URL(request.url);
+    if (requestUrl.pathname === "/.asset-debug") {
+      const probes = [
+        "/",
+        "/index.html",
+        "/live-tracking.html",
+        "/live-tracking/index.html",
+        "/dist/index.html",
+        "/dist/live-tracking.html",
+        "/dist/live-tracking/index.html",
+        "/assets/styles-ulvf0Dcj.css",
+        "/dist/assets/styles-ulvf0Dcj.css"
+      ];
+      const results = [];
+      for (const probe of probes) {
+        const response = await env.ASSETS.fetch(new Request(new URL(probe, request.url)));
+        results.push({ probe, status: response.status, type: response.headers.get("content-type") });
+      }
+      return Response.json(results);
+    }
+
     for (const path of candidates(request.url)) {
       for (const prefix of ["", "/dist"]) {
         const assetUrl = new URL(request.url);
