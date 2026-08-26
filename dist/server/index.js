@@ -11,10 +11,12 @@ function candidates(url) {
 export default {
   async fetch(request, env) {
     for (const path of candidates(request.url)) {
-      const assetUrl = new URL(request.url);
-      assetUrl.pathname = "/" + path;
-      const response = await env.ASSETS.fetch(new Request(assetUrl, request));
-      if (response.status !== 404) return response;
+      for (const prefix of ["", "/dist"]) {
+        const assetUrl = new URL(request.url);
+        assetUrl.pathname = prefix + "/" + path;
+        const response = await env.ASSETS.fetch(new Request(assetUrl, request));
+        if (response.status !== 404) return response;
+      }
     }
     return new Response("Not found", { status: 404 });
   }
