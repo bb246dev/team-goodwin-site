@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mission America Live Tracker | Goodwin</title>
   <meta name="description" content="Follow William Goodge during Mission America with live tracking, Strava, field updates, FAQs, and RSVP links.">
-  <link rel="stylesheet" href="/assets/styles-ulvf0Dcj.css">
-  <link rel="stylesheet" href="/assets/index-CIGW-MKW.css">
+  <link rel="stylesheet" href="../assets/styles-ulvf0Dcj.css">
+  <link rel="stylesheet" href="../assets/index-CIGW-MKW.css">
   <style>
     :root {
       --tracker-ink: #143f3c;
@@ -52,23 +52,27 @@
     .tracker-mark {
       display: inline-flex;
       align-items: center;
-      gap: 18px;
+      gap: clamp(18px, 2.15vw, 30px);
       line-height: 1;
+      text-decoration: none;
     }
 
     .tracker-mark img {
       display: block;
-      width: clamp(188px, 24vw, 286px);
+      width: clamp(208px, 19vw, 292px);
       height: auto;
     }
 
     .tracker-mark span {
       color: var(--tracker-gold);
       font-family: var(--font-sans);
-      font-size: 0.72rem;
+      font-size: clamp(0.68rem, 0.84vw, 0.92rem);
       font-weight: 700;
-      letter-spacing: 0.46em;
+      letter-spacing: 0.52em;
+      line-height: 1;
       text-transform: uppercase;
+      transform: translateY(0.08em);
+      white-space: nowrap;
     }
 
     .tracker-navlinks {
@@ -80,6 +84,8 @@
     }
 
     .tracker-navlinks a {
+      color: inherit;
+      text-decoration: none;
       transition: color 160ms ease;
     }
 
@@ -94,6 +100,10 @@
       background: var(--tracker-ink);
       color: #fff;
       font-weight: 600;
+    }
+
+    .tracker-navlinks a.tracker-cta {
+      color: #fff;
     }
 
     .tracker-hero {
@@ -392,6 +402,58 @@
       text-transform: uppercase;
     }
 
+    .tracking-status {
+      display: grid;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .tracking-status strong {
+      display: block;
+      color: var(--tracker-ink);
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 0.92;
+    }
+
+    .tracking-status span {
+      display: block;
+      margin-top: 8px;
+      color: var(--tracker-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .tracking-status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--tracker-line);
+      border: 1px solid var(--tracker-line);
+    }
+
+    .tracking-status-grid div {
+      background: #fbfaf6;
+      padding: 16px;
+    }
+
+    .tracking-badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 30px;
+      padding: 0 11px;
+      border: 1px solid rgba(20, 63, 60, 0.18);
+      background: rgba(216, 248, 210, 0.48);
+      color: var(--tracker-ink);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
     .button-row {
       display: flex;
       flex-wrap: wrap;
@@ -673,7 +735,7 @@
 <body>
   <main class="tracker-page">
     <nav class="tracker-nav" aria-label="Live tracker navigation">
-      <a class="tracker-mark" href="index.html" aria-label="Goodwin home"><img src="assets/goodwin-logo.jpg" alt="GOODWIN"><span>Endurance</span></a>
+      <a class="tracker-mark" href="index.html" aria-label="Goodwin Endurance home"><img src="../assets/goodwin-logo.png" alt="GOODWIN"><span>Endurance</span></a>
       <div class="tracker-navlinks">
         <a href="#live">Live</a>
         <a href="#strava">Strava</a>
@@ -715,8 +777,21 @@
             </div>
           </div>
           <aside class="tracker-panel">
-            <div class="tracker-eyebrow">Live Feed Ready</div>
-            <p class="tracker-caption">The live map is built for the Strava city feed: current location, daily activity, moving time, and verified progress, all in one transparent view.</p>
+            <div class="tracker-eyebrow" id="tracking-panel-title">Live Feed Ready</div>
+            <p class="tracker-caption" id="tracking-panel-copy">The live map is built for the Strava city feed: current location, daily activity, moving time, and verified progress, all in one transparent view.</p>
+            <div class="tracking-status" data-tracking-status hidden>
+              <div class="tracking-badge" data-tracking-source>Mock data</div>
+              <div>
+                <strong data-tracking-location>Awaiting GPS</strong>
+                <span>Current location</span>
+              </div>
+              <div class="tracking-status-grid">
+                <div><strong data-tracking-distance>0.0</strong><span>Miles today</span></div>
+                <div><strong data-tracking-pace>--</strong><span>Avg pace</span></div>
+                <div><strong data-tracking-moving>--</strong><span>Moving time</span></div>
+                <div><strong data-tracking-progress>0%</strong><span>Mission complete</span></div>
+              </div>
+            </div>
           </aside>
         </div>
       </section>

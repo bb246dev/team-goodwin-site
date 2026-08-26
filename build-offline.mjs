@@ -49,6 +49,7 @@ function localize(html, pageName) {
     .replace(/content="\/"/g, 'content="index.html"')
     .replace(/content="\/athletes"/g, 'content="athletes.html"')
     .replace(/content="\/partners"/g, 'content="partners.html"')
+    .replace(/(href|src)="\.\.\/assets\//g, '$1="assets/')
     .replace(/href="\/#([^"]+)"/g, 'href="index.html#$1"')
     .replace(/href="\/athletes#([^"]+)"/g, 'href="athletes.html#$1"')
     .replace(/href="\/athletes"/g, 'href="athletes.html"')
@@ -163,7 +164,7 @@ const deployAssetPaths = [
   "assets/styles-ulvf0Dcj.css",
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.json",
-  "assets/goodwin-logo.jpg",
+  "assets/goodwin-logo.png",
   "assets/instagram/williamgoodge-01.jpg",
   "assets/instagram/williamgoodge-02.jpg",
   "assets/instagram/williamgoodge-03.jpg",
