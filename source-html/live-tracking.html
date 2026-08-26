@@ -228,6 +228,46 @@
       text-transform: uppercase;
     }
 
+    .map-stop-card {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+
+    .map-stop-card.is-visible {
+      opacity: 1;
+    }
+
+    .map-stop-card rect {
+      fill: rgba(251, 250, 246, 0.96);
+      stroke: rgba(20, 63, 60, 0.28);
+      stroke-width: 1;
+      filter: drop-shadow(0 12px 24px rgba(7, 24, 23, 0.22));
+      vector-effect: non-scaling-stroke;
+    }
+
+    .map-stop-card .map-card-kicker {
+      fill: var(--tracker-gold);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+    }
+
+    .map-stop-card .map-card-city {
+      fill: var(--tracker-ink);
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .map-stop-card .map-card-date {
+      fill: rgba(20, 63, 60, 0.7);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     @keyframes mapPulse {
       0% { opacity: 0.95; r: 8; }
       100% { opacity: 0; r: 22; }
@@ -1136,6 +1176,42 @@
       routeLayer.appendChild(completePath);
       svg.appendChild(routeLayer);
 
+      const stopCard = document.createElementNS(svgNS, "g");
+      stopCard.setAttribute("class", "map-stop-card");
+      stopCard.setAttribute("aria-hidden", "true");
+      const stopCardRect = document.createElementNS(svgNS, "rect");
+      stopCardRect.setAttribute("x", "0");
+      stopCardRect.setAttribute("y", "0");
+      stopCardRect.setAttribute("width", "240");
+      stopCardRect.setAttribute("height", "92");
+      stopCardRect.setAttribute("rx", "0");
+      const stopCardKicker = document.createElementNS(svgNS, "text");
+      stopCardKicker.setAttribute("class", "map-card-kicker");
+      stopCardKicker.setAttribute("x", "18");
+      stopCardKicker.setAttribute("y", "26");
+      const stopCardCity = document.createElementNS(svgNS, "text");
+      stopCardCity.setAttribute("class", "map-card-city");
+      stopCardCity.setAttribute("x", "18");
+      stopCardCity.setAttribute("y", "56");
+      const stopCardDate = document.createElementNS(svgNS, "text");
+      stopCardDate.setAttribute("class", "map-card-date");
+      stopCardDate.setAttribute("x", "18");
+      stopCardDate.setAttribute("y", "78");
+      stopCard.append(stopCardRect, stopCardKicker, stopCardCity, stopCardDate);
+
+      const showStopCard = (stop, point) => {
+        const viewBox = svg.viewBox.baseVal;
+        const cardWidth = 240;
+        const cardHeight = 92;
+        const offsetX = point[0] > viewBox.x + viewBox.width - cardWidth - 36 ? -cardWidth - 22 : 22;
+        const offsetY = point[1] > viewBox.y + viewBox.height - cardHeight - 28 ? -cardHeight - 18 : 18;
+        stopCard.setAttribute("transform", `translate(${point[0] + offsetX} ${point[1] + offsetY})`);
+        stopCardKicker.textContent = `Stop ${String(stop.n).padStart(2, "0")}`;
+        stopCardCity.textContent = stop.city.length > 18 ? `${stop.city.slice(0, 17)}.` : stop.city;
+        stopCardDate.textContent = `${stop.date} · ${stop.state}`;
+        stopCard.classList.add("is-visible");
+      };
+
       routeStops.forEach((stop, index) => {
         const point = routePoint(stop, centroids);
         if (!point) return;
@@ -1154,6 +1230,7 @@
           svg.querySelectorAll(".map-stop").forEach((item) => item.classList.remove("is-current"));
           svg.querySelectorAll(".map-state").forEach((item) => item.classList.toggle("is-active", item.dataset.state === stop.abbr));
           circle.classList.add("is-current");
+          showStopCard(stop, point);
         };
         circle.addEventListener("click", selectStop);
         circle.addEventListener("keydown", (event) => {
@@ -1164,6 +1241,8 @@
         });
         svg.appendChild(circle);
       });
+
+      svg.appendChild(stopCard);
 
       [["ALASKA", 82, 124], ["HAWAII", 20, 488]].forEach(([label, x, y]) => {
         const text = document.createElementNS(svgNS, "text");
