@@ -52,6 +52,7 @@
     .tracker-mark {
       display: inline-flex;
       align-items: center;
+      gap: 18px;
       line-height: 1;
     }
 
@@ -59,6 +60,15 @@
       display: block;
       width: clamp(188px, 24vw, 286px);
       height: auto;
+    }
+
+    .tracker-mark span {
+      color: var(--tracker-gold);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.46em;
+      text-transform: uppercase;
     }
 
     .tracker-navlinks {
@@ -663,7 +673,7 @@
 <body>
   <main class="tracker-page">
     <nav class="tracker-nav" aria-label="Live tracker navigation">
-      <a class="tracker-mark" href="index.html" aria-label="Goodwin home"><img src="assets/goodwin-logo.jpg" alt="GOODWIN"></a>
+      <a class="tracker-mark" href="index.html" aria-label="Goodwin home"><img src="assets/goodwin-logo.jpg" alt="GOODWIN"><span>Endurance</span></a>
       <div class="tracker-navlinks">
         <a href="#live">Live</a>
         <a href="#strava">Strava</a>
@@ -1199,7 +1209,7 @@
         stopCard.setAttribute("transform", `translate(${point[0] + offsetX} ${point[1] + offsetY})`);
         stopCardKicker.textContent = `Stop ${String(stop.n).padStart(2, "0")}`;
         stopCardCity.textContent = stop.city.length > 18 ? `${stop.city.slice(0, 17)}.` : stop.city;
-        stopCardDate.textContent = `${stop.date} · ${stop.state}`;
+        stopCardDate.textContent = stop.date;
         stopCard.classList.add("is-visible");
       };
 
@@ -1243,15 +1253,6 @@
       });
 
       svg.appendChild(stopCard);
-
-      [["ALASKA", 82, 124], ["HAWAII", 20, 488]].forEach(([label, x, y]) => {
-        const text = document.createElementNS(svgNS, "text");
-        text.setAttribute("class", "map-label");
-        text.setAttribute("x", x);
-        text.setAttribute("y", y);
-        text.textContent = label;
-        svg.appendChild(text);
-      });
 
       [
         ["START", routePoints[0], 18, -12],
