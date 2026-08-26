@@ -51,23 +51,14 @@
 
     .tracker-mark {
       display: inline-flex;
-      align-items: baseline;
-      gap: 14px;
-      white-space: nowrap;
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3.45rem);
+      align-items: center;
       line-height: 1;
-      letter-spacing: 0;
-      text-transform: uppercase;
     }
 
-    .tracker-mark span {
-      color: var(--tracker-gold);
-      font-family: var(--font-sans);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
+    .tracker-mark img {
+      display: block;
+      width: clamp(188px, 24vw, 286px);
+      height: auto;
     }
 
     .tracker-navlinks {
@@ -672,7 +663,7 @@
 <body>
   <main class="tracker-page">
     <nav class="tracker-nav" aria-label="Live tracker navigation">
-      <a class="tracker-mark" href="index.html" aria-label="Goodwin home">GOODWIN <span>Endurance</span></a>
+      <a class="tracker-mark" href="index.html" aria-label="Goodwin home"><img src="assets/goodwin-logo.jpg" alt="GOODWIN"></a>
       <div class="tracker-navlinks">
         <a href="#live">Live</a>
         <a href="#strava">Strava</a>
@@ -687,7 +678,7 @@
         <div class="tracker-map-stage" aria-label="Mission America live map">
           <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
           <div class="tracker-headline">
-            <h1 id="page-title">50 Marathons<br>50 States</h1>
+            <h1 id="page-title">Goodwin Generated:<br>Mission America</h1>
             <p>See what we see, as Mission America moves state by state from<br>Oct 9 to Nov&nbsp;1.</p>
           </div>
         </div>
@@ -784,7 +775,7 @@
             <div class="tracker-eyebrow">Short Reads</div>
             <h2>Fuel, training, recovery, mindset.</h2>
           </div>
-          <p>Short answers to the questions people ask when they see what 50 marathons in 24 days really takes.</p>
+          <p>Short answers to the questions people ask when they see what Goodwin Generated: Mission America really takes.</p>
         </div>
         <div class="article-grid">
           <article class="article-card">
@@ -832,8 +823,8 @@
       </section>
 
       <footer class="footer-note">
-        <span>Goodwin Generated Mission America Live Tracker</span>
-        <span>50 marathons. 50 states. Oct 9 - Nov 1.</span>
+        <span>Goodwin Generated: Mission America Live Tracker</span>
+        <span>Goodwin Generated: Mission America. Oct 9 - Nov 1.</span>
       </footer>
     </div>
   </main>

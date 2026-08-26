@@ -163,6 +163,7 @@ const deployAssetPaths = [
   "assets/styles-ulvf0Dcj.css",
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.json",
+  "assets/goodwin-logo.jpg",
   "assets/instagram/williamgoodge-01.jpg",
   "assets/instagram/williamgoodge-02.jpg",
   "assets/instagram/williamgoodge-03.jpg",
