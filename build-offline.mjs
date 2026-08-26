@@ -158,49 +158,108 @@ writeFileSync(
 );
 
 mkdirSync(join(dist, "server"), { recursive: true });
+
+const deployAssetPaths = [
+  "assets/styles-ulvf0Dcj.css",
+  "assets/index-CIGW-MKW.css",
+  "assets/us-states-albers-10m.json",
+  "assets/instagram/williamgoodge-01.jpg",
+  "assets/instagram/williamgoodge-02.jpg",
+  "assets/instagram/williamgoodge-03.jpg",
+  "assets/instagram/williamgoodge-04.jpg",
+  "assets/hero-runner-Ci5y42DW.jpg",
+  "assets/road-aerial-DbGvJBXy.jpg",
+  "assets/shoes-Ds0VB7pt.jpg",
+  "assets/goodge-portrait-BKrZBh3V.jpg",
+  "fonts/offline-fonts.css",
+  "fonts/font-1.ttf",
+  "fonts/font-2.ttf",
+  "fonts/font-3.ttf",
+  "fonts/font-4.ttf",
+  "fonts/font-5.ttf",
+  "fonts/font-6.ttf",
+  "fonts/font-7.ttf",
+  "fonts/font-8.ttf",
+  "fonts/font-9.ttf",
+  "fonts/font-10.ttf",
+  "fonts/font-11.ttf",
+];
+
+function contentType(pathname) {
+  if (pathname.endsWith(".html")) return "text/html; charset=utf-8";
+  if (pathname.endsWith(".css")) return "text/css; charset=utf-8";
+  if (pathname.endsWith(".js") || pathname.endsWith(".mjs")) return "text/javascript; charset=utf-8";
+  if (pathname.endsWith(".json")) return "application/json; charset=utf-8";
+  if (pathname.endsWith(".jpg") || pathname.endsWith(".jpeg")) return "image/jpeg";
+  if (pathname.endsWith(".png")) return "image/png";
+  if (pathname.endsWith(".svg")) return "image/svg+xml";
+  if (pathname.endsWith(".woff2")) return "font/woff2";
+  if (pathname.endsWith(".ttf")) return "font/ttf";
+  return "application/octet-stream";
+}
+
+const deployAssets = Object.fromEntries(
+  deployAssetPaths.map((path) => [
+    path,
+    {
+      contentType: contentType(path),
+      body: readFileSync(join(dist, path)).toString("base64"),
+    },
+  ]),
+);
+
+const deployInstagramFeed = [
+  "assets/instagram/williamgoodge-01.jpg",
+  "assets/instagram/williamgoodge-02.jpg",
+  "assets/instagram/williamgoodge-03.jpg",
+  "assets/instagram/williamgoodge-04.jpg",
+  "assets/hero-runner-Ci5y42DW.jpg",
+  "assets/road-aerial-DbGvJBXy.jpg",
+  "assets/shoes-Ds0VB7pt.jpg",
+  "assets/goodge-portrait-BKrZBh3V.jpg",
+].map((mediaUrl, index) => ({
+  id: `fallback-${index + 1}`,
+  permalink: "https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=",
+  mediaUrl: `/${mediaUrl}`,
+  caption: "Recent William Goodge Instagram image",
+  timestamp: null,
+}));
+
 writeFileSync(
   join(dist, "server", "index.js"),
-  `
-function candidates(url) {
-  const { pathname } = new URL(url);
-  const clean = pathname.replace(/^\\/+/, "") || "index.html";
-  const list = [clean];
-  if (!clean.includes(".")) list.push(clean.replace(/\\/$/, "") + "/index.html");
-  if (!clean.endsWith(".html")) list.push(clean.replace(/\\/$/, "") + ".html");
-  return list;
-}
+  `const liveTrackingHtml = ${JSON.stringify(readFileSync(join(dist, "live-tracking.html"), "utf8"))};
+const assets = ${JSON.stringify(deployAssets)};
+const instagramFeed = ${JSON.stringify(deployInstagramFeed)};
 
 export default {
   async fetch(request, env) {
-    const requestUrl = new URL(request.url);
-    if (requestUrl.pathname === "/.asset-debug") {
-      const probes = [
-        "/",
-        "/index.html",
-        "/live-tracking.html",
-        "/live-tracking/index.html",
-        "/dist/index.html",
-        "/dist/live-tracking.html",
-        "/dist/live-tracking/index.html",
-        "/assets/styles-ulvf0Dcj.css",
-        "/dist/assets/styles-ulvf0Dcj.css"
-      ];
-      const results = [];
-      for (const probe of probes) {
-        const response = await env.ASSETS.fetch(new Request(new URL(probe, request.url)));
-        results.push({ probe, status: response.status, type: response.headers.get("content-type") });
-      }
-      return Response.json(results);
+    const { pathname } = new URL(request.url);
+    const clean = pathname.replace(/^\\/+/, "");
+
+    if (pathname === "/" || clean === "index.html" || clean === "live-tracking.html" || clean === "live-tracking/index.html") {
+      return new Response(liveTrackingHtml, {
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-cache"
+        }
+      });
     }
 
-    for (const path of candidates(request.url)) {
-      for (const prefix of ["", "/dist"]) {
-        const assetUrl = new URL(request.url);
-        assetUrl.pathname = prefix + "/" + path;
-        const response = await env.ASSETS.fetch(new Request(assetUrl, request));
-        if (response.status !== 404) return response;
-      }
+    if (clean === "api/instagram-feed") {
+      return Response.json({ data: instagramFeed }, { headers: { "cache-control": "no-cache" } });
     }
+
+    const asset = assets[clean];
+    if (asset) {
+      const bytes = Uint8Array.from(atob(asset.body), (char) => char.charCodeAt(0));
+      return new Response(bytes, {
+        headers: {
+          "content-type": asset.contentType,
+          "cache-control": clean.endsWith(".css") || clean.endsWith(".json") ? "no-cache" : "public, max-age=31536000, immutable"
+        }
+      });
+    }
+
     return new Response("Not found", { status: 404 });
   }
 };
