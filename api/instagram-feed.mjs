@@ -36,7 +36,7 @@ export async function loadInstagramFeed(accessToken) {
       timestamp: item.timestamp,
     }))
     .filter((item) => item.media_url)
-    .slice(0, 4);
+    .slice(0, 8);
 
   return { data: imageMedia };
 }
