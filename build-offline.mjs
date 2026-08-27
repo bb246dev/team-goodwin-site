@@ -257,7 +257,7 @@ const deployInstagramFeed = [
 const deployAssetPaths = [
   "assets/styles-ulvf0Dcj.css",
   "assets/index-CIGW-MKW.css",
-  "assets/us-states-albers-10m.json",
+  "assets/us-states-albers-10m.js",
   "assets/ticker-updates.json",
   "assets/goodwin-favicon.png",
   "assets/goodwin-webclip.png",

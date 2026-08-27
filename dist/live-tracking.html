@@ -9,6 +9,7 @@
   <link rel="apple-touch-icon" href="assets/goodwin-webclip.png">
   <link rel="stylesheet" href="assets/styles-ulvf0Dcj.css">
   <link rel="stylesheet" href="assets/index-CIGW-MKW.css">
+  <script src="assets/us-states-albers-10m.js"></script>
   <style>
     :root {
       --color-white: #FFFFFF;
@@ -2421,6 +2422,10 @@
         } catch (error) {
           console.warn(error);
         }
+      }
+      if (window.missionAmericaMapTopology) {
+        renderMissionMap(window.missionAmericaMapTopology);
+        return;
       }
       document.getElementById("mission-map").textContent = "Map data could not load. Serve this page from the preview server to view the interactive U.S. route map.";
     }
