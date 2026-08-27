@@ -527,6 +527,14 @@
       letter-spacing: 0.08em;
     }
 
+    .tracker-headline .hero-text-link {
+      color: inherit;
+      text-decoration-color: #5ECAAC;
+      text-decoration-line: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.18em;
+    }
+
     .feature-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1358,7 +1366,7 @@
             <span class="mission-logo-crop mission-logo-title"><img src="assets/mission-america-logo.png" alt=""></span>
           </div>
           <h1 id="page-title">GOODWIN Generated Mission America</h1>
-          <p><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and a mission to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>Follow the Record Attempt · Run With Will · Support the Mission</p>
+          <p><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and <a class="hero-text-link" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noreferrer">a mission</a> to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>Follow the Record Attempt · Run With Will · Support the Mission</p>
         </div>
       </div>
     </section>
@@ -1895,7 +1903,7 @@
             <h3>${stop.city}</h3>
             <p>Want to run with William in ${stop.city}? Register your interest and we'll send the final meeting point and timing as soon as they're confirmed.</p>
           </div>
-          <div class="button-row"><a class="tracker-button secondary" href="partners.html">RSVP</a></div>
+          ${stop.n === 50 ? "" : '<div class="button-row"><a class="tracker-button secondary" href="partners.html">RSVP</a></div>'}
         </article>
       `).join("");
     }
