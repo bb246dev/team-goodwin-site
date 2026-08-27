@@ -1512,9 +1512,9 @@
         <div class="tracker-map-stage" aria-label="Mission America live map">
           <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
           <div class="tracking-map-key" aria-label="Mission America tracking layers">
-            <span><img src="assets/map-runner-bobblehead.png" alt="">Runner</span>
+            <span><img src="assets/map-runner-bobblehead-small.png" alt="">Runner</span>
             <span><i aria-hidden="true"></i>Flight</span>
-            <span><img src="assets/map-rv-green.png" alt="">RV</span>
+            <span><img src="assets/map-rv-green-small.png" alt="">RV</span>
           </div>
         </div>
         <div class="tracker-grid mission-clock-grid">
@@ -1952,8 +1952,8 @@
     const complete = Math.min(50, Math.floor(progress * 50));
     const mapAssetBase = location.pathname.includes("/source-html/") ? "../assets/" : "assets/";
     const mapEntityAssets = {
-      runner: `${mapAssetBase}map-runner-bobblehead.png`,
-      rv: `${mapAssetBase}map-rv-green.png`
+      runner: `${mapAssetBase}map-runner-bobblehead-small.png`,
+      rv: `${mapAssetBase}map-rv-green-small.png`
     };
     const mapTrackingDefaults = {
       runner: { progress },
