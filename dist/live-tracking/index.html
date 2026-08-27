@@ -169,8 +169,8 @@
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      opacity: 0.58;
-      filter: saturate(0.78) contrast(1.05);
+      opacity: 1;
+      filter: none;
       transform: scale(1.08);
     }
 
@@ -178,10 +178,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at 86% 32%, rgba(255, 255, 255, 0.16), transparent 11%),
-        linear-gradient(90deg, rgba(10, 10, 10, 0.88) 0%, rgba(10, 10, 10, 0.72) 43%, rgba(10, 10, 10, 0.34) 68%, rgba(10, 10, 10, 0.16) 100%),
-        linear-gradient(180deg, rgba(10, 10, 10, 0.36), rgba(10, 10, 10, 0.24) 38%, rgba(10, 10, 10, 0.82));
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.45) 30%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 70%);
     }
 
     @media (prefers-reduced-motion: reduce) {
