@@ -242,6 +242,8 @@ const deployAssetPaths = [
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.json",
   "assets/ticker-updates.json",
+  "assets/goodwin-favicon.png",
+  "assets/goodwin-webclip.png",
   "assets/goodwin-logo.png",
   "assets/mission-america-logo.png",
   "assets/map-runner-bobblehead.png",
