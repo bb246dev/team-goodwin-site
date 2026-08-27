@@ -28,6 +28,10 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     .sr-only {
       position: absolute;
       width: 1px;
@@ -62,7 +66,7 @@
       right: 0;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
       gap: 24px;
       padding: 24px clamp(20px, 4vw, 64px);
       background: linear-gradient(180deg, rgba(7, 24, 23, 0.34), rgba(7, 24, 23, 0));
@@ -70,31 +74,38 @@
     }
 
     .tracker-mark {
-      display: none;
-      align-items: center;
+      display: flex;
+      align-items: flex-end;
       flex-wrap: wrap;
       gap: 6px clamp(12px, 1.8vw, 18px);
       line-height: 1;
       text-decoration: none;
+      flex: 0 0 auto;
+      opacity: var(--wordmark-opacity, 0.6);
+      transition: opacity 180ms ease;
     }
 
-    .tracker-mark strong {
+    .tracker-mark:hover,
+    .tracker-mark:focus-visible {
+      opacity: 1;
+    }
+
+    .tracker-mark img {
       display: block;
-      color: inherit;
-      font-family: var(--font-display);
-      font-size: clamp(1.45rem, 2.3vw, 2.35rem);
-      font-weight: 600;
-      letter-spacing: 0;
+      width: clamp(132px, 14vw, 210px);
+      height: auto;
+      filter: brightness(0) invert(1);
     }
 
     .tracker-mark span {
       color: inherit;
-      font-family: var(--font-display);
-      font-size: clamp(1.25rem, 2vw, 2rem);
-      font-weight: 500;
-      letter-spacing: 0;
+      font-size: clamp(0.64rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      letter-spacing: 0.34em;
       line-height: 1;
+      text-transform: uppercase;
       white-space: nowrap;
+      transform: translateY(-0.02em);
     }
 
     .tracker-navlinks {
@@ -118,7 +129,7 @@
     .tracker-cta {
       border: 1px solid rgba(216, 248, 210, 0.24);
       border-radius: 999px;
-      padding: 11px 18px;
+      padding: 11px 22px;
       background: var(--tracker-ink);
       color: #fff;
       font-weight: 600;
@@ -143,7 +154,7 @@
       min-height: min(780px, 88svh);
       flex-direction: column;
       justify-content: flex-start;
-      padding: 112px clamp(22px, 5vw, 74px) clamp(46px, 8vw, 92px);
+      padding: 112px clamp(22px, 4vw, 64px) clamp(46px, 8vw, 92px);
       color: #fff;
     }
 
@@ -153,9 +164,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center center;
+      object-position: 28% 45%;
       opacity: 0.58;
       filter: saturate(0.78) contrast(1.05);
+      transform: scale(1.08);
     }
 
     .tracker-hero::after {
@@ -424,15 +436,53 @@
 
     .tracker-headline {
       position: relative;
-      width: min(1180px, 100%);
+      width: min(640px, 45vw);
       pointer-events: none;
     }
 
     .mission-logo-art {
+      display: none;
+    }
+
+    .mission-logo-stack {
+      display: grid;
+      gap: clamp(10px, 1.2vw, 18px);
+      width: 100%;
+      transform: translateX(0);
+    }
+
+    .mission-logo-crop {
       display: block;
-      width: min(980px, 86vw);
+      position: relative;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .mission-logo-crop img {
+      display: block;
       height: auto;
-      object-fit: contain;
+      max-width: none;
+    }
+
+    .mission-logo-brand {
+      width: min(620px, 54vw);
+      aspect-ratio: 2534 / 188;
+      transform: translate(-18px, -4px);
+    }
+
+    .mission-logo-brand img {
+      width: min(620px, 54vw);
+    }
+
+    .mission-logo-title {
+      width: min(600px, 42vw);
+      aspect-ratio: 2534 / 842;
+      transform: translateX(0);
+    }
+
+    .mission-logo-title img {
+      width: min(600px, 42vw);
+      transform: translateY(-17.9%);
     }
 
     .tracker-headline h1 {
@@ -460,7 +510,7 @@
 
     .tracker-headline p {
       display: block;
-      max-width: 690px;
+      max-width: min(620px, 100%);
       margin-top: clamp(22px, 3vw, 34px);
       color: rgba(255, 255, 255, 0.9);
       font-size: clamp(1.05rem, 1.8vw, 1.35rem);
@@ -473,7 +523,6 @@
       color: #fff;
       font-weight: 800;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     .feature-row {
@@ -527,7 +576,6 @@
       font-size: 0.78rem;
       font-weight: 800;
       letter-spacing: 0.16em;
-      text-transform: uppercase;
     }
 
     .ticker-panel {
@@ -553,7 +601,11 @@
       font-weight: 800;
       letter-spacing: 0.16em;
       text-decoration: none;
-      text-transform: uppercase;
+    }
+
+    .tracker-eyebrow.action-label {
+      letter-spacing: 0;
+      text-transform: none;
     }
 
     .ticker-track {
@@ -616,6 +668,7 @@
       margin: 0 auto;
       padding: 62px 0;
       border-top: 1px solid var(--tracker-line);
+      scroll-margin-top: 96px;
     }
 
     .section-head {
@@ -648,6 +701,10 @@
       gap: 1px;
       background: var(--tracker-line);
       border: 1px solid var(--tracker-line);
+    }
+
+    .mission-clock-grid {
+      grid-template-columns: 1fr;
     }
 
     .tracker-panel {
@@ -934,7 +991,7 @@
       margin-top: 10px;
       color: var(--tracker-ink);
       font-family: var(--font-display);
-      font-size: clamp(2rem, 3.6vw, 4rem);
+      font-size: clamp(2rem, 3vw, 3.25rem);
       line-height: 0.92;
       letter-spacing: 0;
     }
@@ -1181,6 +1238,23 @@
       .section-head p {
         margin-top: 18px;
       }
+
+      .tracker-hero-bg {
+        object-position: 28% 46%;
+      }
+
+      .tracker-headline {
+        width: min(520px, 58vw);
+      }
+
+      .mission-logo-title {
+        width: min(440px, 56vw);
+        transform: translateX(0);
+      }
+
+      .mission-logo-title img {
+        width: min(440px, 56vw);
+      }
     }
 
     @media (max-width: 560px) {
@@ -1194,12 +1268,35 @@
       }
 
       .tracker-hero-bg {
-        object-position: center center;
+        object-position: 38% 48%;
       }
 
       .mission-logo-art {
         width: min(560px, 118vw);
         transform: translateX(-18px);
+      }
+
+      .mission-logo-stack {
+        width: min(560px, 118vw);
+        transform: translateX(-18px);
+      }
+
+      .mission-logo-brand {
+        width: min(360px, 78vw);
+        transform: translate(-8px, -2px);
+      }
+
+      .mission-logo-brand img {
+        width: min(360px, 78vw);
+      }
+
+      .mission-logo-title {
+        width: min(500px, 112vw);
+        transform: translateX(-42px);
+      }
+
+      .mission-logo-title img {
+        width: min(500px, 112vw);
       }
 
       .tracker-map {
@@ -1237,13 +1334,16 @@
 <body>
   <main class="tracker-page">
     <nav class="tracker-nav" aria-label="Live tracker navigation">
-      <a class="tracker-mark" href="index.html" aria-label="Goodwin Generated Mission America home"><strong>GOODWIN</strong><span>Generated</span></a>
+      <a class="tracker-mark" href="#live" aria-label="Back to the top of the Team Goodwin homepage">
+        <img src="assets/goodwin-logo.png" alt="GOODWIN">
+        <span>Endurance</span>
+      </a>
       <div class="tracker-navlinks">
-        <a href="the-run.html">The Run</a>
-        <a href="will.html">Will</a>
-        <a href="fifty-runs.html">50 Runs</a>
+        <a href="#the-run">The Run</a>
+        <a href="#map">50 States</a>
         <a href="#updates">Updates</a>
-        <a href="#rsvp" class="tracker-cta">RSVP</a>
+        <a href="#why">Will</a>
+        <a href="#rsvp" class="tracker-cta">Run With Will</a>
       </div>
     </nav>
 
@@ -1251,44 +1351,37 @@
       <img class="tracker-hero-bg" src="assets/hero-runner-Ci5y42DW.jpg" alt="Open road at dusk for Mission America">
       <div class="tracker-hero-inner">
         <div class="tracker-headline">
-          <img class="mission-logo-art" src="assets/mission-america-logo.png" alt="GOODWIN Generated Mission America">
+          <div class="mission-logo-stack" aria-hidden="true">
+            <span class="mission-logo-crop mission-logo-brand"><img src="assets/mission-america-logo.png" alt=""></span>
+            <span class="mission-logo-crop mission-logo-title"><img src="assets/mission-america-logo.png" alt=""></span>
+          </div>
           <h1 id="page-title">GOODWIN Generated Mission America</h1>
-          <p><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and a mission to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>FOLLOW THE RECORD ATTEMPT · RUN WITH WILL · SUPPORT THE MISSION</p>
+          <p><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and a mission to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>Follow the Record Attempt · Run With Will · Support the Mission</p>
         </div>
       </div>
     </section>
 
     <div class="tracker-content">
-      <section class="tracker-section" aria-label="Mission America feature pages">
+      <section class="tracker-section" id="the-run" aria-label="Mission America feature pages">
         <div class="feature-row">
           <a class="feature-card" href="the-run.html">
             <div class="tracker-eyebrow">Overview</div>
             <h2>The Run</h2>
             <p>William Goodge will run one marathon in every U.S. state in a compressed 24-day window, with Goodwin coordinating the travel, recovery, and live operations behind the attempt.</p>
-            <span class="feature-link">Read the mission</span>
+            <span class="feature-link">Read the Mission</span>
           </a>
           <a class="feature-card" href="will.html">
             <div class="tracker-eyebrow">Athlete</div>
             <h2>Will</h2>
             <p>Meet the British ultrarunner whose previous transcontinental efforts and cancer-fundraising mission shape every mile of Mission America.</p>
-            <span class="feature-link">Read the bio</span>
+            <span class="feature-link">Read the Bio</span>
           </a>
           <a class="feature-card" href="fifty-runs.html">
             <div class="tracker-eyebrow">World Record Attempt</div>
             <h2>50 Runs,<br>50 States</h2>
             <p>The 50-state route is built around an attempt to set a Guinness World Records mark for completing a marathon in every U.S. state.</p>
-            <span class="feature-link">View the attempt</span>
+            <span class="feature-link">View the Attempt</span>
           </a>
-        </div>
-      </section>
-
-      <section class="tracker-section ticker-panel" aria-label="Mission America live ticker">
-        <div class="ticker-head">
-          <div class="tracker-eyebrow">Latest Updates</div>
-          <a href="updates.html">View all updates</a>
-        </div>
-        <div class="ticker-track" data-ticker-items>
-          <div class="ticker-item"><time>Loading</time><span>Fetching Mission America updates.</span></div>
         </div>
       </section>
 
@@ -1303,18 +1396,28 @@
         <div class="follow-panel">
           <div>
             <div class="tracker-eyebrow">Race Updates</div>
-            <h3>Goodwin Generated: Mission America</h3>
-            <p>50 marathons. 50 states. 24 days. Watch the route become a moving crew diary, one finish line and one boarding window at a time.</p>
+            <h3>Come along for the ride.</h3>
+            <p>50 marathons. 50 states. 24 days. Get the view from inside Mission America — from finish lines and flight plans to the moments you won’t see on Strava.</p>
           </div>
           <div>
+            <div class="tracker-eyebrow action-label">Join Team Goodwin</div>
             <form class="follow-form" data-follow-form>
               <label class="sr-only" for="follow-email">Email address</label>
               <input id="follow-email" name="email" type="email" autocomplete="email" placeholder="Email address" required>
-              <button class="tracker-button" type="submit">Follow Along</button>
+              <button class="tracker-button" type="submit">Join Team Goodwin</button>
             </form>
-            <div class="follow-note" data-follow-message aria-live="polite">Drop your email and we’ll send the notes from the road.</div>
+            <div class="follow-note" data-follow-message aria-live="polite">Drop your email and we’ll send notes from the road.</div>
           </div>
         </div>
+        <section class="ticker-panel" aria-label="Mission America live ticker">
+          <div class="ticker-head">
+            <div class="tracker-eyebrow">Latest Updates</div>
+            <a href="updates.html">View All Updates</a>
+          </div>
+          <div class="ticker-track" data-ticker-items>
+            <div class="ticker-item"><time>Loading</time><span>Fetching Mission America updates.</span></div>
+          </div>
+        </section>
         <div class="tracker-map-stage" aria-label="Mission America live map">
           <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
           <div class="tracking-map-key" aria-label="Mission America tracking layers">
@@ -1323,13 +1426,14 @@
             <span><img src="assets/map-rv-green.png" alt="">RV</span>
           </div>
         </div>
-        <div class="tracker-grid">
+        <div class="tracker-grid mission-clock-grid">
           <div class="tracker-panel">
             <div class="tracker-eyebrow">Mission Clock</div>
             <h3 class="tracker-panel-heading">Countdown to wheels up.</h3>
             <p class="tracker-panel-copy">October 9, 2026 · Honolulu, Hawaii</p>
             <p class="tracker-panel-copy">The clock starts in Honolulu. Twenty-four days later — and 49 marathons later — William is scheduled to cross his final finish line at the New York City Marathon.</p>
             <p class="tracker-panel-copy">Until then, we count down.<br>After that, we count miles.</p>
+            <!-- After launch, replace this countdown block with live Mission Control progress statistics. -->
             <div class="metric-row">
               <div class="metric"><strong id="countdown-days">00</strong><span>Days</span></div>
               <div class="metric"><strong id="countdown-hours">00</strong><span>Hours</span></div>
@@ -1337,24 +1441,6 @@
               <div class="metric"><strong id="countdown-seconds">00</strong><span>Seconds</span></div>
             </div>
           </div>
-          <aside class="tracker-panel">
-            <div class="tracker-eyebrow" id="tracking-panel-title">MISSION CONTROL</div>
-            <h3 class="tracker-panel-heading">50 states. One moving target.</h3>
-            <p class="tracker-caption" id="tracking-panel-copy">Follow William and Team Goodwin in real time — where he is, what he’s run, what’s finished and where we’re headed next.</p>
-            <div class="tracking-status" data-tracking-status hidden>
-              <div class="tracking-badge" data-tracking-source>Mock data</div>
-              <div>
-                <strong data-tracking-location>Awaiting GPS</strong>
-                <span>Current location</span>
-              </div>
-              <div class="tracking-status-grid">
-                <div><strong data-tracking-distance>0.0</strong><span>Miles today</span></div>
-                <div><strong data-tracking-pace>--</strong><span>Avg pace</span></div>
-                <div><strong data-tracking-moving>--</strong><span>Moving time</span></div>
-                <div><strong data-tracking-progress>0%</strong><span>Mission complete</span></div>
-              </div>
-            </div>
-          </aside>
         </div>
       </section>
 
@@ -1362,43 +1448,31 @@
         <div class="section-head">
           <div>
             <div class="tracker-eyebrow">Field Notes</div>
-            <h2>The stuff Strava doesn’t tell you.</h2>
+            <h2>The stuff Strava doesn't tell you.</h2>
           </div>
           <p>Finish lines. Airport runs. Weather changes. Bad food decisions. Good legs. Bad legs. Lost bags. Tiny victories. Whatever happens out there, you’ll find it here.</p>
         </div>
         <div class="week-grid">
           <a class="week-card" href="week-1.html">
             <div class="tracker-eyebrow">Week 1</div>
-            <h3>Launch & West</h3>
-            <p>Opening miles, first transfers, and the early rhythm from Hawaii through the western states.</p>
-            <ul>
-              <li>Daily field notes</li>
-              <li>Route and travel recaps</li>
-              <li>Top media moments</li>
-            </ul>
-            <span class="week-link">View week 1 dates</span>
+            <h3>The Launch</h3>
+            <p>Oct 9-15</p>
+            <p>Hawaii to the West. The first miles, first flights, first recovery windows — and the first test of whether the plan actually works.</p>
+            <span class="week-link">View Week 1 →</span>
           </a>
           <a class="week-card" href="week-2.html">
             <div class="tracker-eyebrow">Week 2</div>
-            <h3>Central Push</h3>
-            <p>The longest middle stretch, where consistency, recovery, and operational handoffs matter most.</p>
-            <ul>
-              <li>State-by-state progress</li>
-              <li>Support crew updates</li>
-              <li>Performance notes</li>
-            </ul>
-            <span class="week-link">View week 2 dates</span>
+            <h3>The Grind</h3>
+            <p>Oct 16-24</p>
+            <p>The middle stretch. The miles pile up, sleep gets scarce and getting to the next start line becomes part of the race.</p>
+            <span class="week-link">View Week 2 →</span>
           </a>
           <a class="week-card" href="week-3.html">
             <div class="tracker-eyebrow">Week 3</div>
-            <h3>East & Finish</h3>
-            <p>The final run-in toward New York, with the archive ready for finish-line updates and recap content.</p>
-            <ul>
-              <li>Final state coverage</li>
-              <li>Finish-week media</li>
-              <li>Post-event recap</li>
-            </ul>
-            <span class="week-link">View week 3 dates</span>
+            <h3>The Finish</h3>
+            <p>Oct 25-Nov 1</p>
+            <p>The final states. The final push. And Marathon #50 at the New York City Marathon.</p>
+            <span class="week-link">View Week 3 →</span>
           </a>
         </div>
       </section>
@@ -1407,58 +1481,89 @@
         <div class="section-head">
           <div>
             <div class="tracker-eyebrow">INSIDE MISSION AMERICA</div>
-            <h2>The stuff Strava doesn’t tell you.</h2>
+            <h2>How do you run 50 marathons in 24 days?</h2>
           </div>
-          <p>Finish lines. Airport runs. Weather changes. Bad food decisions. Good legs. Bad legs. Lost bags. Tiny victories. Whatever happens out there, you’ll find it here.</p>
+          <p>Running is only part of the challenge. Go behind the scenes of the training, recovery, logistics, equipment and planning it takes to keep a 50-state world record attempt moving.</p>
         </div>
         <div class="article-grid">
           <article class="article-card">
-            <div class="tracker-eyebrow">Food</div>
-            <h3>What does Will eat?</h3>
-            <p>Simple, repeatable fuel wins: carbohydrates in motion, fast protein after, electrolytes everywhere, and meals chosen for performance over novelty.</p>
+            <div class="tracker-eyebrow">The Record</div>
+            <h3>What does it take to make it official?</h3>
+            <p>Follow the Guinness World Record attempt, what William is attempting to beat, and how the attempt is documented and verified.</p>
           </article>
           <article class="article-card">
             <div class="tracker-eyebrow">Training</div>
-            <h3>How does he prepare?</h3>
-            <p>The block is built around durable aerobic volume, back-to-back long efforts, strength maintenance, and recovery rehearsed under travel pressure.</p>
+            <h3>How do you train for 50 marathons?</h3>
+            <p>You don't train for one marathon 50 times. See how William prepared his body for repeated marathon efforts with almost no true recovery between them.</p>
           </article>
           <article class="article-card">
             <div class="tracker-eyebrow">Recovery</div>
             <h3>What happens between runs?</h3>
-            <p>Each transfer is engineered: rehydrate, refuel, reset the body, protect sleep, prepare the kit, and move cleanly to the next start line.</p>
+            <p>The marathon ends. The clock doesn't. See what the recovery team does in the hours — and sometimes minutes — before William has to run again.</p>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">Travel</div>
-            <h3>How does Will travel between race sites?</h3>
-            <p>Goodwin coordinates the movement between stops with the same open-book precision behind the route map: aviation, ground transfers, timing, and recovery windows working together.</p>
-          </article>
-          <article class="article-card">
-            <div class="tracker-eyebrow">Equipment</div>
-            <h3>What equipment does Will use?</h3>
-            <p>The kit stays simple and proven: rotating shoes, reliable run apparel, hydration, nutrition, recovery tools, and tracking gear that can hold up to daily marathon mileage.</p>
+            <div class="tracker-eyebrow">Fuel</div>
+            <h3>What does Will eat?</h3>
+            <p>Fifty marathons require an enormous amount of fuel — often at times when eating is the last thing William wants to do. See what's actually going in.</p>
           </article>
           <article class="article-card">
             <div class="tracker-eyebrow">Sleep</div>
-            <h3>How does Will sleep?</h3>
-            <p>Sleep is treated as part of the performance system. The team protects quiet windows, manages travel timing, and keeps recovery repeatable from one city to the next.</p>
+            <h3>When does Will actually sleep?</h3>
+            <p>The real question isn't how William sleeps — it's when. Follow the narrow windows for sleep and recovery between one city and the next.</p>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">Giving</div>
-            <h3>How can I donate?</h3>
-            <p>The final donation destination is not live yet. This box is ready for the confirmed campaign link once the public donation page is approved.</p>
-            <div class="button-row"><a class="tracker-button secondary" href="faq.html#donate">Donation details</a></div>
+            <div class="tracker-eyebrow">Equipment</div>
+            <h3>What survives 1,310 miles?</h3>
+            <p>See what works, what breaks and what gets replaced over 50 marathons and 1,310 miles.</p>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">Purpose</div>
-            <h3>What is Will running for?</h3>
-            <p>Will runs in memory of his mother, Amanda, and in support of everyone fighting cancer.</p>
-            <div class="button-row"><a class="tracker-button secondary" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noreferrer">Learn more</a></div>
+            <div class="tracker-eyebrow">Travel</div>
+            <h3>How do you move through 50 states in 24 days?</h3>
+            <p>Planes, cars, an RV, weather windows and very little room for error. Go inside the logistics connecting 50 start lines.</p>
+          </article>
+          <article class="article-card">
+            <div class="tracker-eyebrow">The Crew</div>
+            <h3>Who keeps Will moving?</h3>
+            <p>William runs the miles. A team behind him handles everything else — logistics, recovery, travel, timing and the hundreds of decisions it takes to get him to the next start line.</p>
           </article>
           <article class="article-card">
             <div class="tracker-eyebrow">FAQ</div>
             <h3>More questions?</h3>
-            <p>The full FAQ includes donation details, what Will is running for, and the rest of the Mission America basics.</p>
+            <p>The full FAQ covers the world record attempt, William's story, participation, giving and the Mission America basics.</p>
             <div class="button-row"><a class="tracker-button secondary" href="faq.html">View FAQ</a></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tracker-section" id="why">
+        <div class="section-head">
+          <div>
+            <div class="tracker-eyebrow">Why</div>
+            <h2>Every Mile Has a Reason</h2>
+          </div>
+          <p>Mission America is about more than chasing a world record. Every mile carries Amanda's memory forward — while supporting cancer research, celebrating survivors and standing alongside the families whose lives have been changed by cancer.</p>
+        </div>
+        <div class="article-grid">
+          <article class="article-card">
+            <div class="tracker-eyebrow">Purpose</div>
+            <h3>What is Will running for?</h3>
+            <p>Will began running after losing his mother, Amanda, to cancer in 2018. What started as a way to honor her memory has grown into something much bigger.</p>
+            <p>Mission America carries that purpose across all 50 states.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noreferrer">William's Story →</a></div>
+          </article>
+          <article class="article-card">
+            <div class="tracker-eyebrow">Impact</div>
+            <h3>50 states. Thousands of reasons.</h3>
+            <p>Cancer has touched families in every state William will run through.</p>
+            <p>Along the way, Mission America will celebrate survivors, honor those we've lost and bring communities together around a shared goal: helping create a future where more people survive cancer.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="faq.html">Why It Matters →</a></div>
+          </article>
+          <article class="article-card">
+            <div class="tracker-eyebrow">Giving</div>
+            <h3>Turn miles into impact.</h3>
+            <p>Mission America is raising funds to support the fight against cancer.</p>
+            <p>The official fundraising campaign is coming soon. Follow the mission and we'll let you know when it's time to help turn 1,310 miles into something even bigger.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="faq.html#donate">Support the Mission →</a></div>
           </article>
         </div>
       </section>
@@ -1642,6 +1747,38 @@
 
     loadInstagramFeed();
 
+    function initWordmarkFade() {
+      const wordmark = document.querySelector(".tracker-mark");
+      if (!wordmark) return;
+
+      const preserveMobile = window.matchMedia("(max-width: 760px)");
+      let ticking = false;
+
+      const updateOpacity = () => {
+        ticking = false;
+        if (preserveMobile.matches) {
+          wordmark.style.setProperty("--wordmark-opacity", "0.6");
+          return;
+        }
+
+        const scrollProgress = Math.min(1, Math.max(0, window.scrollY / 260));
+        const opacity = 0.6 - scrollProgress * 0.2;
+        wordmark.style.setProperty("--wordmark-opacity", opacity.toFixed(3));
+      };
+
+      const requestUpdate = () => {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(updateOpacity);
+      };
+
+      updateOpacity();
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      preserveMobile.addEventListener?.("change", updateOpacity);
+    }
+
+    initWordmarkFade();
+
     const routeStops = [
       { n: 1, state: "Hawaii", abbr: "HI", city: "Honolulu", date: "Oct 9", lat: 21.3099, lng: -157.8581 },
       { n: 2, state: "Alaska", abbr: "AK", city: "Anchorage", date: "Oct 10", lat: 61.2181, lng: -149.9003 },
@@ -1754,7 +1891,7 @@
           <div>
             <div class="tracker-eyebrow">${stop.date} | ${stop.state}</div>
             <h3>${stop.city}</h3>
-            <p>${stop.city}, ${stop.state}. Join the Mission America stop as route-specific RSVP details are finalized.</p>
+            <p>Want to run with William in ${stop.city}? Register your interest and we'll send the final meeting point and timing as soon as they're confirmed.</p>
           </div>
           <div class="button-row"><a class="tracker-button secondary" href="partners.html">RSVP</a></div>
         </article>
