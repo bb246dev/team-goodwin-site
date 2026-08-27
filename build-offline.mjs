@@ -97,16 +97,19 @@ function addSharedFooter(html) {
 
 function localize(html, pageName) {
   let out = html;
+  const offlineFontStylesheet = pageName === "live-tracking.html" ? "fonts/inter.css" : "fonts/offline-fonts.css";
 
   out = out
     .replace(/<script defer src="\/~flock\.js"[^>]*><\/script>/g, "")
     .replace(/<script defer src="\/__l5e\/events\.js"[^>]*><\/script>/g, "")
     .replace(/<script type="module" async="">import\("\/assets\/index-CK5luKon\.js"\)<\/script>/g, "")
     .replace(/<link rel="modulepreload"[^>]*>/g, "")
-    .replace(/<link rel="stylesheet" href="\/assets\/styles-ulvf0Dcj\.css"/, '<link rel="stylesheet" href="fonts/offline-fonts.css"/><link rel="stylesheet" href="/assets/styles-ulvf0Dcj.css"')
+    .replace(/<link rel="stylesheet" href="\/assets\/styles-ulvf0Dcj\.css"/, `<link rel="stylesheet" href="${offlineFontStylesheet}"/><link rel="stylesheet" href="/assets/styles-ulvf0Dcj.css"`)
     .replace(/https:\/\/mission-america-journey\.lovable\.app\/partners/g, "partners.html")
     .replace(/https:\/\/pub-bb2e103a32db4e198524a2e9ed8f35b4\.r2\.dev\/[^"]+id-preview[^"]+\.png/g, "assets/hero-runner-Ci5y42DW.jpg")
     .replace(/(href|src)="\/assets\//g, '$1="assets/')
+    .replace(/(href|src)="\.\.\/fonts\//g, '$1="fonts/')
+    .replace(/url\((["']?)\.\.\/assets\//g, "url($1assets/")
     .replace(/content="\/"/g, 'content="index.html"')
     .replace(/content="\/athletes"/g, 'content="athletes.html"')
     .replace(/content="\/partners"/g, 'content="partners.html"')
@@ -263,10 +266,14 @@ const deployAssetPaths = [
   "assets/goodwin-webclip.png",
   "assets/goodwin-logo.png",
   "assets/mission-america-logo.png",
-  "assets/goodge-website.mp4",
   "assets/map-runner-bobblehead-small.png",
   "assets/map-rv-green-small.png",
   "assets/hero-runner-Ci5y42DW.jpg",
+  "fonts/inter.css",
+  "fonts/font-8.ttf",
+  "fonts/font-9.ttf",
+  "fonts/font-10.ttf",
+  "fonts/font-11.ttf",
   "assets/instagram/williamgoodge-01.jpg",
   "assets/instagram/williamgoodge-02.jpg",
   "assets/instagram/williamgoodge-03.jpg",
@@ -293,6 +300,9 @@ const deployAssets = Object.fromEntries(
   ]),
 );
 
+const trackingCoreSource = readFileSync(join(root, "api", "flight-tracking-core.mjs"), "utf8")
+  .replace(/\bexport\s+/g, "");
+
 writeFileSync(
   join(dist, "server", "index.js"),
   `const pages = ${JSON.stringify(Object.fromEntries([
@@ -318,6 +328,7 @@ writeFileSync(
   ]))};
 const assets = ${JSON.stringify(deployAssets)};
 const instagramFeed = ${JSON.stringify(deployInstagramFeed)};
+${trackingCoreSource}
 
 export default {
   async fetch(request, env) {
@@ -336,6 +347,25 @@ export default {
 
     if (clean === "api/instagram-feed") {
       return Response.json({ data: instagramFeed }, { headers: { "cache-control": "no-cache" } });
+    }
+
+    if (clean === "api/tracking-status") {
+      const { searchParams } = new URL(request.url);
+      const pinnedProgress = Number(searchParams.get("progress"));
+      return Response.json({
+        source: "mock",
+        mode: "simulated",
+        updatedAt: new Date().toISOString(),
+        progress: Number.isFinite(pinnedProgress) ? Math.min(1, Math.max(0, pinnedProgress)) : 0,
+        flightStatus: publicFlightStatus({
+          now: searchParams.get("now") || new Date(),
+          env
+        })
+      }, { headers: { "cache-control": "no-cache" } });
+    }
+
+    if (clean.startsWith("api/")) {
+      return new Response("Not found", { status: 404 });
     }
 
     const asset = assets[clean];

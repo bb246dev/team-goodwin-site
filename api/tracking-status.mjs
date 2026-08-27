@@ -1,3 +1,5 @@
+import { publicFlightStatus } from "./flight-tracking-core.mjs";
+
 const ROUTE_STOPS = [
   { n: 1, state: "Hawaii", city: "Honolulu", lat: 21.3099, lng: -157.8581 },
   { n: 2, state: "Alaska", city: "Anchorage", lat: 61.2181, lng: -149.9003 },
@@ -83,13 +85,19 @@ function makeMockTrackingStatus(progressInput) {
       averagePace: "8:42/mi",
       elapsedTime: `${Math.floor((movingMinutes + 14) / 60)}h ${String((movingMinutes + 14) % 60).padStart(2, "0")}m`,
     },
+    flightStatus: publicFlightStatus(),
   };
 }
 
-export function mockTrackingStatusFromUrl(url) {
+export function mockTrackingStatusFromUrl(url, env = {}) {
   const { searchParams } = new URL(url, "https://example.com");
   const pinnedProgress = Number(searchParams.get("progress"));
-  return makeMockTrackingStatus(Number.isFinite(pinnedProgress) ? pinnedProgress : undefined);
+  const status = makeMockTrackingStatus(Number.isFinite(pinnedProgress) ? pinnedProgress : undefined);
+  status.flightStatus = publicFlightStatus({
+    now: searchParams.get("now") || new Date(),
+    env,
+  });
+  return status;
 }
 
 export default async function handler(request, response) {
@@ -97,8 +105,8 @@ export default async function handler(request, response) {
   response.status(200).json(mockTrackingStatusFromUrl(request.url));
 }
 
-export async function onRequestGet({ request }) {
-  return Response.json(mockTrackingStatusFromUrl(request.url), {
+export async function onRequestGet({ request, env }) {
+  return Response.json(mockTrackingStatusFromUrl(request.url, env), {
     headers: {
       "Cache-Control": "no-cache",
     },

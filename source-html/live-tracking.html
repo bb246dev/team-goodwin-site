@@ -7,6 +7,7 @@
   <meta name="description" content="Follow William Goodge during Mission America with live tracking, Strava, field updates, FAQs, and RSVP links.">
   <link rel="icon" href="../assets/goodwin-favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/goodwin-webclip.png">
+  <link rel="stylesheet" href="../fonts/inter.css">
   <link rel="stylesheet" href="../assets/styles-ulvf0Dcj.css">
   <link rel="stylesheet" href="../assets/index-CIGW-MKW.css">
   <script src="../assets/us-states-albers-10m.js"></script>
@@ -26,6 +27,8 @@
       --tracker-cream: #FFFFFF;
       --tracker-line: rgba(10, 10, 10, 0.18);
       --tracker-muted: rgba(10, 10, 10, 0.66);
+      --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-display: var(--font-sans);
     }
 
     *,
@@ -51,9 +54,17 @@
     }
 
     body {
+      font-family: var(--font-sans);
       background: var(--color-white);
       color: var(--tracker-ink);
       overflow-x: hidden;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font-family: inherit;
     }
 
     .tracker-page {
@@ -168,9 +179,9 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center center;
-      opacity: 1;
-      filter: none;
+      object-position: 28% 45%;
+      opacity: 0.58;
+      filter: saturate(0.78) contrast(1.05);
       transform: scale(1.08);
     }
 
@@ -179,18 +190,6 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(90deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.45) 30%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 70%);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .tracker-hero {
-        background-image: url("../assets/hero-runner-Ci5y42DW.jpg");
-        background-size: cover;
-        background-position: center center;
-      }
-
-      .tracker-hero-bg {
-        display: none;
-      }
     }
 
     .tracker-map-stage {
@@ -299,14 +298,6 @@
       animation: mapPulse 1.9s ease-out infinite;
     }
 
-    .map-entity-halo {
-      fill: rgba(10, 10, 10, 0.78);
-      stroke: rgba(255, 255, 255, 0.86);
-      stroke-width: 2.6;
-      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.42));
-      vector-effect: non-scaling-stroke;
-    }
-
     .map-entity-image {
       pointer-events: none;
     }
@@ -325,9 +316,11 @@
     }
 
     .map-flight-body {
-      fill: var(--tracker-mint);
-      stroke: rgba(10, 10, 10, 0.9);
-      stroke-width: 1.4;
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
       vector-effect: non-scaling-stroke;
     }
 
@@ -342,6 +335,7 @@
     .tracking-map-key span {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       min-width: 0;
       padding: 14px clamp(14px, 2.5vw, 26px);
@@ -357,28 +351,23 @@
     }
 
     .tracking-map-key img,
-    .tracking-map-key i {
-      flex: 0 0 26px;
-      width: 26px;
-      height: 26px;
-      border: 1px solid rgba(255, 255, 255, 0.52);
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      object-fit: cover;
-      overflow: hidden;
+    .tracking-map-key svg {
+      flex: 0 0 28px;
+      width: 28px;
+      height: 28px;
+      display: block;
     }
 
-    .tracking-map-key i {
-      position: relative;
-      display: inline-block;
+    .tracking-map-key img {
+      object-fit: contain;
     }
 
-    .tracking-map-key i::before {
-      content: "";
-      position: absolute;
-      inset: 6px 5px 7px;
-      background: var(--color-accent);
-      clip-path: polygon(50% 0, 62% 39%, 100% 48%, 100% 62%, 62% 58%, 57% 100%, 43% 100%, 38% 58%, 0 62%, 0 48%, 38% 39%);
+    .tracking-map-key .legend-plane {
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
     }
 
     .map-label {
@@ -431,7 +420,7 @@
 
     .map-stop-card .map-card-city {
       fill: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: 24px;
       font-weight: 700;
       letter-spacing: 0;
@@ -575,7 +564,7 @@
 
     .feature-card h2 {
       max-width: 11ch;
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(2.1rem, 4vw, 4.6rem);
       line-height: 0.92;
       letter-spacing: 0;
@@ -718,7 +707,7 @@
     .section-head h2 {
       max-width: 780px;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(2.5rem, 6vw, 5.6rem);
       line-height: 0.92;
       letter-spacing: 0;
@@ -751,7 +740,7 @@
     .tracker-panel-heading {
       margin-top: 10px;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(1.9rem, 3vw, 3.4rem);
       line-height: 0.96;
       letter-spacing: 0;
@@ -780,7 +769,7 @@
     .metric strong {
       display: block;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(2rem, 4vw, 3.5rem);
       line-height: 0.9;
     }
@@ -804,7 +793,7 @@
     .tracking-status strong {
       display: block;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(1.8rem, 3vw, 2.8rem);
       line-height: 0.92;
     }
@@ -899,7 +888,7 @@
     .follow-panel h3 {
       margin-top: 8px;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(1.9rem, 3vw, 3.4rem);
       line-height: 0.96;
       letter-spacing: 0;
@@ -987,7 +976,7 @@
     .instagram-feed-state strong {
       display: block;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: 1.65rem;
       line-height: 1;
       margin-bottom: 8px;
@@ -1033,7 +1022,7 @@
     .week-card h3 {
       margin-top: 10px;
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(2rem, 3vw, 3.25rem);
       line-height: 0.92;
       letter-spacing: 0;
@@ -1065,7 +1054,7 @@
     .article-card h3,
     .run-card h3 {
       color: var(--tracker-ink);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: clamp(1.5rem, 3vw, 2.4rem);
       line-height: 1;
       letter-spacing: 0;
@@ -1172,7 +1161,7 @@
       border: 1px solid var(--tracker-line);
       border-radius: 999px;
       color: var(--tracker-gold);
-      font-family: var(--font-display);
+      font-family: var(--font-sans);
       font-size: 1.2rem;
       line-height: 1;
     }
@@ -1327,7 +1316,7 @@
       }
 
       .tracker-hero-bg {
-        object-position: center center;
+        object-position: 28% 46%;
       }
 
       .tracker-headline {
@@ -1355,7 +1344,7 @@
       }
 
       .tracker-hero-bg {
-        object-position: center center;
+        object-position: 38% 48%;
       }
 
       .mission-logo-art {
@@ -1428,16 +1417,14 @@
       <div class="tracker-navlinks">
         <a href="#the-run">The Run</a>
         <a href="#map">50 States</a>
-        <a href="#updates">Updates</a>
+        <a href="#updates">News</a>
         <a href="#why">Will</a>
-        <a href="#rsvp" class="tracker-cta">Run With Will</a>
+        <a href="#rsvp" class="tracker-cta">Join the Run</a>
       </div>
     </nav>
 
     <section class="tracker-hero" id="live" aria-labelledby="page-title">
-      <video class="tracker-hero-bg" autoplay muted loop playsinline preload="metadata" poster="../assets/hero-runner-Ci5y42DW.jpg" aria-label="William Goodge running during Mission America">
-        <source src="../assets/goodge-website.mp4" type="video/mp4">
-      </video>
+      <img class="tracker-hero-bg" src="../assets/hero-runner-Ci5y42DW.jpg" alt="Open road at dusk for Mission America">
       <div class="tracker-hero-inner">
         <div class="tracker-headline">
           <div class="mission-logo-stack" aria-hidden="true">
@@ -1511,7 +1498,7 @@
           <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
           <div class="tracking-map-key" aria-label="Mission America tracking layers">
             <span><img src="../assets/map-runner-bobblehead-small.png" alt="">Runner</span>
-            <span><i aria-hidden="true"></i>Flight</span>
+            <span><svg viewBox="-17 -23 34 46" aria-hidden="true" focusable="false"><path class="legend-plane" d="M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z"></path></svg>Flight</span>
             <span><img src="../assets/map-rv-green-small.png" alt="">RV</span>
           </div>
         </div>
@@ -1750,11 +1737,67 @@
         .filter((update) => update.title || update.body);
     }
 
+    let missionTrackingStatusPromise = null;
+
+    async function loadMissionTrackingStatus() {
+      if (missionTrackingStatusPromise) return missionTrackingStatusPromise;
+      missionTrackingStatusPromise = (async () => {
+        try {
+          const response = await fetch("/api/tracking-status", { headers: { Accept: "application/json" } });
+          if (!response.ok) throw new Error(`Tracking status returned ${response.status}`);
+          const status = await response.json();
+          if (status?.flightStatus) window.missionPublicFlightStatus = status.flightStatus;
+          if (Number.isFinite(Number(status?.progress))) {
+            window.missionMapTracking = {
+              ...(window.missionMapTracking || {}),
+              runner: { ...(window.missionMapTracking?.runner || {}), progress: Number(status.progress) }
+            };
+          }
+          if (status?.flightStatus?.active) {
+            const flight = status.flightStatus;
+            window.missionMapTracking = {
+              ...(window.missionMapTracking || {}),
+              flight: {
+                active: true,
+                fromStop: flight.originStop,
+                toStop: flight.destinationStop,
+                progress: Number(flight.progress) || 0,
+                status: flight.status,
+                nextStop: flight.nextStop
+              }
+            };
+          }
+          return status;
+        } catch (error) {
+          console.warn(error);
+          return null;
+        }
+      })();
+      return missionTrackingStatusPromise;
+    }
+
+    function liveTickerUpdateFromStatus(status) {
+      const flight = status?.flightStatus || window.missionPublicFlightStatus;
+      if (!flight?.active) return null;
+      const destination = flight.nextStop || flight.destinationCity;
+      if (flight.status === "IN TRANSIT" && destination) {
+        return { date: "Live", time: "", title: "In transit", body: `Next stop: ${destination}.` };
+      }
+      if (flight.status === "ARRIVED" && destination) {
+        return { date: "Live", time: "", title: "Arrived", body: `Ground transfer toward ${destination}.` };
+      }
+      if ((flight.status === "DELAYED" || flight.status === "TRAVEL UPDATE") && destination) {
+        return { date: "Live", time: "", title: flight.status === "DELAYED" ? "Delayed" : "Travel update", body: `Next stop: ${destination}.` };
+      }
+      return null;
+    }
+
     async function loadTickerUpdates() {
       const ticker = document.querySelector("[data-ticker-items]");
       if (!ticker) return;
       const sources = ["../assets/ticker-updates.json", "assets/ticker-updates.json"];
       let updates = fallbackTickerUpdates;
+      const trackingStatus = await loadMissionTrackingStatus();
       for (const source of sources) {
         try {
           const response = await fetch(source, { headers: { Accept: "application/json" } });
@@ -1768,7 +1811,8 @@
           console.warn(error);
         }
       }
-      const firstFive = updates.slice(0, 5);
+      const liveUpdate = liveTickerUpdateFromStatus(trackingStatus);
+      const firstFive = (liveUpdate ? [liveUpdate, ...updates] : updates).slice(0, 5);
       const rendered = firstFive.map((update) => `
         <div class="ticker-item">
           <time>${escapeHtml(formatUpdateStamp(update))}</time>
@@ -1955,9 +1999,10 @@
     };
     const mapTrackingDefaults = {
       runner: { progress },
-      flight: { fromStop: 1, toStop: 3, progress: 0.52 },
+      flight: { active: false },
       rv: { pathStops: [3, 4, 5, 6], progress: 0.64 }
     };
+    const MAP_FLIGHT_PREVIEW = false;
 
     function updateCountdown() {
       const remaining = Math.max(0, startDate.getTime() - Date.now());
@@ -2151,18 +2196,17 @@
       group.setAttribute("class", `map-entity-marker ${className}`);
       group.setAttribute("transform", `translate(${point[0]} ${point[1]})`);
 
-      const halo = document.createElementNS(svgNS, "circle");
-      halo.setAttribute("class", "map-entity-halo");
-      halo.setAttribute("r", "24");
-
       const image = document.createElementNS(svgNS, "image");
       image.setAttribute("class", "map-entity-image");
       image.setAttribute("href", imageHref);
-      image.setAttribute("x", "-20");
-      image.setAttribute("y", "-20");
-      image.setAttribute("width", "40");
-      image.setAttribute("height", "40");
-      image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+      const imageFrame = className === "runner"
+        ? { x: -14, y: -38, width: 28, height: 42 }
+        : { x: -20, y: -20, width: 40, height: 40 };
+      image.setAttribute("x", String(imageFrame.x));
+      image.setAttribute("y", String(imageFrame.y));
+      image.setAttribute("width", String(imageFrame.width));
+      image.setAttribute("height", String(imageFrame.height));
+      image.setAttribute("preserveAspectRatio", className === "runner" ? "xMidYMid meet" : "xMidYMid slice");
 
       const text = document.createElementNS(svgNS, "text");
       text.setAttribute("class", "map-entity-label");
@@ -2171,7 +2215,7 @@
       text.setAttribute("text-anchor", "middle");
       text.textContent = label;
 
-      group.append(halo, image, text);
+      group.append(image, text);
       svg.appendChild(group);
     }
 
@@ -2181,13 +2225,9 @@
       group.setAttribute("class", "map-entity-marker flight");
       group.setAttribute("transform", `translate(${point[0]} ${point[1]}) rotate(24)`);
 
-      const halo = document.createElementNS(svgNS, "circle");
-      halo.setAttribute("class", "map-entity-halo");
-      halo.setAttribute("r", "20");
-
       const plane = document.createElementNS(svgNS, "path");
       plane.setAttribute("class", "map-flight-body");
-      plane.setAttribute("d", "M0 -18 L7 -3 L22 1 L22 7 L7 5 L4 19 L-4 19 L-7 5 L-22 7 L-22 1 L-7 -3 Z");
+      plane.setAttribute("d", "M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z");
 
       const label = document.createElementNS(svgNS, "text");
       label.setAttribute("class", "map-entity-label");
@@ -2197,7 +2237,7 @@
       label.setAttribute("transform", "rotate(-24)");
       label.textContent = "Flight";
 
-      group.append(halo, plane, label);
+      group.append(plane, label);
       svg.appendChild(group);
     }
 
@@ -2258,12 +2298,14 @@
       svg.appendChild(routeLayer);
 
       const travelLayer = document.createElementNS(svgNS, "g");
-      const flightStart = pointByStopNumber(trackingData.flight.fromStop, centroids);
-      const flightEnd = pointByStopNumber(trackingData.flight.toStop, centroids);
+      const forcedFlightPoint = displayPoint(projectLower48(39.8, -98.5), "KS");
+      const hasActiveFlight = MAP_FLIGHT_PREVIEW || trackingData.flight.active === true || trackingData.flight.active === "true";
+      const flightStart = !MAP_FLIGHT_PREVIEW && hasActiveFlight ? pointByStopNumber(trackingData.flight.fromStop, centroids) : null;
+      const flightEnd = !MAP_FLIGHT_PREVIEW && hasActiveFlight ? pointByStopNumber(trackingData.flight.toStop, centroids) : null;
       const flightPoint = flightStart && flightEnd
         ? interpolatePoints(flightStart, flightEnd, trackingData.flight.progress)
-        : pointFromTracking(trackingData.flight, centroids, routePoints[1]);
-      if (flightStart && flightEnd) {
+        : MAP_FLIGHT_PREVIEW ? forcedFlightPoint : null;
+      if (!MAP_FLIGHT_PREVIEW && hasActiveFlight && flightStart && flightEnd) {
         const flightPath = document.createElementNS(svgNS, "path");
         flightPath.setAttribute("class", "map-route flight");
         flightPath.setAttribute("d", routePath([flightStart, flightEnd]));
@@ -2394,7 +2436,7 @@
         centroids,
         rvStopPath[rvStopPath.length - 1] || routePoints[Math.min(routePoints.length - 1, currentIndex + 2)]
       );
-      appendFlightMarker(svg, svgNS, flightPoint);
+      if (hasActiveFlight) appendFlightMarker(svg, svgNS, flightPoint);
       appendImageMarker(svg, svgNS, rvPoint, mapEntityAssets.rv, "RV", "rv");
       appendImageMarker(svg, svgNS, runnerPoint, mapEntityAssets.runner, "Runner", "runner");
 
@@ -2410,6 +2452,7 @@
 
     async function loadMissionMap() {
       const sources = ["assets/us-states-albers-10m.json", "../assets/us-states-albers-10m.json"];
+      await loadMissionTrackingStatus();
       for (const source of sources) {
         try {
           const response = await fetch(source, { headers: { Accept: "application/json" } });
