@@ -246,6 +246,7 @@ const deployAssetPaths = [
   "assets/goodwin-webclip.png",
   "assets/goodwin-logo.png",
   "assets/mission-america-logo.png",
+  "assets/goodge-website.mp4",
   "assets/map-runner-bobblehead.png",
   "assets/map-rv-green.png",
   "assets/instagram/williamgoodge-01.jpg",
@@ -276,6 +277,7 @@ function contentType(pathname) {
   if (pathname.endsWith(".js") || pathname.endsWith(".mjs")) return "text/javascript; charset=utf-8";
   if (pathname.endsWith(".json")) return "application/json; charset=utf-8";
   if (pathname.endsWith(".jpg") || pathname.endsWith(".jpeg")) return "image/jpeg";
+  if (pathname.endsWith(".mp4")) return "video/mp4";
   if (pathname.endsWith(".png")) return "image/png";
   if (pathname.endsWith(".svg")) return "image/svg+xml";
   if (pathname.endsWith(".woff2")) return "font/woff2";
