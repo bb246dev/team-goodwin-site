@@ -17,6 +17,14 @@ const pages = [
   ["source-html/athletes.raw.html", "athletes.html"],
   ["source-html/partners.raw.html", "partners.html"],
   ["source-html/live-tracking.html", "live-tracking.html"],
+  ["source-html/the-run.raw.html", "the-run.html"],
+  ["source-html/will.raw.html", "will.html"],
+  ["source-html/fifty-runs.raw.html", "fifty-runs.html"],
+  ["source-html/updates.raw.html", "updates.html"],
+  ["source-html/faq.raw.html", "faq.html"],
+  ["source-html/week-1.raw.html", "week-1.html"],
+  ["source-html/week-2.raw.html", "week-2.html"],
+  ["source-html/week-3.raw.html", "week-3.html"],
 ];
 
 const videoIds = [
@@ -33,6 +41,59 @@ const videoIds = [
   "ApDPZUyHV6Y",
   "CupDgn2O1Vw",
 ];
+
+const sharedFooterCss = `
+    .global-site-footer{width:min(1180px,calc(100% - clamp(44px,10vw,144px)));margin:78px auto 0;border-top:1px solid rgba(20,63,60,.18);color:#143f3c}
+    .global-site-footer-main{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(180px,1fr));gap:clamp(32px,6vw,86px);padding:56px 0}
+    .global-site-footer-brand{max-width:260px}
+    .global-site-footer-brand img{display:block;width:100%;height:auto}
+    .global-site-footer p{max-width:30rem;margin-top:14px;color:rgba(20,63,60,.68);line-height:1.55}
+    .global-site-footer ul{display:grid;gap:10px;margin:16px 0 0;padding:0;list-style:none}
+    .global-site-footer a{color:rgba(20,63,60,.68);text-decoration:none}
+    .global-site-footer a:hover{color:#1c6f4a}
+    .global-site-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;border-top:1px solid rgba(20,63,60,.18);color:rgba(20,63,60,.62);font-size:.8rem}
+    @media(max-width:840px){.global-site-footer-main{grid-template-columns:1fr}.global-site-footer-bottom{display:block}}`;
+
+const sharedFooterHtml = `
+  <footer class="global-site-footer">
+    <div class="global-site-footer-main">
+      <div>
+        <div class="global-site-footer-brand"><img src="assets/goodwin-logo.png" alt="Goodwin"></div>
+        <p>Goodwin Company builds next-generation infrastructure for charter aviation and backs athletes redefining human endurance.</p>
+      </div>
+      <div>
+        <div class="eyebrow">Mission America</div>
+        <ul>
+          <li><a href="the-run.html">The Run</a></li>
+          <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
+          <li><a href="updates.html">Updates Archive</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="live-tracking.html#map">Live Map</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="eyebrow">Team Goodwin</div>
+        <ul>
+          <li><a href="will.html">Will</a></li>
+          <li><a href="athletes.html">Roster</a></li>
+          <li><a href="partners.html">Partners</a></li>
+          <li><a href="https://www.teamgoodwin.com" target="_blank" rel="noreferrer">teamGoodwin.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="global-site-footer-bottom">
+      <span>© 2026 Goodwin Company</span>
+      <span>Goodwin Generated</span>
+    </div>
+  </footer>`;
+
+function addSharedFooter(html) {
+  if (html.includes('class="site-footer"') || html.includes('class="global-site-footer"')) return html;
+  let out = html.includes("</style>")
+    ? html.replace("</style>", `${sharedFooterCss}\n  </style>`)
+    : html.replace("</head>", `<style>${sharedFooterCss}</style></head>`);
+  return out.replace("</body>", `${sharedFooterHtml}\n</body>`);
+}
 
 function localize(html, pageName) {
   let out = html;
@@ -94,7 +155,7 @@ document.querySelector("[data-offline-partner-form]")?.addEventListener("submit"
     );
   }
 
-  return out;
+  return addSharedFooter(out);
 }
 
 function patchClientBundle() {
@@ -136,9 +197,25 @@ patchClientBundle();
 mkdirSync(join(dist, "athletes"), { recursive: true });
 mkdirSync(join(dist, "partners"), { recursive: true });
 mkdirSync(join(dist, "live-tracking"), { recursive: true });
+mkdirSync(join(dist, "the-run"), { recursive: true });
+mkdirSync(join(dist, "will"), { recursive: true });
+mkdirSync(join(dist, "fifty-runs"), { recursive: true });
+mkdirSync(join(dist, "updates"), { recursive: true });
+mkdirSync(join(dist, "faq"), { recursive: true });
+mkdirSync(join(dist, "week-1"), { recursive: true });
+mkdirSync(join(dist, "week-2"), { recursive: true });
+mkdirSync(join(dist, "week-3"), { recursive: true });
 cpSync(join(dist, "athletes.html"), join(dist, "athletes", "index.html"));
 cpSync(join(dist, "partners.html"), join(dist, "partners", "index.html"));
 cpSync(join(dist, "live-tracking.html"), join(dist, "live-tracking", "index.html"));
+cpSync(join(dist, "the-run.html"), join(dist, "the-run", "index.html"));
+cpSync(join(dist, "will.html"), join(dist, "will", "index.html"));
+cpSync(join(dist, "fifty-runs.html"), join(dist, "fifty-runs", "index.html"));
+cpSync(join(dist, "updates.html"), join(dist, "updates", "index.html"));
+cpSync(join(dist, "faq.html"), join(dist, "faq", "index.html"));
+cpSync(join(dist, "week-1.html"), join(dist, "week-1", "index.html"));
+cpSync(join(dist, "week-2.html"), join(dist, "week-2", "index.html"));
+cpSync(join(dist, "week-3.html"), join(dist, "week-3", "index.html"));
 
 writeFileSync(
   join(dist, "README.txt"),
@@ -164,7 +241,11 @@ const deployAssetPaths = [
   "assets/styles-ulvf0Dcj.css",
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.json",
+  "assets/ticker-updates.json",
   "assets/goodwin-logo.png",
+  "assets/mission-america-logo.png",
+  "assets/map-runner-bobblehead.png",
+  "assets/map-rv-green.png",
   "assets/instagram/williamgoodge-01.jpg",
   "assets/instagram/williamgoodge-02.jpg",
   "assets/instagram/williamgoodge-03.jpg",
@@ -229,7 +310,27 @@ const deployInstagramFeed = [
 
 writeFileSync(
   join(dist, "server", "index.js"),
-  `const liveTrackingHtml = ${JSON.stringify(readFileSync(join(dist, "live-tracking.html"), "utf8"))};
+  `const pages = ${JSON.stringify(Object.fromEntries([
+    ["index.html", readFileSync(join(dist, "live-tracking.html"), "utf8")],
+    ["live-tracking.html", readFileSync(join(dist, "live-tracking.html"), "utf8")],
+    ["live-tracking/index.html", readFileSync(join(dist, "live-tracking.html"), "utf8")],
+    ["the-run.html", readFileSync(join(dist, "the-run.html"), "utf8")],
+    ["the-run/index.html", readFileSync(join(dist, "the-run.html"), "utf8")],
+    ["will.html", readFileSync(join(dist, "will.html"), "utf8")],
+    ["will/index.html", readFileSync(join(dist, "will.html"), "utf8")],
+    ["fifty-runs.html", readFileSync(join(dist, "fifty-runs.html"), "utf8")],
+    ["fifty-runs/index.html", readFileSync(join(dist, "fifty-runs.html"), "utf8")],
+    ["updates.html", readFileSync(join(dist, "updates.html"), "utf8")],
+    ["updates/index.html", readFileSync(join(dist, "updates.html"), "utf8")],
+    ["faq.html", readFileSync(join(dist, "faq.html"), "utf8")],
+    ["faq/index.html", readFileSync(join(dist, "faq.html"), "utf8")],
+    ["week-1.html", readFileSync(join(dist, "week-1.html"), "utf8")],
+    ["week-1/index.html", readFileSync(join(dist, "week-1.html"), "utf8")],
+    ["week-2.html", readFileSync(join(dist, "week-2.html"), "utf8")],
+    ["week-2/index.html", readFileSync(join(dist, "week-2.html"), "utf8")],
+    ["week-3.html", readFileSync(join(dist, "week-3.html"), "utf8")],
+    ["week-3/index.html", readFileSync(join(dist, "week-3.html"), "utf8")],
+  ]))};
 const assets = ${JSON.stringify(deployAssets)};
 const instagramFeed = ${JSON.stringify(deployInstagramFeed)};
 
@@ -238,8 +339,9 @@ export default {
     const { pathname } = new URL(request.url);
     const clean = pathname.replace(/^\\/+/, "");
 
-    if (pathname === "/" || clean === "index.html" || clean === "live-tracking.html" || clean === "live-tracking/index.html") {
-      return new Response(liveTrackingHtml, {
+    const page = pathname === "/" ? pages["index.html"] : pages[clean];
+    if (page) {
+      return new Response(page, {
         headers: {
           "content-type": "text/html; charset=utf-8",
           "cache-control": "no-cache"

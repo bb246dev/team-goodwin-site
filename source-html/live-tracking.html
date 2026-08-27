@@ -22,9 +22,28 @@
       --tracker-muted: rgba(20, 63, 60, 0.68);
     }
 
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     body {
       background: #fbfaf6;
       color: var(--tracker-ink);
+      overflow-x: hidden;
     }
 
     .tracker-page {
@@ -32,6 +51,7 @@
         radial-gradient(circle at 78% 18%, rgba(216, 248, 210, 0.52), transparent 28%),
         linear-gradient(180deg, #ffffff 0%, #fbfaf6 52%, #f3efe6 100%);
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .tracker-nav {
@@ -42,36 +62,38 @@
       right: 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 24px;
       padding: 24px clamp(20px, 4vw, 64px);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0));
-      color: var(--tracker-ink);
+      background: linear-gradient(180deg, rgba(7, 24, 23, 0.34), rgba(7, 24, 23, 0));
+      color: #fff;
     }
 
     .tracker-mark {
-      display: inline-flex;
+      display: none;
       align-items: center;
-      gap: clamp(12px, 1.25vw, 18px);
+      flex-wrap: wrap;
+      gap: 6px clamp(12px, 1.8vw, 18px);
       line-height: 1;
       text-decoration: none;
     }
 
-    .tracker-mark img {
+    .tracker-mark strong {
       display: block;
-      width: clamp(188px, 18vw, 246px);
-      height: auto;
+      color: inherit;
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 2.3vw, 2.35rem);
+      font-weight: 600;
+      letter-spacing: 0;
     }
 
     .tracker-mark span {
-      color: var(--tracker-green);
-      font-family: var(--font-sans);
-      font-size: clamp(0.7rem, 0.9vw, 0.98rem);
+      color: inherit;
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2vw, 2rem);
       font-weight: 500;
-      letter-spacing: 0.34em;
+      letter-spacing: 0;
       line-height: 1;
-      text-transform: uppercase;
-      transform: translateY(0.04em);
       white-space: nowrap;
     }
 
@@ -79,7 +101,7 @@
       display: flex;
       align-items: center;
       gap: clamp(16px, 2.4vw, 34px);
-      color: rgba(20, 63, 60, 0.72);
+      color: rgba(255, 255, 255, 0.86);
       font-size: 0.95rem;
     }
 
@@ -90,7 +112,7 @@
     }
 
     .tracker-navlinks a:hover {
-      color: var(--tracker-ink);
+      color: #fff;
     }
 
     .tracker-cta {
@@ -108,23 +130,45 @@
 
     .tracker-hero {
       position: relative;
-      min-height: 100svh;
+      min-height: min(780px, 88svh);
       overflow: hidden;
       border-bottom: 1px solid var(--tracker-line);
+      background: var(--tracker-night);
     }
 
     .tracker-hero-inner {
       position: relative;
       z-index: 1;
-      display: grid;
-      min-height: 100svh;
-      grid-template-rows: 1fr auto;
-      padding: 110px clamp(20px, 4vw, 72px) 38px;
+      display: flex;
+      min-height: min(780px, 88svh);
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 112px clamp(22px, 5vw, 74px) clamp(46px, 8vw, 92px);
+      color: #fff;
+    }
+
+    .tracker-hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      opacity: 0.58;
+      filter: saturate(0.78) contrast(1.05);
+    }
+
+    .tracker-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 86% 32%, rgba(255, 255, 255, 0.16), transparent 11%),
+        linear-gradient(180deg, rgba(7, 24, 23, 0.36), rgba(7, 24, 23, 0.24) 38%, rgba(7, 24, 23, 0.82));
     }
 
     .tracker-map-stage {
       position: relative;
-      min-height: 520px;
       border: 1px solid rgba(20, 63, 60, 0.18);
       background: var(--tracker-night);
     }
@@ -132,8 +176,7 @@
     .tracker-map {
       position: relative;
       width: 100%;
-      height: min(62vh, 650px);
-      min-height: 430px;
+      height: clamp(360px, 42vw, 520px);
       background:
         linear-gradient(rgba(216, 248, 210, 0.08) 1px, transparent 1px),
         linear-gradient(90deg, rgba(216, 248, 210, 0.08) 1px, transparent 1px),
@@ -181,6 +224,19 @@
       stroke-dasharray: 2 13;
     }
 
+    .map-route.flight {
+      stroke: rgba(216, 248, 210, 0.78);
+      stroke-width: 2.6;
+      stroke-dasharray: 12 10;
+    }
+
+    .map-route.rv {
+      stroke: #5fe08d;
+      stroke-width: 3.6;
+      stroke-dasharray: 7 7;
+      filter: drop-shadow(0 0 8px rgba(95, 224, 141, 0.38));
+    }
+
     .map-stop {
       cursor: pointer;
       fill: var(--tracker-night);
@@ -215,6 +271,88 @@
       stroke-width: 1.2;
       transform-origin: center;
       animation: mapPulse 1.9s ease-out infinite;
+    }
+
+    .map-entity-halo {
+      fill: rgba(8, 18, 17, 0.78);
+      stroke: rgba(216, 248, 210, 0.86);
+      stroke-width: 2.6;
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.42));
+      vector-effect: non-scaling-stroke;
+    }
+
+    .map-entity-image {
+      pointer-events: none;
+    }
+
+    .map-entity-label {
+      fill: var(--tracker-mint);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      paint-order: stroke;
+      pointer-events: none;
+      stroke: rgba(8, 18, 17, 0.9);
+      stroke-linejoin: round;
+      stroke-width: 4;
+      text-transform: uppercase;
+    }
+
+    .map-flight-body {
+      fill: var(--tracker-mint);
+      stroke: rgba(8, 18, 17, 0.9);
+      stroke-width: 1.4;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .tracking-map-key {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid rgba(216, 248, 210, 0.14);
+      color: var(--tracker-mint);
+      background: rgba(8, 18, 17, 0.88);
+    }
+
+    .tracking-map-key span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      padding: 14px clamp(14px, 2.5vw, 26px);
+      border-right: 1px solid rgba(216, 248, 210, 0.14);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .tracking-map-key span:last-child {
+      border-right: 0;
+    }
+
+    .tracking-map-key img,
+    .tracking-map-key i {
+      flex: 0 0 26px;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(216, 248, 210, 0.52);
+      border-radius: 50%;
+      background: rgba(216, 248, 210, 0.12);
+      object-fit: cover;
+      overflow: hidden;
+    }
+
+    .tracking-map-key i {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tracking-map-key i::before {
+      content: "";
+      position: absolute;
+      inset: 6px 5px 7px;
+      background: var(--tracker-mint);
+      clip-path: polygon(50% 0, 62% 39%, 100% 48%, 100% 62%, 62% 58%, 57% 100%, 43% 100%, 38% 58%, 0 62%, 0 48%, 38% 39%);
     }
 
     .map-label {
@@ -286,26 +424,173 @@
 
     .tracker-headline {
       position: relative;
-      width: min(980px, calc(100% - 40px));
-      margin: 28px clamp(20px, 4vw, 52px) 38px;
+      width: min(1180px, 100%);
       pointer-events: none;
     }
 
+    .mission-logo-art {
+      display: block;
+      width: min(980px, 86vw);
+      height: auto;
+      object-fit: contain;
+    }
+
     .tracker-headline h1 {
-      color: var(--tracker-mint);
-      font-family: var(--font-display);
-      font-size: clamp(4.2rem, 9.8vw, 8.6rem);
-      font-weight: 700;
-      letter-spacing: 0;
-      line-height: 0.86;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .hero-plus {
+      display: none;
+    }
+
+    .hero-plus.one {
+      left: clamp(42px, 4vw, 70px);
+      top: 47%;
+    }
+
+    .hero-plus.two {
+      right: clamp(56px, 7vw, 118px);
+      top: 22%;
     }
 
     .tracker-headline p {
-      max-width: 860px;
+      display: block;
+      max-width: 690px;
+      margin-top: clamp(22px, 3vw, 34px);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+      line-height: 1.45;
+    }
+
+    .tracker-headline .mission-line {
+      display: block;
+      margin-bottom: 14px;
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .feature-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      min-width: 0;
+      background: var(--tracker-line);
+      border: 1px solid var(--tracker-line);
+    }
+
+    .feature-card {
+      min-width: 0;
+      min-height: 220px;
+      padding: clamp(24px, 3vw, 38px);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--tracker-ink);
+      text-decoration: none;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .feature-card:hover {
+      background: var(--tracker-ink);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .feature-card h2 {
+      max-width: 11ch;
+      font-family: var(--font-display);
+      font-size: clamp(2.1rem, 4vw, 4.6rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .feature-card p {
+      max-width: 28rem;
+      margin-top: 22px;
+      color: currentColor;
+      opacity: 0.78;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .feature-link,
+    .week-link {
+      display: inline-flex;
+      align-items: center;
       margin-top: 24px;
-      color: rgba(216, 248, 210, 0.82);
-      font-size: clamp(1.08rem, 2.05vw, 1.85rem);
-      line-height: 1.22;
+      color: currentColor;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .ticker-panel {
+      overflow: hidden;
+      padding: 0;
+      border-block: 1px solid var(--tracker-line);
+      background: var(--tracker-ink);
+      color: #fff;
+    }
+
+    .ticker-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 5px clamp(20px, 4vw, 48px);
+      border-bottom: 1px solid rgba(216, 248, 210, 0.16);
+    }
+
+    .ticker-head a {
+      color: var(--tracker-mint);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .ticker-track {
+      display: flex;
+      align-items: center;
+      width: max-content;
+      animation: tickerScroll 44s linear infinite;
+    }
+
+    .ticker-panel:hover .ticker-track {
+      animation-play-state: paused;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      min-width: min(620px, 88vw);
+      padding: 5px clamp(20px, 4vw, 48px);
+      white-space: nowrap;
+    }
+
+    .ticker-item time {
+      color: var(--tracker-gold);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .ticker-item span {
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
     }
 
     .tracker-eyebrow {
@@ -368,6 +653,21 @@
     .tracker-panel {
       background: rgba(255, 255, 255, 0.74);
       padding: clamp(22px, 3vw, 40px);
+    }
+
+    .tracker-panel-heading {
+      margin-top: 10px;
+      color: var(--tracker-ink);
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 3vw, 3.4rem);
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .tracker-panel-copy {
+      margin-top: 14px;
+      color: var(--tracker-muted);
+      line-height: 1.6;
     }
 
     .metric-row {
@@ -485,6 +785,68 @@
       color: var(--tracker-ink);
     }
 
+    .follow-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+      gap: clamp(24px, 5vw, 68px);
+      align-items: center;
+      margin-bottom: 28px;
+      border: 1px solid var(--tracker-line);
+      background: rgba(255, 255, 255, 0.72);
+      padding: clamp(24px, 3vw, 38px);
+    }
+
+    .follow-panel h3 {
+      margin-top: 8px;
+      color: var(--tracker-ink);
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 3vw, 3.4rem);
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .follow-panel p {
+      margin-top: 14px;
+      color: var(--tracker-muted);
+      line-height: 1.55;
+    }
+
+    .follow-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .follow-form input {
+      min-width: 0;
+      flex: 1;
+      min-height: 48px;
+      border: 1px solid var(--tracker-line);
+      border-radius: 999px;
+      background: rgba(251, 250, 246, 0.92);
+      color: var(--tracker-ink);
+      padding: 0 18px;
+      font: inherit;
+    }
+
+    .follow-form input:focus {
+      border-color: var(--tracker-green);
+      outline: none;
+    }
+
+    .follow-form button {
+      border: 0;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .follow-note {
+      margin-top: 10px;
+      color: var(--tracker-muted);
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
     .photo-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -538,9 +900,65 @@
       border: 1px solid var(--tracker-line);
     }
 
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      min-width: 0;
+      background: var(--tracker-line);
+      border: 1px solid var(--tracker-line);
+    }
+
     .update-item {
       background: rgba(255, 255, 255, 0.74);
       padding: 24px;
+    }
+
+    .week-card {
+      display: block;
+      min-width: 0;
+      min-height: 280px;
+      padding: clamp(24px, 3vw, 38px);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--tracker-ink);
+      text-decoration: none;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .week-card:hover {
+      background: rgba(255, 255, 255, 0.92);
+      transform: translateY(-2px);
+    }
+
+    .week-card h3 {
+      margin-top: 10px;
+      color: var(--tracker-ink);
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.6vw, 4rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .week-card p {
+      margin-top: 20px;
+      color: var(--tracker-muted);
+      line-height: 1.55;
+    }
+
+    .week-card ul {
+      display: grid;
+      gap: 8px;
+      margin-top: 22px;
+      color: var(--tracker-ink);
+      font-size: 0.92rem;
+      list-style: none;
+    }
+
+    .week-card li::before {
+      content: "+";
+      margin-right: 10px;
+      color: var(--tracker-gold);
+      font-weight: 800;
     }
 
     .update-item h3,
@@ -620,7 +1038,23 @@
     }
 
     .route-itinerary {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
+      max-height: 664px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .route-itinerary::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .route-itinerary::-webkit-scrollbar-track {
+      background: rgba(20, 63, 60, 0.08);
+    }
+
+    .route-itinerary::-webkit-scrollbar-thumb {
+      background: rgba(20, 63, 60, 0.34);
+      border-radius: 999px;
     }
 
     .route-itinerary .run-card {
@@ -648,17 +1082,62 @@
       margin-bottom: 16px;
     }
 
-    .footer-note {
+    .site-footer {
+      width: min(1180px, 100%);
+      margin: 78px auto 0;
+      border-top: 1px solid var(--tracker-line);
+    }
+
+    .site-footer-main {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) repeat(2, minmax(180px, 1fr));
+      gap: clamp(32px, 6vw, 86px);
+      padding: 56px 0;
+    }
+
+    .site-footer-brand {
+      max-width: 260px;
+    }
+
+    .site-footer-brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .site-footer p {
+      max-width: 30rem;
+      margin-top: 14px;
+      color: var(--tracker-muted);
+      line-height: 1.55;
+    }
+
+    .site-footer ul {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      list-style: none;
+    }
+
+    .site-footer a {
+      color: var(--tracker-muted);
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+
+    .site-footer a:hover {
+      color: var(--tracker-green);
+    }
+
+    .site-footer-bottom {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      width: min(1180px, 100%);
-      margin: 0 auto;
-      padding: 34px 0;
+      padding: 22px 0;
       border-top: 1px solid var(--tracker-line);
       color: rgba(20, 63, 60, 0.62);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     @media (max-width: 940px) {
@@ -667,18 +1146,13 @@
         align-items: flex-start;
       }
 
-      .tracker-navlinks {
-        display: none;
-      }
-
-      .tracker-map-stage {
-        min-height: 620px;
-      }
-
       .tracker-grid,
       .article-grid,
       .run-grid,
-      .route-itinerary {
+      .feature-row,
+      .week-grid,
+      .follow-panel,
+      .site-footer-main {
         grid-template-columns: 1fr;
       }
 
@@ -695,6 +1169,11 @@
         grid-template-columns: 1fr;
       }
 
+      .follow-form {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
       .section-head {
         display: block;
       }
@@ -706,15 +1185,38 @@
 
     @media (max-width: 560px) {
       .tracker-hero-inner {
+        min-height: 740px;
         padding-top: 92px;
       }
 
-      .tracker-map {
-        height: 500px;
+      .tracker-hero {
+        min-height: 740px;
       }
 
-      .tracker-headline h1 {
-        font-size: clamp(3.4rem, 15vw, 5.2rem);
+      .tracker-hero-bg {
+        object-position: center center;
+      }
+
+      .mission-logo-art {
+        width: min(560px, 118vw);
+        transform: translateX(-18px);
+      }
+
+      .tracker-map {
+        height: 360px;
+      }
+
+      .tracking-map-key {
+        grid-template-columns: 1fr;
+      }
+
+      .tracking-map-key span {
+        border-right: 0;
+        border-bottom: 1px solid rgba(216, 248, 210, 0.14);
+      }
+
+      .tracking-map-key span:last-child {
+        border-bottom: 0;
       }
 
       .metric-row,
@@ -726,7 +1228,7 @@
         grid-template-columns: 1fr;
       }
 
-      .footer-note {
+      .site-footer-bottom {
         display: block;
       }
     }
@@ -735,40 +1237,99 @@
 <body>
   <main class="tracker-page">
     <nav class="tracker-nav" aria-label="Live tracker navigation">
-      <a class="tracker-mark" href="index.html" aria-label="Goodwin Endurance home"><img src="../assets/goodwin-logo.png" alt="GOODWIN"><span>Endurance</span></a>
+      <a class="tracker-mark" href="index.html" aria-label="Goodwin Generated Mission America home"><strong>GOODWIN</strong><span>Generated</span></a>
       <div class="tracker-navlinks">
-        <a href="#live">Live</a>
-        <a href="#strava">Strava</a>
-        <a href="#gallery">Gallery</a>
+        <a href="the-run.html">The Run</a>
+        <a href="will.html">Will</a>
+        <a href="fifty-runs.html">50 Runs</a>
         <a href="#updates">Updates</a>
         <a href="#rsvp" class="tracker-cta">RSVP</a>
       </div>
     </nav>
 
     <section class="tracker-hero" id="live" aria-labelledby="page-title">
+      <img class="tracker-hero-bg" src="../assets/hero-runner-Ci5y42DW.jpg" alt="Open road at dusk for Mission America">
       <div class="tracker-hero-inner">
-        <div class="tracker-map-stage" aria-label="Mission America live map">
-          <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
-          <div class="tracker-headline">
-            <h1 id="page-title">Goodwin Generated:<br>Mission America</h1>
-            <p>See what we see, as Mission America moves state by state from<br>Oct 9 to Nov&nbsp;1.</p>
-          </div>
+        <div class="tracker-headline">
+          <img class="mission-logo-art" src="../assets/mission-america-logo.png" alt="GOODWIN Generated Mission America">
+          <h1 id="page-title">GOODWIN Generated Mission America</h1>
+          <p><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and a mission to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>FOLLOW THE RECORD ATTEMPT · RUN WITH WILL · SUPPORT THE MISSION</p>
         </div>
       </div>
     </section>
 
     <div class="tracker-content">
-      <section class="tracker-section" id="strava">
+      <section class="tracker-section" aria-label="Mission America feature pages">
+        <div class="feature-row">
+          <a class="feature-card" href="the-run.html">
+            <div class="tracker-eyebrow">Overview</div>
+            <h2>The Run</h2>
+            <p>William Goodge will run one marathon in every U.S. state in a compressed 24-day window, with Goodwin coordinating the travel, recovery, and live operations behind the attempt.</p>
+            <span class="feature-link">Read the mission</span>
+          </a>
+          <a class="feature-card" href="will.html">
+            <div class="tracker-eyebrow">Athlete</div>
+            <h2>Will</h2>
+            <p>Meet the British ultrarunner whose previous transcontinental efforts and cancer-fundraising mission shape every mile of Mission America.</p>
+            <span class="feature-link">Read the bio</span>
+          </a>
+          <a class="feature-card" href="fifty-runs.html">
+            <div class="tracker-eyebrow">World Record Attempt</div>
+            <h2>50 Runs,<br>50 States</h2>
+            <p>The 50-state route is built around an attempt to set a Guinness World Records mark for completing a marathon in every U.S. state.</p>
+            <span class="feature-link">View the attempt</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="tracker-section ticker-panel" aria-label="Mission America live ticker">
+        <div class="ticker-head">
+          <div class="tracker-eyebrow">Latest Updates</div>
+          <a href="updates.html">View all updates</a>
+        </div>
+        <div class="ticker-track" data-ticker-items>
+          <div class="ticker-item"><time>Loading</time><span>Fetching Mission America updates.</span></div>
+        </div>
+      </section>
+
+      <section class="tracker-section" id="map">
         <div class="section-head">
           <div>
-            <div class="tracker-eyebrow">Mission Clock</div>
-            <h2>Countdown to wheels up.</h2>
+            <div class="tracker-eyebrow">Live Map</div>
+            <h2>50 states. One moving target.</h2>
           </div>
-          <p>Mission America starts Friday, October 9, 2026. Once the run begins, this space becomes the live Strava and location panel.</p>
+          <p>Follow William and Team Goodwin in real time — where he is, what he’s run, what’s finished and where we’re headed next.</p>
+        </div>
+        <div class="follow-panel">
+          <div>
+            <div class="tracker-eyebrow">Race Updates</div>
+            <h3>Goodwin Generated: Mission America</h3>
+            <p>50 marathons. 50 states. 24 days. Watch the route become a moving crew diary, one finish line and one boarding window at a time.</p>
+          </div>
+          <div>
+            <form class="follow-form" data-follow-form>
+              <label class="sr-only" for="follow-email">Email address</label>
+              <input id="follow-email" name="email" type="email" autocomplete="email" placeholder="Email address" required>
+              <button class="tracker-button" type="submit">Follow Along</button>
+            </form>
+            <div class="follow-note" data-follow-message aria-live="polite">Drop your email and we’ll send the notes from the road.</div>
+          </div>
+        </div>
+        <div class="tracker-map-stage" aria-label="Mission America live map">
+          <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
+          <div class="tracking-map-key" aria-label="Mission America tracking layers">
+            <span><img src="../assets/map-runner-bobblehead.png" alt="">Runner</span>
+            <span><i aria-hidden="true"></i>Flight</span>
+            <span><img src="../assets/map-rv-green.png" alt="">RV</span>
+          </div>
         </div>
         <div class="tracker-grid">
           <div class="tracker-panel">
-            <div class="tracker-eyebrow">Race Start</div>
+            <div class="tracker-eyebrow">Mission Clock</div>
+            <h3 class="tracker-panel-heading">Countdown to wheels up.</h3>
+            <p class="tracker-panel-copy">October 9, 2026 · Honolulu, Hawaii</p>
+            <p class="tracker-panel-copy">The clock starts in Honolulu. Twenty-four days later — and 49 marathons later — William is scheduled to cross his final finish line at the New York City Marathon.</p>
+            <p class="tracker-panel-copy">Until then, we count down.<br>After that, we count miles.</p>
             <div class="metric-row">
               <div class="metric"><strong id="countdown-days">00</strong><span>Days</span></div>
               <div class="metric"><strong id="countdown-hours">00</strong><span>Hours</span></div>
@@ -777,8 +1338,9 @@
             </div>
           </div>
           <aside class="tracker-panel">
-            <div class="tracker-eyebrow" id="tracking-panel-title">Live Feed Ready</div>
-            <p class="tracker-caption" id="tracking-panel-copy">The live map is built for the Strava city feed: current location, daily activity, moving time, and verified progress, all in one transparent view.</p>
+            <div class="tracker-eyebrow" id="tracking-panel-title">MISSION CONTROL</div>
+            <h3 class="tracker-panel-heading">50 states. One moving target.</h3>
+            <p class="tracker-caption" id="tracking-panel-copy">Follow William and Team Goodwin in real time — where he is, what he’s run, what’s finished and where we’re headed next.</p>
             <div class="tracking-status" data-tracking-status hidden>
               <div class="tracking-badge" data-tracking-source>Mock data</div>
               <div>
@@ -796,71 +1358,58 @@
         </div>
       </section>
 
-      <section class="tracker-section" id="gallery">
-        <div class="section-head">
-          <div>
-            <div class="tracker-eyebrow">From Instagram</div>
-            <h2>Will in the Wild</h2>
-          </div>
-          <p>The newest image posts load from William's Instagram feed at runtime. Each tile links back to the original post.</p>
-        </div>
-        <div id="instagram-feed" class="photo-strip" data-instagram-feed data-endpoint="/api/instagram-feed" aria-live="polite">
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/instagram/williamgoodge-01.jpg" alt="Recent William Goodge Instagram image"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/instagram/williamgoodge-02.jpg" alt="Recent William Goodge Instagram image"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/instagram/williamgoodge-03.jpg" alt="Recent William Goodge Instagram image"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/instagram/williamgoodge-04.jpg" alt="Recent William Goodge Instagram image"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/hero-runner-Ci5y42DW.jpg" alt="William Goodge running"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/road-aerial-DbGvJBXy.jpg" alt="Open road route view"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/shoes-Ds0VB7pt.jpg" alt="Running shoes on the road"></a>
-          <a data-static-instagram href="https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=" target="_blank" rel="noopener noreferrer"><img src="assets/goodge-portrait-BKrZBh3V.jpg" alt="William Goodge portrait"></a>
-        </div>
-      </section>
-
       <section class="tracker-section" id="updates">
         <div class="section-head">
           <div>
-            <div class="tracker-eyebrow">Road Updates</div>
-            <h2>Field notes from the route.</h2>
+            <div class="tracker-eyebrow">Field Notes</div>
+            <h2>The stuff Strava doesn’t tell you.</h2>
           </div>
-          <p>A running log for the moments between official splits, with room for viewers to leave local notes in this preview.</p>
+          <p>Finish lines. Airport runs. Weather changes. Bad food decisions. Good legs. Bad legs. Lost bags. Tiny victories. Whatever happens out there, you’ll find it here.</p>
         </div>
-        <div class="updates-list">
-          <article class="update-item" data-update-id="launch">
-            <div class="tracker-eyebrow">Oct 9 | Hawaii</div>
-            <h3>Mission America opens in Honolulu.</h3>
-            <p>The first marathon sets the baseline for a 24-day sequence built on precision travel, disciplined recovery, and repeatable effort.</p>
-            <div class="comment-box">
-              <form class="comment-form" data-comment-form>
-                <input name="name" placeholder="Name" aria-label="Name">
-                <textarea name="comment" rows="1" placeholder="Leave a comment" aria-label="Leave a comment"></textarea>
-                <button class="tracker-button" type="submit">Post</button>
-              </form>
-              <div class="comment-list" data-comment-list></div>
-            </div>
-          </article>
-          <article class="update-item" data-update-id="mainland">
-            <div class="tracker-eyebrow">Oct 10 | Alaska to Oregon</div>
-            <h3>Island to frontier to mainland.</h3>
-            <p>The opening transfer sets the tone: every detail accounted for, every handoff smooth, every next start line already in view.</p>
-            <div class="comment-box">
-              <form class="comment-form" data-comment-form>
-                <input name="name" placeholder="Name" aria-label="Name">
-                <textarea name="comment" rows="1" placeholder="Leave a comment" aria-label="Leave a comment"></textarea>
-                <button class="tracker-button" type="submit">Post</button>
-              </form>
-              <div class="comment-list" data-comment-list></div>
-            </div>
-          </article>
+        <div class="week-grid">
+          <a class="week-card" href="week-1.html">
+            <div class="tracker-eyebrow">Week 1</div>
+            <h3>Launch & West</h3>
+            <p>Opening miles, first transfers, and the early rhythm from Hawaii through the western states.</p>
+            <ul>
+              <li>Daily field notes</li>
+              <li>Route and travel recaps</li>
+              <li>Top media moments</li>
+            </ul>
+            <span class="week-link">View week 1 dates</span>
+          </a>
+          <a class="week-card" href="week-2.html">
+            <div class="tracker-eyebrow">Week 2</div>
+            <h3>Central Push</h3>
+            <p>The longest middle stretch, where consistency, recovery, and operational handoffs matter most.</p>
+            <ul>
+              <li>State-by-state progress</li>
+              <li>Support crew updates</li>
+              <li>Performance notes</li>
+            </ul>
+            <span class="week-link">View week 2 dates</span>
+          </a>
+          <a class="week-card" href="week-3.html">
+            <div class="tracker-eyebrow">Week 3</div>
+            <h3>East & Finish</h3>
+            <p>The final run-in toward New York, with the archive ready for finish-line updates and recap content.</p>
+            <ul>
+              <li>Final state coverage</li>
+              <li>Finish-week media</li>
+              <li>Post-event recap</li>
+            </ul>
+            <span class="week-link">View week 3 dates</span>
+          </a>
         </div>
       </section>
 
       <section class="tracker-section" id="articles">
         <div class="section-head">
           <div>
-            <div class="tracker-eyebrow">Short Reads</div>
-            <h2>Fuel, training, recovery, mindset.</h2>
+            <div class="tracker-eyebrow">INSIDE MISSION AMERICA</div>
+            <h2>The stuff Strava doesn’t tell you.</h2>
           </div>
-          <p>Short answers to the questions people ask when they see what Goodwin Generated: Mission America really takes.</p>
+          <p>Finish lines. Airport runs. Weather changes. Bad food decisions. Good legs. Bad legs. Lost bags. Tiny victories. Whatever happens out there, you’ll find it here.</p>
         </div>
         <div class="article-grid">
           <article class="article-card">
@@ -893,6 +1442,24 @@
             <h3>How does Will sleep?</h3>
             <p>Sleep is treated as part of the performance system. The team protects quiet windows, manages travel timing, and keeps recovery repeatable from one city to the next.</p>
           </article>
+          <article class="article-card">
+            <div class="tracker-eyebrow">Giving</div>
+            <h3>How can I donate?</h3>
+            <p>The final donation destination is not live yet. This box is ready for the confirmed campaign link once the public donation page is approved.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="faq.html#donate">Donation details</a></div>
+          </article>
+          <article class="article-card">
+            <div class="tracker-eyebrow">Purpose</div>
+            <h3>What is Will running for?</h3>
+            <p>Will runs in memory of his mother, Amanda, and in support of everyone fighting cancer.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noreferrer">Learn more</a></div>
+          </article>
+          <article class="article-card">
+            <div class="tracker-eyebrow">FAQ</div>
+            <h3>More questions?</h3>
+            <p>The full FAQ includes donation details, what Will is running for, and the rest of the Mission America basics.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="faq.html">View FAQ</a></div>
+          </article>
         </div>
       </section>
 
@@ -900,21 +1467,125 @@
         <div class="section-head">
           <div>
             <div class="tracker-eyebrow">Run With Will</div>
-            <h2>RSVP to run with Will</h2>
+            <h2>Want to be part of a world record attempt?</h2>
           </div>
-          <p>Stops are listed in course order. Each card can point to a state-specific RSVP as event links are finalized.</p>
+          <p>Join William for part of a marathon, bring your run club, show up at a finish line or just come make some noise.<br><br>Help turn the miles into support for people affected by cancer.</p>
         </div>
         <div class="run-grid route-itinerary" data-route-itinerary></div>
       </section>
 
-      <footer class="footer-note">
-        <span>Goodwin Generated: Mission America Live Tracker</span>
-        <span>Goodwin Generated: Mission America. Oct 9 - Nov 1.</span>
+      <footer class="site-footer">
+        <div class="site-footer-main">
+          <div>
+            <div class="site-footer-brand"><img src="../assets/goodwin-logo.png" alt="Goodwin"></div>
+            <p>Goodwin Company builds next-generation infrastructure for charter aviation and backs athletes redefining human endurance.</p>
+          </div>
+          <div>
+            <div class="tracker-eyebrow">Mission America</div>
+            <ul>
+              <li><a href="the-run.html">The Run</a></li>
+              <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
+              <li><a href="updates.html">Updates Archive</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="#map">Live Map</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="tracker-eyebrow">Team Goodwin</div>
+            <ul>
+              <li><a href="will.html">Will</a></li>
+              <li><a href="athletes.html">Roster</a></li>
+              <li><a href="partners.html">Partners</a></li>
+              <li><a href="https://www.teamgoodwin.com" target="_blank" rel="noreferrer">teamGoodwin.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="site-footer-bottom">
+          <span>© 2026 Goodwin Company</span>
+          <span>Goodwin Generated</span>
+        </div>
       </footer>
     </div>
   </main>
 
   <script>
+    const fallbackTickerUpdates = [
+      {
+        date: "2026-10-09",
+        time: "06:00 EDT",
+        title: "Mission America opens in Honolulu",
+        body: "The first marathon sets the baseline for 24 days of state-by-state progress."
+      },
+      {
+        date: "2026-10-10",
+        time: "07:30 AKDT",
+        title: "Alaska transfer window complete",
+        body: "The team moves from the island start into the frontier leg and toward the mainland."
+      },
+      {
+        date: "2026-10-10",
+        time: "18:15 PDT",
+        title: "Mainland rhythm begins in Oregon",
+        body: "The support crew settles into the repeatable run, recover, travel, reset cadence."
+      }
+    ];
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function formatUpdateStamp(update) {
+      return [update.date, update.time].filter(Boolean).join(" | ");
+    }
+
+    function normalizeTickerUpdates(payload) {
+      const updates = Array.isArray(payload) ? payload : Array.isArray(payload?.updates) ? payload.updates : [];
+      return updates
+        .map((update) => ({
+          date: update.date || "",
+          time: update.time || "",
+          title: update.title || "Mission America update",
+          body: update.body || update.text || ""
+        }))
+        .filter((update) => update.title || update.body);
+    }
+
+    async function loadTickerUpdates() {
+      const ticker = document.querySelector("[data-ticker-items]");
+      if (!ticker) return;
+      const sources = ["../assets/ticker-updates.json", "assets/ticker-updates.json"];
+      let updates = fallbackTickerUpdates;
+      for (const source of sources) {
+        try {
+          const response = await fetch(source, { headers: { Accept: "application/json" } });
+          if (!response.ok) throw new Error(`Ticker returned ${response.status}`);
+          const parsed = normalizeTickerUpdates(await response.json());
+          if (parsed.length) {
+            updates = parsed;
+            break;
+          }
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+      const firstFive = updates.slice(0, 5);
+      const rendered = firstFive.map((update) => `
+        <div class="ticker-item">
+          <time>${escapeHtml(formatUpdateStamp(update))}</time>
+          <span><strong>${escapeHtml(update.title)}</strong> ${escapeHtml(update.body)}</span>
+        </div>
+      `).join("");
+      ticker.innerHTML = rendered + rendered;
+    }
+
+    loadTickerUpdates();
+
     const instagramProfileUrl = "https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=";
 
     function formatInstagramDate(value) {
@@ -1051,6 +1722,16 @@
     const { segmentIndex, livePoint } = interpolateRoute(progress);
     const currentIndex = Math.min(routeStops.length - 1, Math.floor(progress * (routeStops.length - 1)));
     const complete = Math.min(50, Math.floor(progress * 50));
+    const mapAssetBase = location.pathname.includes("/source-html/") ? "../assets/" : "assets/";
+    const mapEntityAssets = {
+      runner: `${mapAssetBase}map-runner-bobblehead.png`,
+      rv: `${mapAssetBase}map-rv-green.png`
+    };
+    const mapTrackingDefaults = {
+      runner: { progress },
+      flight: { fromStop: 1, toStop: 3, progress: 0.52 },
+      rv: { pathStops: [3, 4, 5, 6], progress: 0.64 }
+    };
 
     function updateCountdown() {
       const remaining = Math.max(0, startDate.getTime() - Date.now());
@@ -1201,6 +1882,99 @@
       return displayPoint(projectLower48(stop.lat, stop.lng), stop.abbr);
     }
 
+    function interpolatePoints(start, end, progressValue) {
+      const safeProgress = Math.max(0, Math.min(1, Number(progressValue) || 0));
+      return [
+        start[0] + (end[0] - start[0]) * safeProgress,
+        start[1] + (end[1] - start[1]) * safeProgress
+      ];
+    }
+
+    function stopByNumber(stopNumber) {
+      return routeStops.find((stop) => stop.n === Number(stopNumber));
+    }
+
+    function pointByStopNumber(stopNumber, centroids) {
+      const stop = stopByNumber(stopNumber);
+      return stop ? routePoint(stop, centroids) : null;
+    }
+
+    function pointFromTracking(entity, centroids, fallbackPoint) {
+      if (!entity) return fallbackPoint;
+      const fromPoint = pointByStopNumber(entity.fromStop || entity.stop || entity.stopNumber, centroids);
+      const toPoint = pointByStopNumber(entity.toStop, centroids);
+      if (fromPoint && toPoint) return interpolatePoints(fromPoint, toPoint, entity.segmentProgress ?? entity.progress ?? 0);
+      if (Number.isFinite(Number(entity.progress))) {
+        const computed = interpolateRoute(Number(entity.progress));
+        const start = pointByStopNumber(computed.segmentIndex + 1, centroids);
+        const end = pointByStopNumber(Math.min(routeStops.length, computed.segmentIndex + 2), centroids);
+        if (start && end) return interpolatePoints(start, end, Number(entity.progress) * (routeStops.length - 1) - computed.segmentIndex);
+      }
+      return fromPoint || fallbackPoint;
+    }
+
+    function pathPointsFromStops(stopNumbers, centroids) {
+      return (stopNumbers || [])
+        .map((stopNumber) => pointByStopNumber(stopNumber, centroids))
+        .filter(Boolean);
+    }
+
+    function appendImageMarker(svg, svgNS, point, imageHref, label, className) {
+      if (!point) return;
+      const group = document.createElementNS(svgNS, "g");
+      group.setAttribute("class", `map-entity-marker ${className}`);
+      group.setAttribute("transform", `translate(${point[0]} ${point[1]})`);
+
+      const halo = document.createElementNS(svgNS, "circle");
+      halo.setAttribute("class", "map-entity-halo");
+      halo.setAttribute("r", "24");
+
+      const image = document.createElementNS(svgNS, "image");
+      image.setAttribute("class", "map-entity-image");
+      image.setAttribute("href", imageHref);
+      image.setAttribute("x", "-20");
+      image.setAttribute("y", "-20");
+      image.setAttribute("width", "40");
+      image.setAttribute("height", "40");
+      image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+
+      const text = document.createElementNS(svgNS, "text");
+      text.setAttribute("class", "map-entity-label");
+      text.setAttribute("x", "0");
+      text.setAttribute("y", "41");
+      text.setAttribute("text-anchor", "middle");
+      text.textContent = label;
+
+      group.append(halo, image, text);
+      svg.appendChild(group);
+    }
+
+    function appendFlightMarker(svg, svgNS, point) {
+      if (!point) return;
+      const group = document.createElementNS(svgNS, "g");
+      group.setAttribute("class", "map-entity-marker flight");
+      group.setAttribute("transform", `translate(${point[0]} ${point[1]}) rotate(24)`);
+
+      const halo = document.createElementNS(svgNS, "circle");
+      halo.setAttribute("class", "map-entity-halo");
+      halo.setAttribute("r", "20");
+
+      const plane = document.createElementNS(svgNS, "path");
+      plane.setAttribute("class", "map-flight-body");
+      plane.setAttribute("d", "M0 -18 L7 -3 L22 1 L22 7 L7 5 L4 19 L-4 19 L-7 5 L-22 7 L-22 1 L-7 -3 Z");
+
+      const label = document.createElementNS(svgNS, "text");
+      label.setAttribute("class", "map-entity-label");
+      label.setAttribute("x", "0");
+      label.setAttribute("y", "38");
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("transform", "rotate(-24)");
+      label.textContent = "Flight";
+
+      group.append(halo, plane, label);
+      svg.appendChild(group);
+    }
+
     function renderMissionMap(topo) {
       const mapEl = document.getElementById("mission-map");
       if (!mapEl || mapEl.dataset.mapReady) return;
@@ -1240,6 +2014,11 @@
         ]
         : routePoints[currentIndex];
       const completedPoints = routePoints.slice(0, segmentIndex + 1).concat([liveSvgPoint]);
+      const trackingData = {
+        runner: { ...mapTrackingDefaults.runner, ...(window.missionMapTracking?.runner || window.missionRunnerTracking || {}) },
+        flight: { ...mapTrackingDefaults.flight, ...(window.missionMapTracking?.flight || window.missionFlightTracking || {}) },
+        rv: { ...mapTrackingDefaults.rv, ...(window.missionMapTracking?.rv || window.missionRvTracking || {}) }
+      };
 
       const routeLayer = document.createElementNS(svgNS, "g");
       const futurePath = document.createElementNS(svgNS, "path");
@@ -1251,6 +2030,28 @@
       completePath.setAttribute("d", routePath(completedPoints));
       routeLayer.appendChild(completePath);
       svg.appendChild(routeLayer);
+
+      const travelLayer = document.createElementNS(svgNS, "g");
+      const flightStart = pointByStopNumber(trackingData.flight.fromStop, centroids);
+      const flightEnd = pointByStopNumber(trackingData.flight.toStop, centroids);
+      const flightPoint = flightStart && flightEnd
+        ? interpolatePoints(flightStart, flightEnd, trackingData.flight.progress)
+        : pointFromTracking(trackingData.flight, centroids, routePoints[1]);
+      if (flightStart && flightEnd) {
+        const flightPath = document.createElementNS(svgNS, "path");
+        flightPath.setAttribute("class", "map-route flight");
+        flightPath.setAttribute("d", routePath([flightStart, flightEnd]));
+        travelLayer.appendChild(flightPath);
+      }
+
+      const rvStopPath = pathPointsFromStops(trackingData.rv.pathStops, centroids);
+      if (rvStopPath.length > 1) {
+        const rvPath = document.createElementNS(svgNS, "path");
+        rvPath.setAttribute("class", "map-route rv");
+        rvPath.setAttribute("d", routePath(rvStopPath));
+        travelLayer.appendChild(rvPath);
+      }
+      svg.appendChild(travelLayer);
 
       const stopCard = document.createElementNS(svgNS, "g");
       stopCard.setAttribute("class", "map-stop-card");
@@ -1357,6 +2158,20 @@
         svg.appendChild(live);
       }
 
+      const runnerPoint = pointFromTracking(trackingData.runner, centroids, liveSvgPoint);
+      const rvPoint = pointFromTracking(
+        {
+          fromStop: trackingData.rv.fromStop || trackingData.rv.pathStops?.[0],
+          toStop: trackingData.rv.toStop || trackingData.rv.pathStops?.[trackingData.rv.pathStops.length - 1],
+          progress: trackingData.rv.progress
+        },
+        centroids,
+        rvStopPath[rvStopPath.length - 1] || routePoints[Math.min(routePoints.length - 1, currentIndex + 2)]
+      );
+      appendFlightMarker(svg, svgNS, flightPoint);
+      appendImageMarker(svg, svgNS, rvPoint, mapEntityAssets.rv, "RV", "rv");
+      appendImageMarker(svg, svgNS, runnerPoint, mapEntityAssets.runner, "Runner", "runner");
+
       mapEl.replaceChildren(svg);
       svg.addEventListener("click", (event) => {
         if (!event.target.closest(".map-stop")) resetStopCard();
@@ -1383,6 +2198,20 @@
     }
 
     loadMissionMap();
+
+    document.querySelector("[data-follow-form]")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const message = document.querySelector("[data-follow-message]");
+      const data = new FormData(form);
+      const email = String(data.get("email") || "").trim();
+      if (!email) return;
+      const subscribers = JSON.parse(localStorage.getItem("mission-follow-emails") || "[]");
+      subscribers.push({ email, createdAt: new Date().toISOString() });
+      localStorage.setItem("mission-follow-emails", JSON.stringify(subscribers));
+      if (message) message.textContent = "Thanks. You are on the Mission America updates list.";
+      form.reset();
+    });
 
     document.querySelectorAll("[data-update-id]").forEach((update) => {
       const id = update.dataset.updateId;

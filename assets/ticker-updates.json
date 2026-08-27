@@ -1,0 +1,40 @@
+{
+  "updates": [
+    {
+      "date": "2026-10-09",
+      "time": "06:00 EDT",
+      "title": "Mission America opens in Honolulu",
+      "body": "Will begins the first marathon of the 50-state sequence."
+    },
+    {
+      "date": "2026-10-10",
+      "time": "07:30 AKDT",
+      "title": "Alaska transfer window complete",
+      "body": "The team moves from the island start into the frontier leg and toward the mainland."
+    },
+    {
+      "date": "2026-10-10",
+      "time": "18:15 PDT",
+      "title": "Mainland rhythm begins in Oregon",
+      "body": "Run, recover, travel, reset becomes the operating cadence."
+    },
+    {
+      "date": "2026-10-11",
+      "time": "09:00 PDT",
+      "title": "Pacific Northwest double begins",
+      "body": "Washington and Utah put the early logistics stack under pressure."
+    },
+    {
+      "date": "2026-10-12",
+      "time": "08:45 MDT",
+      "title": "Mountain states underway",
+      "body": "Idaho and Montana mark the first sustained altitude and travel block."
+    },
+    {
+      "date": "2026-10-13",
+      "time": "19:20 MDT",
+      "title": "Dakotas complete",
+      "body": "The route turns toward Wyoming, Nebraska, and the central push."
+    }
+  ]
+}
