@@ -15,14 +15,14 @@
     :root {
       --color-white: #FFFFFF;
       --color-black: #0A0A0A;
-      --color-accent: #00BCEB;
+      --color-accent: #193B3B;
       --tracker-ink: #0A0A0A;
       --tracker-deep: #0A0A0A;
       --tracker-night: #0A0A0A;
       --tracker-panel: #ffffff;
-      --tracker-green: #00BCEB;
+      --tracker-green: #193B3B;
       --tracker-mint: #FFFFFF;
-      --tracker-soft: #00BCEB;
+      --tracker-soft: #193B3B;
       --tracker-gold: rgba(10, 10, 10, 0.56);
       --tracker-cream: #FFFFFF;
       --tracker-line: rgba(10, 10, 10, 0.18);
@@ -112,6 +112,10 @@
       filter: brightness(0) invert(1);
     }
 
+    .tracker-mark-mobile-logo {
+      display: none;
+    }
+
     .tracker-mark span {
       color: inherit;
       font-size: clamp(0.64rem, 0.85vw, 0.82rem);
@@ -146,12 +150,16 @@
       border-radius: 999px;
       padding: 11px 22px;
       background: var(--color-accent);
-      color: var(--color-black);
+      color: var(--color-white);
       font-weight: 600;
     }
 
     .tracker-navlinks a.tracker-cta {
-      color: var(--color-black);
+      color: var(--color-white);
+    }
+
+    .tracker-menu-toggle {
+      display: none;
     }
 
     .tracker-hero {
@@ -205,7 +213,7 @@
       background:
         linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-        radial-gradient(circle at 62% 56%, rgba(0, 188, 235, 0.1), transparent 32%),
+        radial-gradient(circle at 62% 56%, rgba(25, 59, 59, 0.1), transparent 32%),
         var(--tracker-night);
       background-size: 160px 160px, 160px 160px, auto, auto;
       overflow: hidden;
@@ -227,8 +235,8 @@
 
     .map-state:hover,
     .map-state.is-active {
-      fill: rgba(0, 188, 235, 0.32);
-      stroke: rgba(0, 188, 235, 0.92);
+      fill: rgba(25, 59, 59, 0.32);
+      stroke: rgba(25, 59, 59, 0.92);
     }
 
     .map-route {
@@ -259,7 +267,7 @@
       stroke: var(--color-accent);
       stroke-width: 3.6;
       stroke-dasharray: 7 7;
-      filter: drop-shadow(0 0 8px rgba(0, 188, 235, 0.38));
+      filter: drop-shadow(0 0 8px rgba(25, 59, 59, 0.38));
     }
 
     .map-stop {
@@ -286,13 +294,13 @@
       fill: var(--color-accent);
       stroke: var(--tracker-mint);
       stroke-width: 5;
-      filter: drop-shadow(0 0 14px rgba(0, 188, 235, 0.82));
+      filter: drop-shadow(0 0 14px rgba(25, 59, 59, 0.82));
       vector-effect: non-scaling-stroke;
     }
 
     .map-live-pulse {
-      fill: rgba(0, 188, 235, 0.18);
-      stroke: rgba(0, 188, 235, 0.48);
+      fill: rgba(25, 59, 59, 0.18);
+      stroke: rgba(25, 59, 59, 0.48);
       stroke-width: 1.2;
       transform-origin: center;
       animation: mapPulse 1.9s ease-out infinite;
@@ -513,7 +521,8 @@
 
     .tracker-headline p {
       display: block;
-      max-width: min(620px, 100%);
+      width: 100%;
+      max-width: 620px;
       margin-top: clamp(22px, 3vw, 34px);
       color: rgba(255, 255, 255, 0.9);
       font-size: clamp(1.05rem, 1.8vw, 1.35rem);
@@ -535,6 +544,22 @@
       text-decoration-line: underline;
       text-decoration-thickness: 2px;
       text-underline-offset: 0.18em;
+    }
+
+    .hero-mobile-copy,
+    .hero-mobile-action {
+      display: none;
+    }
+
+    .hero-mobile-action {
+      pointer-events: auto;
+      text-decoration: none;
+    }
+
+    .tracker-headline .hero-mobile-copy,
+    .tracker-headline .hero-mobile-action,
+    .tracker-panel-copy.mobile-clock-copy {
+      display: none;
     }
 
     .feature-row {
@@ -689,7 +714,8 @@
     }
 
     .tracker-section {
-      width: min(1180px, 100%);
+      width: 100%;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 62px 0;
       border-top: 1px solid var(--tracker-line);
@@ -828,7 +854,7 @@
       min-height: 30px;
       padding: 0 11px;
       border: 1px solid rgba(10, 10, 10, 0.18);
-      background: rgba(0, 188, 235, 0.16);
+      background: rgba(25, 59, 59, 0.16);
       color: var(--tracker-ink);
       font-size: 0.7rem;
       font-weight: 800;
@@ -871,7 +897,7 @@
     #rsvp .tracker-button.secondary {
       border-color: var(--color-accent);
       background: var(--color-accent);
-      color: var(--color-black);
+      color: var(--color-white);
     }
 
     .follow-panel {
@@ -963,6 +989,10 @@
     .photo-strip a:hover img {
       transform: scale(1.04);
       opacity: 1;
+    }
+
+    .mobile-photo-break {
+      display: none;
     }
 
     .instagram-feed-state {
@@ -1153,6 +1183,10 @@
       align-items: start;
     }
 
+    .rsvp-mobile-controls {
+      display: none;
+    }
+
     .route-number {
       display: grid;
       place-items: center;
@@ -1173,13 +1207,13 @@
 
     #articles .article-card:first-child {
       background: var(--color-accent);
-      color: var(--color-black);
+      color: var(--color-white);
     }
 
     #articles .article-card:first-child h3,
     #articles .article-card:first-child p,
     #articles .article-card:first-child .tracker-eyebrow {
-      color: var(--color-black);
+      color: var(--color-white);
     }
 
     #why {
@@ -1212,11 +1246,12 @@
     #why .tracker-button.secondary {
       border-color: var(--color-accent);
       background: var(--color-accent);
-      color: var(--color-black);
+      color: var(--color-white);
     }
 
     .site-footer {
-      width: min(1180px, 100%);
+      width: 100%;
+      max-width: 1180px;
       margin: 78px auto 0;
       border-top: 1px solid var(--tracker-line);
     }
@@ -1333,10 +1368,291 @@
       }
     }
 
+    @media (max-width: 768px) {
+      .tracker-nav {
+        align-items: center;
+        right: auto;
+        width: 100vw;
+        max-width: 100vw;
+        padding: 18px 20px;
+      }
+
+      .tracker-mark {
+        gap: 5px 10px;
+      }
+
+      .tracker-mark img {
+        width: clamp(118px, 38vw, 154px);
+      }
+
+      .tracker-mark-mobile-logo {
+        display: none;
+      }
+
+      .tracker-mark span {
+        font-size: 0.56rem;
+        letter-spacing: 0.28em;
+      }
+
+      .tracker-menu-toggle {
+        display: inline-flex;
+        position: fixed;
+        top: 18px;
+        right: auto;
+        left: calc(100vw - 64px);
+        z-index: 40;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        border: 1px solid rgba(255, 255, 255, 0.58);
+        border-radius: 999px;
+        background: rgba(10, 10, 10, 0.58);
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .tracker-menu-toggle span,
+      .tracker-menu-toggle::before,
+      .tracker-menu-toggle::after {
+        content: "";
+        display: block;
+        width: 17px;
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+        transition: transform 180ms ease, opacity 180ms ease;
+      }
+
+      .tracker-menu-toggle {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .tracker-nav.is-open .tracker-menu-toggle span {
+        opacity: 0;
+      }
+
+      .tracker-nav.is-open .tracker-menu-toggle::before {
+        transform: translateY(6px) rotate(45deg);
+      }
+
+      .tracker-nav.is-open .tracker-menu-toggle::after {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+
+      .tracker-navlinks {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        right: 20px;
+        z-index: 1;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(10, 10, 10, 0.92);
+        color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 18px 42px rgba(10, 10, 10, 0.28);
+      }
+
+      .tracker-nav.is-open .tracker-navlinks {
+        display: grid;
+      }
+
+      .tracker-navlinks a {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 14px;
+      }
+
+      .tracker-navlinks a.tracker-cta {
+        justify-content: center;
+        margin-top: 4px;
+        padding: 0 18px;
+      }
+
+      .tracker-hero,
+      .tracker-hero-inner {
+        min-height: 760px;
+      }
+
+      .tracker-hero-inner {
+        padding: 104px 22px 44px;
+      }
+
+      .tracker-hero-bg {
+        object-position: 62% 48%;
+        opacity: 0.56;
+        transform: scale(1.06);
+      }
+
+      .tracker-hero::after {
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.1) 34%, rgba(0, 0, 0, 0.5) 100%),
+          linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.48) 58%, rgba(0, 0, 0, 0.08) 100%);
+      }
+
+      .tracker-headline {
+        width: 100%;
+        max-width: min(500px, calc(100vw - 44px));
+      }
+
+      .mission-logo-stack {
+        width: 100%;
+        gap: 10px;
+        transform: none;
+      }
+
+      .mission-logo-brand {
+        width: min(330px, 94vw);
+        transform: translate(-6px, -2px);
+      }
+
+      .mission-logo-brand img {
+        width: 100%;
+      }
+
+      .mission-logo-title {
+        width: min(360px, 84vw);
+        transform: none;
+      }
+
+      .mission-logo-title img {
+        width: 100%;
+      }
+
+      .tracker-headline p {
+        max-width: min(22rem, calc(100vw - 44px));
+        font-size: clamp(1rem, 4.2vw, 1.18rem);
+        line-height: 1.48;
+      }
+
+      .tracker-content {
+        padding: 46px 20px 68px;
+      }
+
+      .tracker-section {
+        padding: 44px 0;
+        scroll-margin-top: 84px;
+        width: calc(100vw - 40px);
+        max-width: 100%;
+      }
+
+      .section-head {
+        margin-bottom: 22px;
+      }
+
+      .section-head h2 {
+        max-width: 100%;
+        font-size: clamp(2.35rem, 11vw, 4.8rem);
+        line-height: 0.96;
+        overflow-wrap: break-word;
+      }
+
+      .feature-card,
+      .week-card,
+      .article-card,
+      .run-card,
+      .tracker-panel,
+      .follow-panel {
+        padding: 24px;
+      }
+
+      .feature-card p,
+      .week-card p,
+      .article-card p,
+      .run-card p,
+      .tracker-panel-copy,
+      .section-head p {
+        overflow-wrap: break-word;
+      }
+
+      .follow-panel {
+        gap: 22px;
+      }
+
+      .tracker-map-stage {
+        margin-inline: -20px;
+        border-inline: 0;
+      }
+
+      .tracker-map {
+        height: clamp(340px, 82vw, 460px);
+      }
+
+      .tracking-map-key {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .tracking-map-key span {
+        gap: 7px;
+        padding: 12px 4px;
+        font-size: 0.62rem;
+        letter-spacing: 0.12em;
+        border-right: 1px solid rgba(255, 255, 255, 0.16);
+        border-bottom: 0;
+      }
+
+      .tracking-map-key span:last-child {
+        border-right: 0;
+      }
+
+      .tracking-map-key img,
+      .tracking-map-key svg {
+        flex-basis: 23px;
+        width: 23px;
+        height: 23px;
+      }
+
+      .ticker-head,
+      .ticker-item {
+        padding-inline: 18px;
+      }
+
+      .ticker-head a {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+      }
+
+      .ticker-item {
+        min-width: min(560px, 94vw);
+        gap: 12px;
+      }
+
+      .route-itinerary {
+        max-height: none;
+        overflow-y: visible;
+        overscroll-behavior: auto;
+      }
+
+      .route-itinerary .run-card {
+        grid-template-columns: auto 1fr;
+        align-items: start;
+      }
+
+      .route-itinerary .button-row {
+        grid-column: 2;
+        margin-top: 10px;
+      }
+
+      .route-itinerary .tracker-button {
+        min-width: 128px;
+      }
+
+      .site-footer {
+        width: calc(100vw - 40px);
+        max-width: 100%;
+        margin-top: 52px;
+      }
+    }
+
     @media (max-width: 560px) {
       .tracker-hero-inner {
         min-height: 740px;
-        padding-top: 92px;
+        padding-top: 94px;
       }
 
       .tracker-hero {
@@ -1344,52 +1660,42 @@
       }
 
       .tracker-hero-bg {
-        object-position: 38% 48%;
-      }
-
-      .mission-logo-art {
-        width: min(560px, 118vw);
-        transform: translateX(-18px);
+        object-position: 65% 50%;
       }
 
       .mission-logo-stack {
-        width: min(560px, 118vw);
-        transform: translateX(-18px);
+        width: 100%;
+        transform: none;
+      }
+
+      .tracker-headline {
+        max-width: calc(100vw - 44px);
       }
 
       .mission-logo-brand {
-        width: min(360px, 78vw);
-        transform: translate(-8px, -2px);
+        width: min(260px, 78vw);
+        transform: translate(-5px, -2px);
       }
 
       .mission-logo-brand img {
-        width: min(360px, 78vw);
+        width: 100%;
       }
 
       .mission-logo-title {
-        width: min(500px, 112vw);
-        transform: translateX(-42px);
+        width: min(278px, 82vw);
+        transform: none;
       }
 
       .mission-logo-title img {
-        width: min(500px, 112vw);
+        width: 100%;
+      }
+
+      .tracker-headline p {
+        max-width: min(18.5rem, calc(100vw - 44px));
       }
 
       .tracker-map {
-        height: 360px;
-      }
-
-      .tracking-map-key {
-        grid-template-columns: 1fr;
-      }
-
-      .tracking-map-key span {
-        border-right: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-      }
-
-      .tracking-map-key span:last-child {
-        border-bottom: 0;
+        height: clamp(320px, 92vw, 390px);
       }
 
       .metric-row,
@@ -1401,8 +1707,573 @@
         grid-template-columns: 1fr;
       }
 
+      .route-itinerary .button-row {
+        grid-column: auto;
+      }
+
+      .tracker-button {
+        width: 100%;
+      }
+
       .site-footer-bottom {
         display: block;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tracker-menu-toggle {
+        left: auto;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .tracker-menu-toggle {
+        left: auto;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .tracker-nav {
+        position: absolute;
+        inset: 0 0 auto 0;
+        width: 100%;
+        max-width: 100vw;
+        padding: 18px 20px;
+        overflow: visible;
+      }
+
+      .tracker-navlinks {
+        position: absolute;
+        top: calc(100% - 4px);
+        left: 20px;
+        right: 20px;
+        width: auto;
+        max-width: calc(100vw - 40px);
+      }
+
+      .tracker-menu-toggle {
+        position: relative;
+        inset: auto;
+        margin-left: auto;
+        flex: 0 0 44px;
+        border-color: transparent;
+        background: transparent;
+      }
+
+      .tracker-mark {
+        align-items: center;
+        width: min(234px, calc(100vw - 92px));
+        opacity: 1;
+      }
+
+      .tracker-mark > img:not(.tracker-mark-mobile-logo),
+      .tracker-mark > span {
+        display: none;
+      }
+
+      .tracker-mark .tracker-mark-mobile-logo {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: none;
+      }
+
+      .tracker-hero,
+      .tracker-hero-inner {
+        min-height: clamp(640px, 172vw, 740px);
+      }
+
+      .tracker-hero-inner {
+        padding-top: 98px;
+        padding-bottom: 58px;
+      }
+
+      .tracker-hero-bg {
+        object-position: 40% 47%;
+        opacity: 1;
+        filter: none;
+        transform: none;
+      }
+
+      .tracker-hero::after {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.82) 38%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0) 68%);
+      }
+
+      .tracker-headline {
+        width: 100%;
+        max-width: min(16rem, 62vw);
+        margin-top: clamp(60px, 18vw, 78px);
+      }
+
+      .mission-logo-stack {
+        display: none;
+      }
+
+      .mission-logo-title {
+        width: min(278px, calc(100vw - 44px));
+        transform: translateX(-12px);
+      }
+
+      .tracker-headline p {
+        max-width: min(16rem, 62vw);
+      }
+
+      .tracker-headline .hero-desktop-copy {
+        display: none;
+      }
+
+      .tracker-headline .hero-mobile-copy {
+        display: block;
+        max-width: min(16rem, 62vw);
+        margin-top: 24px;
+        font-size: clamp(1.125rem, 4.75vw, 1.2rem);
+        line-height: 1.45;
+      }
+
+      .tracker-headline .hero-mobile-copy .mission-line {
+        margin-bottom: 30px;
+        font-size: clamp(1.5rem, 6vw, 1.63rem);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0.02em;
+      }
+
+      .tracker-headline .hero-mobile-copy span:not(.mission-line) {
+        display: block;
+      }
+
+      .tracker-headline .hero-mobile-copy span:not(.mission-line) + span:not(.mission-line) {
+        margin-top: 26px;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: clamp(1.05rem, 4.45vw, 1.13rem);
+        line-height: 1.5;
+        opacity: 1;
+      }
+
+      .tracker-headline .hero-mobile-action {
+        display: inline-flex;
+        width: auto;
+        max-width: calc(100vw - 44px);
+        margin-top: 34px;
+        padding-inline: 20px;
+        white-space: nowrap;
+      }
+
+      .feature-card h2,
+      .section-head h2,
+      .tracker-panel-heading,
+      #rsvp .section-head h2 {
+        font-weight: 700;
+      }
+
+      #map {
+        padding-top: 54px;
+        padding-bottom: 58px;
+      }
+
+      #map .section-head {
+        margin-bottom: 30px;
+      }
+
+      #map .tracker-panel {
+        border: 1px solid var(--color-black);
+        background: var(--color-black);
+        color: var(--color-white);
+        padding: 24px 20px;
+      }
+
+      #map .tracker-panel-heading,
+      #map .tracker-panel-copy {
+        color: var(--color-white);
+      }
+
+      #map .tracker-panel-copy {
+        margin-top: 10px;
+        color: rgba(255, 255, 255, 0.78);
+        line-height: 1.48;
+      }
+
+      #map .tracker-panel-copy.desktop-clock-copy {
+        display: none;
+      }
+
+      #map .tracker-panel-copy.mobile-clock-copy {
+        display: block;
+      }
+
+      #map .metric-row {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0;
+        margin-top: 22px;
+        border-color: rgba(255, 255, 255, 0.22);
+        background: var(--color-white);
+      }
+
+      #map .metric {
+        display: grid;
+        place-items: center;
+        position: relative;
+        background: var(--color-white);
+        padding: 13px 4px 11px;
+        text-align: center;
+      }
+
+      #map .metric + .metric {
+        border-left: 0;
+      }
+
+      #map .metric:not(:last-child)::after {
+        content: ":";
+        position: absolute;
+        top: 11px;
+        right: -5px;
+        z-index: 1;
+        color: var(--tracker-ink);
+        font-size: clamp(2.15rem, 12vw, 3.25rem);
+        font-weight: 700;
+        line-height: 0.88;
+      }
+
+      #map .metric strong {
+        font-size: clamp(2.15rem, 12vw, 3.25rem);
+        line-height: 0.88;
+      }
+
+      #map .metric span {
+        margin-top: 8px;
+        font-size: 0;
+        letter-spacing: 0.14em;
+        line-height: 1;
+      }
+
+      #map .metric span::before {
+        content: attr(data-short);
+        font-size: 0.58rem;
+      }
+
+      #updates {
+        padding-top: 58px;
+        padding-bottom: 64px;
+      }
+
+      #updates .section-head {
+        margin-bottom: 34px;
+      }
+
+      #updates .section-head p {
+        margin-top: 22px;
+      }
+
+      .week-grid,
+      #articles .article-grid,
+      .photo-strip,
+      #rsvp .route-itinerary.is-expanded {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 84vw;
+        grid-template-columns: none;
+        gap: 14px;
+        margin-inline: -20px;
+        padding: 0 20px 4px;
+        border: 0;
+        background: transparent;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-inline: contain;
+        scroll-padding-inline: 20px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .week-grid::-webkit-scrollbar,
+      #articles .article-grid::-webkit-scrollbar,
+      .photo-strip::-webkit-scrollbar,
+      #rsvp .route-itinerary.is-expanded::-webkit-scrollbar {
+        display: none;
+      }
+
+      .week-card,
+      #articles .article-card,
+      .photo-strip a,
+      #rsvp .route-itinerary.is-expanded .run-card {
+        width: auto;
+        min-width: 0;
+        border: 1px solid rgba(10, 10, 10, 0.34);
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+      }
+
+      .week-card,
+      #articles .article-card {
+        min-height: 300px;
+      }
+
+      .week-card {
+        padding: 26px 22px;
+      }
+
+      .mobile-photo-break {
+        display: block;
+        width: calc(100vw - 40px);
+        height: clamp(220px, 74vw, 318px);
+        margin: 14px auto 20px;
+        border: 1px solid rgba(10, 10, 10, 0.28);
+        background: var(--color-black);
+        overflow: hidden;
+      }
+
+      .mobile-photo-break img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .mobile-photo-break-road img {
+        object-position: center center;
+      }
+
+      .mobile-photo-break-portrait img {
+        object-position: 54% 24%;
+      }
+
+      #articles {
+        padding-top: 58px;
+        padding-bottom: 64px;
+      }
+
+      #articles .section-head {
+        margin-bottom: 34px;
+      }
+
+      #articles .section-head p {
+        margin-top: 22px;
+      }
+
+      .photo-strip {
+        grid-auto-columns: 80vw;
+      }
+
+      .photo-strip a {
+        min-height: 260px;
+      }
+
+      .rsvp-mobile-controls {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .rsvp-mobile-controls select {
+        width: 100%;
+        min-height: 50px;
+        border: 1px solid var(--tracker-line);
+        border-radius: 999px;
+        background: var(--color-white);
+        color: var(--tracker-ink);
+        padding: 0 18px;
+        font-size: 1rem;
+      }
+
+      #rsvp .route-itinerary {
+        display: block;
+        border: 0;
+        background: transparent;
+        max-height: none;
+        overflow: visible;
+      }
+
+      #rsvp .route-itinerary .run-card {
+        grid-template-columns: 1fr;
+        border: 1px solid var(--tracker-line);
+      }
+
+      #rsvp .route-itinerary.is-expanded .run-card {
+        display: grid;
+      }
+
+      #rsvp .route-itinerary.is-expanded .button-row,
+      #rsvp .route-itinerary .button-row {
+        grid-column: auto;
+      }
+
+      #why {
+        padding: 40px 24px;
+      }
+
+      #why .section-head {
+        margin-bottom: 26px;
+      }
+
+      #why .tracker-eyebrow {
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      #why .section-head h2 {
+        font-size: clamp(2.625rem, 11vw, 3rem);
+        line-height: 1;
+      }
+
+      #why .section-head p {
+        max-width: 100%;
+        margin-top: 24px;
+        font-size: clamp(1.125rem, 4.8vw, 1.25rem);
+        line-height: 1.5;
+      }
+
+      #why .article-grid {
+        margin-top: 6px;
+      }
+
+      #why .article-card {
+        padding: 24px;
+      }
+
+      #rsvp {
+        width: calc(100vw - 40px);
+        padding: 48px 24px 54px;
+        background: var(--color-accent);
+        color: var(--color-white);
+      }
+
+      #rsvp .section-head {
+        margin-bottom: 30px;
+      }
+
+      #rsvp .section-head h2,
+      #rsvp .section-head p,
+      #rsvp .tracker-eyebrow {
+        color: var(--color-white);
+      }
+
+      #rsvp .section-head p {
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      #rsvp .rsvp-mobile-controls {
+        margin-bottom: 20px;
+      }
+
+      #rsvp .rsvp-mobile-controls select {
+        border-color: rgba(255, 255, 255, 0.42);
+      }
+
+      #rsvp .rsvp-mobile-controls .tracker-button {
+        border-color: var(--color-white);
+        background: var(--color-white);
+        color: var(--color-black);
+      }
+
+      #rsvp .route-itinerary .run-card {
+        background: var(--color-white);
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 410px) {
+      .tracker-mark {
+        width: min(212px, calc(100vw - 92px));
+      }
+
+      .tracker-headline .hero-mobile-copy {
+        font-size: clamp(1.0625rem, 4.3vw, 1.12rem);
+      }
+
+      .tracker-headline .hero-mobile-copy .mission-line {
+        font-size: clamp(1.44rem, 5.8vw, 1.5rem);
+      }
+
+      .tracker-headline .hero-mobile-copy span:not(.mission-line) + span:not(.mission-line) {
+        font-size: clamp(1rem, 4.15vw, 1.06rem);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .tracker-nav {
+        padding-inline: 16px;
+      }
+
+      .tracker-menu-toggle {
+        left: auto;
+      }
+
+      .tracker-navlinks {
+        left: 16px;
+        right: 16px;
+      }
+
+      .tracker-mark img {
+        width: 112px;
+      }
+
+      .tracker-mark span {
+        font-size: 0.5rem;
+        letter-spacing: 0.22em;
+      }
+
+      .tracker-mark .tracker-mark-mobile-logo {
+        width: 100%;
+      }
+
+      .tracker-hero-inner {
+        padding-inline: 18px;
+      }
+
+      .tracker-hero-bg {
+        object-position: 40% 47%;
+      }
+
+      .tracker-headline {
+        max-width: min(16rem, 62vw);
+      }
+
+      .tracker-headline p {
+        max-width: min(16rem, 62vw);
+      }
+
+      .tracker-content {
+        padding-inline: 18px;
+      }
+
+      .tracker-section,
+      .site-footer {
+        width: calc(100vw - 36px);
+      }
+
+      #rsvp,
+      .mobile-photo-break {
+        width: calc(100vw - 36px);
+      }
+
+      .week-grid,
+      #articles .article-grid,
+      .photo-strip,
+      #rsvp .route-itinerary.is-expanded {
+        margin-inline: -18px;
+        padding-inline: 18px;
+        scroll-padding-inline: 18px;
+      }
+
+      .tracker-map-stage {
+        margin-inline: -18px;
+      }
+
+      .section-head h2 {
+        font-size: clamp(2.05rem, 10.5vw, 3.2rem);
+      }
+
+      .tracking-map-key span {
+        gap: 5px;
+        font-size: 0.56rem;
+        letter-spacing: 0.09em;
+      }
+
+      .tracking-map-key img,
+      .tracking-map-key svg {
+        flex-basis: 20px;
+        width: 20px;
+        height: 20px;
       }
     }
   </style>
@@ -1412,9 +2283,11 @@
     <nav class="tracker-nav" aria-label="Live tracker navigation">
       <a class="tracker-mark" href="#live" aria-label="Back to the top of the Team Goodwin homepage">
         <img src="assets/goodwin-logo.png" alt="GOODWIN">
+        <img class="tracker-mark-mobile-logo" src="assets/mission-america-logo.png" alt="GOODWIN Generated Mission America">
         <span>Endurance</span>
       </a>
-      <div class="tracker-navlinks">
+      <button class="tracker-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="tracker-navlinks"><span></span></button>
+      <div class="tracker-navlinks" id="tracker-navlinks">
         <a href="#the-run">The Run</a>
         <a href="#map">50 States</a>
         <a href="#updates">News</a>
@@ -1432,7 +2305,9 @@
             <span class="mission-logo-crop mission-logo-title"><img src="assets/mission-america-logo.png" alt=""></span>
           </div>
           <h1 id="page-title">GOODWIN Generated Mission America</h1>
-          <p><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and <a class="hero-text-link" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noreferrer">a mission</a> to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>Follow the Record Attempt · Run With Will · Support the Mission</p>
+          <p class="hero-desktop-copy"><span class="mission-line">50 marathons. 50 states. 24 days.</span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.<br><br>Driven by the loss of his mother, Amanda, and <a class="hero-text-link" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noreferrer">a mission</a> to support people affected by cancer.<br><br>Now he's taking on his biggest challenge yet. And Team Goodwin is going with him.<br><br>Follow every marathon, every flight, every finish line and everything it takes to chase a world record across America.<br><br>Follow the Record Attempt · Run With Will · Support the Mission</p>
+          <p class="hero-mobile-copy"><span class="mission-line">50 marathons.<br>50 states. 24 days.</span><span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.</span><span>Chasing a world record. Pushing the limits of human endurance. Carrying the memory of his mother, Amanda, through every mile.</span></p>
+          <a class="tracker-button hero-mobile-action" href="#map">Enter Mission Control ↓</a>
         </div>
       </div>
     </section>
@@ -1507,14 +2382,15 @@
             <div class="tracker-eyebrow">Mission Clock</div>
             <h3 class="tracker-panel-heading">Countdown to wheels up.</h3>
             <p class="tracker-panel-copy">October 9, 2026 · Honolulu, Hawaii</p>
-            <p class="tracker-panel-copy">The clock starts in Honolulu. Twenty-four days later — and 49 marathons later — William is scheduled to cross his final finish line at the New York City Marathon.</p>
+            <p class="tracker-panel-copy desktop-clock-copy">The clock starts in Honolulu. Twenty-four days later — and 49 marathons later — William is scheduled to cross his final finish line at the New York City Marathon.</p>
+            <p class="tracker-panel-copy mobile-clock-copy">Honolulu starts the clock. 24 days and 50 marathons later, Mission America finishes in New York City.</p>
             <p class="tracker-panel-copy">Until then, we count down.<br>After that, we count miles.</p>
             <!-- After launch, replace this countdown block with live Mission Control progress statistics. -->
             <div class="metric-row">
-              <div class="metric"><strong id="countdown-days">00</strong><span>Days</span></div>
-              <div class="metric"><strong id="countdown-hours">00</strong><span>Hours</span></div>
-              <div class="metric"><strong id="countdown-minutes">00</strong><span>Minutes</span></div>
-              <div class="metric"><strong id="countdown-seconds">00</strong><span>Seconds</span></div>
+              <div class="metric"><strong id="countdown-days">00</strong><span data-short="DAYS">Days</span></div>
+              <div class="metric"><strong id="countdown-hours">00</strong><span data-short="HRS">Hours</span></div>
+              <div class="metric"><strong id="countdown-minutes">00</strong><span data-short="MIN">Minutes</span></div>
+              <div class="metric"><strong id="countdown-seconds">00</strong><span data-short="SEC">Seconds</span></div>
             </div>
           </div>
         </div>
@@ -1552,6 +2428,10 @@
           </a>
         </div>
       </section>
+
+      <div class="mobile-photo-break mobile-photo-break-road" aria-hidden="true">
+        <img src="assets/road-aerial-DbGvJBXy.jpg" alt="">
+      </div>
 
       <section class="tracker-section" id="articles">
         <div class="section-head">
@@ -1611,6 +2491,10 @@
         </div>
       </section>
 
+      <div class="mobile-photo-break mobile-photo-break-portrait" aria-hidden="true">
+        <img src="assets/goodge-portrait-BKrZBh3V.jpg" alt="">
+      </div>
+
       <section class="tracker-section" id="why">
         <div class="section-head">
           <div>
@@ -1652,6 +2536,13 @@
           </div>
           <p>Join William for part of a marathon, bring your run club, show up at a finish line or just come make some noise.<br><br>Help turn the miles into support for people affected by cancer.</p>
         </div>
+        <div class="rsvp-mobile-controls" data-rsvp-mobile-controls>
+          <label class="tracker-eyebrow" for="rsvp-state-select">Select your state</label>
+          <select id="rsvp-state-select" data-rsvp-state-select>
+            <option value="">Select your state</option>
+          </select>
+          <button class="tracker-button secondary" type="button" data-rsvp-view-all>View all 50 stops</button>
+        </div>
         <div class="run-grid route-itinerary" data-route-itinerary></div>
       </section>
 
@@ -1690,6 +2581,45 @@
   </main>
 
   <script>
+    function initMobileNavigation() {
+      const nav = document.querySelector(".tracker-nav");
+      const toggle = document.querySelector(".tracker-menu-toggle");
+      const navlinks = document.querySelector(".tracker-navlinks");
+      if (!nav || !toggle || !navlinks) return;
+
+      const closeMenu = () => {
+        nav.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Open navigation menu");
+      };
+
+      const openMenu = () => {
+        nav.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-label", "Close navigation menu");
+      };
+
+      toggle.addEventListener("click", () => {
+        if (nav.classList.contains("is-open")) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      navlinks.addEventListener("click", (event) => {
+        if (event.target.closest("a")) closeMenu();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenu();
+      });
+
+      window.matchMedia("(min-width: 769px)").addEventListener?.("change", closeMenu);
+    }
+
+    initMobileNavigation();
+
     const fallbackTickerUpdates = [
       {
         date: "2026-10-09",
@@ -2016,10 +2946,12 @@
       document.getElementById("countdown-seconds").textContent = String(seconds).padStart(2, "0");
     }
 
-    function renderRunItinerary() {
-      const container = document.querySelector("[data-route-itinerary]");
-      if (!container) return;
-      container.innerHTML = routeStops.map((stop) => `
+    const rsvpMobileMedia = window.matchMedia("(max-width: 430px)");
+    let rsvpMobileMode = "select";
+    let selectedRouteStop = "";
+
+    function getRouteStopMarkup(stop) {
+      return `
         <article class="run-card">
           <div class="route-number">${String(stop.n).padStart(2, "0")}</div>
           <div>
@@ -2029,11 +2961,61 @@
           </div>
           ${stop.n === 50 ? "" : '<div class="button-row"><a class="tracker-button secondary" href="partners.html">RSVP</a></div>'}
         </article>
-      `).join("");
+      `;
+    }
+
+    function populateRsvpMobileControls() {
+      const select = document.querySelector("[data-rsvp-state-select]");
+      if (!select || select.dataset.populated === "true") return;
+      select.innerHTML = '<option value="">Select your state</option>' + routeStops.map((stop) => (
+        `<option value="${stop.n}">${String(stop.n).padStart(2, "0")} · ${stop.state} · ${stop.city}</option>`
+      )).join("");
+      select.dataset.populated = "true";
+      select.addEventListener("change", () => {
+        selectedRouteStop = select.value;
+        rsvpMobileMode = selectedRouteStop ? "selected" : "select";
+        renderRunItinerary();
+      });
+
+      const viewAll = document.querySelector("[data-rsvp-view-all]");
+      if (viewAll) {
+        viewAll.addEventListener("click", () => {
+          rsvpMobileMode = "all";
+          renderRunItinerary();
+        });
+      }
+    }
+
+    function renderRunItinerary() {
+      const container = document.querySelector("[data-route-itinerary]");
+      if (!container) return;
+      populateRsvpMobileControls();
+      const isMobile = rsvpMobileMedia.matches;
+      container.classList.toggle("is-expanded", isMobile && rsvpMobileMode === "all");
+      container.classList.toggle("is-selected", isMobile && rsvpMobileMode === "selected");
+
+      if (isMobile) {
+        if (rsvpMobileMode === "all") {
+          container.innerHTML = routeStops.map(getRouteStopMarkup).join("");
+          return;
+        }
+
+        if (selectedRouteStop) {
+          const selectedStop = routeStops.find((stop) => String(stop.n) === selectedRouteStop);
+          container.innerHTML = selectedStop ? getRouteStopMarkup(selectedStop) : "";
+          return;
+        }
+
+        container.innerHTML = "";
+        return;
+      }
+
+      container.innerHTML = routeStops.map(getRouteStopMarkup).join("");
     }
 
     updateCountdown();
     renderRunItinerary();
+    rsvpMobileMedia.addEventListener("change", renderRunItinerary);
     window.setInterval(updateCountdown, 1000);
 
     const stateAbbr = {
