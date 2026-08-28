@@ -162,6 +162,333 @@
       display: none;
     }
 
+    .mission-intro {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+    }
+
+    .mission-intro.is-active {
+      display: flex;
+    }
+
+    .mission-intro-logo {
+      position: fixed;
+      z-index: 3;
+      top: max(22px, env(safe-area-inset-top));
+      right: max(22px, env(safe-area-inset-right));
+      width: min(210px, 48vw);
+      height: auto;
+      transition: opacity 180ms ease;
+    }
+
+    .mission-intro-stage {
+      position: relative;
+      width: min(60.9vw, 252px);
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: #050505;
+      transform-origin: center;
+    }
+
+    .mission-intro-wipe-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      object-fit: cover;
+      clip-path: inset(100% 0 0 0);
+      opacity: 1;
+      transform: none;
+      animation: none;
+      pointer-events: none;
+      z-index: 2;
+      will-change: clip-path;
+    }
+
+    .mission-intro-wipe-frame.is-wiping {
+      animation: missionIntroBottomWipe 80ms cubic-bezier(0.42, 0, 0.12, 1) forwards;
+    }
+
+    .mission-intro-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      will-change: transform, opacity;
+      transition: transform 90ms ease-out;
+    }
+
+    .mission-intro-bloom {
+      position: absolute;
+      z-index: 4;
+      inset: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .mission-intro-bloom-core,
+    .mission-intro-bloom-field,
+    .mission-intro-bloom-lobe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 48% 52% 46% 54%;
+      background:
+        radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.94) 26%, rgba(247,245,239,0.68) 50%, rgba(247,245,239,0.18) 70%, rgba(247,245,239,0) 88%);
+      filter: blur(7px) brightness(1.7);
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.18);
+      transform-origin: center;
+      will-change: transform, opacity, filter;
+    }
+
+    .mission-intro-bloom-core {
+      z-index: 3;
+      width: 34px;
+      height: 30px;
+    }
+
+    .mission-intro-bloom-field {
+      z-index: 1;
+      width: 36vmax;
+      height: 34vmax;
+      background:
+        radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.98) 34%, rgba(247,245,239,0.86) 58%, rgba(247,245,239,0.4) 78%, rgba(247,245,239,0) 96%);
+      box-shadow: 0 0 120px 82px rgba(247,245,239,0.76);
+      filter: blur(18px) brightness(2);
+      transform: translate(-50%, -50%) scale(0.04);
+    }
+
+    .mission-intro-bloom-lobe {
+      z-index: 2;
+      width: var(--bloom-width, 42px);
+      height: var(--bloom-height, 38px);
+      transform: translate(-50%, -50%) scale(0.2) rotate(var(--bloom-rotate, 0deg));
+    }
+
+    .mission-intro.is-collapsing .mission-intro-logo,
+    .mission-intro.is-seeding .mission-intro-logo,
+    .mission-intro.is-blooming .mission-intro-logo {
+      opacity: 0;
+    }
+
+    .mission-intro-stage.is-collapsing {
+      animation: missionIntroCollapse 240ms cubic-bezier(0.72, 0, 0.2, 1) forwards;
+    }
+
+    .mission-intro.is-seeding .mission-intro-bloom,
+    .mission-intro.is-blooming .mission-intro-bloom {
+      opacity: 1;
+    }
+
+    .mission-intro.is-seeding .mission-intro-bloom-core {
+      animation: missionIntroSeed 120ms ease-out forwards;
+    }
+
+    .mission-intro.is-blooming {
+      animation: missionIntroReveal 1500ms ease-out forwards;
+    }
+
+    .mission-intro.is-blooming .mission-intro-bloom-core {
+      animation: missionIntroSeedBloom 1500ms cubic-bezier(0.12, 0.86, 0.2, 1) forwards;
+    }
+
+    .mission-intro.is-blooming .mission-intro-bloom-field {
+      animation: missionIntroBloomField 1500ms cubic-bezier(0.12, 0.86, 0.2, 1) forwards;
+    }
+
+    .mission-intro.is-blooming .mission-intro-bloom-lobe {
+      animation: missionIntroBloomLobe 1500ms cubic-bezier(0.12, 0.86, 0.2, 1) forwards;
+      animation-delay: var(--bloom-delay, 0ms);
+    }
+
+    .mission-intro.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+
+    body.mission-intro-active {
+      overflow: hidden;
+    }
+
+    @keyframes missionIntroBottomWipe {
+      0% {
+        clip-path: inset(100% 0 0 0);
+      }
+
+      100% {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    @keyframes missionIntroCollapse {
+      0% {
+        clip-path: inset(0 0 0 0);
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      42% {
+        clip-path: inset(25% 4% 25% 4%);
+        transform: scaleX(0.88) scaleY(0.38);
+        opacity: 1;
+      }
+
+      78% {
+        clip-path: inset(44% 28% 44% 28%);
+        transform: scaleX(0.32) scaleY(0.08);
+        opacity: 0.85;
+      }
+
+      100% {
+        clip-path: inset(49% 48% 49% 48%);
+        transform: scaleX(0.04) scaleY(0.02);
+        opacity: 0;
+      }
+    }
+
+    @keyframes missionIntroSeed {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.18);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes missionIntroSeedBloom {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        filter: blur(7px) brightness(1.7);
+      }
+
+      42% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(10.2);
+        filter: blur(15px) brightness(2.65);
+      }
+
+      60% {
+        opacity: 0.92;
+        transform: translate(-50%, -50%) scale(12.4);
+        filter: blur(22px) brightness(2.5);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(15.5);
+        filter: blur(36px) brightness(1.18);
+      }
+    }
+
+    @keyframes missionIntroBloomField {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.04);
+        filter: blur(18px) brightness(2);
+      }
+
+      24% {
+        opacity: 0.92;
+      }
+
+      42% {
+        opacity: 0.96;
+        transform: translate(-50%, -50%) scale(3.1);
+        filter: blur(26px) brightness(2.55);
+      }
+
+      58% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(3.55);
+        filter: blur(34px) brightness(2.05);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(4.1);
+        filter: blur(48px) brightness(1.12);
+      }
+    }
+
+    @keyframes missionIntroBloomLobe {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) rotate(var(--bloom-rotate, 0deg));
+      }
+
+      18% {
+        opacity: 1;
+      }
+
+      42% {
+        opacity: 1;
+        transform:
+          translate(calc(-50% + var(--bloom-x, 0px)), calc(-50% + var(--bloom-y, 0px)))
+          scale(var(--bloom-scale, 10))
+          rotate(var(--bloom-rotate, 0deg));
+      }
+
+      64% {
+        opacity: 0.82;
+        transform:
+          translate(calc(-50% + var(--bloom-x, 0px)), calc(-50% + var(--bloom-y, 0px)))
+          scale(var(--bloom-scale, 10))
+          rotate(var(--bloom-rotate, 0deg));
+      }
+
+      100% {
+        opacity: 0;
+        transform:
+          translate(calc(-50% + var(--bloom-end-x, var(--bloom-x, 0px))), calc(-50% + var(--bloom-end-y, var(--bloom-y, 0px))))
+          scale(var(--bloom-end-scale, 11.6))
+          rotate(var(--bloom-rotate, 0deg));
+      }
+    }
+
+    @keyframes missionIntroReveal {
+      0% {
+        background: rgba(0, 0, 0, 1);
+        opacity: 1;
+      }
+
+      34% {
+        background: rgba(0, 0, 0, 0.94);
+        opacity: 1;
+      }
+
+      62% {
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 1;
+      }
+
+      82% {
+        background: rgba(0, 0, 0, 0);
+        opacity: 1;
+      }
+
+      100% {
+        background: rgba(0, 0, 0, 0);
+        opacity: 0;
+      }
+    }
+
     .tracker-hero {
       position: relative;
       min-height: min(780px, 88svh);
@@ -1732,6 +2059,18 @@
       }
     }
 
+    @media (min-width: 431px) {
+      .mission-intro {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 430px) and (prefers-reduced-motion: reduce) {
+      .mission-intro {
+        display: none !important;
+      }
+    }
+
     @media (max-width: 430px) {
       .tracker-nav {
         position: absolute;
@@ -2619,6 +2958,197 @@
     }
 
     initMobileNavigation();
+
+    const MISSION_AMERICA_INTRO_CONFIG = {
+      sessionKey: "missionAmericaIntroSeen",
+      mobileQuery: "(max-width: 430px)",
+      reducedMotionQuery: "(prefers-reduced-motion: reduce)",
+      secondaryWipeDuration: 80,
+      secondaryHold: 120,
+      secondaryImages: [0, 1, 2, 3, 4],
+      collapseDuration: 240,
+      seedDuration: 120,
+      revealDuration: 1500,
+      bloomLobes: [
+        { width: 48, height: 40, x: -88, y: -124, endX: -116, endY: -158, scale: 10.4, rotate: -18, delay: 0 },
+        { width: 42, height: 54, x: 96, y: -110, endX: 136, endY: -142, scale: 10.8, rotate: 24, delay: 22 },
+        { width: 58, height: 38, x: -132, y: 8, endX: -174, endY: 14, scale: 11.5, rotate: 6, delay: 42 },
+        { width: 52, height: 46, x: 124, y: 26, endX: 168, endY: 38, scale: 11.2, rotate: -7, delay: 34 },
+        { width: 42, height: 62, x: -54, y: 132, endX: -72, endY: 174, scale: 10.6, rotate: 14, delay: 62 },
+        { width: 56, height: 48, x: 64, y: 132, endX: 86, endY: 178, scale: 10.1, rotate: -22, delay: 76 },
+        { width: 64, height: 44, x: 0, y: -4, endX: 8, endY: -4, scale: 13.4, rotate: 0, delay: 10 }
+      ],
+      images: [
+        {
+          original: "[image] - 7479884.jpeg",
+          file: "intro-dubai-skyline-running.jpg",
+          position: "57% 54%",
+          duration: 560,
+          transform: "none"
+        },
+        {
+          original: "[image] - 805936.jpeg",
+          file: "intro-group-running.jpg",
+          position: "48% 48%",
+          duration: 500,
+          transform: "none"
+        },
+        {
+          original: "[image] - 965702.jpeg",
+          file: "intro-close-portrait.jpg",
+          position: "51% 42%",
+          duration: 500,
+          transform: "none"
+        },
+        {
+          original: "[image] - 656212.jpeg",
+          file: "intro-fence-stretch.jpg",
+          position: "68% 50%",
+          duration: 500,
+          transform: "none"
+        },
+        {
+          original: "[image] - 6327353.jpeg",
+          file: "intro-solo-track-running.jpg",
+          position: "42% 50%",
+          duration: 580,
+          transform: "none"
+        }
+      ]
+    };
+
+    function initMissionAmericaIntro() {
+      const config = MISSION_AMERICA_INTRO_CONFIG;
+      const mobileQuery = window.matchMedia(config.mobileQuery);
+      const reducedMotionQuery = window.matchMedia(config.reducedMotionQuery);
+      if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+
+      const forceReplay = new URLSearchParams(window.location.search).get("intro") === "1";
+
+      try {
+        if (!forceReplay && window.sessionStorage.getItem(config.sessionKey) === "true") return;
+      } catch (error) {
+        if (!forceReplay) return;
+      }
+
+      const logoSource = document.querySelector(".tracker-mark-mobile-logo")?.getAttribute("src") || "../assets/mission-america-logo.png";
+      const assetBase = logoSource.replace(/mission-america-logo\.png(?:\?.*)?$/, "");
+      const root = document.createElement("div");
+      root.className = "mission-intro is-active";
+      root.setAttribute("aria-hidden", "true");
+      root.innerHTML = `
+        <img class="mission-intro-logo" src="${logoSource}" alt="">
+        <div class="mission-intro-stage">
+          <img class="mission-intro-frame" alt="">
+          <img class="mission-intro-wipe-frame" alt="" aria-hidden="true">
+        </div>
+        <div class="mission-intro-bloom" aria-hidden="true">
+          <span class="mission-intro-bloom-core"></span>
+          <span class="mission-intro-bloom-field"></span>
+        </div>
+      `;
+
+      document.body.appendChild(root);
+      document.body.classList.add("mission-intro-active");
+      window.scrollTo(0, 0);
+
+      const frame = root.querySelector(".mission-intro-frame");
+      const wipeFrame = root.querySelector(".mission-intro-wipe-frame");
+      const stage = root.querySelector(".mission-intro-stage");
+      const bloom = root.querySelector(".mission-intro-bloom");
+      const sleep = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
+      const imageUrl = (item) => `${assetBase}${item.file}`;
+      const preload = (item) => new Promise((resolve) => {
+        const image = new Image();
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = imageUrl(item);
+      });
+
+      const finish = async () => {
+        if (!forceReplay) {
+          try {
+            window.sessionStorage.setItem(config.sessionKey, "true");
+          } catch (error) {}
+        }
+
+        root.classList.add("is-hidden");
+        document.body.classList.remove("mission-intro-active");
+        window.scrollTo(0, 0);
+        await sleep(180);
+        root.remove();
+      };
+
+      mobileQuery.addEventListener?.("change", (event) => {
+        if (!event.matches && document.body.contains(root)) finish();
+      }, { once: true });
+
+      (async () => {
+        await preload(config.images[0]);
+        config.images.slice(1).forEach(preload);
+
+        for (const item of config.images) {
+          frame.src = imageUrl(item);
+          frame.style.objectPosition = item.position;
+          frame.style.transform = item.transform;
+          await sleep(item.duration);
+        }
+
+        const secondaryStart = config.images[config.secondaryImages[0]];
+        frame.src = imageUrl(secondaryStart);
+        frame.style.objectPosition = secondaryStart.position;
+        frame.style.transform = "none";
+
+        for (const imageIndex of config.secondaryImages.slice(1)) {
+          const item = config.images[imageIndex];
+          wipeFrame.classList.remove("is-wiping");
+          wipeFrame.style.clipPath = "inset(100% 0 0 0)";
+          wipeFrame.src = imageUrl(item);
+          wipeFrame.style.objectPosition = item.position;
+          wipeFrame.style.transform = "none";
+          void wipeFrame.offsetWidth;
+          wipeFrame.classList.add("is-wiping");
+          await sleep(config.secondaryWipeDuration);
+          frame.src = wipeFrame.src;
+          frame.style.objectPosition = item.position;
+          frame.style.transform = "none";
+        }
+
+        wipeFrame.classList.remove("is-wiping");
+        wipeFrame.style.clipPath = "inset(100% 0 0 0)";
+        await sleep(config.secondaryHold);
+        stage.classList.add("is-collapsing");
+        root.classList.add("is-collapsing");
+        await sleep(config.collapseDuration);
+
+        for (const lobe of config.bloomLobes) {
+          const bloomLobe = document.createElement("span");
+          bloomLobe.className = "mission-intro-bloom-lobe";
+          bloomLobe.style.setProperty("--bloom-width", `${lobe.width}px`);
+          bloomLobe.style.setProperty("--bloom-height", `${lobe.height}px`);
+          bloomLobe.style.setProperty("--bloom-x", `${lobe.x}px`);
+          bloomLobe.style.setProperty("--bloom-y", `${lobe.y}px`);
+          bloomLobe.style.setProperty("--bloom-end-x", `${lobe.endX}px`);
+          bloomLobe.style.setProperty("--bloom-end-y", `${lobe.endY}px`);
+          bloomLobe.style.setProperty("--bloom-scale", lobe.scale);
+          bloomLobe.style.setProperty("--bloom-end-scale", lobe.scale * 1.16);
+          bloomLobe.style.setProperty("--bloom-rotate", `${lobe.rotate}deg`);
+          bloomLobe.style.setProperty("--bloom-delay", `${lobe.delay}ms`);
+          bloom.appendChild(bloomLobe);
+        }
+
+        root.classList.remove("is-collapsing");
+        root.classList.add("is-seeding");
+        await sleep(config.seedDuration);
+
+        root.classList.remove("is-seeding");
+        root.classList.add("is-blooming");
+        await sleep(config.revealDuration);
+        await finish();
+      })();
+    }
+
+    initMissionAmericaIntro();
 
     const fallbackTickerUpdates = [
       {
