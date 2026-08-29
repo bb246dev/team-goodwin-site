@@ -1612,6 +1612,128 @@
       font-size: 0.8rem;
     }
 
+    .site-footer-partners {
+      margin-top: 4px;
+      padding: 42px clamp(24px, 4vw, 48px) 46px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      background: var(--color-black);
+      color: var(--color-white);
+    }
+
+    .site-footer-partners .tracker-eyebrow {
+      color: rgba(255, 255, 255, 0.78);
+      text-align: center;
+    }
+
+    .site-footer .site-footer-partners-copy {
+      max-width: 620px;
+      margin: 14px auto 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: clamp(0.64rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .partner-logo-wall {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: center;
+      justify-items: center;
+      column-gap: 32px;
+      row-gap: 34px;
+      margin-top: 38px;
+    }
+
+    .partner-logo-item {
+      display: flex;
+      grid-column: span 2;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .partner-logo-item img {
+      display: block;
+      width: auto;
+      max-width: min(168px, 100%);
+      max-height: 34px;
+      object-fit: contain;
+      opacity: 0.76;
+      transition: opacity 160ms ease;
+    }
+
+    .partner-logo-item img:hover {
+      opacity: 1;
+    }
+
+    @media (min-width: 941px) {
+      .partner-logo-item {
+        grid-column: auto;
+        min-height: 42px;
+      }
+
+      .partner-logo-item:nth-child(1) {
+        order: 1;
+      }
+
+      .partner-logo-item:nth-child(2) {
+        order: 2;
+      }
+
+      .partner-logo-item:nth-child(4) {
+        order: 3;
+      }
+
+      .partner-logo-item:nth-child(5) {
+        order: 4;
+      }
+
+      .partner-logo-item:nth-child(6) {
+        order: 5;
+      }
+
+      .partner-logo-item:nth-child(7) {
+        order: 6;
+      }
+
+      .partner-logo-item:nth-child(8) {
+        order: 7;
+      }
+
+      .partner-logo-item:nth-child(9) {
+        order: 8;
+      }
+
+      .partner-logo-item:nth-child(10) {
+        order: 9;
+      }
+
+      .partner-logo-item:nth-child(11) {
+        order: 10;
+      }
+
+      .partner-logo-item:nth-child(3) {
+        order: 11;
+      }
+
+      .partner-logo-item:nth-child(12) {
+        order: 12;
+      }
+
+      .partner-logo-item:nth-child(13) {
+        order: 13;
+      }
+
+      .partner-logo-item:nth-child(14) {
+        order: 14;
+      }
+
+      .partner-logo-item:nth-child(15) {
+        order: 15;
+      }
+    }
+
     @media (max-width: 940px) {
       .tracker-nav {
         position: absolute;
@@ -2331,12 +2453,22 @@
 
       .mobile-photo-break {
         display: block;
+        position: relative;
         width: calc(100vw - 40px);
         height: clamp(220px, 74vw, 318px);
         margin: 14px auto 20px;
         border: 1px solid rgba(10, 10, 10, 0.28);
         background: var(--color-black);
         overflow: hidden;
+      }
+
+      :is(.mobile-photo-break, .photo-strip a)::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: rgba(255, 255, 255, 0.22);
       }
 
       .mobile-photo-break img {
@@ -2484,6 +2616,58 @@
 
       #rsvp .route-itinerary .run-card {
         background: var(--color-white);
+      }
+
+      .site-footer-partners {
+        margin-inline: 0;
+        padding: 32px 0 34px;
+        overflow: hidden;
+      }
+
+      .site-footer-partners .tracker-eyebrow {
+        padding-inline: 20px;
+        text-align: left;
+      }
+
+      .site-footer .site-footer-partners-copy {
+        max-width: none;
+        margin-top: 16px;
+        padding-inline: 20px;
+        font-size: clamp(0.64rem, 2.8vw, 0.82rem);
+        line-height: 1.42;
+        text-align: left;
+      }
+
+      .partner-logo-wall {
+        display: flex;
+        justify-content: flex-start;
+        gap: 28px;
+        margin-top: 28px;
+        padding: 0 20px 4px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-inline: contain;
+        scroll-padding-inline: 20px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .partner-logo-wall::-webkit-scrollbar {
+        display: none;
+      }
+
+      .partner-logo-item {
+        flex: 0 0 auto;
+        grid-column: auto;
+        min-width: 96px;
+        scroll-snap-align: start;
+      }
+
+      .partner-logo-item img {
+        max-width: 150px;
+        max-height: 32px;
+        opacity: 0.78;
       }
     }
 
@@ -2664,7 +2848,7 @@
           <div>
             <div class="tracker-eyebrow">Race Updates</div>
             <h3>Come along for the ride.</h3>
-            <p>50 marathons. 50 states. 24 days. Get the view from inside Mission America — from finish lines and flight plans to the moments you won’t see on Strava.</p>
+            <p>50 marathons. 50 states. 24 days. Get the view from inside Mission America.</p>
           </div>
           <div>
             <div class="tracker-eyebrow action-label">Join Team Goodwin</div>
@@ -2696,7 +2880,7 @@
         <div class="tracker-grid mission-clock-grid">
           <div class="tracker-panel">
             <div class="tracker-eyebrow">Mission Clock</div>
-            <h3 class="tracker-panel-heading">Countdown to wheels up.</h3>
+            <h3 class="tracker-panel-heading">Countdown to race day</h3>
             <p class="tracker-panel-copy">October 9, 2026 · Honolulu, Hawaii</p>
             <p class="tracker-panel-copy desktop-clock-copy">The clock starts in Honolulu. Twenty-four days later — and 49 marathons later — William is scheduled to cross his final finish line at the New York City Marathon.</p>
             <p class="tracker-panel-copy mobile-clock-copy">Honolulu starts the clock. 24 days and 50 marathons later, Mission America finishes in New York City.</p>
@@ -2886,6 +3070,26 @@
               <li><a href="partners.html">Partners</a></li>
               <li><a href="https://www.teamgoodwin.com" target="_blank" rel="noreferrer">teamGoodwin.com</a></li>
             </ul>
+          </div>
+        </div>
+        <div class="site-footer-partners" aria-label="Partners">
+          <div class="tracker-eyebrow">MADE POSSIBLE BY</div>
+          <div class="partner-logo-wall">
+            <div class="partner-logo-item"><img src="../assets/partners/arsenal-aviation-footer.svg" alt="Arsenal Aviation logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/trilogy-aviation-footer.svg" alt="Trilogy Aviation Group logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/titan-aviation-footer.png" alt="Titan Aviation Group logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/fly1200-footer.svg" alt="FLY1200 logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/flyexclusive-footer.svg" alt="flyExclusive logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/jet-linx-footer.svg" alt="Jet Linx logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/skyward-aviation-footer.svg" alt="Skyward Aviation logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/trueskies-footer.svg" alt="TrueSkies Aviation Group logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/magellan-jets-footer.svg" alt="Magellan Jets logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/charter-flight-support-footer.svg" alt="Charter Flight Support logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/spyroll-studios-footer.svg" alt="Spyroll Studios logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/david-footer.png" alt="David logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/humantra-footer.png" alt="Humantra logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/rizkia-footer.png" alt="Rizkia logo"></div>
+            <div class="partner-logo-item"><img src="../assets/partners/whoop-footer.png" alt="WHOOP logo"></div>
           </div>
         </div>
         <div class="site-footer-bottom">
