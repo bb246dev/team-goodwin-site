@@ -1324,6 +1324,10 @@
       display: none;
     }
 
+    .mobile-photo-break-heading {
+      display: none;
+    }
+
     .instagram-feed-state {
       border: 1px solid var(--tracker-line);
       background: var(--color-white);
@@ -1474,6 +1478,79 @@
       line-height: 1.62;
     }
 
+    .inside-mobile-accordion {
+      display: none;
+    }
+
+    .inside-accordion-item {
+      border-bottom: 1px solid var(--tracker-line);
+    }
+
+    .inside-accordion-item:first-child {
+      border-top: 1px solid var(--tracker-line);
+    }
+
+    .inside-accordion-trigger {
+      display: flex;
+      width: 100%;
+      min-height: 62px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 17px 0;
+      border: 0;
+      background: transparent;
+      color: var(--tracker-ink);
+      font: inherit;
+      font-size: 1.06rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .inside-accordion-icon {
+      flex: 0 0 auto;
+      color: var(--tracker-ink);
+      font-size: 1.4rem;
+      font-weight: 400;
+      line-height: 1;
+      transition: transform 180ms ease;
+    }
+
+    .inside-accordion-trigger[aria-expanded="true"] .inside-accordion-icon {
+      transform: rotate(45deg);
+    }
+
+    .inside-accordion-panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 260ms ease, opacity 180ms ease;
+    }
+
+    .inside-accordion-panel.is-open {
+      opacity: 1;
+    }
+
+    .inside-accordion-content {
+      padding: 0 0 22px;
+    }
+
+    .inside-accordion-content p {
+      margin: 0;
+      color: var(--tracker-muted);
+      font-size: 0.98rem;
+      line-height: 1.55;
+    }
+
+    .inside-accordion-content p + p {
+      margin-top: 14px;
+    }
+
+    .inside-accordion-content .button-row {
+      margin-top: 18px;
+    }
+
     .comment-box {
       margin-top: 20px;
       border-top: 1px solid var(--tracker-line);
@@ -1530,6 +1607,109 @@
     .run-card {
       background: var(--color-white);
       padding: 26px;
+    }
+
+    .article-card-trigger {
+      display: flex;
+      width: 100%;
+      min-height: inherit;
+      height: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .article-card-affordance {
+      display: block;
+      margin-top: auto;
+      padding-top: 24px;
+      color: var(--tracker-ink);
+      font-size: clamp(1.375rem, 2vw, 1.75rem);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1;
+      opacity: 0.76;
+      transform-origin: center;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .article-card-trigger[aria-expanded="true"] .article-card-affordance {
+      opacity: 1;
+      transform: rotate(45deg);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .article-card-trigger:hover .article-card-affordance {
+        opacity: 0.92;
+        transform: rotate(12deg);
+      }
+
+      .article-card-trigger[aria-expanded="true"]:hover .article-card-affordance {
+        transform: rotate(45deg);
+      }
+    }
+
+    .article-card.is-selected {
+      outline: 2px solid rgba(25, 59, 59, 0.34);
+      outline-offset: -2px;
+    }
+
+    .inside-desktop-answer-row {
+      display: none;
+      grid-column: 1 / -1;
+      background: var(--color-white);
+    }
+
+    .inside-desktop-answer-row.is-open {
+      display: block;
+    }
+
+    .inside-desktop-answer-panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 260ms ease, opacity 220ms ease;
+    }
+
+    .inside-desktop-answer-panel.is-open {
+      opacity: 1;
+    }
+
+    .inside-desktop-answer-content {
+      border-top: 1px solid var(--tracker-line);
+      border-bottom: 1px solid var(--tracker-line);
+      background: rgba(25, 59, 59, 0.045);
+      padding: clamp(28px, 4vw, 44px);
+    }
+
+    .inside-desktop-answer-content p {
+      max-width: 820px;
+      margin: 0;
+      color: var(--tracker-muted);
+      line-height: 1.65;
+    }
+
+    .inside-desktop-answer-content p + p {
+      margin-top: 14px;
+    }
+
+    .inside-desktop-answer-content .button-row {
+      margin-top: 22px;
+    }
+
+    .inside-section-cta {
+      justify-content: center;
+      align-items: center;
+      margin-top: -1px;
+      padding: 32px;
+      border: 1px solid var(--tracker-line);
+      background: var(--color-white);
     }
 
     .route-itinerary {
@@ -1627,7 +1807,8 @@
 
     #articles .article-card:first-child h3,
     #articles .article-card:first-child p,
-    #articles .article-card:first-child .tracker-eyebrow {
+    #articles .article-card:first-child .tracker-eyebrow,
+    #articles .article-card:first-child .article-card-affordance {
       color: var(--color-white);
     }
 
@@ -1941,6 +2122,12 @@
 
       .mission-logo-title img {
         width: min(440px, 56vw);
+      }
+    }
+
+    @media (min-width: 431px) and (max-width: 940px) {
+      #articles .article-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -2586,6 +2773,18 @@
         scrollbar-width: none;
       }
 
+      #articles .article-grid {
+        display: none;
+      }
+
+      #articles .inside-mobile-accordion {
+        display: block;
+      }
+
+      #articles .inside-section-cta {
+        padding: 26px 20px;
+      }
+
       .week-grid::-webkit-scrollbar,
       #articles .article-grid::-webkit-scrollbar,
       .photo-strip::-webkit-scrollbar,
@@ -2656,17 +2855,74 @@
         object-position: center center;
       }
 
+      .mobile-photo-break-road,
+      .mobile-photo-break-portrait {
+        height: clamp(220px, 68vw, 288px);
+        margin-bottom: 0;
+      }
+
+      .mobile-photo-break-road::after,
+      .mobile-photo-break-portrait::after {
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.02) 20%,
+          rgba(0, 0, 0, 0.15) 48%,
+          rgba(0, 0, 0, 0.45) 70%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+
+      .mobile-photo-break-road .mobile-photo-break-heading,
+      .mobile-photo-break-portrait .mobile-photo-break-heading {
+        display: block;
+        position: absolute;
+        right: 20px;
+        bottom: 24px;
+        left: 20px;
+        z-index: 2;
+      }
+
+      .mobile-photo-break-road .tracker-eyebrow,
+      .mobile-photo-break-road h2,
+      .mobile-photo-break-portrait .tracker-eyebrow,
+      .mobile-photo-break-portrait h2,
+      .mobile-photo-break-portrait p {
+        color: var(--color-white);
+      }
+
+      .mobile-photo-break-road .tracker-eyebrow,
+      .mobile-photo-break-portrait .tracker-eyebrow {
+        margin-bottom: 12px;
+      }
+
+      .mobile-photo-break-road h2,
+      .mobile-photo-break-portrait h2 {
+        font-family: var(--font-sans);
+        font-size: clamp(2.05rem, 10.5vw, 3.2rem);
+        font-weight: 700;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .mobile-photo-break-portrait p {
+        max-width: 100%;
+        margin: 14px 0 0;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: clamp(0.84rem, 3.8vw, 0.98rem);
+        line-height: 1.45;
+      }
+
       .mobile-photo-break-portrait img {
         object-position: 54% 24%;
       }
 
       #articles {
-        padding-top: 58px;
+        padding-top: 0;
         padding-bottom: 64px;
       }
 
       #articles .section-head {
-        margin-bottom: 34px;
+        display: none;
       }
 
       #articles .section-head p {
@@ -2720,12 +2976,45 @@
         grid-column: auto;
       }
 
+      #rsvp .route-itinerary.is-selected .run-card {
+        display: grid;
+        gap: 16px;
+        padding: 20px;
+        border-radius: 16px;
+        border-left: 2px solid var(--color-accent);
+      }
+
+      #rsvp .route-itinerary.is-selected .rsvp-selected-stop-label {
+        display: grid;
+        gap: 7px;
+        color: var(--tracker-ink);
+        font-weight: 400;
+      }
+
+      #rsvp .route-itinerary.is-selected .rsvp-selected-stop-date {
+        color: var(--tracker-muted);
+        font-size: 0.9rem;
+        font-weight: 400;
+        line-height: 1.2;
+      }
+
+      #rsvp .route-itinerary.is-selected .rsvp-selected-stop-place {
+        color: var(--tracker-ink);
+        font-size: clamp(1.08rem, 5vw, 1.25rem);
+        font-weight: 500;
+        line-height: 1.25;
+      }
+
+      #rsvp .route-itinerary.is-selected .button-row {
+        margin-top: 0;
+      }
+
       #why {
-        padding: 40px 24px;
+        padding: 0 24px 40px;
       }
 
       #why .section-head {
-        margin-bottom: 26px;
+        display: none;
       }
 
       #why .tracker-eyebrow {
@@ -2795,7 +3084,7 @@
       .site-footer-partners {
         margin-inline: 0;
         padding: 32px 0 34px;
-        overflow: hidden;
+        overflow: visible;
       }
 
       .site-footer-partners .tracker-eyebrow {
@@ -2812,35 +3101,42 @@
         text-align: left;
       }
 
-      .partner-logo-wall {
-        display: flex;
-        justify-content: flex-start;
-        gap: 28px;
-        margin-top: 28px;
-        padding: 0 20px 4px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        overscroll-behavior-inline: contain;
-        scroll-padding-inline: 20px;
-        scroll-snap-type: x proximity;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+      .site-footer-link-group:nth-child(n + 2)::before {
+        content: "";
+        display: block;
+        width: 32px;
+        height: 2px;
+        margin: 30px 0 16px;
+        background: var(--color-accent);
       }
 
-      .partner-logo-wall::-webkit-scrollbar {
-        display: none;
+      .partner-logo-wall {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        align-items: center;
+        justify-items: center;
+        column-gap: 22px;
+        row-gap: 28px;
+        margin-top: 28px;
+        padding: 0 20px 4px;
+        overflow: visible;
       }
 
       .partner-logo-item {
-        flex: 0 0 auto;
+        display: flex;
         grid-column: auto;
-        min-width: 96px;
-        scroll-snap-align: start;
+        min-width: 0;
+        min-height: 30px;
+        align-items: center;
+        justify-content: center;
       }
 
       .partner-logo-item img {
-        max-width: 150px;
-        max-height: 32px;
+        max-width: 92px;
+        max-height: 26px;
         opacity: 0.78;
       }
     }
@@ -3096,8 +3392,12 @@
         </div>
       </section>
 
-      <div class="mobile-photo-break mobile-photo-break-road" aria-hidden="true">
+      <div class="mobile-photo-break mobile-photo-break-road">
         <img src="assets/road-aerial-DbGvJBXy.jpg" alt="">
+        <div class="mobile-photo-break-heading">
+          <div class="tracker-eyebrow">INSIDE GOODWIN GENERATED MISSION AMERICA</div>
+          <h2>How do you run 50 marathons in 24 days?</h2>
+        </div>
       </div>
 
       <section class="tracker-section" id="articles">
@@ -3107,50 +3407,262 @@
             <h2>How do you run 50 marathons in 24 days?</h2>
           </div>
         </div>
-        <div class="article-grid">
+        <div class="article-grid" data-inside-desktop-grid>
           <article class="article-card">
-            <div class="tracker-eyebrow">THE RECORD</div>
-            <h3>What makes it official?</h3>
-            <p>Goodwin Generated Mission America is an attempt to establish or break an applicable world record. Any record claim remains subject to the relevant governing body's evidence review and official verification following completion of the attempt.</p>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-will" id="inside-desktop-question-will" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">THE ATHLETE</div>
+              <h3>Who is Will Goodge?</h3>
+              <p>Known by some as the fastest man to run across Australia, Goodge has spent the last decade building a body and mind for extreme endurance.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">TRAINING</div>
-            <h3>How do you train for 50 marathons?</h3>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-goodwin" id="inside-desktop-question-goodwin" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">THE PARTNERSHIP</div>
+              <h3>Why is Goodwin involved?</h3>
+              <p>Goodwin backs athletes attempting things history hasn't seen yet. William Goodge doesn't talk about limits — he builds his life around running through them.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">RECOVERY</div>
-            <h3>What happens between runs?</h3>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-origin" id="inside-desktop-question-origin" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">THE ORIGIN</div>
+              <h3>How did this all come together?</h3>
+              <p>One run. One world-record dream. And a joke about having access to time machines.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
+          </article>
+          <div class="inside-desktop-answer-row" data-inside-desktop-row>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-will" role="region" aria-labelledby="inside-desktop-question-will" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>Goodge, known by some as the fastest man to run across Australia, crossed the country on foot in just over 35 days (2,361 miles). He has also run from Los Angeles to New York in 55 days (3,011 miles), and spent the last decade engineering a body and mind capable of what most consider biologically impossible.</p>
+                <p>He runs in memory of his mother, Amanda, who died of non-Hodgkin's lymphoma in 2018. Every project he takes on is a fundraiser. Every mile is a tribute.</p>
+              </div>
+            </div>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-goodwin" role="region" aria-labelledby="inside-desktop-question-goodwin" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>Goodwin Generated Mission America is the first chapter of the Goodwin Endurance Series — an ultra-endurance platform built around athletes attempting things history hasn't seen yet.</p>
+                <p>The Goodwin Company backs people willing to push beyond what most consider possible. William Goodge was chosen to kick off the series because he doesn't talk about limits. He runs through them.</p>
+                <p>Mission America brings those two ideas together: an athlete built for extreme endurance and a company built to solve the operational challenges required to make an attempt of this scale possible.</p>
+              </div>
+            </div>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-origin" role="region" aria-labelledby="inside-desktop-question-origin" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>The Founder of Goodwin and Will Goodge went on a run and talked about what challenge Will was looking to take on next. Will's dream was to set a world record by running 50 marathons in 50 states in the quickest time ever. Goodwin's Founder joked that he had access to "time machines" — airplanes — and a dream started to turn into a plan.</p>
+              </div>
+            </div>
+          </div>
+          <article class="article-card">
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-join" id="inside-desktop-question-join" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">RUN WITH WILL</div>
+              <h3>Can anyone join?</h3>
+              <p>Yes. Every marathon gives runners the chance to join Will for the first 5K — individually, with friends, or alongside an entire run club.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">FUEL</div>
-            <h3>What does Will eat?</h3>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-eat-sleep" id="inside-desktop-question-eat-sleep" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">RECOVERY</div>
+              <h3>Where does Will eat and sleep?</h3>
+              <p>Wherever the schedule allows. Nutrition, hydration, sleep and recovery happen on the move, with a team managing the protocol between every marathon.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">SLEEP</div>
-            <h3>When does Will actually sleep?</h3>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-logistics" id="inside-desktop-question-logistics" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">LOGISTICS</div>
+              <h3>How is travel between states handled?</h3>
+              <p>Private aviation, commercial flights and RV transfers connect 50 start lines. Goodwin coordinates the moving pieces against a clock with almost no margin for error.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
+          </article>
+          <div class="inside-desktop-answer-row" data-inside-desktop-row>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-join" role="region" aria-labelledby="inside-desktop-question-join" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>Every run will have an option for outside participants to join in this historic achievement by running the first 5K of the marathon with Will. Since he is running in every state, there is a good chance he will be running close to you, and this is the perfect time to be part of a world record and run with William Goodge.</p>
+                <p>Whether you want to sign up as an entire run club or as an individual, use the Run With Will signup to register your interest.</p>
+                <div class="button-row"><a class="tracker-button secondary" href="#rsvp">Run With Will →</a></div>
+              </div>
+            </div>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-eat-sleep" role="region" aria-labelledby="inside-desktop-question-eat-sleep" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>Goodge will be eating and sleeping on the go — in the RV and wherever the schedule allows. Team members are providing nutrition and hydration protocols for every run, along with a regimented rest and sleep schedule.</p>
+                <div class="button-row"><a class="tracker-button secondary" href="fifty-runs.html">View the Itinerary →</a></div>
+              </div>
+            </div>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-logistics" role="region" aria-labelledby="inside-desktop-question-logistics" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>Goodwin Generated Mission America runs on precision. The Goodwin Company provides the aerial transport, support fleet, and operational intelligence that make 50 marathons in 24 days physically possible.</p>
+                <p>The same exacting standards Goodwin applies to flight are applied to human performance. The Goodwin Company coordinates the entire route, including private-aviation rotations, commercial airlines, and RV transfers.</p>
+              </div>
+            </div>
+          </div>
+          <article class="article-card">
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-record" id="inside-desktop-question-record" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">THE RECORD</div>
+              <h3>What makes it official?</h3>
+              <p>Goodwin Generated Mission America is an attempt to establish or break an applicable world record. Any record claim remains subject to the relevant governing body's evidence review and official verification following completion of the attempt.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">EQUIPMENT</div>
-            <h3>What survives 1,310 miles?</h3>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-training" id="inside-desktop-question-training" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">TRAINING</div>
+              <h3>How do you train for 50 marathons?</h3>
+              <p>You don't train for one marathon 50 times. Goodge has spent years building the durability, aerobic capacity and resilience to perform under accumulated fatigue.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
           <article class="article-card">
-            <div class="tracker-eyebrow">TRAVEL</div>
-            <h3>How do you move through 50 states?</h3>
+            <button class="article-card-trigger" type="button" aria-label="Expand answer" aria-expanded="false" aria-controls="inside-desktop-answer-recovery" id="inside-desktop-question-recovery" data-inside-desktop-trigger>
+              <div class="tracker-eyebrow">RECOVERY</div>
+              <h3>What happens between runs?</h3>
+              <p>The marathon ends. The clock doesn't. Every hour between finish lines is spent refueling, rehydrating, recovering, traveling and sleeping whenever the schedule allows.</p>
+              <span class="article-card-affordance" aria-hidden="true">+</span>
+            </button>
           </article>
-          <article class="article-card">
-            <div class="tracker-eyebrow">THE CREW</div>
-            <h3>Who keeps Will moving?</h3>
-          </article>
-          <article class="article-card">
-            <div class="tracker-eyebrow">FAQ</div>
-            <h3>Still have questions?</h3>
-            <div class="button-row"><a class="tracker-button secondary is-accent" href="faq.html">View FAQ</a></div>
-          </article>
+          <div class="inside-desktop-answer-row" data-inside-desktop-row>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-record" role="region" aria-labelledby="inside-desktop-question-record" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>Goodwin Generated Mission America is an attempt to establish or break an applicable world record. Any record claim remains subject to the relevant governing body's evidence review and official verification following completion of the attempt.</p>
+              </div>
+            </div>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-training" role="region" aria-labelledby="inside-desktop-question-training" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>You don't train for one marathon 50 times. Goodge has spent years building the durability, aerobic capacity and resilience required to perform under extreme accumulated fatigue.</p>
+                <p>For Goodwin Generated Mission America, the goal isn't to peak for a single race. It's to prepare his body to run 26.2 miles, recover in transit, and be ready to do it again — and again — across 50 states in just 24 days.</p>
+              </div>
+            </div>
+            <div class="inside-desktop-answer-panel" id="inside-desktop-answer-recovery" role="region" aria-labelledby="inside-desktop-question-recovery" data-inside-desktop-panel>
+              <div class="inside-desktop-answer-content">
+                <p>The marathon ends. The clock doesn't.</p>
+                <p>Every hour between finish lines is part of the attempt: refueling, rehydrating, mobility and recovery work, sleep whenever the schedule allows, and getting Will to the next state.</p>
+                <p>The challenge isn't simply running 50 marathons. It's recovering fast enough to keep running them.</p>
+              </div>
+            </div>
+          </div>
         </div>
+        <div class="inside-mobile-accordion" data-inside-accordion>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-will" id="inside-question-will">
+              <span>Who is Will Goodge?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-will" role="region" aria-labelledby="inside-question-will">
+              <div class="inside-accordion-content">
+                <p>Goodge, known by some as the fastest man to run across Australia, crossed the country on foot in just over 35 days (2,361 miles). He has also run from Los Angeles to New York in 55 days (3,011 miles), and spent the last decade engineering a body and mind capable of what most consider biologically impossible.</p>
+                <p>He runs in memory of his mother, Amanda, who died of non-Hodgkin's lymphoma in 2018. Every project he takes on is a fundraiser. Every mile is a tribute.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-goodwin" id="inside-question-goodwin">
+              <span>Why is Goodwin involved?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-goodwin" role="region" aria-labelledby="inside-question-goodwin">
+              <div class="inside-accordion-content">
+                <p>Goodwin Generated Mission America is the first chapter of the Goodwin Endurance Series — an ultra-endurance platform built around athletes attempting things history hasn't seen yet.</p>
+                <p>The Goodwin Company backs people willing to push beyond what most consider possible. William Goodge was chosen to kick off the series because he doesn't talk about limits. He runs through them.</p>
+                <p>Mission America brings those two ideas together: an athlete built for extreme endurance and a company built to solve the operational challenges required to make an attempt of this scale possible.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-origin" id="inside-question-origin">
+              <span>How did this all come together?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-origin" role="region" aria-labelledby="inside-question-origin">
+              <div class="inside-accordion-content">
+                <p>The Founder of Goodwin and Will Goodge went on a run and talked about what challenge Will was looking to take on next. Will's dream was to set a world record by running 50 marathons in 50 states in the quickest time ever. Goodwin's Founder joked that he had access to "time machines" — airplanes — and a dream started to turn into a plan.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-join" id="inside-question-join">
+              <span>Can anyone join?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-join" role="region" aria-labelledby="inside-question-join">
+              <div class="inside-accordion-content">
+                <p>Every run will have an option for outside participants to join in this historic achievement by running the first 5K of the marathon with Will. Since he is running in every state, there is a good chance he will be running close to you, and this is the perfect time to be part of a world record and run with William Goodge.</p>
+                <p>Whether you want to sign up as an entire run club or as an individual, use the Run With Will signup to register your interest.</p>
+                <div class="button-row"><a class="tracker-button secondary" href="#rsvp">Run With Will →</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-eat-sleep" id="inside-question-eat-sleep">
+              <span>Where does Will eat and sleep?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-eat-sleep" role="region" aria-labelledby="inside-question-eat-sleep">
+              <div class="inside-accordion-content">
+                <p>Goodge will be eating and sleeping on the go — in the RV and wherever the schedule allows. Team members are providing nutrition and hydration protocols for every run, along with a regimented rest and sleep schedule.</p>
+                <div class="button-row"><a class="tracker-button secondary" href="fifty-runs.html">View the Itinerary →</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-logistics" id="inside-question-logistics">
+              <span>How is travel between states handled?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-logistics" role="region" aria-labelledby="inside-question-logistics">
+              <div class="inside-accordion-content">
+                <p>Goodwin Generated Mission America runs on precision. The Goodwin Company provides the aerial transport, support fleet, and operational intelligence that make 50 marathons in 24 days physically possible.</p>
+                <p>The same exacting standards Goodwin applies to flight are applied to human performance. The Goodwin Company coordinates the entire route, including private-aviation rotations, commercial airlines, and RV transfers.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-record" id="inside-question-record">
+              <span>What makes it official?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-record" role="region" aria-labelledby="inside-question-record">
+              <div class="inside-accordion-content">
+                <p>Goodwin Generated Mission America is an attempt to establish or break an applicable world record. Any record claim remains subject to the relevant governing body's evidence review and official verification following completion of the attempt.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-training" id="inside-question-training">
+              <span>How do you train for 50 marathons?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-training" role="region" aria-labelledby="inside-question-training">
+              <div class="inside-accordion-content">
+                <p>You don't train for one marathon 50 times. Goodge has spent years building the durability, aerobic capacity and resilience required to perform under extreme accumulated fatigue.</p>
+                <p>For Goodwin Generated Mission America, the goal isn't to peak for a single race. It's to prepare his body to run 26.2 miles, recover in transit, and be ready to do it again — and again — across 50 states in just 24 days.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-recovery" id="inside-question-recovery">
+              <span>What happens between runs?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="inside-accordion-panel" id="inside-answer-recovery" role="region" aria-labelledby="inside-question-recovery">
+              <div class="inside-accordion-content">
+                <p>The marathon ends. The clock doesn't.</p>
+                <p>Every hour between finish lines is part of the attempt: refueling, rehydrating, mobility and recovery work, sleep whenever the schedule allows, and getting Will to the next state.</p>
+                <p>The challenge isn't simply running 50 marathons. It's recovering fast enough to keep running them.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="button-row inside-section-cta"><a class="tracker-button secondary is-accent" href="faq.html">View FAQ</a></div>
       </section>
 
-      <div class="mobile-photo-break mobile-photo-break-portrait" aria-hidden="true">
+      <div class="mobile-photo-break mobile-photo-break-portrait">
         <img src="assets/goodge-portrait-BKrZBh3V.jpg" alt="">
+        <div class="mobile-photo-break-heading">
+          <div class="tracker-eyebrow">WHY</div>
+          <h2>Every Mile Has a Reason</h2>
+          <p>Will began running after losing his mother, Amanda, to cancer in 2018. What started as a way to honor her memory has grown into something much bigger.</p>
+        </div>
       </div>
 
       <section class="tracker-section" id="why">
@@ -3208,7 +3720,7 @@
             <ul class="site-footer-link-group">
               <li><a href="the-run.html">The Run</a></li>
               <li><a href="#map">Live Map</a></li>
-              <li><a href="updates.html">Updates Archive</a></li>
+              <li><a href="updates.html">Running Live Archive</a></li>
               <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
             </ul>
             <ul class="site-footer-link-group">
@@ -3305,6 +3817,96 @@
     }
 
     initMobileNavigation();
+
+    function initInsideDesktopAnswers() {
+      const grid = document.querySelector("[data-inside-desktop-grid]");
+      if (!grid) return;
+
+      const triggers = Array.from(grid.querySelectorAll("[data-inside-desktop-trigger]"));
+      const rows = Array.from(grid.querySelectorAll("[data-inside-desktop-row]"));
+      const panels = Array.from(grid.querySelectorAll("[data-inside-desktop-panel]"));
+
+      const setPanelHeight = (panel) => {
+        panel.style.maxHeight = panel.classList.contains("is-open") ? `${panel.scrollHeight}px` : "0px";
+      };
+
+      const closeAll = () => {
+        triggers.forEach((trigger) => {
+          trigger.setAttribute("aria-expanded", "false");
+          trigger.setAttribute("aria-label", "Expand answer");
+          trigger.closest(".article-card")?.classList.remove("is-selected");
+        });
+        panels.forEach((panel) => {
+          panel.classList.remove("is-open");
+          setPanelHeight(panel);
+        });
+        rows.forEach((row) => row.classList.remove("is-open"));
+      };
+
+      const openAnswer = (trigger) => {
+        const panel = document.getElementById(trigger.getAttribute("aria-controls"));
+        const row = panel?.closest("[data-inside-desktop-row]");
+        if (!panel || !row) return;
+
+        closeAll();
+        row.classList.add("is-open");
+        panel.classList.add("is-open");
+        setPanelHeight(panel);
+        trigger.setAttribute("aria-expanded", "true");
+        trigger.setAttribute("aria-label", "Collapse answer");
+        trigger.closest(".article-card")?.classList.add("is-selected");
+      };
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener("click", () => {
+          const isOpen = trigger.getAttribute("aria-expanded") === "true";
+          closeAll();
+          if (!isOpen) openAnswer(trigger);
+        });
+      });
+
+      window.addEventListener("resize", () => {
+        panels.forEach(setPanelHeight);
+      });
+    }
+
+    initInsideDesktopAnswers();
+
+    function initInsideMobileAccordion() {
+      const accordion = document.querySelector("[data-inside-accordion]");
+      if (!accordion) return;
+
+      const triggers = Array.from(accordion.querySelectorAll(".inside-accordion-trigger"));
+      const closePanel = (trigger) => {
+        const panel = document.getElementById(trigger.getAttribute("aria-controls"));
+        trigger.setAttribute("aria-expanded", "false");
+        if (!panel) return;
+        panel.style.maxHeight = "0px";
+        panel.classList.remove("is-open");
+      };
+      const openPanel = (trigger) => {
+        const panel = document.getElementById(trigger.getAttribute("aria-controls"));
+        trigger.setAttribute("aria-expanded", "true");
+        if (!panel) return;
+        panel.classList.add("is-open");
+        panel.style.maxHeight = `${panel.scrollHeight}px`;
+      };
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener("click", () => {
+          const isOpen = trigger.getAttribute("aria-expanded") === "true";
+          triggers.forEach(closePanel);
+          if (!isOpen) openPanel(trigger);
+        });
+      });
+
+      window.addEventListener("resize", () => {
+        const openTrigger = accordion.querySelector('.inside-accordion-trigger[aria-expanded="true"]');
+        if (openTrigger) openPanel(openTrigger);
+      });
+    }
+
+    initInsideMobileAccordion();
 
     const MISSION_AMERICA_INTRO_CONFIG = {
       sessionKey: "missionAmericaIntroSeen",
@@ -3817,11 +4419,23 @@
       `;
     }
 
+    function getSelectedRouteStopMarkup(stop) {
+      return `
+        <article class="run-card">
+          <div class="rsvp-selected-stop-label">
+            <span class="rsvp-selected-stop-date">${stop.date}</span>
+            <span class="rsvp-selected-stop-place">${stop.city}, ${stop.abbr}</span>
+          </div>
+          ${stop.n === 50 ? "" : '<div class="button-row"><a class="tracker-button secondary" href="partners.html" data-rsvp-link>RSVP</a></div>'}
+        </article>
+      `;
+    }
+
     function populateRsvpMobileControls() {
       const select = document.querySelector("[data-rsvp-state-select]");
       if (!select || select.dataset.populated === "true") return;
       select.innerHTML = '<option value="">Select your state</option>' + routeStops.map((stop) => (
-        `<option value="${stop.n}">${stop.city}, ${stop.abbr}</option>`
+        `<option value="${stop.n}">${stop.date} — ${stop.city}, ${stop.abbr}</option>`
       )).join("");
       select.dataset.populated = "true";
       select.addEventListener("change", () => {
@@ -3855,7 +4469,7 @@
 
         if (selectedRouteStop) {
           const selectedStop = routeStops.find((stop) => String(stop.n) === selectedRouteStop);
-          container.innerHTML = selectedStop ? getRouteStopMarkup(selectedStop) : "";
+          container.innerHTML = selectedStop ? getSelectedRouteStopMarkup(selectedStop) : "";
           return;
         }
 
