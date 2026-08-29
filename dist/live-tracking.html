@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mission America Live Tracker | Goodwin</title>
-  <meta name="description" content="Follow William Goodge during Mission America with live tracking, Strava, field updates, FAQs, and RSVP links.">
+  <title>Goodwin Generated Mission America Live Tracker | Goodwin</title>
+  <meta name="description" content="Follow William Goodge during Goodwin Generated Mission America with live tracking, Strava, field updates, FAQs, and RSVP links.">
   <link rel="icon" href="assets/goodwin-favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/goodwin-webclip.png">
   <link rel="stylesheet" href="fonts/inter.css">
@@ -1204,6 +1204,12 @@
       color: var(--color-white);
     }
 
+    .tracker-button.secondary.is-accent {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      color: var(--color-white);
+    }
+
     .follow-panel {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
@@ -1228,6 +1234,11 @@
       margin-top: 14px;
       color: var(--tracker-muted);
       line-height: 1.55;
+    }
+
+    .follow-panel.signup-only {
+      grid-template-columns: minmax(320px, 0.8fr);
+      justify-content: end;
     }
 
     .follow-form {
@@ -1264,6 +1275,20 @@
       color: var(--tracker-muted);
       font-size: 0.85rem;
       line-height: 1.45;
+    }
+
+    .legal-note {
+      margin-top: 12px;
+      color: var(--tracker-muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .legal-note a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--color-accent);
+      text-underline-offset: 0.18em;
     }
 
     .photo-strip {
@@ -1338,18 +1363,65 @@
     }
 
     .week-card {
+      position: relative;
       display: block;
+      overflow: hidden;
       min-width: 0;
       min-height: 280px;
       padding: clamp(24px, 3vw, 38px);
       background: var(--color-white);
+      background-size: cover;
+      background-repeat: no-repeat;
       color: var(--tracker-ink);
       text-decoration: none;
       transition: background 160ms ease, transform 160ms ease;
     }
 
+    .week-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: rgba(0, 0, 0, var(--week-card-overlay, 0));
+      pointer-events: none;
+    }
+
+    .week-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .week-card.has-image {
+      color: var(--color-white);
+    }
+
+    .week-card.has-image h3,
+    .week-card.has-image p,
+    .week-card.has-image .tracker-eyebrow {
+      color: var(--color-white);
+    }
+
+    .week-card.week-card-launch {
+      --week-card-overlay: 0.5;
+      background-image: url("assets/field-notes-week-2-grind.jpg");
+      background-position: 50% 44%;
+    }
+
+    .week-card.week-card-grind {
+      --week-card-overlay: 0.55;
+      background-image: url("assets/field-notes-week-1-launch.jpg");
+      background-size: 120% auto;
+      background-position: 0% 30%;
+    }
+
+    .week-card.week-card-finish {
+      --week-card-overlay: 0.48;
+      background-image: url("assets/field-notes-week-3-finish.jpg");
+      background-position: 50% 35%;
+    }
+
     .week-card:hover {
-      background: rgba(10, 10, 10, 0.04);
+      background-color: rgba(10, 10, 10, 0.04);
       transform: translateY(-2px);
     }
 
@@ -1491,6 +1563,45 @@
       display: none;
     }
 
+    .rsvp-consent {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      max-width: 760px;
+      margin: 0 0 22px;
+      color: var(--tracker-muted);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .rsvp-consent input {
+      width: 18px;
+      height: 18px;
+      margin-top: 0.18em;
+      accent-color: var(--color-accent);
+      flex: 0 0 auto;
+    }
+
+    .rsvp-consent a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--color-accent);
+      text-underline-offset: 0.18em;
+    }
+
+    .rsvp-consent-message {
+      display: none;
+      margin: -12px 0 20px;
+      color: var(--color-accent);
+      font-size: 0.86rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .rsvp-consent-message.is-visible {
+      display: block;
+    }
+
     .route-number {
       display: grid;
       place-items: center;
@@ -1562,9 +1673,16 @@
 
     .site-footer-main {
       display: grid;
-      grid-template-columns: minmax(0, 2fr) repeat(2, minmax(180px, 1fr));
+      grid-template-columns: minmax(220px, 0.9fr) minmax(0, 2.1fr);
       gap: clamp(32px, 6vw, 86px);
       padding: 56px 0;
+    }
+
+    .site-footer-nav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      gap: clamp(24px, 4vw, 64px);
     }
 
     .site-footer-brand {
@@ -1587,13 +1705,16 @@
     .site-footer ul {
       display: grid;
       gap: 10px;
-      margin-top: 16px;
+      margin: 0;
+      padding: 0;
       list-style: none;
     }
 
-    .site-footer a {
+    .site-footer a,
+    .site-footer-link-disabled {
       color: var(--tracker-muted);
       text-decoration: none;
+      white-space: nowrap;
       transition: color 160ms ease;
     }
 
@@ -1610,6 +1731,26 @@
       border-top: 1px solid var(--tracker-line);
       color: rgba(10, 10, 10, 0.62);
       font-size: 0.8rem;
+    }
+
+    .site-footer-legal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 22px;
+      margin-top: 3px;
+      padding: 0 0 28px;
+      color: rgba(10, 10, 10, 0.62);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .site-footer .site-footer-disclaimer {
+      width: 100%;
+      max-width: none;
+      margin: 0 0 30px;
+      color: rgba(10, 10, 10, 0.58);
+      font-size: 0.72rem;
+      line-height: 1.55;
     }
 
     .site-footer-partners {
@@ -1632,6 +1773,15 @@
       font-size: clamp(0.64rem, 0.85vw, 0.82rem);
       font-weight: 600;
       line-height: 1.55;
+      text-align: center;
+    }
+
+    .site-footer .site-footer-partner-disclaimer {
+      max-width: 620px;
+      margin: 30px auto 0;
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 0.68rem;
+      line-height: 1.45;
       text-align: center;
     }
 
@@ -2073,6 +2223,18 @@
         max-width: 100%;
         margin-top: 52px;
       }
+
+      .site-footer-nav {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .site-footer-nav a,
+      .site-footer-link-disabled {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+      }
     }
 
     @media (max-width: 560px) {
@@ -2451,6 +2613,18 @@
         padding: 26px 22px;
       }
 
+      .week-card.week-card-launch {
+        background-position: 50% 44%;
+      }
+
+      .week-card.week-card-grind {
+        background-position: 8% 22%;
+      }
+
+      .week-card.week-card-finish {
+        background-position: 50% 36%;
+      }
+
       .mobile-photo-break {
         display: block;
         position: relative;
@@ -2797,7 +2971,7 @@
     </nav>
 
     <section class="tracker-hero" id="live" aria-labelledby="page-title">
-      <img class="tracker-hero-bg" src="assets/hero-runner-Ci5y42DW.jpg" alt="Open road at dusk for Mission America">
+      <img class="tracker-hero-bg" src="assets/hero-runner-Ci5y42DW.jpg" alt="Open road at dusk for Goodwin Generated Mission America">
       <div class="tracker-hero-inner">
         <div class="tracker-headline">
           <div class="mission-logo-stack" aria-hidden="true">
@@ -2813,7 +2987,7 @@
     </section>
 
     <div class="tracker-content">
-      <section class="tracker-section" id="the-run" aria-label="Mission America feature pages">
+      <section class="tracker-section" id="the-run" aria-label="Goodwin Generated Mission America feature pages">
         <div class="feature-row">
           <a class="feature-card" href="the-run.html">
             <div class="tracker-eyebrow">OVERVIEW</div>
@@ -2840,43 +3014,38 @@
         <div class="section-head">
           <div>
             <div class="tracker-eyebrow">LIVE MAP</div>
-            <h2>50 states. One moving target.</h2>
+            <h2>Follow William and Team Goodwin in real time.</h2>
           </div>
-          <p>Follow William and Team Goodwin in real time.</p>
         </div>
-        <div class="follow-panel">
+        <div class="follow-panel signup-only">
           <div>
-            <div class="tracker-eyebrow">RACE UPDATES</div>
-            <h3>Come along for the ride.</h3>
-            <p>Get the view from inside Mission America.</p>
-          </div>
-          <div>
-            <div class="tracker-eyebrow action-label">Join Team Goodwin</div>
             <form class="follow-form" data-follow-form>
               <label class="sr-only" for="follow-email">Email address</label>
               <input id="follow-email" name="email" type="email" autocomplete="email" placeholder="Email address" required>
               <button class="tracker-button" type="submit">Join Team Goodwin</button>
             </form>
+            <p class="legal-note">By submitting, you agree to receive updates from Team Goodwin. See our <a href="/privacy/">Privacy Policy</a>.</p>
             <div class="follow-note" data-follow-message aria-live="polite"></div>
           </div>
         </div>
-        <section class="ticker-panel" aria-label="Mission America live ticker">
+        <section class="ticker-panel" aria-label="Goodwin Generated Mission America live ticker">
           <div class="ticker-head">
             <div class="tracker-eyebrow">Latest Updates</div>
             <a href="updates.html">View All Updates</a>
           </div>
           <div class="ticker-track" data-ticker-items>
-            <div class="ticker-item"><time>Loading</time><span>Fetching Mission America updates.</span></div>
+            <div class="ticker-item"><time>Loading</time><span>Fetching Goodwin Generated Mission America updates.</span></div>
           </div>
         </section>
-        <div class="tracker-map-stage" aria-label="Mission America live map">
-          <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Mission America route map"></div>
-          <div class="tracking-map-key" aria-label="Mission America tracking layers">
+        <div class="tracker-map-stage" aria-label="Goodwin Generated Mission America live map">
+          <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Goodwin Generated Mission America route map"></div>
+          <div class="tracking-map-key" aria-label="Goodwin Generated Mission America tracking layers">
             <span><img src="assets/map-runner-bobblehead-small.png" alt="">Runner</span>
             <span><svg viewBox="-17 -23 34 46" aria-hidden="true" focusable="false"><path class="legend-plane" d="M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z"></path></svg>Flight</span>
             <span><img src="assets/map-rv-green-small.png" alt="">RV</span>
           </div>
         </div>
+        <p class="legal-note">Tracking note: Location and status information may be delayed, approximate or temporarily unavailable. Travel schedules and route information are subject to change.</p>
         <div class="tracker-grid mission-clock-grid">
           <div class="tracker-panel">
             <div class="tracker-eyebrow">MISSION CLOCK</div>
@@ -2900,24 +3069,24 @@
             <div class="tracker-eyebrow">FIELD NOTES</div>
             <h2>The stuff Strava doesn't tell you.</h2>
           </div>
-          <p>Finish lines. Airport runs. Good legs. Bad legs. Lost bags. Tiny victories. Whatever happens out there, you'll find it here.</p>
+          <p>Finish lines. Airport runs. Good legs. Bad legs. Lost bags. Whatever happens out there, you'll find it here.</p>
         </div>
         <div class="week-grid">
-          <a class="week-card" href="week-1.html">
+          <a class="week-card has-image week-card-launch" href="week-1.html">
             <div class="tracker-eyebrow">WEEK 1</div>
             <h3>The Launch</h3>
             <p>Oct 9–15</p>
             <p>Hawaii to the West.</p>
             <span class="week-link">View Week 1 →</span>
           </a>
-          <a class="week-card" href="week-2.html">
+          <a class="week-card has-image week-card-grind" href="week-2.html">
             <div class="tracker-eyebrow">WEEK 2</div>
             <h3>The Grind</h3>
             <p>Oct 16–24</p>
             <p>The miles pile up.</p>
             <span class="week-link">View Week 2 →</span>
           </a>
-          <a class="week-card" href="week-3.html">
+          <a class="week-card has-image week-card-finish" href="week-3.html">
             <div class="tracker-eyebrow">WEEK 3</div>
             <h3>The Finish</h3>
             <p>Oct 25–Nov 1</p>
@@ -2934,7 +3103,7 @@
       <section class="tracker-section" id="articles">
         <div class="section-head">
           <div>
-            <div class="tracker-eyebrow">INSIDE MISSION AMERICA</div>
+            <div class="tracker-eyebrow">INSIDE GOODWIN GENERATED MISSION AMERICA</div>
             <h2>How do you run 50 marathons in 24 days?</h2>
           </div>
         </div>
@@ -2942,6 +3111,7 @@
           <article class="article-card">
             <div class="tracker-eyebrow">THE RECORD</div>
             <h3>What makes it official?</h3>
+            <p>Goodwin Generated Mission America is an attempt to establish or break an applicable world record. Any record claim remains subject to the relevant governing body's evidence review and official verification following completion of the attempt.</p>
           </article>
           <article class="article-card">
             <div class="tracker-eyebrow">TRAINING</div>
@@ -2974,7 +3144,7 @@
           <article class="article-card">
             <div class="tracker-eyebrow">FAQ</div>
             <h3>Still have questions?</h3>
-            <div class="button-row"><a class="tracker-button secondary" href="faq.html">View FAQ</a></div>
+            <div class="button-row"><a class="tracker-button secondary is-accent" href="faq.html">View FAQ</a></div>
           </article>
         </div>
       </section>
@@ -3034,25 +3204,27 @@
           <div>
             <div class="site-footer-brand"><img src="assets/goodwin-logo.png" alt="Goodwin"></div>
           </div>
-          <div>
-            <div class="tracker-eyebrow">Mission America</div>
-            <ul>
+          <nav class="site-footer-nav" aria-label="Footer navigation">
+            <ul class="site-footer-link-group">
               <li><a href="the-run.html">The Run</a></li>
               <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
               <li><a href="updates.html">Updates Archive</a></li>
-              <li><a href="faq.html">FAQ</a></li>
               <li><a href="#map">Live Map</a></li>
             </ul>
-          </div>
-          <div>
-            <div class="tracker-eyebrow">Team Goodwin</div>
-            <ul>
-              <li><a href="will.html">Will</a></li>
-              <li><a href="athletes.html">Roster</a></li>
-              <li><a href="partners.html">Partners</a></li>
-              <li><a href="https://www.teamgoodwin.com" target="_blank" rel="noreferrer">teamGoodwin.com</a></li>
+            <ul class="site-footer-link-group">
+              <li><a href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer">Will — Instagram</a></li>
+              <li><span class="site-footer-link-disabled">Will — TikTok</span></li>
+              <li><a href="https://www.youtube.com/@goodge" target="_blank" rel="noopener noreferrer">Will — YouTube</a></li>
+              <li><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer">Rizkia</a></li>
+              <li><a href="https://live-mission-america-50.pantheonsite.io/#faq" target="_blank" rel="noopener noreferrer">WilliamGoodge.com</a></li>
             </ul>
-          </div>
+            <ul class="site-footer-link-group">
+              <li><a href="https://www.linkedin.com/company/teamgoodwin/" target="_blank" rel="noopener noreferrer">Goodwin — LinkedIn</a></li>
+              <li><a href="https://www.youtube.com/@goodwinsoftwarecompany" target="_blank" rel="noopener noreferrer">Goodwin — YouTube</a></li>
+              <li><a href="https://x.com/goteamgoodwin" target="_blank" rel="noopener noreferrer">Goodwin — X</a></li>
+              <li><a href="https://teamgoodwin.com/" target="_blank" rel="noopener noreferrer">TeamGoodwin.com</a></li>
+            </ul>
+          </nav>
         </div>
         <div class="site-footer-partners" aria-label="Partners">
           <div class="tracker-eyebrow">MADE POSSIBLE BY</div>
@@ -3073,7 +3245,15 @@
             <div class="partner-logo-item"><img src="assets/partners/rizkia-footer.png" alt="Rizkia logo"></div>
             <div class="partner-logo-item"><img src="assets/partners/whoop-footer.png" alt="WHOOP logo"></div>
           </div>
+          <p class="site-footer-partner-disclaimer">All trademarks and logos are the property of their respective owners and are used with permission where applicable.</p>
         </div>
+        <nav class="site-footer-legal" aria-label="Legal links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="/participation-terms/">Participation Terms</a>
+          <a href="/accessibility/">Accessibility</a>
+        </nav>
+        <p class="site-footer-disclaimer">Goodwin Generated Mission America is an endurance event and world record attempt. Routes, schedules, locations, tracking data and event details are subject to change. World record status is subject to independent verification. Participation in any associated run or event is voluntary and subject to the Participation Terms.</p>
         <div class="site-footer-bottom">
           <span>© 2026 Goodwin Company</span>
           <span>Goodwin Generated</span>
@@ -3081,6 +3261,9 @@
       </footer>
     </div>
   </main>
+  <template id="fundraising-disclosure-template">
+    <p class="legal-note">Donations are processed by [PLATFORM] for the benefit of [BENEFICIARY]. See the fundraising page for applicable terms and tax-deductibility information.</p>
+  </template>
 
   <script>
     function initMobileNavigation() {
@@ -3294,7 +3477,7 @@
       {
         date: "2026-10-09",
         time: "06:00 EDT",
-        title: "Mission America opens in Honolulu",
+        title: "Goodwin Generated Mission America opens in Honolulu",
         body: "The first marathon sets the baseline for 24 days of state-by-state progress."
       },
       {
@@ -3331,7 +3514,7 @@
         .map((update) => ({
           date: update.date || "",
           time: update.time || "",
-          title: update.title || "Mission America update",
+          title: update.title || "Goodwin Generated Mission America update",
           body: update.body || update.text || ""
         }))
         .filter((update) => update.title || update.body);
@@ -3628,7 +3811,7 @@
             <div class="tracker-eyebrow">${stop.date} · ${stop.state}</div>
             <h3>${stop.city}</h3>
           </div>
-          ${stop.n === 50 ? "" : '<div class="button-row"><a class="tracker-button secondary" href="partners.html">RSVP</a></div>'}
+          ${stop.n === 50 ? "" : '<div class="button-row"><a class="tracker-button secondary" href="partners.html" data-rsvp-link>RSVP</a></div>'}
         </article>
       `;
     }
@@ -3637,7 +3820,7 @@
       const select = document.querySelector("[data-rsvp-state-select]");
       if (!select || select.dataset.populated === "true") return;
       select.innerHTML = '<option value="">Select your state</option>' + routeStops.map((stop) => (
-        `<option value="${stop.n}">${String(stop.n).padStart(2, "0")} · ${stop.state} · ${stop.city}</option>`
+        `<option value="${stop.n}">${stop.city}, ${stop.abbr}</option>`
       )).join("");
       select.dataset.populated = "true";
       select.addEventListener("change", () => {
@@ -4133,7 +4316,7 @@
       const subscribers = JSON.parse(localStorage.getItem("mission-follow-emails") || "[]");
       subscribers.push({ email, createdAt: new Date().toISOString() });
       localStorage.setItem("mission-follow-emails", JSON.stringify(subscribers));
-      if (message) message.textContent = "Thanks. You are on the Mission America updates list.";
+      if (message) message.textContent = "Thanks. You are on the Goodwin Generated Mission America updates list.";
       form.reset();
     });
 

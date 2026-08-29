@@ -79,7 +79,7 @@ function makeMockTrackingStatus(progressInput) {
       lng: Number((start.lng + (end.lng - start.lng) * segmentProgress).toFixed(5)),
     },
     activity: {
-      name: `Mission America mock run ${String(start.n).padStart(2, "0")}`,
+      name: `Goodwin Generated Mission America mock run ${String(start.n).padStart(2, "0")}`,
       distanceMiles: Number(milesToday.toFixed(1)),
       movingTime: `${Math.floor(movingMinutes / 60)}h ${String(movingMinutes % 60).padStart(2, "0")}m`,
       averagePace: "8:42/mi",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Updates Archive | Mission America</title>
+  <title>Updates Archive | Goodwin Generated Mission America</title>
   <link rel="stylesheet" href="../assets/styles-ulvf0Dcj.css">
   <style>
     body{margin:0;background:#fbfaf6;color:#143f3c;font-family:Inter,Arial,sans-serif}.page{min-height:100vh;padding:40px clamp(22px,5vw,72px)}a{color:inherit}.nav{display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{font-family:Fraunces,Georgia,serif;font-size:clamp(1.4rem,3vw,2.4rem);text-decoration:none}.back{font-weight:700;text-decoration:none}.hero{padding:12vh 0 7vh}.eyebrow{color:#bca273;font-size:.72rem;font-weight:800;letter-spacing:.3em;text-transform:uppercase}h1{margin:.2em 0 0;font-family:Fraunces,Georgia,serif;font-size:clamp(4rem,12vw,10rem);line-height:.84;text-transform:uppercase}.updates{display:grid;gap:1px;background:rgba(20,63,60,.18);border:1px solid rgba(20,63,60,.18)}.update{display:grid;grid-template-columns:minmax(160px,.3fr) 1fr;gap:24px;background:rgba(255,255,255,.76);padding:24px}.update time{color:#bca273;font-size:.78rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.update h2{margin:0;font-family:Fraunces,Georgia,serif;font-size:clamp(1.6rem,3vw,2.6rem);line-height:1}.update p{margin:10px 0 0;color:rgba(20,63,60,.68);line-height:1.6}@media(max-width:680px){.update{grid-template-columns:1fr}}
@@ -21,7 +21,7 @@
     function esc(value){return String(value||"").replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
     async function loadArchive(){
       const container=document.querySelector("[data-updates-archive]");
-      const fallback={updates:[{date:"2026-10-09",time:"06:00 EDT",title:"Mission America opens in Honolulu",body:"Will begins the first marathon of the 50-state sequence."}]};
+      const fallback={updates:[{date:"2026-10-09",time:"06:00 EDT",title:"Goodwin Generated Mission America opens in Honolulu",body:"Will begins the first marathon of the 50-state sequence."}]};
       let payload=fallback;
       for(const source of ["../assets/ticker-updates.json","assets/ticker-updates.json"]){
         try{const response=await fetch(source,{headers:{Accept:"application/json"}});if(!response.ok)throw new Error(response.status);payload=await response.json();break}catch(error){console.warn(error)}

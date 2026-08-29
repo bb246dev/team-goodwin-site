@@ -25,6 +25,10 @@ const pages = [
   ["source-html/week-1.raw.html", "week-1.html"],
   ["source-html/week-2.raw.html", "week-2.html"],
   ["source-html/week-3.raw.html", "week-3.html"],
+  ["source-html/privacy.raw.html", "privacy.html"],
+  ["source-html/terms.raw.html", "terms.html"],
+  ["source-html/participation-terms.raw.html", "participation-terms.html"],
+  ["source-html/accessibility.raw.html", "accessibility.html"],
 ];
 
 const videoIds = [
@@ -44,15 +48,19 @@ const videoIds = [
 
 const sharedFooterCss = `
     .global-site-footer{width:min(1180px,calc(100% - clamp(44px,10vw,144px)));margin:78px auto 0;border-top:1px solid rgba(20,63,60,.18);color:#143f3c}
-    .global-site-footer-main{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(180px,1fr));gap:clamp(32px,6vw,86px);padding:56px 0}
+    .global-site-footer-main{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,2.1fr);gap:clamp(32px,6vw,86px);padding:56px 0}
+    .global-site-footer-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:clamp(24px,4vw,64px)}
     .global-site-footer-brand{max-width:260px}
     .global-site-footer-brand img{display:block;width:100%;height:auto}
     .global-site-footer p{max-width:30rem;margin-top:14px;color:rgba(20,63,60,.68);line-height:1.55}
-    .global-site-footer ul{display:grid;gap:10px;margin:16px 0 0;padding:0;list-style:none}
-    .global-site-footer a{color:rgba(20,63,60,.68);text-decoration:none}
+    .global-site-footer ul{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .global-site-footer a,.global-site-footer-link-disabled{color:rgba(20,63,60,.68);text-decoration:none;white-space:nowrap}
     .global-site-footer a:hover{color:#1c6f4a}
+    .global-site-footer-legal{display:flex;flex-wrap:wrap;gap:12px 22px;padding:0 0 28px;color:rgba(20,63,60,.62);font-size:.78rem;line-height:1.5}
+    .global-site-footer-disclaimer{max-width:980px;margin:0 0 30px;color:rgba(20,63,60,.58);font-size:.72rem;line-height:1.55}
     .global-site-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;border-top:1px solid rgba(20,63,60,.18);color:rgba(20,63,60,.62);font-size:.8rem}
-    @media(max-width:840px){.global-site-footer-main{grid-template-columns:1fr}.global-site-footer-bottom{display:block}}`;
+    @media(max-width:840px){.global-site-footer-main{grid-template-columns:1fr}.global-site-footer-bottom{display:block}}
+    @media(max-width:430px){.global-site-footer-nav{grid-template-columns:1fr;gap:18px}.global-site-footer-nav a,.global-site-footer-link-disabled{display:flex;align-items:center;min-height:44px}}`;
 
 const sharedFooterHtml = `
   <footer class="global-site-footer">
@@ -61,26 +69,35 @@ const sharedFooterHtml = `
         <div class="global-site-footer-brand"><img src="assets/goodwin-logo.png" alt="Goodwin"></div>
         <p>Goodwin Company builds next-generation infrastructure for charter aviation and backs athletes redefining human endurance.</p>
       </div>
-      <div>
-        <div class="eyebrow">Mission America</div>
-        <ul>
+      <nav class="global-site-footer-nav" aria-label="Footer navigation">
+        <ul class="global-site-footer-link-group">
           <li><a href="the-run.html">The Run</a></li>
           <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
           <li><a href="updates.html">Updates Archive</a></li>
-          <li><a href="faq.html">FAQ</a></li>
           <li><a href="live-tracking.html#map">Live Map</a></li>
         </ul>
-      </div>
-      <div>
-        <div class="eyebrow">Team Goodwin</div>
-        <ul>
-          <li><a href="will.html">Will</a></li>
-          <li><a href="athletes.html">Roster</a></li>
-          <li><a href="partners.html">Partners</a></li>
-          <li><a href="https://www.teamgoodwin.com" target="_blank" rel="noreferrer">teamGoodwin.com</a></li>
+        <ul class="global-site-footer-link-group">
+          <li><a href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer">Will — Instagram</a></li>
+          <li><span class="global-site-footer-link-disabled">Will — TikTok</span></li>
+          <li><a href="https://www.youtube.com/@goodge" target="_blank" rel="noopener noreferrer">Will — YouTube</a></li>
+          <li><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer">Rizkia</a></li>
+          <li><a href="https://live-mission-america-50.pantheonsite.io/#faq" target="_blank" rel="noopener noreferrer">WilliamGoodge.com</a></li>
         </ul>
-      </div>
+        <ul class="global-site-footer-link-group">
+          <li><a href="https://www.linkedin.com/company/teamgoodwin/" target="_blank" rel="noopener noreferrer">Goodwin — LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@goodwinsoftwarecompany" target="_blank" rel="noopener noreferrer">Goodwin — YouTube</a></li>
+          <li><a href="https://x.com/goteamgoodwin" target="_blank" rel="noopener noreferrer">Goodwin — X</a></li>
+          <li><a href="https://teamgoodwin.com/" target="_blank" rel="noopener noreferrer">TeamGoodwin.com</a></li>
+        </ul>
+      </nav>
     </div>
+    <nav class="global-site-footer-legal" aria-label="Legal links">
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+      <a href="/participation-terms/">Participation Terms</a>
+      <a href="/accessibility/">Accessibility</a>
+    </nav>
+    <p class="global-site-footer-disclaimer">Goodwin Generated Mission America is an endurance event and world record attempt. Routes, schedules, locations, tracking data and event details are subject to change. World record status is subject to independent verification. Participation in any associated run or event is voluntary and subject to the Participation Terms.</p>
     <div class="global-site-footer-bottom">
       <span>© 2026 Goodwin Company</span>
       <span>Goodwin Generated</span>
@@ -208,6 +225,10 @@ mkdirSync(join(dist, "faq"), { recursive: true });
 mkdirSync(join(dist, "week-1"), { recursive: true });
 mkdirSync(join(dist, "week-2"), { recursive: true });
 mkdirSync(join(dist, "week-3"), { recursive: true });
+mkdirSync(join(dist, "privacy"), { recursive: true });
+mkdirSync(join(dist, "terms"), { recursive: true });
+mkdirSync(join(dist, "participation-terms"), { recursive: true });
+mkdirSync(join(dist, "accessibility"), { recursive: true });
 cpSync(join(dist, "athletes.html"), join(dist, "athletes", "index.html"));
 cpSync(join(dist, "partners.html"), join(dist, "partners", "index.html"));
 cpSync(join(dist, "live-tracking.html"), join(dist, "live-tracking", "index.html"));
@@ -219,11 +240,15 @@ cpSync(join(dist, "faq.html"), join(dist, "faq", "index.html"));
 cpSync(join(dist, "week-1.html"), join(dist, "week-1", "index.html"));
 cpSync(join(dist, "week-2.html"), join(dist, "week-2", "index.html"));
 cpSync(join(dist, "week-3.html"), join(dist, "week-3", "index.html"));
+cpSync(join(dist, "privacy.html"), join(dist, "privacy", "index.html"));
+cpSync(join(dist, "terms.html"), join(dist, "terms", "index.html"));
+cpSync(join(dist, "participation-terms.html"), join(dist, "participation-terms", "index.html"));
+cpSync(join(dist, "accessibility.html"), join(dist, "accessibility", "index.html"));
 
 writeFileSync(
   join(dist, "README.txt"),
   [
-    "Goodwin Mission America offline website export",
+    "Goodwin Generated Mission America offline website export",
     "",
     "Open index.html in a browser to view the site.",
     "For the interactive map and route navigation, serve this folder from a local web server.",
@@ -333,6 +358,14 @@ writeFileSync(
     ["week-2/index.html", readFileSync(join(dist, "week-2.html"), "utf8")],
     ["week-3.html", readFileSync(join(dist, "week-3.html"), "utf8")],
     ["week-3/index.html", readFileSync(join(dist, "week-3.html"), "utf8")],
+    ["privacy.html", readFileSync(join(dist, "privacy.html"), "utf8")],
+    ["privacy/index.html", readFileSync(join(dist, "privacy.html"), "utf8")],
+    ["terms.html", readFileSync(join(dist, "terms.html"), "utf8")],
+    ["terms/index.html", readFileSync(join(dist, "terms.html"), "utf8")],
+    ["participation-terms.html", readFileSync(join(dist, "participation-terms.html"), "utf8")],
+    ["participation-terms/index.html", readFileSync(join(dist, "participation-terms.html"), "utf8")],
+    ["accessibility.html", readFileSync(join(dist, "accessibility.html"), "utf8")],
+    ["accessibility/index.html", readFileSync(join(dist, "accessibility.html"), "utf8")],
   ]))};
 const assets = ${JSON.stringify(deployAssets)};
 const instagramFeed = ${JSON.stringify(deployInstagramFeed)};
@@ -341,9 +374,9 @@ ${trackingCoreSource}
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
-    const clean = pathname.replace(/^\\/+/, "");
+    const clean = pathname.replace(/^\\/+/, "").replace(/\\/+$/, "");
 
-    const page = pathname === "/" ? pages["index.html"] : pages[clean];
+    const page = pathname === "/" ? pages["index.html"] : pages[clean] || pages[clean + "/index.html"];
     if (page) {
       return new Response(page, {
         headers: {

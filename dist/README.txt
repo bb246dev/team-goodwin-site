@@ -1,4 +1,4 @@
-Goodwin Mission America offline website export
+Goodwin Generated Mission America offline website export
 
 Open index.html in a browser to view the site.
 For the interactive map and route navigation, serve this folder from a local web server.
