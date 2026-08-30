@@ -116,6 +116,8 @@
         const panel = document.getElementById(trigger.getAttribute("aria-controls"));
         trigger.setAttribute("aria-expanded", "false");
         if (!panel) return;
+        panel.setAttribute("aria-hidden", "true");
+        panel.setAttribute("inert", "");
         panel.style.maxHeight = "0px";
         panel.classList.remove("is-open");
       };
@@ -123,10 +125,13 @@
         const panel = document.getElementById(trigger.getAttribute("aria-controls"));
         trigger.setAttribute("aria-expanded", "true");
         if (!panel) return;
+        panel.setAttribute("aria-hidden", "false");
+        panel.removeAttribute("inert");
         panel.classList.add("is-open");
         panel.style.maxHeight = `${panel.scrollHeight}px`;
       };
 
+      triggers.forEach(closePanel);
       triggers.forEach((trigger) => {
         trigger.addEventListener("click", () => {
           const isOpen = trigger.getAttribute("aria-expanded") === "true";
