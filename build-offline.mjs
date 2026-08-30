@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const root = process.cwd();
@@ -177,6 +177,7 @@ document.querySelector("[data-offline-partner-form]")?.addEventListener("submit"
 
   if (pageName === "updates.html" || pageName === "faq.html") {
     out = out.replace('<base href="index.html">', '<base href="/">');
+    out = out.replace(/(href|src)="assets\/partners\//g, '$1="/assets/partners/');
   }
 
   return addSharedFooter(out);
@@ -286,6 +287,16 @@ const deployInstagramFeed = [
   timestamp: null,
 }));
 
+function deployDirectoryAssetPaths(relativeDir) {
+  const absoluteDir = join(dist, relativeDir);
+  if (!existsSync(absoluteDir)) return [];
+
+  return readdirSync(absoluteDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => `${relativeDir}/${entry.name}`)
+    .sort();
+}
+
 const deployAssetPaths = [
   "assets/styles-ulvf0Dcj.css",
   "assets/index-CIGW-MKW.css",
@@ -315,6 +326,7 @@ const deployAssetPaths = [
   "assets/instagram/williamgoodge-02.jpg",
   "assets/instagram/williamgoodge-03.jpg",
   "assets/instagram/williamgoodge-04.jpg",
+  ...deployDirectoryAssetPaths("assets/partners"),
 ];
 
 function contentType(pathname) {
@@ -324,6 +336,7 @@ function contentType(pathname) {
   if (pathname.endsWith(".jpg") || pathname.endsWith(".jpeg")) return "image/jpeg";
   if (pathname.endsWith(".mp4")) return "video/mp4";
   if (pathname.endsWith(".png")) return "image/png";
+  if (pathname.endsWith(".svg")) return "image/svg+xml";
   return "application/octet-stream";
 }
 
