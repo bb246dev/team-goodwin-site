@@ -106,6 +106,12 @@ body.has-ambient-scroll .site-footer {
 body.has-ambient-scroll .tracker-content {
   position: relative;
   z-index: 1;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+body.has-ambient-scroll .tracker-eyebrow {
+  line-height: 1.45;
 }
 
 body.has-ambient-scroll .tracker-hero-bg {
@@ -188,8 +194,8 @@ body.has-ambient-scroll #articles .inside-accordion-content p {
 
 body.has-ambient-scroll .tracker-section {
   border: 0;
-  padding-top: clamp(68px, 8vw, 112px);
-  padding-bottom: clamp(68px, 8vw, 112px);
+  padding-top: clamp(52px, 4.5vw, 72px);
+  padding-bottom: clamp(52px, 4.5vw, 72px);
   scroll-margin-top: 104px;
 }
 
@@ -310,7 +316,26 @@ body.has-ambient-scroll .site-footer-legal {
 }
 
 body.has-ambient-scroll .section-head .tracker-eyebrow + h2 {
+  margin-top: 18px;
+}
+
+body.has-ambient-scroll .feature-card .tracker-eyebrow {
+  margin-bottom: 16px;
+}
+
+body.has-ambient-scroll .week-card h3,
+body.has-ambient-scroll .tracker-panel-heading {
+  margin-top: 16px;
+}
+
+body.has-ambient-scroll .article-card .tracker-eyebrow + h3,
+body.has-ambient-scroll .run-card .tracker-eyebrow + h3 {
   margin-top: 14px;
+}
+
+body.has-ambient-scroll .article-card h3 + p,
+body.has-ambient-scroll .run-card h3 + p {
+  margin-top: 16px;
 }
 
 body.has-ambient-scroll .section-head p,
@@ -601,8 +626,12 @@ body.has-ambient-scroll .site-footer .site-footer-partner-disclaimer {
   }
 
   body.has-ambient-scroll .tracker-section {
-    padding-top: 64px;
-    padding-bottom: 64px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  body.has-ambient-scroll .tracker-content {
+    padding-top: 20px;
   }
 
   body.has-ambient-scroll .feature-row,
@@ -693,6 +722,11 @@ body.has-ambient-scroll .site-footer .site-footer-partner-disclaimer {
 @media (max-width: 560px) {
   body.has-ambient-scroll .tracker-hero-bg {
     object-position: 40% top;
+  }
+
+  body.has-ambient-scroll .mobile-photo-break-road .tracker-eyebrow,
+  body.has-ambient-scroll .mobile-photo-break-portrait .tracker-eyebrow {
+    margin-bottom: 16px;
   }
 
   body.has-ambient-scroll #articles .inside-accordion-trigger {
