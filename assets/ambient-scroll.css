@@ -309,6 +309,10 @@ body.has-ambient-scroll .site-footer-legal {
   color: rgb(var(--ambient-ink));
 }
 
+body.has-ambient-scroll .section-head .tracker-eyebrow + h2 {
+  margin-top: 14px;
+}
+
 body.has-ambient-scroll .section-head p,
 body.has-ambient-scroll .feature-card p,
 body.has-ambient-scroll .tracker-panel-copy,
