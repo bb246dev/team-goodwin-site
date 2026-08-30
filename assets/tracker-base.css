@@ -877,6 +877,10 @@
       transform: translateY(-2px);
     }
 
+    .feature-card .tracker-eyebrow {
+      margin-bottom: 12px;
+    }
+
     .feature-card h2 {
       max-width: 11ch;
       font-family: var(--font-sans);
