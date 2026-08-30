@@ -9,23 +9,30 @@
   <meta property="og:description" content="Everything you need to know about the athlete, the world record attempt, the logistics, participation, recovery and what it takes to move through 50 states in 24 days.">
   <meta property="og:type" content="website">
   <base href="/">
+  <link rel="icon" href="assets/goodwin-favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/goodwin-webclip.png">
+  <link rel="stylesheet" href="fonts/inter.css">
+  <link rel="stylesheet" href="assets/styles-ulvf0Dcj.css">
+  <link rel="stylesheet" href="assets/index-CIGW-MKW.css">
   <style>
-    @font-face{font-family:Inter;src:url("../fonts/InterVariable.woff2") format("woff2");font-weight:100 900;font-display:swap}
-    @font-face{font-family:GoodwinSerif;src:url("../fonts/PPFragment-SerifRegular.woff2") format("woff2");font-weight:400;font-display:swap}
-    :root{--emerald:#193B3B;--ink:#0a0a0a;--muted:#5c5c5c;--line:rgba(10,10,10,.18);--paper:#f5f3ee;--white:#fff}
+    :root{--color-white:#FFFFFF;--color-black:#0A0A0A;--color-accent:#193B3B;--tracker-ink:#0A0A0A;--tracker-panel:#FFFFFF;--tracker-line:rgba(10,10,10,.18);--tracker-muted:rgba(10,10,10,.66);--font-sans:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--emerald:var(--color-accent);--ink:var(--tracker-ink);--muted:var(--tracker-muted);--line:var(--tracker-line);--paper:#f5f3ee;--white:var(--color-white)}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Arial,sans-serif;text-rendering:optimizeLegibility}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-sans);text-rendering:optimizeLegibility;overflow-x:hidden}
     a{color:inherit}
-    .tracker-page{min-height:100vh;background:#fff}
-    .tracker-topbar{position:fixed;z-index:30;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px clamp(20px,4vw,48px);color:#fff;mix-blend-mode:difference;pointer-events:none}
-    .tracker-topbar a{pointer-events:auto}
-    .tracker-logo{display:flex;align-items:center;gap:18px;color:#fff;text-decoration:none}
-    .tracker-logo img{display:block;width:min(260px,40vw);height:auto;filter:brightness(0) invert(1)}
-    .tracker-topbar-nav{display:flex;align-items:center;gap:30px;font-size:16px;color:rgba(255,255,255,.9)}
-    .tracker-topbar-nav a{text-decoration:none}
-    .tracker-topbar-nav a:hover{color:#fff}
-    .tracker-join{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border-radius:999px;background:var(--emerald);color:#fff;font-weight:800;text-decoration:none;mix-blend-mode:normal}
+    .tracker-page{min-height:100vh;background:var(--color-white);overflow-x:hidden}
+    .tracker-nav{position:fixed;z-index:30;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px clamp(20px,4vw,64px);background:linear-gradient(180deg,rgba(10,10,10,.34),rgba(10,10,10,0));color:#fff}
+    .tracker-mark{display:flex;align-items:flex-end;flex-wrap:wrap;gap:6px clamp(12px,1.8vw,18px);line-height:1;text-decoration:none;flex:0 0 auto;opacity:var(--wordmark-opacity,.6);transition:opacity 180ms ease}
+    .tracker-mark:hover,.tracker-mark:focus-visible{opacity:1}
+    .tracker-mark img{display:block;width:clamp(132px,14vw,210px);height:auto;filter:brightness(0) invert(1)}
+    .tracker-mark img.tracker-mark-mobile-logo{display:none}
+    .tracker-mark span{color:inherit;font-size:clamp(.64rem,.85vw,.82rem);font-weight:600;letter-spacing:.34em;line-height:1;text-transform:uppercase;white-space:nowrap;transform:translateY(-.02em)}
+    .tracker-navlinks{display:flex;align-items:center;gap:clamp(16px,2.4vw,34px);color:rgba(255,255,255,.86);font-size:.95rem}
+    .tracker-navlinks a{color:inherit;text-decoration:none;transition:color 160ms ease}
+    .tracker-navlinks a:hover{color:#fff}
+    .tracker-cta{border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:11px 22px;background:var(--color-accent);color:var(--color-white);font-weight:600}
+    .tracker-navlinks a.tracker-cta{color:var(--color-white)}
+    .tracker-menu-toggle{display:none}
     .tracker-content{width:min(1180px,calc(100% - clamp(40px,8vw,96px)));margin:0 auto;padding:124px 0 0}
     .faq-hero{display:grid;grid-template-columns:minmax(0,.72fr) minmax(280px,.28fr);gap:clamp(32px,7vw,92px);align-items:end;padding:92px 0 62px;border-bottom:1px solid var(--line)}
     .tracker-eyebrow{margin:0 0 14px;color:rgba(10,10,10,.58);font-size:.78rem;font-weight:800;letter-spacing:.34em;line-height:1.2;text-transform:uppercase}
@@ -50,26 +57,28 @@
     .faq-answer .callout{margin-top:20px;border-left:3px solid var(--emerald);padding:3px 0 3px 18px;color:rgba(10,10,10,.76);font-weight:800;line-height:1.6}
     .tracker-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border-radius:999px;border:1px solid rgba(10,10,10,.22);background:#fff;color:var(--ink);font-weight:800;text-decoration:none;white-space:nowrap}
     .tracker-button:hover{border-color:var(--emerald);background:var(--emerald);color:#fff}
-    .site-footer{width:100%;max-width:1180px;margin:78px auto 0;border-top:1px solid var(--line);padding:0;color:rgba(10,10,10,.64)}
+    .site-footer{width:100%;max-width:1180px;margin:78px auto 0;border-top:1px solid var(--tracker-line)}
     .site-footer-main{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,2.1fr);gap:clamp(32px,6vw,86px);padding:56px 0}
     .site-footer-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:clamp(24px,4vw,64px)}
     .site-footer-brand{max-width:260px}
     .site-footer-brand img{display:block;width:100%;height:auto}
-    .site-footer p{max-width:30rem;margin-top:14px;color:rgba(10,10,10,.66);line-height:1.55}
+    .site-footer p{max-width:30rem;margin-top:14px;color:var(--tracker-muted);line-height:1.55}
     .site-footer ul{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-    .site-footer a,.site-footer-link-disabled{color:rgba(10,10,10,.66);font-size:1rem;line-height:1.2;text-decoration:none;white-space:nowrap;transition:color 160ms ease}
-    .site-footer a:hover{color:var(--emerald)}
+    .site-footer a,.site-footer-link-disabled{color:var(--tracker-muted);text-decoration:none;white-space:nowrap;transition:color 160ms ease}
+    .site-footer a:hover{color:var(--color-accent)}
     .site-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;border-top:1px solid var(--line);color:rgba(10,10,10,.62);font-size:.8rem}
-    .site-footer-legal{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:3px;padding:28px 0 18px;color:rgba(10,10,10,.62);font-size:.78rem;line-height:1.5}
+    .site-footer-legal{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:3px;padding:0 0 28px;color:rgba(10,10,10,.62);font-size:.78rem;line-height:1.5}
     .site-footer .site-footer-disclaimer{width:100%;max-width:none;margin:0 0 30px;color:rgba(10,10,10,.58);font-size:.72rem;line-height:1.55}
-    .site-footer-partners{margin-top:4px;padding:42px clamp(24px,4vw,48px) 46px;border-top:1px solid rgba(255,255,255,.16);background:#0A0A0A;color:#FFFFFF}
+    .site-footer-partners{margin-top:4px;padding:42px clamp(24px,4vw,48px) 46px;border-top:1px solid rgba(255,255,255,.16);background:var(--color-black);color:var(--color-white)}
     .site-footer-partners .tracker-eyebrow{color:rgba(255,255,255,.78);text-align:center}
+    .site-footer .site-footer-partners-copy{max-width:620px;margin:14px auto 0;color:rgba(255,255,255,.78);font-size:clamp(.64rem,.85vw,.82rem);font-weight:600;line-height:1.55;text-align:center}
     .site-footer .site-footer-partner-disclaimer{max-width:620px;margin:30px auto 0;color:rgba(255,255,255,.56);font-size:.68rem;line-height:1.45;text-align:center}
     .partner-logo-wall{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;justify-items:center;column-gap:32px;row-gap:34px;margin-top:38px}
-    .partner-logo-item{display:flex;align-items:center;justify-content:center;min-width:0;min-height:42px}
+    .partner-logo-item{display:flex;grid-column:span 2;align-items:center;justify-content:center;min-width:0}
     .partner-logo-item img{display:block;width:auto;max-width:min(168px,100%);max-height:34px;object-fit:contain;opacity:.76;transition:opacity 160ms ease}
     .partner-logo-item img:hover{opacity:1}
     @media(min-width:941px){
+      .partner-logo-item{grid-column:auto;min-height:42px}
       .partner-logo-item:nth-child(1){order:1}
       .partner-logo-item:nth-child(2){order:2}
       .partner-logo-item:nth-child(4){order:3}
@@ -86,40 +95,80 @@
       .partner-logo-item:nth-child(14){order:14}
       .partner-logo-item:nth-child(15){order:15}
     }
-    @media(max-width:760px){
-      .tracker-topbar{position:absolute;padding:22px 20px}
-      .tracker-logo img{width:190px}
-      .tracker-topbar-nav a:not(.tracker-join){display:none}
+    @media(max-width:940px){
+      .tracker-nav{position:absolute;align-items:flex-start}
+      .site-footer-main{grid-template-columns:1fr}
+    }
+    @media(max-width:768px){
+      .tracker-nav{align-items:center;right:auto;width:100vw;max-width:100vw;padding:18px 20px}
+      .tracker-mark{gap:5px 10px}
+      .tracker-mark img{width:clamp(118px,38vw,154px)}
+      .tracker-mark img.tracker-mark-mobile-logo{display:none}
+      .tracker-mark span{font-size:.56rem;letter-spacing:.28em}
+      .tracker-menu-toggle{display:inline-flex;position:fixed;top:18px;right:auto;left:calc(100vw - 64px);z-index:40;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:1px solid rgba(255,255,255,.58);border-radius:999px;background:rgba(10,10,10,.58);color:#fff;cursor:pointer}
+      .tracker-menu-toggle span,.tracker-menu-toggle::before,.tracker-menu-toggle::after{content:"";display:block;width:17px;height:2px;border-radius:999px;background:currentColor;transition:transform 180ms ease,opacity 180ms ease}
+      .tracker-menu-toggle{flex-direction:column;gap:4px}
+      .tracker-nav.is-open .tracker-menu-toggle span{opacity:0}
+      .tracker-nav.is-open .tracker-menu-toggle::before{transform:translateY(6px) rotate(45deg)}
+      .tracker-nav.is-open .tracker-menu-toggle::after{transform:translateY(-6px) rotate(-45deg)}
+      .tracker-navlinks{display:none;position:fixed;top:70px;left:20px;right:20px;z-index:1;grid-template-columns:1fr;gap:4px;padding:12px;border:1px solid rgba(255,255,255,.18);background:rgba(10,10,10,.92);color:rgba(255,255,255,.9);box-shadow:0 18px 42px rgba(10,10,10,.28)}
+      .tracker-nav.is-open .tracker-navlinks{display:grid}
+      .tracker-navlinks a{display:flex;align-items:center;min-height:44px;padding:0 14px}
+      .tracker-navlinks a.tracker-cta{justify-content:center;margin-top:4px;padding:0 18px}
       .tracker-content{width:calc(100% - 40px);padding-top:92px}
       .faq-hero{grid-template-columns:1fr;gap:22px;padding:74px 0 42px}
       h1{font-size:clamp(3.5rem,18vw,5.6rem)}
       .faq-question{padding:25px 20px}
       .faq-answer{padding:0 20px 30px}
-      .site-footer-main{grid-template-columns:1fr;gap:0}
+      .site-footer-main{gap:0}
       .site-footer-nav{grid-template-columns:1fr;gap:18px}
-      .site-footer-link-group:nth-child(n+2)::before{content:"";display:block;width:32px;height:2px;margin:30px 0 16px;background:var(--emerald)}
       .site-footer a,.site-footer-link-disabled{display:flex;align-items:center;min-height:44px}
+      .site-footer-bottom{display:block}
+    }
+    @media(max-width:430px){
+      .tracker-nav{position:absolute;inset:0 0 auto 0;width:100%;max-width:100vw;padding:18px 20px;overflow:visible}
+      .tracker-mark{align-items:center;width:min(234px,calc(100vw - 92px));opacity:1}
+      .tracker-mark > img:not(.tracker-mark-mobile-logo),.tracker-mark > span{display:none}
+      .tracker-mark img.tracker-mark-mobile-logo{display:block;width:100%;height:auto;filter:none}
+      .tracker-menu-toggle{position:relative;inset:auto;margin-left:auto;flex:0 0 44px;border-color:transparent;background:transparent}
+      .tracker-navlinks{position:absolute;top:calc(100% - 4px);left:20px;right:20px;width:auto;max-width:calc(100vw - 40px)}
+      .site-footer{margin-top:52px}
+      .site-footer-main{gap:32px}
       .site-footer-partners{margin-inline:0;padding:32px 0 34px;overflow:visible}
       .site-footer-partners .tracker-eyebrow{padding-inline:20px;text-align:left}
-      .partner-logo-wall{grid-template-columns:repeat(3,minmax(0,1fr));width:100%;max-width:100%;box-sizing:border-box;gap:28px 22px;margin-top:28px;padding:0 20px 4px;overflow:visible}
-      .partner-logo-item{min-width:0;min-height:30px}
-      .partner-logo-item img{max-height:26px}
-      .site-footer-bottom{display:flex}
+      .site-footer .site-footer-partners-copy{max-width:none;margin-top:16px;padding-inline:20px;font-size:clamp(.64rem,2.8vw,.82rem);line-height:1.42;text-align:left}
+      .site-footer-link-group:nth-child(n+2)::before{content:"";display:block;width:32px;height:2px;margin:30px 0 16px;background:var(--color-accent)}
+      .partner-logo-wall{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;max-width:100%;box-sizing:border-box;align-items:center;justify-items:center;column-gap:22px;row-gap:28px;margin-top:28px;padding:0 20px 4px;overflow:visible}
+      .partner-logo-item{display:flex;grid-column:auto;min-width:0;min-height:30px;align-items:center;justify-content:center}
+      .partner-logo-item img{max-width:92px;max-height:26px;opacity:.78}
+    }
+    @media(min-width:360px) and (max-width:410px){
+      .tracker-mark{width:min(212px,calc(100vw - 92px))}
+    }
+    @media(max-width:360px){
+      .tracker-nav{padding-inline:16px}
+      .tracker-menu-toggle{left:auto}
+      .tracker-navlinks{left:16px;right:16px}
     }
   </style>
 </head>
 <body>
   <main class="tracker-page">
-    <header class="tracker-topbar" aria-label="Site navigation">
-      <a class="tracker-logo" href="/live-tracking/" aria-label="Goodwin home"><img src="assets/goodwin-logo.png" alt="Goodwin"></a>
-      <nav class="tracker-topbar-nav" aria-label="Primary navigation">
+    <nav class="tracker-nav" aria-label="Site navigation">
+      <a class="tracker-mark" href="/live-tracking/" aria-label="Goodwin home">
+        <img src="assets/goodwin-logo.png" alt="GOODWIN">
+        <img class="tracker-mark-mobile-logo" src="assets/mission-america-logo.png" alt="GOODWIN Generated Mission America">
+        <span>Endurance</span>
+      </a>
+      <button class="tracker-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="tracker-navlinks"><span></span></button>
+      <div class="tracker-navlinks" id="tracker-navlinks">
         <a href="/live-tracking/#the-run">The Run</a>
         <a href="/live-tracking/#map">50 States</a>
         <a href="/updates/">News</a>
         <a href="/live-tracking/#why">Will</a>
-        <a class="tracker-join" href="/live-tracking/#rsvp">Join the Run</a>
-      </nav>
-    </header>
+        <a class="tracker-cta" href="/live-tracking/#rsvp">Join the Run</a>
+      </div>
+    </nav>
 
     <div class="tracker-content">
       <section class="faq-hero" aria-labelledby="faq-title">
@@ -400,6 +449,45 @@
   </main>
 
   <script>
+    function initMobileNavigation() {
+      const nav = document.querySelector(".tracker-nav");
+      const toggle = document.querySelector(".tracker-menu-toggle");
+      const navlinks = document.querySelector(".tracker-navlinks");
+      if (!nav || !toggle || !navlinks) return;
+
+      const closeMenu = () => {
+        nav.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Open navigation menu");
+      };
+
+      const openMenu = () => {
+        nav.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-label", "Close navigation menu");
+      };
+
+      toggle.addEventListener("click", () => {
+        if (nav.classList.contains("is-open")) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      navlinks.addEventListener("click", (event) => {
+        if (event.target.closest("a")) closeMenu();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenu();
+      });
+
+      window.matchMedia("(min-width: 769px)").addEventListener?.("change", closeMenu);
+    }
+
+    initMobileNavigation();
+
     const faqItems = Array.from(document.querySelectorAll(".faq-item"));
     const faqTriggers = Array.from(document.querySelectorAll(".faq-question"));
 

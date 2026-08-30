@@ -10,6 +10,7 @@
   <link rel="apple-touch-icon" href="../assets/goodwin-webclip.png">
   <link rel="stylesheet" href="../fonts/inter.css">
   <link rel="stylesheet" href="../assets/styles-ulvf0Dcj.css">
+  <link rel="stylesheet" href="../assets/index-CIGW-MKW.css">
   <style>
     :root {
       --color-white: #FFFFFF;
@@ -44,7 +45,7 @@
       color: inherit;
     }
 
-    .tracker-topbar {
+    .tracker-nav {
       position: fixed;
       z-index: 30;
       top: 0;
@@ -54,65 +55,83 @@
       align-items: center;
       justify-content: space-between;
       gap: 24px;
-      padding: 24px clamp(20px, 4vw, 48px);
-      color: var(--color-white);
-      mix-blend-mode: difference;
-      pointer-events: none;
+      padding: 24px clamp(20px, 4vw, 64px);
+      background: linear-gradient(180deg, rgba(10, 10, 10, 0.34), rgba(10, 10, 10, 0));
+      color: #fff;
     }
 
-    .tracker-topbar a {
-      pointer-events: auto;
-    }
-
-    .tracker-logo {
+    .tracker-mark {
       display: flex;
-      align-items: center;
-      flex: 0 0 auto;
-      gap: 18px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 6px clamp(12px, 1.8vw, 18px);
       line-height: 1;
       text-decoration: none;
-      color: var(--color-white);
+      flex: 0 0 auto;
+      opacity: var(--wordmark-opacity, 0.6);
+      transition: opacity 180ms ease;
     }
 
-    .tracker-logo img {
+    .tracker-mark:hover,
+    .tracker-mark:focus-visible {
+      opacity: 1;
+    }
+
+    .tracker-mark img {
       display: block;
-      width: min(260px, 40vw);
+      width: clamp(132px, 14vw, 210px);
       height: auto;
       filter: brightness(0) invert(1);
     }
 
-    .tracker-topbar-nav {
-      display: flex;
-      align-items: center;
-      gap: 30px;
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 16px;
+    .tracker-mark img.tracker-mark-mobile-logo {
+      display: none;
     }
 
-    .tracker-topbar-nav a {
+    .tracker-mark span {
+      color: inherit;
+      font-size: clamp(0.64rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      letter-spacing: 0.34em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transform: translateY(-0.02em);
+    }
+
+    .tracker-navlinks {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.4vw, 34px);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.95rem;
+    }
+
+    .tracker-navlinks a {
       color: inherit;
       text-decoration: none;
       transition: color 160ms ease;
     }
 
-    .tracker-topbar-nav a:hover,
-    .tracker-topbar-nav a:focus-visible {
+    .tracker-navlinks a:hover {
+      color: #fff;
+    }
+
+    .tracker-cta {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      padding: 11px 22px;
+      background: var(--color-accent);
+      color: var(--color-white);
+      font-weight: 600;
+    }
+
+    .tracker-navlinks a.tracker-cta {
       color: var(--color-white);
     }
 
-    .tracker-join {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      border: 1px solid rgba(25, 59, 59, 0.28);
-      border-radius: 999px;
-      padding: 0 26px;
-      background: var(--color-accent);
-      color: var(--color-white);
-      font-weight: 800;
-      text-decoration: none;
-      mix-blend-mode: normal;
+    .tracker-menu-toggle {
+      display: none;
     }
 
     .updates-page {
@@ -222,7 +241,8 @@
     }
 
     .site-footer {
-      width: min(1180px, calc(100% - clamp(44px, 10vw, 144px)));
+      width: 100%;
+      max-width: 1180px;
       margin: 78px auto 0;
       border-top: 1px solid var(--tracker-line);
     }
@@ -245,15 +265,10 @@
       max-width: 260px;
     }
 
-    .site-footer-brand img,
-    .partner-logo-item img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-    }
-
     .site-footer-brand img {
+      display: block;
       width: 100%;
+      height: auto;
     }
 
     .site-footer ul {
@@ -280,13 +295,23 @@
       margin-top: 4px;
       padding: 42px clamp(24px, 4vw, 48px) 46px;
       border-top: 1px solid rgba(255, 255, 255, 0.16);
-      background: #0A0A0A;
-      color: #FFFFFF;
-      text-align: center;
+      background: var(--color-black);
+      color: var(--color-white);
     }
 
     .site-footer-partners .tracker-eyebrow {
-      color: rgba(255, 255, 255, 0.74);
+      color: rgba(255, 255, 255, 0.78);
+      text-align: center;
+    }
+
+    .site-footer .site-footer-partners-copy {
+      max-width: 620px;
+      margin: 14px auto 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: clamp(0.64rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      line-height: 1.55;
+      text-align: center;
     }
 
     .partner-logo-wall {
@@ -301,26 +326,32 @@
 
     .partner-logo-item {
       display: flex;
+      grid-column: span 2;
       align-items: center;
       justify-content: center;
       min-width: 0;
-      min-height: 42px;
     }
 
     .partner-logo-item img {
+      display: block;
       width: auto;
       max-width: min(168px, 100%);
       max-height: 34px;
-      opacity: 0.78;
       object-fit: contain;
+      opacity: 0.76;
       transition: opacity 160ms ease;
     }
 
-    .partner-logo-item:hover img {
+    .partner-logo-item img:hover {
       opacity: 1;
     }
 
     @media (min-width: 941px) {
+      .partner-logo-item {
+        grid-column: auto;
+        min-height: 42px;
+      }
+
       .partner-logo-item:nth-child(1) {
         order: 1;
       }
@@ -396,7 +427,7 @@
       flex-wrap: wrap;
       gap: 12px 22px;
       margin-top: 3px;
-      padding: 28px 0 18px;
+      padding: 0 0 28px;
       color: rgba(10, 10, 10, 0.62);
       font-size: 0.78rem;
       line-height: 1.5;
@@ -422,15 +453,19 @@
       font-size: 0.8rem;
     }
 
-    @media (max-width: 840px) {
-      .tracker-topbar-nav a:not(.tracker-join) {
-        display: none;
+    @media (max-width: 940px) {
+      .tracker-nav {
+        position: absolute;
+        align-items: flex-start;
       }
 
       .updates-hero,
       .site-footer-main {
         grid-template-columns: 1fr;
       }
+    }
+
+    @media (max-width: 840px) {
 
       .site-footer-bottom {
         display: block;
@@ -444,23 +479,162 @@
       }
     }
 
+    @media (max-width: 768px) {
+      .tracker-nav {
+        align-items: center;
+        right: auto;
+        width: 100vw;
+        max-width: 100vw;
+        padding: 18px 20px;
+      }
+
+      .tracker-mark {
+        gap: 5px 10px;
+      }
+
+      .tracker-mark img {
+        width: clamp(118px, 38vw, 154px);
+      }
+
+      .tracker-mark img.tracker-mark-mobile-logo {
+        display: none;
+      }
+
+      .tracker-mark span {
+        font-size: 0.56rem;
+        letter-spacing: 0.28em;
+      }
+
+      .tracker-menu-toggle {
+        display: inline-flex;
+        position: fixed;
+        top: 18px;
+        right: auto;
+        left: calc(100vw - 64px);
+        z-index: 40;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        border: 1px solid rgba(255, 255, 255, 0.58);
+        border-radius: 999px;
+        background: rgba(10, 10, 10, 0.58);
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .tracker-menu-toggle span,
+      .tracker-menu-toggle::before,
+      .tracker-menu-toggle::after {
+        content: "";
+        display: block;
+        width: 17px;
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+        transition: transform 180ms ease, opacity 180ms ease;
+      }
+
+      .tracker-menu-toggle {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .tracker-nav.is-open .tracker-menu-toggle span {
+        opacity: 0;
+      }
+
+      .tracker-nav.is-open .tracker-menu-toggle::before {
+        transform: translateY(6px) rotate(45deg);
+      }
+
+      .tracker-nav.is-open .tracker-menu-toggle::after {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+
+      .tracker-navlinks {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        right: 20px;
+        z-index: 1;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(10, 10, 10, 0.92);
+        color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 18px 42px rgba(10, 10, 10, 0.28);
+      }
+
+      .tracker-nav.is-open .tracker-navlinks {
+        display: grid;
+      }
+
+      .tracker-navlinks a {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 14px;
+      }
+
+      .tracker-navlinks a.tracker-cta {
+        justify-content: center;
+        margin-top: 4px;
+        padding: 0 18px;
+      }
+    }
+
     @media (max-width: 430px) {
-      .tracker-topbar {
-        padding: 18px 22px;
-      }
-
-      .tracker-logo img {
-        width: 190px;
-      }
-
-      .tracker-join {
-        padding: 10px 16px;
-        font-size: 0.9rem;
-      }
-
       .updates-content,
       .site-footer {
         width: calc(100% - 40px);
+      }
+
+      .tracker-nav {
+        position: absolute;
+        inset: 0 0 auto 0;
+        width: 100%;
+        max-width: 100vw;
+        padding: 18px 20px;
+        overflow: visible;
+      }
+
+      .tracker-mark {
+        align-items: center;
+        width: min(234px, calc(100vw - 92px));
+        opacity: 1;
+      }
+
+      .tracker-mark > img:not(.tracker-mark-mobile-logo),
+      .tracker-mark > span {
+        display: none;
+      }
+
+      .tracker-mark img.tracker-mark-mobile-logo {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: none;
+      }
+
+      .tracker-menu-toggle {
+        position: relative;
+        inset: auto;
+        margin-left: auto;
+        flex: 0 0 44px;
+        border-color: transparent;
+        background: transparent;
+      }
+
+      .tracker-navlinks {
+        position: absolute;
+        top: calc(100% - 4px);
+        left: 20px;
+        right: 20px;
+        width: auto;
+        max-width: calc(100vw - 40px);
       }
 
       .updates-hero {
@@ -519,43 +693,85 @@
         text-align: left;
       }
 
+      .site-footer .site-footer-partners-copy {
+        max-width: none;
+        margin-top: 16px;
+        padding-inline: 20px;
+        font-size: clamp(0.64rem, 2.8vw, 0.82rem);
+        line-height: 1.42;
+        text-align: left;
+      }
+
       .partner-logo-wall {
+        display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        gap: 28px 22px;
+        align-items: center;
+        justify-items: center;
+        column-gap: 22px;
+        row-gap: 28px;
         margin-top: 28px;
         padding: 0 20px 4px;
         overflow: visible;
       }
 
       .partner-logo-item {
+        display: flex;
+        grid-column: auto;
         min-width: 0;
         min-height: 30px;
+        align-items: center;
+        justify-content: center;
       }
 
       .partner-logo-item img {
         max-width: 92px;
         max-height: 26px;
+        opacity: 0.78;
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 410px) {
+      .tracker-mark {
+        width: min(212px, calc(100vw - 92px));
+      }
+    }
+
+    @media (max-width: 360px) {
+      .tracker-nav {
+        padding-inline: 16px;
+      }
+
+      .tracker-menu-toggle {
+        left: auto;
+      }
+
+      .tracker-navlinks {
+        left: 16px;
+        right: 16px;
       }
     }
   </style>
 </head>
 <body>
   <main class="updates-page">
-    <header class="tracker-topbar" aria-label="Site navigation">
-      <a class="tracker-logo" href="/live-tracking/" aria-label="Goodwin home">
-        <img src="/assets/goodwin-logo.png" alt="Goodwin">
+    <nav class="tracker-nav" aria-label="Site navigation">
+      <a class="tracker-mark" href="/live-tracking/" aria-label="Goodwin home">
+        <img src="/assets/goodwin-logo.png" alt="GOODWIN">
+        <img class="tracker-mark-mobile-logo" src="/assets/mission-america-logo.png" alt="GOODWIN Generated Mission America">
+        <span>Endurance</span>
       </a>
-      <nav class="tracker-topbar-nav" aria-label="Primary navigation">
+      <button class="tracker-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="tracker-navlinks"><span></span></button>
+      <div class="tracker-navlinks" id="tracker-navlinks">
         <a href="/live-tracking/#the-run">The Run</a>
         <a href="/live-tracking/#map">50 States</a>
         <a href="/updates/" aria-current="page">News</a>
         <a href="/live-tracking/#why">Will</a>
-        <a class="tracker-join" href="/live-tracking/#rsvp">Join the Run</a>
-      </nav>
-    </header>
+        <a class="tracker-cta" href="/live-tracking/#rsvp">Join the Run</a>
+      </div>
+    </nav>
 
     <div class="updates-content">
       <section class="updates-hero">
@@ -640,6 +856,45 @@
   </main>
 
   <script>
+    function initMobileNavigation() {
+      const nav = document.querySelector(".tracker-nav");
+      const toggle = document.querySelector(".tracker-menu-toggle");
+      const navlinks = document.querySelector(".tracker-navlinks");
+      if (!nav || !toggle || !navlinks) return;
+
+      const closeMenu = () => {
+        nav.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Open navigation menu");
+      };
+
+      const openMenu = () => {
+        nav.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-label", "Close navigation menu");
+      };
+
+      toggle.addEventListener("click", () => {
+        if (nav.classList.contains("is-open")) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      navlinks.addEventListener("click", (event) => {
+        if (event.target.closest("a")) closeMenu();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenu();
+      });
+
+      window.matchMedia("(min-width: 769px)").addEventListener?.("change", closeMenu);
+    }
+
+    initMobileNavigation();
+
     const sheetConfig = {
       endpoint: "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",
       gid: "0",
