@@ -558,6 +558,16 @@ body.has-ambient-scroll .site-footer .site-footer-partner-disclaimer {
   color: rgb(var(--ambient-ink) / 72%);
 }
 
+@media (min-width: 561px) and (max-width: 768px) {
+  body.has-ambient-scroll .tracker-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+  }
+}
+
 @media (max-width: 768px) {
   body.has-ambient-scroll .tracker-hero-bg {
     object-position: 35% top;
