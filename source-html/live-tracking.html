@@ -73,6 +73,11 @@
       overflow-x: hidden;
     }
 
+    .mobile-ambient-background,
+    .mobile-ambient-debug {
+      display: none;
+    }
+
     .tracker-nav {
       position: fixed;
       z-index: 30;
@@ -2513,13 +2518,99 @@
       }
     }
 
-    @media (max-width: 430px) and (prefers-reduced-motion: reduce) {
-      .mission-intro {
-        display: none !important;
-      }
-    }
-
     @media (max-width: 430px) {
+      body.has-mobile-ambient-background {
+        --ambient-ink: 245 243 238;
+        background: transparent;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background {
+        --base: 10 10 10;
+        --glow-one: 18 32 32;
+        --glow-two: 25 59 59;
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100vw;
+        height: 100dvh;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            circle at 14% 12%,
+            rgb(var(--glow-one) / 72%),
+            transparent 52%
+          ),
+          radial-gradient(
+            circle at 86% 82%,
+            rgb(var(--glow-two) / 66%),
+            transparent 55%
+          ),
+          rgb(var(--base));
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(circle at 25% 25%, rgb(255 255 255 / 16%) 0 1px, transparent 1px),
+          radial-gradient(circle at 75% 75%, rgb(0 0 0 / 18%) 0 1px, transparent 1px);
+        background-size: 34px 34px, 43px 43px;
+        opacity: 0.03;
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            125deg,
+            rgb(255 255 255 / 4%),
+            transparent 45%,
+            rgb(0 0 0 / 7%)
+          );
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-debug {
+        display: block;
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        z-index: 80;
+        max-width: calc(100vw - 24px);
+        padding: 9px 10px;
+        border: 1px solid rgb(255 255 255 / 32%);
+        background: rgb(10 10 10 / 82%);
+        color: var(--color-white);
+        font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        white-space: pre;
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .tracker-page {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+      }
+
+      body.has-mobile-ambient-background .tracker-section > .section-head h2,
+      body.has-mobile-ambient-background .tracker-section > .section-head p {
+        color: rgb(var(--ambient-ink));
+      }
+
+      body.has-mobile-ambient-background .tracker-section > .section-head .tracker-eyebrow {
+        color: rgb(var(--ambient-ink) / 72%);
+      }
+
+      body.has-mobile-ambient-background .site-footer {
+        background: var(--color-white);
+      }
+
       .tracker-nav {
         position: absolute;
         inset: 0 0 auto 0;
@@ -3160,6 +3251,22 @@
         max-width: 92px;
         max-height: 26px;
         opacity: 0.78;
+      }
+    }
+
+    @media (max-width: 430px) and (prefers-reduced-motion: reduce) {
+      .mission-intro {
+        display: none !important;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background,
+      body.has-mobile-ambient-background .mobile-ambient-debug {
+        display: none;
+      }
+
+      body.has-mobile-ambient-background,
+      body.has-mobile-ambient-background .tracker-page {
+        background: var(--color-white);
       }
     }
 
@@ -4113,6 +4220,145 @@
     }
 
     initMissionAmericaIntro();
+
+    const MISSION_AMBIENT_BACKGROUND_CONFIG = {
+      mobileQuery: "(max-width: 430px)",
+      reducedMotionQuery: "(prefers-reduced-motion: reduce)",
+      debugParam: "ambientDebug",
+      palettes: [
+        { base: [10, 10, 10], glowOne: [18, 32, 32], glowTwo: [25, 59, 59], ink: [245, 243, 238] },
+        { base: [17, 36, 36], glowOne: [25, 59, 59], glowTwo: [39, 73, 69], ink: [245, 243, 238] },
+        { base: [25, 59, 59], glowOne: [38, 76, 71], glowTwo: [56, 88, 82], ink: [245, 243, 238] },
+        { base: [116, 139, 131], glowOne: [160, 178, 169], glowTwo: [201, 210, 203], ink: [20, 25, 25] },
+        { base: [245, 243, 238], glowOne: [232, 235, 228], glowTwo: [204, 216, 208], ink: [20, 25, 25] },
+        { base: [25, 59, 59], glowOne: [43, 78, 73], glowTwo: [17, 36, 36], ink: [245, 243, 238] },
+        { base: [10, 10, 10], glowOne: [17, 35, 35], glowTwo: [25, 59, 59], ink: [245, 243, 238] }
+      ]
+    };
+
+    let missionAmbientBackgroundInitialized = false;
+
+    function ambientClamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function mix(start, end, amount) {
+      return start.map((channel, index) => Math.round(channel + (end[index] - channel) * amount));
+    }
+
+    function smoothstep(value) {
+      return value * value * (3 - 2 * value);
+    }
+
+    function getMissionAmbientState(pageProgress) {
+      const palettes = MISSION_AMBIENT_BACKGROUND_CONFIG.palettes;
+      const position = ambientClamp(pageProgress, 0, 1) * (palettes.length - 1);
+      const index = Math.min(Math.floor(position), palettes.length - 2);
+      const localProgress = smoothstep(position - index);
+      const current = palettes[index];
+      const next = palettes[index + 1];
+
+      return {
+        pageProgress,
+        index,
+        localProgress,
+        base: mix(current.base, next.base, localProgress),
+        glowOne: mix(current.glowOne, next.glowOne, localProgress),
+        glowTwo: mix(current.glowTwo, next.glowTwo, localProgress),
+        ink: mix(current.ink, next.ink, localProgress)
+      };
+    }
+
+    function waitForMissionAmbientIntroRelease() {
+      return new Promise((resolve) => {
+        const isReleased = () => {
+          const intro = document.querySelector(".mission-intro");
+          const bodyStyle = window.getComputedStyle(document.body);
+          return !intro
+            && !document.body.classList.contains("mission-intro-active")
+            && bodyStyle.overflowY !== "hidden";
+        };
+
+        const check = () => {
+          if (isReleased()) {
+            requestAnimationFrame(resolve);
+            return;
+          }
+
+          requestAnimationFrame(check);
+        };
+
+        check();
+      });
+    }
+
+    async function initMobileAmbientBackground() {
+      if (missionAmbientBackgroundInitialized) return;
+
+      const config = MISSION_AMBIENT_BACKGROUND_CONFIG;
+      const mobileQuery = window.matchMedia(config.mobileQuery);
+      const reducedMotionQuery = window.matchMedia(config.reducedMotionQuery);
+      if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+
+      missionAmbientBackgroundInitialized = true;
+      await waitForMissionAmbientIntroRelease();
+      if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+
+      const debugEnabled = new URLSearchParams(window.location.search).get(config.debugParam) === "1";
+      const layer = document.querySelector(".mobile-ambient-background") || document.createElement("div");
+      layer.className = "mobile-ambient-background";
+      layer.setAttribute("aria-hidden", "true");
+      if (!layer.parentNode) document.body.prepend(layer);
+
+      const debug = debugEnabled ? document.createElement("div") : null;
+      if (debug) {
+        debug.className = "mobile-ambient-debug";
+        debug.setAttribute("aria-hidden", "true");
+        document.body.appendChild(debug);
+      }
+
+      document.body.classList.add("has-mobile-ambient-background");
+
+      let updateQueued = false;
+      const render = () => {
+        updateQueued = false;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const pageProgress = maxScroll > 0
+          ? ambientClamp(window.scrollY / maxScroll, 0, 1)
+          : 0;
+        const state = getMissionAmbientState(pageProgress);
+
+        layer.style.setProperty("--base", state.base.join(" "));
+        layer.style.setProperty("--glow-one", state.glowOne.join(" "));
+        layer.style.setProperty("--glow-two", state.glowTwo.join(" "));
+        document.body.style.setProperty("--ambient-ink", state.ink.join(" "));
+
+        if (debug) {
+          debug.textContent = [
+            `scroll: ${(state.pageProgress * 100).toFixed(1)}%`,
+            `palette: ${state.index}`,
+            `local: ${state.localProgress.toFixed(3)}`,
+            `base: ${state.base.join(", ")}`,
+            `glow-one: ${state.glowOne.join(", ")}`,
+            `glow-two: ${state.glowTwo.join(", ")}`,
+            `ink: ${state.ink.join(", ")}`
+          ].join("\n");
+        }
+      };
+
+      const requestUpdate = () => {
+        if (updateQueued) return;
+        updateQueued = true;
+        requestAnimationFrame(render);
+      };
+
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      window.addEventListener("resize", requestUpdate);
+      mobileQuery.addEventListener?.("change", requestUpdate);
+      render();
+    }
+
+    initMobileAmbientBackground();
 
     const missionUpdatesSheet = {
       endpoint: "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",
