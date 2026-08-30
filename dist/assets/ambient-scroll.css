@@ -30,7 +30,7 @@ body.has-ambient-scroll {
   position: absolute;
   display: block;
   border-radius: 50%;
-  opacity: 0.82;
+  opacity: 0.58;
   transform-origin: center;
   will-change: transform;
 }
@@ -146,21 +146,6 @@ body.has-ambient-scroll .tracker-page {
   position: relative;
 }
 
-body.has-ambient-scroll #the-run,
-body.has-ambient-scroll #updates,
-body.has-ambient-scroll #why,
-body.has-ambient-scroll #rsvp,
-body.has-ambient-scroll .site-footer {
-  --ambient-ink: 248 247 239;
-}
-
-body.has-ambient-scroll #map,
-body.has-ambient-scroll #articles,
-body.has-ambient-scroll #map input,
-body.has-ambient-scroll #map select {
-  --ambient-ink: 13 38 35;
-}
-
 body.has-ambient-scroll #why .article-card,
 body.has-ambient-scroll .week-card.has-image {
   --ambient-ink: 248 247 239;
@@ -174,14 +159,6 @@ body.has-ambient-scroll .tracker-content {
 
 body.has-ambient-scroll .tracker-eyebrow {
   line-height: 1.45;
-}
-
-body.has-ambient-scroll .ambient-word {
-  /* White + difference is the exact per-pixel RGB inverse of the rendered backdrop. */
-  color: #fff !important;
-  mix-blend-mode: difference;
-  text-shadow: none;
-  transition: none !important;
 }
 
 body.has-ambient-scroll .tracker-hero-bg {
@@ -260,6 +237,11 @@ body.has-ambient-scroll #articles .inside-accordion-content {
 body.has-ambient-scroll #articles .inside-accordion-content p {
   font-size: clamp(1rem, 1.15vw, 1.08rem);
   line-height: 1.7;
+  color: inherit;
+}
+
+body.has-ambient-scroll .inside-desktop-answer-content p {
+  color: inherit;
 }
 
 body.has-ambient-scroll .tracker-section {
@@ -463,6 +445,18 @@ body.has-ambient-scroll .ticker-panel::before {
   background: rgb(var(--ambient-ink) / 22%);
 }
 
+body.has-ambient-scroll .ticker-item {
+  color: rgb(var(--ambient-ink));
+}
+
+body.has-ambient-scroll .ticker-item time {
+  color: rgb(var(--ambient-ink) / 84%);
+}
+
+body.has-ambient-scroll .ticker-item span {
+  color: rgb(var(--ambient-ink) / 88%);
+}
+
 body.has-ambient-scroll .follow-form input,
 body.has-ambient-scroll .follow-form textarea,
 body.has-ambient-scroll .follow-form select {
@@ -490,11 +484,10 @@ body.has-ambient-scroll .tracker-map::before {
   z-index: 0;
   inset: 0;
   background:
-    linear-gradient(rgb(255 255 255 / 12%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 12%) 1px, transparent 1px);
+    linear-gradient(rgb(var(--ambient-ink) / 8%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--ambient-ink) / 8%) 1px, transparent 1px);
   background-size: 160px 160px;
   content: "";
-  mix-blend-mode: difference;
   pointer-events: none;
 }
 
@@ -503,68 +496,55 @@ body.has-ambient-scroll .tracker-map > * {
   z-index: 1;
 }
 
-/*
- * The map artwork was authored as pale marks for a dark panel. Render the
- * monochrome vector geometry as white difference layers so it becomes dark on
- * the white phase and light on a dark phase without touching the runner/RV art.
- */
-body.has-ambient-scroll #map .map-state,
-body.has-ambient-scroll #map .map-route,
-body.has-ambient-scroll #map .map-stop,
-body.has-ambient-scroll #map .map-live-marker,
-body.has-ambient-scroll #map .map-live-pulse,
-body.has-ambient-scroll #map .map-flight-body,
-body.has-ambient-scroll #map .map-label,
-body.has-ambient-scroll #map .map-endpoint-label {
-  mix-blend-mode: difference;
-}
-
 body.has-ambient-scroll #map .map-state {
-  fill: rgb(255 255 255 / 8%);
-  stroke: rgb(255 255 255 / 72%);
+  fill: rgb(var(--ambient-ink) / 5%);
+  stroke: rgb(var(--ambient-ink) / 62%);
 }
 
 body.has-ambient-scroll #map .map-state:hover,
 body.has-ambient-scroll #map .map-state.is-active {
-  fill: rgb(255 255 255 / 20%);
-  stroke: #fff;
+  fill: rgb(var(--ambient-ink) / 14%);
+  stroke: rgb(var(--ambient-ink));
 }
 
 body.has-ambient-scroll #map .map-route.future {
-  stroke: rgb(255 255 255 / 38%);
+  stroke: rgb(var(--ambient-ink) / 34%);
 }
 
 body.has-ambient-scroll #map .map-route.complete,
 body.has-ambient-scroll #map .map-route.flight,
 body.has-ambient-scroll #map .map-route.rv,
 body.has-ambient-scroll #map .map-flight-body {
-  stroke: #fff;
+  stroke: rgb(var(--ambient-ink));
   filter: none;
 }
 
 body.has-ambient-scroll #map .map-stop {
-  fill: #fff;
-  stroke: #fff;
+  fill: rgb(var(--ambient-base));
+  stroke: rgb(var(--ambient-ink));
 }
 
 body.has-ambient-scroll #map .map-stop:hover,
 body.has-ambient-scroll #map .map-stop.is-current,
 body.has-ambient-scroll #map .map-stop.is-terminal,
 body.has-ambient-scroll #map .map-live-marker {
-  fill: #fff;
-  stroke: #fff;
+  fill: rgb(var(--ambient-ink));
+  stroke: rgb(var(--ambient-ink));
   filter: none;
 }
 
 body.has-ambient-scroll #map .map-live-pulse {
-  fill: rgb(255 255 255 / 18%);
-  stroke: rgb(255 255 255 / 62%);
+  fill: rgb(var(--ambient-ink) / 14%);
+  stroke: rgb(var(--ambient-ink) / 58%);
 }
 
 body.has-ambient-scroll #map .map-label,
 body.has-ambient-scroll #map .map-endpoint-label {
-  fill: #fff;
-  stroke: transparent;
+  fill: rgb(var(--ambient-ink));
+  paint-order: stroke;
+  stroke: rgb(var(--ambient-base) / 88%);
+  stroke-linejoin: round;
+  stroke-width: 3px;
 }
 
 body.has-ambient-scroll .tracking-map-key {
@@ -728,6 +708,10 @@ body.has-ambient-scroll .site-footer-partners {
 body.has-ambient-scroll .site-footer-partners .tracker-eyebrow,
 body.has-ambient-scroll .site-footer .site-footer-partner-disclaimer {
   color: rgb(var(--ambient-ink) / 72%);
+}
+
+body.has-ambient-scroll .site-footer-link-disabled {
+  color: rgb(var(--ambient-ink) / 62%);
 }
 
 @media (min-width: 561px) and (max-width: 768px) {

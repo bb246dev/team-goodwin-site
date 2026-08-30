@@ -4,17 +4,19 @@
   const GREEN = { base: [25, 59, 59], glowOne: [52, 96, 82], glowTwo: [45, 66, 78] };
   const palettes = [BLACK, WHITE, GREEN, WHITE, BLACK, BLACK, BLACK];
   const anchorSelectors = ["#the-run", "#map", "#updates", "#articles", "#why", "#rsvp", ".site-footer"];
-  const fixedInkSelector = [
-    ".tracker-nav", ".tracker-hero", ".tracker-button", ".tracker-cta",
-    ".week-card.has-image", ".mission-clock-grid", ".mobile-photo-break",
-    ".partner-logo-wall", ".site-footer-partners", ".sr-only", "[aria-live]",
-    "input", "textarea", "select", "option", "script", "style", "noscript",
-    "svg", "canvas",
-  ].join(", ");
+  const LIGHT_INK = [248, 247, 239];
+  const DARK_INK = [9, 31, 29];
   const clamp = (value, minimum = 0, maximum = 1) => Math.min(maximum, Math.max(minimum, value));
   const smoothstep = (value) => value * value * (3 - 2 * value);
   const mix = (start, end, amount) => start.map((channel, index) => channel + (end[index] - channel) * amount);
   const rgb = (value) => value.map(Math.round).join(" ");
+  const relativeLuminance = (color) => {
+    const channels = color.map((channel) => {
+      const value = channel / 255;
+      return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    });
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+  };
 
   const background = document.createElement("div");
   background.className = "ambient-scroll-background";
@@ -39,35 +41,6 @@
   let renderedScroll = targetScroll;
   let scrollVelocity = 0;
   let previousTime = 0;
-
-  const shouldSkipTextNode = (node) => {
-    if (!node.nodeValue.trim()) return true;
-    const parent = node.parentElement;
-    return !parent || parent.closest(".ambient-word") || parent.closest(fixedInkSelector);
-  };
-
-  const instrumentTextNode = (node) => {
-    if (shouldSkipTextNode(node)) return;
-    const fragment = document.createDocumentFragment();
-    const leadingWhitespace = node.nodeValue.match(/^\s+/)?.[0] || "";
-    if (leadingWhitespace) fragment.append(document.createTextNode(leadingWhitespace));
-    const content = node.nodeValue.slice(leadingWhitespace.length);
-    (content.match(/\S+(?:\s+|$)/g) || []).forEach((part) => {
-      const word = document.createElement("span");
-      word.className = "ambient-word";
-      word.textContent = part;
-      fragment.append(word);
-    });
-    node.replaceWith(fragment);
-  };
-
-  const instrumentRoot = (root) => {
-    if (!(root instanceof Element) || root.matches(".ambient-word") || root.closest(".ambient-word")) return;
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(instrumentTextNode);
-  };
 
   const measure = () => {
     anchors = anchorSelectors
@@ -108,6 +81,9 @@
     document.documentElement.style.setProperty("--ambient-base", rgb(palette.base));
     document.documentElement.style.setProperty("--ambient-glow-one", rgb(palette.glowOne));
     document.documentElement.style.setProperty("--ambient-glow-two", rgb(palette.glowTwo));
+    const usesDarkInk = relativeLuminance(palette.base) > 0.179;
+    document.documentElement.style.setProperty("--ambient-ink", rgb(usesDarkInk ? DARK_INK : LIGHT_INK));
+    document.documentElement.dataset.ambientTheme = usesDarkInk ? "light" : "dark";
     document.documentElement.style.setProperty("--ambient-cloud-lag", Math.abs(lag).toFixed(2));
     document.documentElement.style.setProperty("--ambient-rendered-scroll", renderedScroll.toFixed(2));
   };
@@ -145,18 +121,6 @@
     targetScroll = window.scrollY;
     if (!frame) frame = requestAnimationFrame(render);
   };
-
-  document.querySelectorAll(".tracker-content, .site-footer").forEach(instrumentRoot);
-  const mutationObserver = new MutationObserver((records) => {
-    records.forEach((record) => record.addedNodes.forEach((node) => {
-      if (node instanceof Element && !node.matches(".ambient-word")) instrumentRoot(node);
-      else if (node.nodeType === Node.TEXT_NODE) instrumentTextNode(node);
-    }));
-    measure();
-    requestRender();
-  });
-  const trackerPage = document.querySelector(".tracker-page");
-  if (trackerPage) mutationObserver.observe(trackerPage, { childList: true, subtree: true });
 
   measure();
   render();
