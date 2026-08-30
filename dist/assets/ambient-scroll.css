@@ -108,6 +108,32 @@ body.has-ambient-scroll #articles [hidden] {
   display: none !important;
 }
 
+body.has-ambient-scroll #articles .inside-mobile-accordion {
+  display: block;
+  width: min(100%, 920px);
+  margin-inline: auto;
+}
+
+body.has-ambient-scroll #articles .inside-accordion-trigger {
+  min-height: 72px;
+  padding: 20px 2px;
+}
+
+body.has-ambient-scroll #articles .inside-accordion-trigger:hover,
+body.has-ambient-scroll #articles .inside-accordion-trigger:focus-visible {
+  color: rgb(var(--ambient-ink));
+}
+
+body.has-ambient-scroll #articles .inside-accordion-trigger:focus-visible {
+  outline: 2px solid rgb(var(--ambient-ink));
+  outline-offset: 4px;
+}
+
+body.has-ambient-scroll #articles .inside-accordion-content {
+  padding-right: clamp(24px, 6vw, 72px);
+  padding-bottom: 26px;
+}
+
 body.has-ambient-scroll .tracker-section {
   border: 0;
   padding-top: clamp(68px, 8vw, 112px);
