@@ -519,6 +519,18 @@ body.has-ambient-scroll .site-footer-brand img {
   opacity: 1;
 }
 
+body.has-ambient-scroll .site-footer-partners {
+  border: 0;
+  background: transparent;
+  color: rgb(var(--ambient-ink));
+  box-shadow: none;
+}
+
+body.has-ambient-scroll .site-footer-partners .tracker-eyebrow,
+body.has-ambient-scroll .site-footer .site-footer-partner-disclaimer {
+  color: rgb(var(--ambient-ink) / 72%);
+}
+
 @media (max-width: 768px) {
   body.has-ambient-scroll .tracker-menu-toggle {
     position: relative;
