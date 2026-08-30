@@ -105,8 +105,8 @@ body.has-ambient-scroll .tracker-content {
 
 body.has-ambient-scroll .tracker-section {
   border: 0;
-  padding-top: clamp(96px, 12vw, 180px);
-  padding-bottom: clamp(96px, 12vw, 180px);
+  padding-top: clamp(68px, 8vw, 112px);
+  padding-bottom: clamp(68px, 8vw, 112px);
 }
 
 body.has-ambient-scroll .tracker-section + .tracker-section {
@@ -287,6 +287,49 @@ body.has-ambient-scroll #rsvp {
   border-block: 1px solid rgb(var(--ambient-ink) / 22%);
 }
 
+body.has-ambient-scroll #rsvp .rsvp-mobile-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 12px;
+  max-width: 720px;
+  margin-bottom: 24px;
+}
+
+body.has-ambient-scroll #rsvp .rsvp-mobile-controls label {
+  grid-column: 1 / -1;
+}
+
+body.has-ambient-scroll #rsvp .rsvp-mobile-controls select {
+  min-height: 50px;
+  border: 1px solid rgb(var(--ambient-ink) / 38%);
+  border-radius: 999px;
+  background: transparent;
+  color: rgb(var(--ambient-ink));
+  padding: 0 18px;
+}
+
+body.has-ambient-scroll #rsvp .route-itinerary {
+  max-height: none;
+  overflow: visible;
+}
+
+body.has-ambient-scroll #rsvp .route-itinerary:empty {
+  display: none;
+}
+
+body.has-ambient-scroll #rsvp .route-itinerary.is-expanded {
+  display: grid;
+  max-height: min(620px, 58vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+body.has-ambient-scroll #rsvp .route-itinerary.is-selected {
+  display: grid;
+}
+
 body.has-ambient-scroll .site-footer {
   margin-top: 0;
   border-top: 1px solid rgb(var(--ambient-ink) / 20%);
@@ -294,8 +337,8 @@ body.has-ambient-scroll .site-footer {
 
 @media (max-width: 760px) {
   body.has-ambient-scroll .tracker-section {
-    padding-top: 88px;
-    padding-bottom: 88px;
+    padding-top: 64px;
+    padding-bottom: 64px;
   }
 
   body.has-ambient-scroll .feature-row,
@@ -314,6 +357,24 @@ body.has-ambient-scroll .site-footer {
   body.has-ambient-scroll #rsvp {
     width: calc(100% - 32px);
     padding-inline: 20px;
+  }
+
+  body.has-ambient-scroll #rsvp .rsvp-mobile-controls {
+    grid-template-columns: 1fr;
+  }
+
+  body.has-ambient-scroll #rsvp .rsvp-mobile-controls label {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  body.has-ambient-scroll #articles .article-grid {
+    display: none;
+  }
+
+  body.has-ambient-scroll #articles .inside-mobile-accordion {
+    display: block;
   }
 }
 

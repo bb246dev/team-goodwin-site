@@ -757,7 +757,6 @@
       document.getElementById("countdown-seconds").textContent = String(seconds).padStart(2, "0");
     }
 
-    const rsvpMobileMedia = window.matchMedia("(max-width: 430px)");
     let rsvpMobileMode = "select";
     let selectedRouteStop = "";
 
@@ -812,32 +811,25 @@
       const container = document.querySelector("[data-route-itinerary]");
       if (!container) return;
       populateRsvpMobileControls();
-      const isMobile = rsvpMobileMedia.matches;
-      container.classList.toggle("is-expanded", isMobile && rsvpMobileMode === "all");
-      container.classList.toggle("is-selected", isMobile && rsvpMobileMode === "selected");
+      container.classList.toggle("is-expanded", rsvpMobileMode === "all");
+      container.classList.toggle("is-selected", rsvpMobileMode === "selected");
 
-      if (isMobile) {
-        if (rsvpMobileMode === "all") {
-          container.innerHTML = routeStops.map(getRouteStopMarkup).join("");
-          return;
-        }
-
-        if (selectedRouteStop) {
-          const selectedStop = routeStops.find((stop) => String(stop.n) === selectedRouteStop);
-          container.innerHTML = selectedStop ? getSelectedRouteStopMarkup(selectedStop) : "";
-          return;
-        }
-
-        container.innerHTML = "";
+      if (rsvpMobileMode === "all") {
+        container.innerHTML = routeStops.map(getRouteStopMarkup).join("");
         return;
       }
 
-      container.innerHTML = routeStops.map(getRouteStopMarkup).join("");
+      if (selectedRouteStop) {
+        const selectedStop = routeStops.find((stop) => String(stop.n) === selectedRouteStop);
+        container.innerHTML = selectedStop ? getSelectedRouteStopMarkup(selectedStop) : "";
+        return;
+      }
+
+      container.innerHTML = "";
     }
 
     updateCountdown();
     renderRunItinerary();
-    rsvpMobileMedia.addEventListener("change", renderRunItinerary);
     window.setInterval(updateCountdown, 1000);
 
     const stateAbbr = {
