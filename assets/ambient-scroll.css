@@ -514,6 +514,11 @@ body.has-ambient-scroll .site-footer {
   border-top: 1px solid rgb(var(--ambient-ink) / 20%);
 }
 
+body.has-ambient-scroll .site-footer-brand img {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+}
+
 @media (max-width: 760px) {
   html {
     scroll-padding-top: 84px;
