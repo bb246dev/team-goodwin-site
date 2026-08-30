@@ -10,13 +10,15 @@ html {
 }
 
 body.has-ambient-scroll {
+  position: relative;
+  isolation: isolate;
   background: rgb(10 30 28);
   color: rgb(var(--ambient-ink));
 }
 
 .ambient-scroll-background {
   position: fixed;
-  z-index: -2;
+  z-index: 0;
   inset: 0;
   overflow: hidden;
   background: rgb(var(--ambient-base));
@@ -28,7 +30,7 @@ body.has-ambient-scroll {
   position: absolute;
   display: block;
   border-radius: 50%;
-  opacity: 0.9;
+  opacity: 0.66;
   transform-origin: center;
   will-change: transform;
 }
@@ -140,6 +142,29 @@ body.has-ambient-scroll .site-footer {
   color: rgb(var(--ambient-ink));
 }
 
+body.has-ambient-scroll .tracker-page {
+  position: relative;
+  z-index: 1;
+}
+
+body.has-ambient-scroll #the-run,
+body.has-ambient-scroll #map {
+  --ambient-ink: 248 247 239;
+}
+
+body.has-ambient-scroll #updates,
+body.has-ambient-scroll #articles,
+body.has-ambient-scroll #why {
+  --ambient-ink: 13 38 35;
+}
+
+body.has-ambient-scroll #rsvp,
+body.has-ambient-scroll .site-footer,
+body.has-ambient-scroll #why .article-card,
+body.has-ambient-scroll .week-card.has-image {
+  --ambient-ink: 248 247 239;
+}
+
 body.has-ambient-scroll .tracker-content {
   position: relative;
   z-index: 1;
@@ -149,17 +174,6 @@ body.has-ambient-scroll .tracker-content {
 
 body.has-ambient-scroll .tracker-eyebrow {
   line-height: 1.45;
-}
-
-body.has-ambient-scroll .ambient-word {
-  color: rgb(var(--ambient-word-ink, var(--ambient-ink))) !important;
-  text-shadow: none;
-  transition: none !important;
-}
-
-body.has-ambient-scroll :is(.tracker-button, .tracker-cta) > .ambient-word + .ambient-word,
-body.has-ambient-scroll .tracker-navlinks a > .ambient-word + .ambient-word {
-  margin-left: 0.26em;
 }
 
 body.has-ambient-scroll .tracker-hero-bg {
@@ -252,8 +266,9 @@ body.has-ambient-scroll .tracker-section + .tracker-section {
 }
 
 body.has-ambient-scroll .tracker-nav {
-  border-bottom: 1px solid rgb(var(--ambient-ink) / 16%);
-  background: rgb(var(--ambient-base) / 82%);
+  --ambient-ink: 248 247 239;
+  border-bottom: 1px solid rgb(255 255 255 / 16%);
+  background: rgb(10 30 28 / 92%);
   -webkit-backdrop-filter: saturate(125%) blur(18px);
   backdrop-filter: saturate(125%) blur(18px);
   transition: none;
@@ -273,7 +288,7 @@ body.has-ambient-scroll .tracker-navlinks a:hover {
 }
 
 body.has-ambient-scroll .tracker-mark > img:not(.tracker-mark-mobile-logo) {
-  filter: brightness(0) invert(var(--ambient-logo-lightness, 1));
+  filter: brightness(0) invert(1);
 }
 
 body.has-ambient-scroll .tracker-mark img {
@@ -281,7 +296,7 @@ body.has-ambient-scroll .tracker-mark img {
 }
 
 body.has-ambient-scroll .tracker-menu-toggle {
-  color: rgb(var(--ambient-control-ink, var(--ambient-ink)));
+  color: rgb(var(--ambient-ink));
   transition: none;
 }
 
@@ -313,10 +328,6 @@ body.has-ambient-scroll .inside-section-cta .tracker-button {
   border-color: #0f302b;
   background: #0f302b;
   color: #fff;
-}
-
-body.has-ambient-scroll .inside-section-cta .tracker-button .ambient-word {
-  color: #fff !important;
 }
 
 body.has-ambient-scroll .inside-section-cta .tracker-button:hover {
