@@ -1,0 +1,126 @@
+:root {
+  --ambient-base: 10 30 28;
+  --ambient-glow-one: 21 69 58;
+  --ambient-glow-two: 43 63 82;
+  --ambient-ink: 246 246 239;
+}
+
+body.has-ambient-pages {
+  --background: transparent;
+  --secondary: transparent;
+  --card: transparent;
+  --popover: transparent;
+  --foreground: rgb(var(--ambient-ink));
+  --card-foreground: rgb(var(--ambient-ink));
+  --secondary-foreground: rgb(var(--ambient-ink));
+  --muted-foreground: rgb(var(--ambient-ink) / 68%);
+  --border: rgb(var(--ambient-ink) / 18%);
+  background: rgb(10 30 28);
+  color: rgb(var(--ambient-ink));
+}
+
+.ambient-pages-background {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 10%, rgb(var(--ambient-glow-one) / 70%), transparent 52%),
+    radial-gradient(circle at 88% 84%, rgb(var(--ambient-glow-two) / 60%), transparent 56%),
+    rgb(var(--ambient-base));
+  pointer-events: none;
+  will-change: background;
+}
+
+.ambient-pages-background::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, rgb(255 255 255 / 4%), transparent 42%, rgb(0 0 0 / 8%));
+  content: "";
+}
+
+body.has-ambient-pages .page,
+body.has-ambient-pages .tracker-page,
+body.has-ambient-pages main,
+body.has-ambient-pages .bg-background,
+body.has-ambient-pages .bg-card,
+body.has-ambient-pages .bg-white,
+body.has-ambient-pages .bg-secondary\/40,
+body.has-ambient-pages .card,
+body.has-ambient-pages .state,
+body.has-ambient-pages .record,
+body.has-ambient-pages .body,
+body.has-ambient-pages .profile,
+body.has-ambient-pages .faq-item,
+body.has-ambient-pages .legal-section,
+body.has-ambient-pages .site-footer,
+body.has-ambient-pages .global-site-footer {
+  background: transparent;
+  background-color: transparent;
+  color: rgb(var(--ambient-ink));
+  box-shadow: none;
+}
+
+body.has-ambient-pages .card,
+body.has-ambient-pages .state,
+body.has-ambient-pages .record,
+body.has-ambient-pages .faq-item,
+body.has-ambient-pages .legal-section,
+body.has-ambient-pages .site-footer,
+body.has-ambient-pages .global-site-footer {
+  border-color: rgb(var(--ambient-ink) / 18%);
+}
+
+body.has-ambient-pages h1,
+body.has-ambient-pages h2,
+body.has-ambient-pages h3,
+body.has-ambient-pages h4,
+body.has-ambient-pages p,
+body.has-ambient-pages li,
+body.has-ambient-pages a,
+body.has-ambient-pages label,
+body.has-ambient-pages summary,
+body.has-ambient-pages .global-site-footer a,
+body.has-ambient-pages .global-site-footer p {
+  color: rgb(var(--ambient-ink));
+}
+
+body.has-ambient-pages p,
+body.has-ambient-pages li,
+body.has-ambient-pages .muted,
+body.has-ambient-pages .text-muted-foreground,
+body.has-ambient-pages .global-site-footer p {
+  color: rgb(var(--ambient-ink) / 72%);
+}
+
+body.has-ambient-pages .eyebrow,
+body.has-ambient-pages .kicker,
+body.has-ambient-pages .tracker-eyebrow {
+  color: rgb(var(--ambient-ink) / 62%);
+}
+
+body.has-ambient-pages input,
+body.has-ambient-pages textarea,
+body.has-ambient-pages select,
+body.has-ambient-pages button {
+  border-color: rgb(var(--ambient-ink) / 38%);
+  background: transparent;
+  color: rgb(var(--ambient-ink));
+}
+
+body.has-ambient-pages .card:hover,
+body.has-ambient-pages .state:hover,
+body.has-ambient-pages .faq-item:hover {
+  background: rgb(var(--ambient-ink) / 6%);
+}
+
+body.has-ambient-pages .global-site-footer {
+  width: min(1180px, calc(100% - clamp(44px, 10vw, 144px)));
+  margin-top: clamp(72px, 10vw, 140px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-pages-background {
+    will-change: auto;
+  }
+}

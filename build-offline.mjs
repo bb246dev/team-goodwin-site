@@ -137,6 +137,13 @@ function localize(html, pageName) {
     .replace(/href="\/partners"/g, 'href="partners.html"')
     .replace(/href="\/"/g, 'href="index.html"');
 
+  if (pageName !== "live-tracking.html") {
+    out = out.replace(
+      "</head>",
+      '<link rel="stylesheet" href="/assets/ambient-pages.css"><script defer src="/assets/ambient-pages.js"></script></head>',
+    );
+  }
+
   for (const id of videoIds) {
     out = out.replace(
       new RegExp(`https://i\\.ytimg\\.com/vi/${id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/hqdefault\\.jpg`, "g"),
