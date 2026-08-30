@@ -267,6 +267,7 @@ body.has-ambient-scroll .tracker-section + .tracker-section {
 
 body.has-ambient-scroll .tracker-nav {
   --ambient-ink: 248 247 239;
+  align-items: center;
   border-bottom: 1px solid rgb(255 255 255 / 16%);
   background: rgb(10 30 28 / 92%);
   -webkit-backdrop-filter: saturate(125%) blur(18px);
@@ -280,6 +281,7 @@ body.has-ambient-scroll .tracker-mark {
 }
 
 body.has-ambient-scroll .tracker-mark {
+  align-self: center;
   transition: opacity 180ms ease;
 }
 
