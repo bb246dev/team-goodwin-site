@@ -150,7 +150,19 @@ body.has-ambient-scroll .tracker-nav {
 
 body.has-ambient-scroll .tracker-navlinks,
 body.has-ambient-scroll .tracker-mark {
-  color: #fff;
+  color: rgb(var(--ambient-ink));
+}
+
+body.has-ambient-scroll .tracker-navlinks a:hover {
+  color: rgb(var(--ambient-ink));
+}
+
+html[data-ambient-ink="dark"] body.has-ambient-scroll .tracker-mark img {
+  filter: brightness(0);
+}
+
+html[data-ambient-ink="light"] body.has-ambient-scroll .tracker-mark img {
+  filter: brightness(0) invert(1);
 }
 
 body.has-ambient-scroll .tracker-cta,
@@ -229,13 +241,13 @@ body.has-ambient-scroll #why .section-head p,
 body.has-ambient-scroll #why .article-card p,
 body.has-ambient-scroll #rsvp .section-head p,
 body.has-ambient-scroll .site-footer p {
-  color: rgb(var(--ambient-ink) / 70%);
+  color: rgb(var(--ambient-ink));
 }
 
 body.has-ambient-scroll .tracker-eyebrow,
 body.has-ambient-scroll #why .tracker-eyebrow,
 body.has-ambient-scroll #rsvp .tracker-eyebrow {
-  color: rgb(var(--ambient-ink) / 64%);
+  color: rgb(var(--ambient-ink));
 }
 
 body.has-ambient-scroll .feature-row,

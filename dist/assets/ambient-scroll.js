@@ -11,8 +11,33 @@
 
   const anchorSelectors = ["#the-run", "#map", "#updates", "#articles", "#why", "#rsvp", ".site-footer"];
   const mix = (start, end, amount) => start.map((channel, index) => Math.round(channel + (end[index] - channel) * amount));
+  const composite = (foreground, background, alpha) => foreground.map((channel, index) => Math.round(channel * alpha + background[index] * (1 - alpha)));
   const smoothstep = (value) => value * value * (3 - 2 * value);
   const rgb = (value) => value.join(" ");
+  const inkChoices = {
+    dark: [8, 17, 15],
+    light: [255, 253, 247],
+  };
+  const linearChannel = (channel) => {
+    const value = channel / 255;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = (color) => color.reduce((total, channel, index) => total + linearChannel(channel) * [0.2126, 0.7152, 0.0722][index], 0);
+  const contrast = (foreground, background) => {
+    const lighter = Math.max(luminance(foreground), luminance(background));
+    const darker = Math.min(luminance(foreground), luminance(background));
+    return (lighter + 0.05) / (darker + 0.05);
+  };
+  const contrastSamples = (base, glowOne, glowTwo) => {
+    const samples = [];
+    [0, 0.24, 0.48, 0.72].forEach((oneAlpha) => {
+      [0, 0.21, 0.42, 0.62].forEach((twoAlpha) => {
+        samples.push(composite(glowOne, composite(glowTwo, base, twoAlpha), oneAlpha));
+      });
+    });
+    return samples;
+  };
+  const minimumContrast = (ink, samples) => Math.min(...samples.map((sample) => contrast(ink, sample)));
 
   const background = document.createElement("div");
   background.className = "ambient-scroll-background";
@@ -28,6 +53,7 @@
 
   let anchors = [];
   let frame = 0;
+  let inkMode = "";
 
   const measure = () => {
     anchors = anchorSelectors
@@ -51,10 +77,24 @@
     const current = palettes[Math.min(index, palettes.length - 1)];
     const next = palettes[Math.min(index + 1, palettes.length - 1)];
 
-    document.documentElement.style.setProperty("--ambient-base", rgb(mix(current.base, next.base, amount)));
-    document.documentElement.style.setProperty("--ambient-glow-one", rgb(mix(current.glowOne, next.glowOne, amount)));
-    document.documentElement.style.setProperty("--ambient-glow-two", rgb(mix(current.glowTwo, next.glowTwo, amount)));
-    document.documentElement.style.setProperty("--ambient-ink", rgb(mix(current.ink, next.ink, amount)));
+    const base = mix(current.base, next.base, amount);
+    const glowOne = mix(current.glowOne, next.glowOne, amount);
+    const glowTwo = mix(current.glowTwo, next.glowTwo, amount);
+    const samples = contrastSamples(base, glowOne, glowTwo);
+    const scores = {
+      dark: minimumContrast(inkChoices.dark, samples),
+      light: minimumContrast(inkChoices.light, samples),
+    };
+    const bestMode = scores.dark >= scores.light ? "dark" : "light";
+    const currentScore = inkMode ? scores[inkMode] : 0;
+    if (!inkMode || currentScore < 4.5 || scores[bestMode] > currentScore + 0.6) inkMode = bestMode;
+
+    document.documentElement.style.setProperty("--ambient-base", rgb(base));
+    document.documentElement.style.setProperty("--ambient-glow-one", rgb(glowOne));
+    document.documentElement.style.setProperty("--ambient-glow-two", rgb(glowTwo));
+    document.documentElement.style.setProperty("--ambient-ink", rgb(inkChoices[inkMode]));
+    document.documentElement.dataset.ambientInk = inkMode;
+    document.documentElement.dataset.ambientContrast = scores[inkMode].toFixed(2);
 
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     progress.firstElementChild.style.transform = `scaleX(${maxScroll > 0 ? window.scrollY / maxScroll : 0})`;
