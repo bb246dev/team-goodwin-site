@@ -104,6 +104,10 @@ body.has-ambient-scroll .tracker-content {
   z-index: 1;
 }
 
+body.has-ambient-scroll #articles [hidden] {
+  display: none !important;
+}
+
 body.has-ambient-scroll .tracker-section {
   border: 0;
   padding-top: clamp(68px, 8vw, 112px);
