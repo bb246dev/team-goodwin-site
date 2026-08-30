@@ -17,6 +17,7 @@
     ".mission-clock-grid",
     ".mobile-photo-break",
     ".partner-logo-wall",
+    ".inside-section-cta .tracker-button",
     ".sr-only",
     "[aria-live]",
     "script",
@@ -30,15 +31,18 @@
   const controlSelector = ".follow-form input, .follow-form textarea, .follow-form select, .rsvp-mobile-controls select, .tracker-menu-toggle";
   const clamp = (value, minimum = 0, maximum = 1) => Math.min(maximum, Math.max(minimum, value));
   const mix = (start, end, amount) => start.map((channel, index) => channel + (end[index] - channel) * amount);
+  const cubicMix = (start, controlOne, controlTwo, end, amount) => {
+    const inverse = 1 - amount;
+    return start.map((channel, index) =>
+      inverse ** 3 * channel
+      + 3 * inverse ** 2 * amount * controlOne[index]
+      + 3 * inverse * amount ** 2 * controlTwo[index]
+      + amount ** 3 * end[index]);
+  };
   const composite = (foreground, backgroundColor, alpha) => foreground.map((channel, index) => channel * alpha + backgroundColor[index] * (1 - alpha));
   const smoothstep = (value) => value * value * (3 - 2 * value);
   const rgb = (value) => value.map(Math.round).join(" ");
-  const inkChoices = {
-    dark: [8, 17, 15],
-    light: [255, 253, 247],
-  };
-  const contrastTarget = 4.5;
-  const hysteresisMargin = 0.65;
+  const brandInk = [25, 59, 59];
   const linearChannel = (channel) => {
     const value = channel / 255;
     return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
@@ -49,26 +53,47 @@
     const darker = Math.min(luminance(foreground), luminance(backgroundColor));
     return (lighter + 0.05) / (darker + 0.05);
   };
-  const chooseInk = (backgroundColor, currentMode = "") => {
+  const mixInk = (start, end, amount) => {
+    const startLight = luminance(start) > 0.5;
+    const endLight = luminance(end) > 0.5;
+    if (startLight === endLight) return mix(start, end, amount);
+
+    // Compress the vulnerable mid-lightness interval without removing any
+    // values from the scroll-driven continuum. Light ink falls into the
+    // branded dark range early; the reverse crossing stays dark until late.
+    const chromaticAmount = startLight
+      ? 1 - (1 - amount) ** 6
+      : amount ** 6;
+
+    // Travel through the Goodwin green instead of the muddy neutral gray
+    // produced by a straight white-to-black RGB interpolation. The curve
+    // enters the dark, chromatic range early (and exits it late in reverse),
+    // preserving a continuous sweep without leaving low-contrast gray spread
+    // across an entire line of type.
+    const nearBrand = startLight
+      ? mix(start, brandInk, 0.88)
+      : mix(start, brandInk, 0.2);
+    const farBrand = endLight
+      ? mix(end, brandInk, 0.88)
+      : mix(end, brandInk, 0.2);
+    return cubicMix(start, nearBrand, farBrand, end, chromaticAmount);
+  };
+  const sweepInkAt = (x, y, backgroundColor) => {
     const backgroundLuminance = luminance(backgroundColor);
-    const scores = {
-      dark: contrast(inkChoices.dark, backgroundColor),
-      light: contrast(inkChoices.light, backgroundColor),
-    };
-    const bestMode = scores.dark >= scores.light ? "dark" : "light";
-    let mode = bestMode;
-    if (
-      currentMode &&
-      currentMode !== bestMode &&
-      scores[currentMode] >= contrastTarget &&
-      scores[bestMode] < scores[currentMode] + hysteresisMargin
-    ) {
-      mode = currentMode;
-    }
+    const xRatio = clamp(x / Math.max(1, window.innerWidth));
+    const yRatio = clamp(y / Math.max(1, window.innerHeight));
+    const amount = smoothstep(clamp(currentPalette.amount * 1.38 - xRatio * 0.3 - yRatio * 0.08));
+    const rawColor = mixInk(currentPalette.inkStart, currentPalette.inkEnd, amount);
+    const rawScore = contrast(rawColor, backgroundColor);
+    const preferredDarkAmount = smoothstep(clamp((backgroundLuminance - 0.14) / 0.28));
+    const supportColor = mixInk([255, 253, 247], brandInk, preferredDarkAmount);
+    const supportAmount = smoothstep(clamp((4.4 - rawScore) / 2.6)) * 0.92;
+    const color = mixInk(rawColor, supportColor, supportAmount);
+    const score = contrast(color, backgroundColor);
     return {
-      mode,
-      color: inkChoices[mode],
-      score: scores[mode],
+      color,
+      amount,
+      score,
       backgroundLuminance,
     };
   };
@@ -99,7 +124,6 @@
   let previousTime = 0;
   let controls = [];
   let cloudModels = [];
-  let structuralInkMode = "";
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const clouds = [...background.querySelectorAll(".ambient-scroll-cloud")];
   const activeWords = new Set();
@@ -177,6 +201,9 @@
       base: mix(current.base, next.base, amount),
       glowOne: mix(current.glowOne, next.glowOne, amount),
       glowTwo: mix(current.glowTwo, next.glowTwo, amount),
+      inkStart: current.ink,
+      inkEnd: next.ink,
+      amount,
     };
   };
 
@@ -264,12 +291,9 @@
     return sample;
   };
 
-  const applyInk = (element, ink, property, dataProperty) => {
-    if (element.dataset[dataProperty] !== ink.mode) {
-      element.dataset[dataProperty] = ink.mode;
-      element.style.setProperty(property, rgb(ink.color));
-      element.style.setProperty("--ambient-word-halo-ink", rgb(ink.color));
-    }
+  const applyInk = (element, ink, property) => {
+    element.style.setProperty(property, rgb(ink.color));
+    element.dataset.ambientTone = ink.amount.toFixed(4);
     element.dataset.ambientContrast = ink.score.toFixed(2);
     element.dataset.ambientBackgroundLuminance = ink.backgroundLuminance.toFixed(3);
   };
@@ -287,8 +311,8 @@
       measurements.push({ word, x: clamp(rect.left + rect.width * 0.5, 0, window.innerWidth), y: clamp(rect.top + rect.height * 0.5, 0, window.innerHeight) });
     });
     measurements.forEach(({ word, x, y }) => {
-      const ink = chooseInk(sampleAmbientAt(x, y, word), word.dataset.ambientWordInk || "");
-      applyInk(word, ink, "--ambient-word-ink", "ambientWordInk");
+      const sample = sampleAmbientAt(x, y, word);
+      applyInk(word, sweepInkAt(x, y, sample), "--ambient-word-ink");
     });
   };
 
@@ -296,16 +320,21 @@
     controls.forEach((control) => {
       const rect = control.getBoundingClientRect();
       if (rect.bottom < -140 || rect.top > window.innerHeight + 140 || rect.width === 0 || rect.height === 0) return;
-      const sample = sampleAmbientAt(rect.left + rect.width * 0.5, rect.top + rect.height * 0.5, control);
-      const ink = chooseInk(sample, control.dataset.ambientControlInk || "");
-      applyInk(control, ink, "--ambient-control-ink", "ambientControlInk");
+      const x = rect.left + rect.width * 0.5;
+      const y = rect.top + rect.height * 0.5;
+      const sample = sampleAmbientAt(x, y, control);
+      applyInk(control, sweepInkAt(x, y, sample), "--ambient-control-ink");
     });
 
     const mark = document.querySelector(".tracker-mark");
     if (mark) {
       const rect = mark.getBoundingClientRect();
-      const ink = chooseInk(sampleAmbientAt(rect.left + rect.width * 0.5, rect.top + rect.height * 0.5, mark), mark.dataset.ambientLocalInk || "");
-      mark.dataset.ambientLocalInk = ink.mode;
+      const x = rect.left + rect.width * 0.5;
+      const y = rect.top + rect.height * 0.5;
+      const ink = sweepInkAt(x, y, sampleAmbientAt(x, y, mark));
+      const logoLightness = clamp(luminance(ink.color));
+      mark.style.setProperty("--ambient-logo-lightness", logoLightness.toFixed(4));
+      mark.dataset.ambientTone = ink.amount.toFixed(4);
       mark.dataset.ambientContrast = ink.score.toFixed(2);
     }
   };
@@ -338,10 +367,11 @@
     document.documentElement.dataset.ambientMotion = renderedScroll === targetScroll ? "settled" : "moving";
 
     updateCloudMotion();
-    const structuralInk = chooseInk(sampleAmbientAt(window.innerWidth * 0.5, window.innerHeight * 0.5), structuralInkMode);
-    structuralInkMode = structuralInk.mode;
+    const structuralX = window.innerWidth * 0.5;
+    const structuralY = window.innerHeight * 0.5;
+    const structuralInk = sweepInkAt(structuralX, structuralY, sampleAmbientAt(structuralX, structuralY));
     document.documentElement.style.setProperty("--ambient-ink", rgb(structuralInk.color));
-    document.documentElement.dataset.ambientInk = structuralInk.mode;
+    document.documentElement.dataset.ambientTone = structuralInk.amount.toFixed(4);
     document.documentElement.dataset.ambientContrast = structuralInk.score.toFixed(2);
     updateWords();
     updateControls();

@@ -153,10 +153,8 @@ body.has-ambient-scroll .tracker-eyebrow {
 
 body.has-ambient-scroll .ambient-word {
   color: rgb(var(--ambient-word-ink, var(--ambient-ink))) !important;
-  text-shadow: 0 0 6px rgb(var(--ambient-word-halo-ink, var(--ambient-word-ink, var(--ambient-ink))) / 18%);
-  transition:
-    color 160ms cubic-bezier(0.22, 1, 0.36, 1),
-    text-shadow 160ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  text-shadow: none;
+  transition: none !important;
 }
 
 body.has-ambient-scroll :is(.tracker-button, .tracker-cta) > .ambient-word + .ambient-word,
@@ -258,7 +256,7 @@ body.has-ambient-scroll .tracker-nav {
   background: rgb(var(--ambient-base) / 82%);
   -webkit-backdrop-filter: saturate(125%) blur(18px);
   backdrop-filter: saturate(125%) blur(18px);
-  transition: border-color 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: none;
 }
 
 body.has-ambient-scroll .tracker-navlinks,
@@ -275,20 +273,16 @@ body.has-ambient-scroll .tracker-navlinks a:hover {
 }
 
 body.has-ambient-scroll .tracker-mark > img:not(.tracker-mark-mobile-logo) {
-  filter: brightness(0);
-}
-
-body.has-ambient-scroll .tracker-mark[data-ambient-local-ink="light"] > img:not(.tracker-mark-mobile-logo) {
-  filter: brightness(0) invert(1);
+  filter: brightness(0) invert(var(--ambient-logo-lightness, 1));
 }
 
 body.has-ambient-scroll .tracker-mark img {
-  transition: filter 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: none;
 }
 
 body.has-ambient-scroll .tracker-menu-toggle {
   color: rgb(var(--ambient-control-ink, var(--ambient-ink)));
-  transition: color 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: none;
 }
 
 body.has-ambient-scroll .tracker-cta,
@@ -319,6 +313,10 @@ body.has-ambient-scroll .inside-section-cta .tracker-button {
   border-color: #0f302b;
   background: #0f302b;
   color: #fff;
+}
+
+body.has-ambient-scroll .inside-section-cta .tracker-button .ambient-word {
+  color: #fff !important;
 }
 
 body.has-ambient-scroll .inside-section-cta .tracker-button:hover {
