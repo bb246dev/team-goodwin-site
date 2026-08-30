@@ -4,44 +4,731 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Updates Archive | Goodwin Generated Mission America</title>
+  <meta name="description" content="Every published update from Goodwin Generated Mission America, newest first.">
+  <base href="/">
+  <link rel="icon" href="../assets/goodwin-favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/goodwin-webclip.png">
+  <link rel="stylesheet" href="../fonts/inter.css">
   <link rel="stylesheet" href="../assets/styles-ulvf0Dcj.css">
   <style>
-    body{margin:0;background:#fbfaf6;color:#143f3c;font-family:Inter,Arial,sans-serif}.page{min-height:100vh;padding:40px clamp(22px,5vw,72px)}a{color:inherit}.nav{display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{font-family:Fraunces,Georgia,serif;font-size:clamp(1.4rem,3vw,2.4rem);text-decoration:none}.back{font-weight:700;text-decoration:none}.hero{padding:12vh 0 7vh}.eyebrow{color:#bca273;font-size:.72rem;font-weight:800;letter-spacing:.3em;text-transform:uppercase}h1{margin:.2em 0 0;font-family:Fraunces,Georgia,serif;font-size:clamp(4rem,12vw,10rem);line-height:.84;text-transform:uppercase}.updates{display:grid;gap:1px;background:rgba(20,63,60,.18);border:1px solid rgba(20,63,60,.18)}.update{display:grid;grid-template-columns:minmax(160px,.3fr) 1fr;gap:24px;background:rgba(255,255,255,.76);padding:24px}.update time{color:#bca273;font-size:.78rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.update h2{margin:0;font-family:Fraunces,Georgia,serif;font-size:clamp(1.6rem,3vw,2.6rem);line-height:1}.update p{margin:10px 0 0;color:rgba(20,63,60,.68);line-height:1.6}@media(max-width:680px){.update{grid-template-columns:1fr}}
+    :root {
+      --color-white: #FFFFFF;
+      --color-black: #0A0A0A;
+      --color-accent: #193B3B;
+      --tracker-ink: #0A0A0A;
+      --tracker-panel: #FFFFFF;
+      --tracker-line: rgba(10, 10, 10, 0.18);
+      --tracker-muted: rgba(10, 10, 10, 0.66);
+      --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--color-white);
+      color: var(--tracker-ink);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .tracker-nav {
+      position: sticky;
+      z-index: 30;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 24px clamp(20px, 4vw, 64px);
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--tracker-line);
+      color: var(--tracker-ink);
+      backdrop-filter: blur(14px);
+    }
+
+    .tracker-mark {
+      display: flex;
+      align-items: flex-end;
+      flex: 0 0 auto;
+      gap: 6px clamp(12px, 1.8vw, 18px);
+      line-height: 1;
+      text-decoration: none;
+      opacity: 0.9;
+      transition: opacity 180ms ease;
+    }
+
+    .tracker-mark:hover,
+    .tracker-mark:focus-visible {
+      opacity: 1;
+    }
+
+    .tracker-mark img {
+      display: block;
+      width: clamp(132px, 14vw, 210px);
+      height: auto;
+    }
+
+    .tracker-mark span {
+      color: inherit;
+      font-size: clamp(0.64rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      letter-spacing: 0.34em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transform: translateY(-0.02em);
+    }
+
+    .tracker-navlinks {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.4vw, 34px);
+      color: var(--tracker-muted);
+      font-size: 0.95rem;
+    }
+
+    .tracker-navlinks a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+
+    .tracker-navlinks a:hover,
+    .tracker-navlinks a:focus-visible {
+      color: var(--color-accent);
+    }
+
+    .tracker-cta {
+      border: 1px solid rgba(25, 59, 59, 0.28);
+      border-radius: 999px;
+      padding: 11px 22px;
+      background: var(--color-accent);
+      color: var(--color-white);
+      font-weight: 600;
+    }
+
+    .updates-page {
+      min-height: 100vh;
+    }
+
+    .updates-content {
+      width: min(1180px, calc(100% - clamp(44px, 10vw, 144px)));
+      margin: 0 auto;
+    }
+
+    .updates-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.55fr);
+      gap: clamp(36px, 8vw, 112px);
+      align-items: end;
+      padding: clamp(72px, 10vw, 128px) 0 clamp(44px, 7vw, 82px);
+      border-bottom: 1px solid var(--tracker-line);
+    }
+
+    .tracker-eyebrow {
+      color: var(--tracker-muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.34em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .updates-hero h1 {
+      max-width: 760px;
+      margin: 12px 0 0;
+      font-size: clamp(4.4rem, 9vw, 8.8rem);
+      font-weight: 500;
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .updates-hero p {
+      max-width: 28rem;
+      margin: 0;
+      color: var(--tracker-muted);
+      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      line-height: 1.55;
+    }
+
+    .updates-archive {
+      display: grid;
+      border: 1px solid var(--tracker-line);
+      border-top: 0;
+    }
+
+    .update {
+      display: grid;
+      grid-template-columns: minmax(170px, 0.28fr) minmax(0, 1fr);
+      gap: clamp(24px, 5vw, 64px);
+      padding: clamp(24px, 4vw, 42px) clamp(22px, 4vw, 40px);
+      border-top: 1px solid var(--tracker-line);
+      background: var(--tracker-panel);
+    }
+
+    .update:first-child {
+      border-top: 0;
+    }
+
+    .update time {
+      color: var(--tracker-muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .update h2 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(1.8rem, 3.4vw, 3.5rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .update p {
+      max-width: 720px;
+      margin: 14px 0 0;
+      color: var(--tracker-muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .update-link {
+      display: inline-flex;
+      margin-top: 18px;
+      color: var(--color-accent);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .update-link:hover,
+    .update-link:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 0.24em;
+    }
+
+    .site-footer {
+      width: min(1180px, calc(100% - clamp(44px, 10vw, 144px)));
+      margin: 78px auto 0;
+      border-top: 1px solid var(--tracker-line);
+    }
+
+    .site-footer-main {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.9fr) minmax(0, 2.1fr);
+      gap: clamp(32px, 6vw, 86px);
+      padding: 56px 0;
+    }
+
+    .site-footer-nav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      gap: clamp(24px, 4vw, 64px);
+    }
+
+    .site-footer-brand {
+      max-width: 260px;
+    }
+
+    .site-footer-brand img,
+    .partner-logo-item img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .site-footer-brand img {
+      width: 100%;
+    }
+
+    .site-footer ul {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .site-footer a,
+    .site-footer-link-disabled {
+      color: var(--tracker-muted);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 160ms ease;
+    }
+
+    .site-footer a:hover {
+      color: var(--color-accent);
+    }
+
+    .site-footer-partners {
+      padding: 48px clamp(24px, 5vw, 54px) 44px;
+      background: #0A0A0A;
+      color: #FFFFFF;
+      text-align: center;
+    }
+
+    .site-footer-partners .tracker-eyebrow {
+      color: rgba(255, 255, 255, 0.74);
+    }
+
+    .partner-logo-wall {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 34px clamp(28px, 4vw, 54px);
+      align-items: center;
+      margin-top: 38px;
+    }
+
+    .partner-logo-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+    }
+
+    .partner-logo-item img {
+      width: auto;
+      max-height: 34px;
+      opacity: 0.78;
+      object-fit: contain;
+      transition: opacity 160ms ease;
+    }
+
+    .partner-logo-item:hover img {
+      opacity: 1;
+    }
+
+    .site-footer .site-footer-partner-disclaimer {
+      max-width: none;
+      margin: 36px 0 0;
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 0.72rem;
+      line-height: 1.55;
+    }
+
+    .site-footer-legal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 22px;
+      margin-top: 3px;
+      padding: 28px 0 18px;
+      color: rgba(10, 10, 10, 0.62);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .site-footer .site-footer-disclaimer {
+      width: 100%;
+      max-width: none;
+      margin: 0 0 30px;
+      color: rgba(10, 10, 10, 0.58);
+      font-size: 0.72rem;
+      line-height: 1.55;
+    }
+
+    .site-footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 0;
+      border-top: 1px solid var(--tracker-line);
+      color: rgba(10, 10, 10, 0.62);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 840px) {
+      .tracker-navlinks a:not(.tracker-cta) {
+        display: none;
+      }
+
+      .updates-hero,
+      .site-footer-main {
+        grid-template-columns: 1fr;
+      }
+
+      .site-footer-bottom {
+        display: block;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .update {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .tracker-nav {
+        padding: 18px 22px;
+      }
+
+      .tracker-mark span {
+        display: none;
+      }
+
+      .tracker-mark img {
+        width: 148px;
+      }
+
+      .tracker-cta {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+
+      .updates-content,
+      .site-footer {
+        width: calc(100% - 40px);
+      }
+
+      .updates-hero {
+        padding: 54px 0 34px;
+      }
+
+      .updates-hero h1 {
+        font-size: clamp(3.4rem, 18vw, 4.8rem);
+      }
+
+      .updates-hero p {
+        font-size: 1rem;
+      }
+
+      .update {
+        padding: 24px 20px;
+      }
+
+      .update h2 {
+        font-size: clamp(1.8rem, 10vw, 2.55rem);
+      }
+
+      .site-footer {
+        margin-top: 52px;
+      }
+
+      .site-footer-nav {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .site-footer-nav a,
+      .site-footer-link-disabled {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+      }
+
+      .site-footer-link-group:nth-child(n + 2)::before {
+        content: "";
+        display: block;
+        width: 32px;
+        height: 2px;
+        margin: 30px 0 16px;
+        background: var(--color-accent);
+      }
+
+      .site-footer-partners {
+        padding: 38px 20px 34px;
+      }
+
+      .partner-logo-wall {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 28px 22px;
+      }
+
+      .partner-logo-item {
+        min-height: 30px;
+      }
+
+      .partner-logo-item img {
+        max-height: 24px;
+      }
+    }
   </style>
 </head>
 <body>
-  <main class="page">
-    <nav class="nav"><a class="brand" href="live-tracking.html">GOODWIN Generated</a><a class="back" href="live-tracking.html">Back to tracker</a></nav>
-    <section class="hero"><div class="eyebrow">Ticker Archive</div><h1>All Updates</h1></section>
-    <section class="updates" data-updates-archive>
-      <article class="update"><time>Loading</time><div><h2>Fetching updates</h2><p>The archive will populate from the shared ticker data file.</p></div></article>
-    </section>
+  <main class="updates-page">
+    <nav class="tracker-nav" aria-label="Primary navigation">
+      <a class="tracker-mark" href="live-tracking.html" aria-label="Goodwin Generated Mission America home">
+        <img src="../assets/goodwin-logo.png" alt="Goodwin">
+        <span>Endurance</span>
+      </a>
+      <div class="tracker-navlinks">
+        <a href="the-run.html">The Run</a>
+        <a href="fifty-runs.html">50 States</a>
+        <a href="updates.html" aria-current="page">News</a>
+        <a href="will.html">Will</a>
+        <a class="tracker-cta" href="live-tracking.html#rsvp">Join the Run</a>
+      </div>
+    </nav>
+
+    <div class="updates-content">
+      <section class="updates-hero">
+        <div>
+          <div class="tracker-eyebrow">UPDATES ARCHIVE</div>
+          <h1>Every update from the road.</h1>
+        </div>
+        <p>Every published update from Goodwin Generated Mission America, newest first.</p>
+      </section>
+
+      <section class="updates-archive" data-updates-archive aria-live="polite">
+        <article class="update">
+          <time>Loading</time>
+          <div>
+            <h2>Fetching updates</h2>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <footer class="site-footer">
+      <div class="site-footer-main">
+        <div>
+          <div class="site-footer-brand"><img src="../assets/goodwin-logo.png" alt="Goodwin"></div>
+        </div>
+        <nav class="site-footer-nav" aria-label="Footer navigation">
+          <ul class="site-footer-link-group">
+            <li><a href="the-run.html">The Run</a></li>
+            <li><a href="live-tracking.html#map">Live Map</a></li>
+            <li><a href="updates.html">Running Live Archive</a></li>
+            <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
+          </ul>
+          <ul class="site-footer-link-group">
+            <li><a href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer">Will — Instagram</a></li>
+            <li><span class="site-footer-link-disabled">Will — TikTok</span></li>
+            <li><a href="https://www.youtube.com/@goodge" target="_blank" rel="noopener noreferrer">Will — YouTube</a></li>
+            <li><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer">Rizkia</a></li>
+            <li><a href="https://live-mission-america-50.pantheonsite.io/#faq" target="_blank" rel="noopener noreferrer">WilliamGoodge.com</a></li>
+          </ul>
+          <ul class="site-footer-link-group">
+            <li><a href="https://www.linkedin.com/company/teamgoodwin/" target="_blank" rel="noopener noreferrer">Goodwin — LinkedIn</a></li>
+            <li><a href="https://www.youtube.com/@goodwinsoftwarecompany" target="_blank" rel="noopener noreferrer">Goodwin — YouTube</a></li>
+            <li><a href="https://x.com/goteamgoodwin" target="_blank" rel="noopener noreferrer">Goodwin — X</a></li>
+            <li><a href="https://teamgoodwin.com/" target="_blank" rel="noopener noreferrer">TeamGoodwin.com</a></li>
+            <li><a href="mailto:run@teamgoodwin.com">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="site-footer-partners" aria-label="Partners">
+        <div class="tracker-eyebrow">MADE POSSIBLE BY</div>
+        <div class="partner-logo-wall">
+          <div class="partner-logo-item"><img src="../assets/partners/arsenal-aviation-footer.svg" alt="Arsenal Aviation logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/trilogy-aviation-footer.svg" alt="Trilogy Aviation Group logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/titan-aviation-footer.png" alt="Titan Aviation Group logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/fly1200-footer.svg" alt="FLY1200 logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/flyexclusive-footer.svg" alt="flyExclusive logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/jet-linx-footer.svg" alt="Jet Linx logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/skyward-aviation-footer.svg" alt="Skyward Aviation logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/trueskies-footer.svg" alt="TrueSkies Aviation Group logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/magellan-jets-footer.svg" alt="Magellan Jets logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/charter-flight-support-footer.svg" alt="Charter Flight Support logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/spyroll-studios-footer.svg" alt="Spyroll Studios logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/david-footer.png" alt="David logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/humantra-footer.png" alt="Humantra logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/rizkia-footer.png" alt="Rizkia logo"></div>
+          <div class="partner-logo-item"><img src="../assets/partners/whoop-footer.png" alt="WHOOP logo"></div>
+        </div>
+        <p class="site-footer-partner-disclaimer">All trademarks and logos are the property of their respective owners and are used with permission where applicable.</p>
+      </div>
+      <nav class="site-footer-legal" aria-label="Legal links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/participation-terms/">Participation Terms</a>
+        <a href="/accessibility/">Accessibility</a>
+      </nav>
+      <p class="site-footer-disclaimer">Goodwin Generated Mission America is an endurance event and world record attempt. Routes, schedules, locations, tracking data and event details are subject to change. World record status is subject to independent verification. Participation in any associated run or event is voluntary and subject to the Participation Terms.</p>
+      <div class="site-footer-bottom">
+        <span>© 2026 Goodwin Company</span>
+        <span>Goodwin Generated</span>
+      </div>
+    </footer>
   </main>
+
   <script>
-    const sheetConfig={endpoint:"https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",gid:"0",cacheKey:"goodwin-generated-mission-america-updates-v1",cacheMs:2*60*1000};
-    const updatesDebug=new URLSearchParams(window.location.search).get("updatesDebug")==="1";
-    function esc(value){return String(value||"").replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-    function parseGoogleDate(value){const match=String(value||"").match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);if(!match)return Date.parse(value);return new Date(Number(match[1]),Number(match[2]),Number(match[3]),Number(match[4]||0),Number(match[5]||0),Number(match[6]||0)).getTime()}
-    function googleCell(row,index,preferFormatted=true){const cell=row?.c?.[index];if(!cell)return "";if(preferFormatted&&cell.f!=null&&cell.f!=="")return cell.f;if(cell.v!=null)return cell.v;if(cell.f!=null)return cell.f;return ""}
-    function validUrl(value){const raw=String(value||"").trim();if(!raw)return "";try{const url=new URL(raw,window.location.href);return url.protocol==="http:"||url.protocol==="https:"?url.href:""}catch(error){return ""}}
-    function normalizeSheetUpdates(payload){const table=payload?.table;const columns=Array.isArray(table?.cols)?table.cols:[];const rows=Array.isArray(table?.rows)?table.rows:[];const headerIndex=new Map(columns.map((column,index)=>[String(column.label||"").trim(),index]));const required=["Date/Time","Headline","Update","Optional Link","Published"];if(!required.every((header)=>headerIndex.has(header)))throw new Error("Google Sheet update headers are missing or renamed.");return rows.map((row,index)=>{const dateTime=String(googleCell(row,headerIndex.get("Date/Time"))||"").trim();const rawDate=googleCell(row,headerIndex.get("Date/Time"),false);const title=String(googleCell(row,headerIndex.get("Headline"))||"").trim();const body=String(googleCell(row,headerIndex.get("Update"))||"").trim();const link=validUrl(googleCell(row,headerIndex.get("Optional Link")));const published=googleCell(row,headerIndex.get("Published"),false)===true||String(googleCell(row,headerIndex.get("Published"),false)||"").trim().toLowerCase()==="true";const sortValue=parseGoogleDate(rawDate||dateTime);return{dateTime,title,body,link,published,sortValue:Number.isFinite(sortValue)?sortValue:0,sourceIndex:index}}).filter((update)=>update.published&&(update.dateTime||update.title||update.body||update.link)).sort((a,b)=>(b.sortValue-a.sortValue)||(b.sourceIndex-a.sourceIndex))}
-    function readCache(allowExpired=false){try{const cached=JSON.parse(localStorage.getItem(sheetConfig.cacheKey)||"null");if(!cached||!Array.isArray(cached.updates))return null;if(!allowExpired&&Date.now()-Number(cached.savedAt||0)>sheetConfig.cacheMs)return null;return cached.updates}catch(error){return null}}
-    function writeCache(updates){try{localStorage.setItem(sheetConfig.cacheKey,JSON.stringify({savedAt:Date.now(),updates}))}catch(error){console.warn(error)}}
-    function requestSheet(){return new Promise((resolve,reject)=>{const callbackName=`__goodwinMissionUpdates${Date.now()}${Math.random().toString(36).slice(2)}`;const params=new URLSearchParams({gid:sheetConfig.gid,tqx:`out:json;responseHandler:${callbackName}`,cacheBust:String(Date.now())});const script=document.createElement("script");const timeout=window.setTimeout(()=>{cleanup();reject(new Error("Google Sheet updates request timed out."))},10000);const cleanup=()=>{window.clearTimeout(timeout);delete window[callbackName];script.remove()};window[callbackName]=(payload)=>{cleanup();resolve(payload)};script.onerror=()=>{cleanup();reject(new Error("Google Sheet updates request failed."))};script.src=`${sheetConfig.endpoint}?${params.toString()}`;document.head.appendChild(script)})}
-    async function loadUpdates({bypassCache=false}={}){const cached=updatesDebug||bypassCache?null:readCache();if(cached)return cached;try{const updates=normalizeSheetUpdates(await requestSheet());writeCache(updates);return updates}catch(error){console.warn(error);const stale=readCache(true);if(stale)return stale;throw error}}
-    function renderTitle(update){if(!update.link)return esc(update.title);const url=new URL(update.link,window.location.href);const external=url.origin===window.location.origin?"":' target="_blank" rel="noopener noreferrer"';return `<a href="${esc(update.link)}"${external}>${esc(update.title)}</a>`}
-    async function loadArchive(options={}){
-      const container=document.querySelector("[data-updates-archive]");
-      try{
-        const updates=await loadUpdates(options);
-        if(!updates.length){container.innerHTML='<article class="update"><time>Updates</time><div><h2>Updates from the road are coming.</h2></div></article>';return}
-        container.innerHTML=updates.map((update)=>`<article class="update"><time>${esc(update.dateTime)}</time><div><h2>${renderTitle(update)}</h2><p>${esc(update.body)}</p></div></article>`).join("");
-      }catch(error){
-        container.innerHTML='<article class="update"><time>Updates</time><div><h2>Latest updates are temporarily unavailable.</h2></div></article>';
+    const sheetConfig = {
+      endpoint: "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",
+      gid: "0",
+      cacheKey: "goodwin-generated-mission-america-updates-v1",
+      cacheMs: 2 * 60 * 1000
+    };
+    const updatesDebug = new URLSearchParams(window.location.search).get("updatesDebug") === "1";
+
+    function esc(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function parseGoogleDate(value) {
+      const match = String(value || "").match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);
+      if (!match) return Date.parse(value);
+      return new Date(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4] || 0), Number(match[5] || 0), Number(match[6] || 0)).getTime();
+    }
+
+    function isPublishedValue(value) {
+      return value === true || String(value || "").trim().toLowerCase() === "true";
+    }
+
+    function googleCell(row, index, preferFormatted = true) {
+      const cell = row?.c?.[index];
+      if (!cell) return "";
+      if (preferFormatted && cell.f != null && cell.f !== "") return cell.f;
+      if (cell.v != null) return cell.v;
+      if (cell.f != null) return cell.f;
+      return "";
+    }
+
+    function validUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      try {
+        const url = new URL(raw, window.location.href);
+        return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
+      } catch (error) {
+        return "";
       }
     }
+
+    function normalizeSheetUpdates(payload) {
+      const table = payload?.table;
+      const columns = Array.isArray(table?.cols) ? table.cols : [];
+      const rows = Array.isArray(table?.rows) ? table.rows : [];
+      const headerIndex = new Map(columns.map((column, index) => [String(column.label || "").trim(), index]));
+      const required = ["Date/Time", "Headline", "Update", "Optional Link", "Published"];
+      if (!required.every((header) => headerIndex.has(header))) throw new Error("Google Sheet update headers are missing or renamed.");
+      return rows
+        .map((row, index) => {
+          const dateTime = String(googleCell(row, headerIndex.get("Date/Time")) || "").trim();
+          const rawDate = googleCell(row, headerIndex.get("Date/Time"), false);
+          const title = String(googleCell(row, headerIndex.get("Headline")) || "").trim();
+          const body = String(googleCell(row, headerIndex.get("Update")) || "").trim();
+          const link = validUrl(googleCell(row, headerIndex.get("Optional Link")));
+          const published = isPublishedValue(googleCell(row, headerIndex.get("Published"), false));
+          const sortValue = parseGoogleDate(rawDate || dateTime);
+          return { dateTime, title, body, link, published, sortValue: Number.isFinite(sortValue) ? sortValue : 0, sourceIndex: index };
+        })
+        .filter((update) => update.published && (update.dateTime || update.title || update.body || update.link))
+        .sort((a, b) => (b.sortValue - a.sortValue) || (b.sourceIndex - a.sourceIndex));
+    }
+
+    function readCache(allowExpired = false) {
+      try {
+        const cached = JSON.parse(localStorage.getItem(sheetConfig.cacheKey) || "null");
+        if (!cached || !Array.isArray(cached.updates)) return null;
+        if (!allowExpired && Date.now() - Number(cached.savedAt || 0) > sheetConfig.cacheMs) return null;
+        return cached.updates;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function writeCache(updates) {
+      try {
+        localStorage.setItem(sheetConfig.cacheKey, JSON.stringify({ savedAt: Date.now(), updates }));
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+
+    function requestSheet() {
+      return new Promise((resolve, reject) => {
+        const callbackName = `__goodwinMissionUpdates${Date.now()}${Math.random().toString(36).slice(2)}`;
+        const params = new URLSearchParams({ gid: sheetConfig.gid, tqx: `out:json;responseHandler:${callbackName}`, cacheBust: String(Date.now()) });
+        const script = document.createElement("script");
+        const timeout = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Google Sheet updates request timed out."));
+        }, 10000);
+        const cleanup = () => {
+          window.clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+        };
+        window[callbackName] = (payload) => {
+          cleanup();
+          resolve(payload);
+        };
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Google Sheet updates request failed."));
+        };
+        script.src = `${sheetConfig.endpoint}?${params.toString()}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadUpdates({ bypassCache = false } = {}) {
+      const cached = updatesDebug || bypassCache ? null : readCache();
+      if (cached) return cached;
+      try {
+        const updates = normalizeSheetUpdates(await requestSheet());
+        writeCache(updates);
+        return updates;
+      } catch (error) {
+        console.warn(error);
+        const stale = readCache(true);
+        if (stale) return stale;
+        throw error;
+      }
+    }
+
+    function renderLink(update) {
+      if (!update.link) return "";
+      const url = new URL(update.link, window.location.href);
+      const external = url.origin === window.location.origin ? "" : ' target="_blank" rel="noopener noreferrer"';
+      return `<a class="update-link" href="${esc(update.link)}"${external}>Read More</a>`;
+    }
+
+    async function loadArchive(options = {}) {
+      const container = document.querySelector("[data-updates-archive]");
+      try {
+        const updates = await loadUpdates(options);
+        if (!updates.length) {
+          container.innerHTML = '<article class="update"><time>Updates</time><div><h2>Updates from the road are coming.</h2><p>When Goodwin Generated Mission America gets underway, live updates from the team will appear here.</p></div></article>';
+          return;
+        }
+        container.innerHTML = updates.map((update) => `
+          <article class="update">
+            <time>${esc(update.dateTime)}</time>
+            <div>
+              <h2>${esc(update.title)}</h2>
+              <p>${esc(update.body)}</p>
+              ${renderLink(update)}
+            </div>
+          </article>
+        `).join("");
+      } catch (error) {
+        container.innerHTML = '<article class="update"><time>Updates</time><div><h2>Latest updates are temporarily unavailable.</h2></div></article>';
+      }
+    }
+
     loadArchive();
-    window.setInterval(()=>loadArchive({bypassCache:true}),sheetConfig.cacheMs);
+    window.setInterval(() => loadArchive({ bypassCache: true }), sheetConfig.cacheMs);
   </script>
 </body>
 </html>

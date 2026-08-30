@@ -175,6 +175,10 @@ document.querySelector("[data-offline-partner-form]")?.addEventListener("submit"
     );
   }
 
+  if (pageName === "updates.html") {
+    out = out.replace('<base href="index.html">', '<base href="/">');
+  }
+
   return addSharedFooter(out);
 }
 
