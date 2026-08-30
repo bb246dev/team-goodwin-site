@@ -19,12 +19,43 @@ body.has-ambient-scroll {
   z-index: -2;
   inset: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 12% 10%, rgb(var(--ambient-glow-one) / 72%), transparent 52%),
-    radial-gradient(circle at 88% 84%, rgb(var(--ambient-glow-two) / 62%), transparent 56%),
-    rgb(var(--ambient-base));
+  background: rgb(var(--ambient-base));
   pointer-events: none;
-  will-change: background;
+  isolation: isolate;
+}
+
+.ambient-scroll-cloud {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  opacity: 0.9;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.ambient-scroll-cloud-one {
+  top: -34%;
+  left: -30%;
+  width: 112%;
+  height: 105%;
+  background: radial-gradient(ellipse at center, rgb(var(--ambient-glow-one) / 82%) 0%, rgb(var(--ambient-glow-one) / 48%) 27%, transparent 70%);
+}
+
+.ambient-scroll-cloud-two {
+  right: -34%;
+  bottom: -36%;
+  width: 118%;
+  height: 112%;
+  background: radial-gradient(ellipse at center, rgb(var(--ambient-glow-two) / 76%) 0%, rgb(var(--ambient-glow-two) / 42%) 31%, transparent 72%);
+}
+
+.ambient-scroll-cloud-three {
+  top: 17%;
+  left: 22%;
+  width: 72%;
+  height: 76%;
+  background: radial-gradient(ellipse at center, rgb(var(--ambient-glow-one) / 26%) 0%, rgb(var(--ambient-glow-two) / 16%) 38%, transparent 74%);
+  mix-blend-mode: soft-light;
 }
 
 .ambient-scroll-background::before {
@@ -44,6 +75,12 @@ body.has-ambient-scroll {
   inset: 0;
   background: linear-gradient(125deg, rgb(255 255 255 / 4%), transparent 42%, rgb(0 0 0 / 8%));
   content: "";
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-scroll-cloud {
+    will-change: auto;
+  }
 }
 
 .ambient-scroll-progress {

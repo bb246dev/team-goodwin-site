@@ -42,6 +42,11 @@
   const background = document.createElement("div");
   background.className = "ambient-scroll-background";
   background.setAttribute("aria-hidden", "true");
+  ["one", "two", "three"].forEach((name) => {
+    const cloud = document.createElement("span");
+    cloud.className = `ambient-scroll-cloud ambient-scroll-cloud-${name}`;
+    background.append(cloud);
+  });
 
   const progress = document.createElement("div");
   progress.className = "ambient-scroll-progress";
@@ -54,6 +59,12 @@
   let anchors = [];
   let frame = 0;
   let inkMode = "";
+  let targetScroll = window.scrollY;
+  let renderedScroll = targetScroll;
+  let scrollVelocity = 0;
+  let previousTime = 0;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const clouds = [...background.querySelectorAll(".ambient-scroll-cloud")];
 
   const measure = () => {
     anchors = anchorSelectors
@@ -62,11 +73,8 @@
       .map((element) => element.getBoundingClientRect().top + window.scrollY);
   };
 
-  const render = () => {
-    frame = 0;
-    if (anchors.length < 2) measure();
-
-    const focus = window.scrollY + window.innerHeight * 0.5;
+  const paletteAt = (scrollPosition) => {
+    const focus = scrollPosition + window.innerHeight * 0.5;
     let index = 0;
     while (index < anchors.length - 2 && focus >= anchors[index + 1]) index += 1;
 
@@ -77,9 +85,50 @@
     const current = palettes[Math.min(index, palettes.length - 1)];
     const next = palettes[Math.min(index + 1, palettes.length - 1)];
 
-    const base = mix(current.base, next.base, amount);
-    const glowOne = mix(current.glowOne, next.glowOne, amount);
-    const glowTwo = mix(current.glowTwo, next.glowTwo, amount);
+    return {
+      base: mix(current.base, next.base, amount),
+      glowOne: mix(current.glowOne, next.glowOne, amount),
+      glowTwo: mix(current.glowTwo, next.glowTwo, amount),
+    };
+  };
+
+  const updateCloudMotion = () => {
+    const lag = Math.max(-180, Math.min(180, targetScroll - renderedScroll));
+    const phase = renderedScroll / Math.max(720, window.innerHeight * 1.15);
+    const velocityLean = Math.max(-34, Math.min(34, scrollVelocity * 0.018));
+    const transforms = [
+      `translate3d(${Math.sin(phase * 1.18) * 4.5}vw, ${Math.cos(phase * 0.86) * 28 - lag * 0.2}px, 0) rotate(${Math.sin(phase * 0.72) * 3.2 + velocityLean * 0.08}deg) scale(${1.06 + Math.sin(phase * 0.62) * 0.035})`,
+      `translate3d(${Math.cos(phase * 0.91) * -5.5}vw, ${Math.sin(phase * 1.04) * 38 - lag * 0.14}px, 0) rotate(${Math.cos(phase * 0.58) * -4.5 - velocityLean * 0.06}deg) scale(${1.08 + Math.cos(phase * 0.51) * 0.045})`,
+      `translate3d(${Math.sin(phase * 0.73 + 1.4) * 3.8}vw, ${Math.cos(phase * 0.69 + 0.8) * 30 + lag * 0.1}px, 0) rotate(${Math.sin(phase * 0.47 + 0.6) * 2.6}deg) scale(${1.04 + Math.sin(phase * 0.43 + 0.5) * 0.03})`,
+    ];
+    clouds.forEach((cloud, index) => {
+      cloud.style.transform = transforms[index];
+    });
+    document.documentElement.style.setProperty("--ambient-cloud-lag", Math.abs(lag).toFixed(2));
+  };
+
+  const render = (time = performance.now()) => {
+    frame = 0;
+    if (anchors.length < 2) measure();
+
+    targetScroll = window.scrollY;
+    const deltaTime = previousTime ? Math.min(0.034, (time - previousTime) / 1000) : 1 / 60;
+    previousTime = time;
+    if (reducedMotion.matches) {
+      renderedScroll = targetScroll;
+      scrollVelocity = 0;
+    } else {
+      const displacement = targetScroll - renderedScroll;
+      scrollVelocity += displacement * 44 * deltaTime;
+      scrollVelocity *= Math.exp(-9.2 * deltaTime);
+      renderedScroll += scrollVelocity * deltaTime;
+      if (Math.abs(displacement) < 0.12 && Math.abs(scrollVelocity) < 0.12) {
+        renderedScroll = targetScroll;
+        scrollVelocity = 0;
+      }
+    }
+
+    const { base, glowOne, glowTwo } = paletteAt(renderedScroll);
     const samples = contrastSamples(base, glowOne, glowTwo);
     const scores = {
       dark: minimumContrast(inkChoices.dark, samples),
@@ -95,12 +144,20 @@
     document.documentElement.style.setProperty("--ambient-ink", rgb(inkChoices[inkMode]));
     document.documentElement.dataset.ambientInk = inkMode;
     document.documentElement.dataset.ambientContrast = scores[inkMode].toFixed(2);
+    document.documentElement.dataset.ambientMotion = renderedScroll === targetScroll ? "settled" : "moving";
+
+    updateCloudMotion();
 
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     progress.firstElementChild.style.transform = `scaleX(${maxScroll > 0 ? window.scrollY / maxScroll : 0})`;
+
+    if (!reducedMotion.matches && (Math.abs(targetScroll - renderedScroll) >= 0.12 || Math.abs(scrollVelocity) >= 0.12)) {
+      frame = requestAnimationFrame(render);
+    }
   };
 
   const requestRender = () => {
+    targetScroll = window.scrollY;
     if (!frame) frame = requestAnimationFrame(render);
   };
 
@@ -115,4 +172,5 @@
     measure();
     requestRender();
   }, { once: true });
+  reducedMotion.addEventListener("change", requestRender);
 })();
