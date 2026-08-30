@@ -446,16 +446,36 @@ body.has-ambient-scroll #rsvp {
   border-block: 1px solid rgb(var(--ambient-ink) / 22%);
 }
 
+body.has-ambient-scroll #rsvp .section-head {
+  display: grid;
+  justify-items: center;
+  max-width: 780px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+
+body.has-ambient-scroll #rsvp .section-head h2,
+body.has-ambient-scroll #rsvp .section-head p {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+body.has-ambient-scroll #rsvp .section-head p {
+  max-width: 640px;
+}
+
 body.has-ambient-scroll #rsvp .rsvp-mobile-controls {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) auto;
   gap: 12px;
   max-width: 720px;
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
 }
 
 body.has-ambient-scroll #rsvp .rsvp-mobile-controls label {
   grid-column: 1 / -1;
+  text-align: center;
 }
 
 body.has-ambient-scroll #rsvp .rsvp-mobile-controls select {
