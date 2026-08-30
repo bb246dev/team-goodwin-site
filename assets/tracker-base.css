@@ -1227,8 +1227,8 @@
     }
 
     .follow-panel.signup-only {
-      grid-template-columns: minmax(320px, 0.8fr);
-      justify-content: end;
+      grid-template-columns: minmax(0, 680px);
+      justify-content: center;
     }
 
     .follow-form {
