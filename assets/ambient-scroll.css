@@ -194,11 +194,19 @@ body.has-ambient-scroll .tracker-nav {
   background: rgb(var(--ambient-base) / 82%);
   -webkit-backdrop-filter: saturate(125%) blur(18px);
   backdrop-filter: saturate(125%) blur(18px);
+  transition: border-color 640ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.has-ambient-scroll .tracker-navlinks,
 body.has-ambient-scroll .tracker-mark {
   color: rgb(var(--ambient-ink));
+  transition: color 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.has-ambient-scroll .tracker-mark {
+  transition:
+    color 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
 }
 
 body.has-ambient-scroll .tracker-navlinks a:hover {
@@ -211,6 +219,17 @@ html[data-ambient-ink="dark"] body.has-ambient-scroll .tracker-mark img {
 
 html[data-ambient-ink="light"] body.has-ambient-scroll .tracker-mark img {
   filter: brightness(0) invert(1);
+}
+
+body.has-ambient-scroll .tracker-mark img {
+  transition:
+    filter 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+body.has-ambient-scroll .tracker-menu-toggle {
+  color: rgb(var(--ambient-ink));
+  transition: color 640ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.has-ambient-scroll .tracker-cta,
