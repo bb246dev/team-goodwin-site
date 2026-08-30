@@ -2872,6 +2872,17 @@
         );
       }
 
+      .mobile-photo-break.mobile-photo-break-portrait::after {
+        background: linear-gradient(
+          to top right,
+          rgba(0, 0, 0, 0.82) 0%,
+          rgba(0, 0, 0, 0.68) 30%,
+          rgba(0, 0, 0, 0.35) 52%,
+          rgba(0, 0, 0, 0.08) 72%,
+          rgba(0, 0, 0, 0) 100%
+        );
+      }
+
       .mobile-photo-break-road .mobile-photo-break-heading,
       .mobile-photo-break-portrait .mobile-photo-break-heading {
         display: block;
@@ -2880,6 +2891,11 @@
         bottom: 24px;
         left: 20px;
         z-index: 2;
+      }
+
+      .mobile-photo-break-portrait .mobile-photo-break-heading {
+        max-width: min(74vw, 292px);
+        bottom: 16px;
       }
 
       .mobile-photo-break-road .tracker-eyebrow,
@@ -2904,16 +2920,22 @@
         letter-spacing: 0;
       }
 
+      .mobile-photo-break-portrait h2 {
+        font-size: clamp(1.55rem, 6.6vw, 2rem);
+        line-height: 1.04;
+      }
+
       .mobile-photo-break-portrait p {
-        max-width: 100%;
-        margin: 14px 0 0;
-        color: rgba(255, 255, 255, 0.78);
-        font-size: clamp(0.84rem, 3.8vw, 0.98rem);
-        line-height: 1.45;
+        max-width: min(74vw, 292px);
+        margin: 8px 0 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: clamp(0.72rem, 2.95vw, 0.82rem);
+        line-height: 1.42;
       }
 
       .mobile-photo-break-portrait img {
-        object-position: 54% 24%;
+        object-position: center 22%;
+        filter: grayscale(100%) contrast(1.05);
       }
 
       #articles {
