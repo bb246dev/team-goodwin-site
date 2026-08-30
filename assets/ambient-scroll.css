@@ -18,7 +18,7 @@ body.has-ambient-scroll {
 
 .ambient-scroll-background {
   position: fixed;
-  z-index: 0;
+  z-index: -1;
   inset: 0;
   overflow: hidden;
   background: rgb(var(--ambient-base));
@@ -144,7 +144,6 @@ body.has-ambient-scroll .site-footer {
 
 body.has-ambient-scroll .tracker-page {
   position: relative;
-  z-index: 1;
 }
 
 body.has-ambient-scroll #the-run,
@@ -169,7 +168,6 @@ body.has-ambient-scroll .week-card.has-image {
 
 body.has-ambient-scroll .tracker-content {
   position: relative;
-  z-index: 1;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -179,7 +177,9 @@ body.has-ambient-scroll .tracker-eyebrow {
 }
 
 body.has-ambient-scroll .ambient-word {
-  color: rgb(var(--ambient-word-ink, var(--ambient-ink))) !important;
+  /* White + difference is the exact per-pixel RGB inverse of the rendered backdrop. */
+  color: #fff !important;
+  mix-blend-mode: difference;
   text-shadow: none;
   transition: none !important;
 }
@@ -482,10 +482,89 @@ body.has-ambient-scroll .tracker-map {
 }
 
 body.has-ambient-scroll .tracker-map {
+  background: transparent;
+}
+
+body.has-ambient-scroll .tracker-map::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
   background:
-    linear-gradient(rgb(var(--ambient-ink) / 6%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--ambient-ink) / 6%) 1px, transparent 1px);
+    linear-gradient(rgb(255 255 255 / 12%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 12%) 1px, transparent 1px);
   background-size: 160px 160px;
+  content: "";
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+body.has-ambient-scroll .tracker-map > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * The map artwork was authored as pale marks for a dark panel. Render the
+ * monochrome vector geometry as white difference layers so it becomes dark on
+ * the white phase and light on a dark phase without touching the runner/RV art.
+ */
+body.has-ambient-scroll #map .map-state,
+body.has-ambient-scroll #map .map-route,
+body.has-ambient-scroll #map .map-stop,
+body.has-ambient-scroll #map .map-live-marker,
+body.has-ambient-scroll #map .map-live-pulse,
+body.has-ambient-scroll #map .map-flight-body,
+body.has-ambient-scroll #map .map-label,
+body.has-ambient-scroll #map .map-endpoint-label {
+  mix-blend-mode: difference;
+}
+
+body.has-ambient-scroll #map .map-state {
+  fill: rgb(255 255 255 / 8%);
+  stroke: rgb(255 255 255 / 72%);
+}
+
+body.has-ambient-scroll #map .map-state:hover,
+body.has-ambient-scroll #map .map-state.is-active {
+  fill: rgb(255 255 255 / 20%);
+  stroke: #fff;
+}
+
+body.has-ambient-scroll #map .map-route.future {
+  stroke: rgb(255 255 255 / 38%);
+}
+
+body.has-ambient-scroll #map .map-route.complete,
+body.has-ambient-scroll #map .map-route.flight,
+body.has-ambient-scroll #map .map-route.rv,
+body.has-ambient-scroll #map .map-flight-body {
+  stroke: #fff;
+  filter: none;
+}
+
+body.has-ambient-scroll #map .map-stop {
+  fill: #fff;
+  stroke: #fff;
+}
+
+body.has-ambient-scroll #map .map-stop:hover,
+body.has-ambient-scroll #map .map-stop.is-current,
+body.has-ambient-scroll #map .map-stop.is-terminal,
+body.has-ambient-scroll #map .map-live-marker {
+  fill: #fff;
+  stroke: #fff;
+  filter: none;
+}
+
+body.has-ambient-scroll #map .map-live-pulse {
+  fill: rgb(255 255 255 / 18%);
+  stroke: rgb(255 255 255 / 62%);
+}
+
+body.has-ambient-scroll #map .map-label,
+body.has-ambient-scroll #map .map-endpoint-label {
+  fill: #fff;
+  stroke: transparent;
 }
 
 body.has-ambient-scroll .tracking-map-key {

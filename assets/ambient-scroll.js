@@ -3,16 +3,7 @@
   const WHITE = { base: [240, 241, 235], glowOne: [255, 251, 239], glowTwo: [207, 225, 218] };
   const GREEN = { base: [25, 59, 59], glowOne: [52, 96, 82], glowTwo: [45, 66, 78] };
   const palettes = [BLACK, WHITE, GREEN, WHITE, BLACK, BLACK, BLACK];
-  const lightInkRamp = [
-    [255, 253, 247], [224, 239, 231], [218, 229, 235],
-    [235, 241, 225], [246, 237, 226], [255, 253, 247],
-  ];
-  const darkInkRamp = [
-    [7, 24, 22], [25, 59, 59], [15, 45, 53],
-    [32, 50, 44], [12, 37, 33], [7, 24, 22],
-  ];
   const anchorSelectors = ["#the-run", "#map", "#updates", "#articles", "#why", "#rsvp", ".site-footer"];
-  const darkInkSections = "#map, #articles";
   const fixedInkSelector = [
     ".tracker-nav", ".tracker-hero", ".tracker-button", ".tracker-cta",
     ".week-card.has-image", ".mission-clock-grid", ".mobile-photo-break",
@@ -24,12 +15,6 @@
   const smoothstep = (value) => value * value * (3 - 2 * value);
   const mix = (start, end, amount) => start.map((channel, index) => channel + (end[index] - channel) * amount);
   const rgb = (value) => value.map(Math.round).join(" ");
-  const positiveModulo = (value, divisor) => ((value % divisor) + divisor) % divisor;
-  const rampColor = (ramp, amount) => {
-    const position = positiveModulo(amount, 1) * (ramp.length - 1);
-    const index = Math.min(ramp.length - 2, Math.floor(position));
-    return mix(ramp[index], ramp[index + 1], smoothstep(position - index));
-  };
 
   const background = document.createElement("div");
   background.className = "ambient-scroll-background";
@@ -48,28 +33,12 @@
 
   const clouds = [...background.querySelectorAll(".ambient-scroll-cloud")];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const activeWords = new Set();
   let anchors = [];
   let frame = 0;
   let targetScroll = window.scrollY;
   let renderedScroll = targetScroll;
   let scrollVelocity = 0;
   let previousTime = 0;
-
-  const wordObserver = "IntersectionObserver" in window
-    ? new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) activeWords.add(entry.target);
-          else activeWords.delete(entry.target);
-        });
-        requestRender();
-      }, { rootMargin: "120px 60px" })
-    : null;
-
-  const registerWord = (word) => {
-    if (wordObserver) wordObserver.observe(word);
-    else activeWords.add(word);
-  };
 
   const shouldSkipTextNode = (node) => {
     if (!node.nodeValue.trim()) return true;
@@ -88,7 +57,6 @@
       word.className = "ambient-word";
       word.textContent = part;
       fragment.append(word);
-      registerWord(word);
     });
     node.replaceWith(fragment);
   };
@@ -115,9 +83,9 @@
     const end = anchors[index + 1] ?? document.documentElement.scrollHeight;
     const start = anchors[index] ?? 0;
     const interval = Math.max(1, end - start);
-    const transitionLength = Math.min(interval, Math.max(320, interval * 0.3));
-    const transitionStart = end - transitionLength;
-    const amount = smoothstep(clamp((focus - transitionStart) / transitionLength));
+    // Use the entire distance between section anchors. The old final-30% window
+    // compressed the change and made otherwise continuous colors feel abrupt.
+    const amount = smoothstep(clamp((focus - start) / interval));
     const current = palettes[Math.min(index, palettes.length - 1)];
     const next = palettes[Math.min(index + 1, palettes.length - 1)];
     return {
@@ -144,27 +112,6 @@
     document.documentElement.style.setProperty("--ambient-rendered-scroll", renderedScroll.toFixed(2));
   };
 
-  const updateWords = () => {
-    const measurements = [];
-    activeWords.forEach((word) => {
-      if (!word.isConnected) return activeWords.delete(word);
-      if (word.closest("[hidden]")) return;
-      const rect = word.getBoundingClientRect();
-      if (rect.bottom < -120 || rect.top > window.innerHeight + 120 || rect.width === 0 || rect.height === 0) return;
-      measurements.push({ word, x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.5 });
-    });
-    measurements.forEach(({ word, x, y }) => {
-      const usesDarkInk = Boolean(word.closest(darkInkSections));
-      const ramp = usesDarkInk ? darkInkRamp : lightInkRamp;
-      const horizontalOffset = clamp(x / Math.max(1, window.innerWidth)) * 0.32;
-      const verticalOffset = clamp(y / Math.max(1, window.innerHeight)) * 0.055;
-      const tone = positiveModulo(renderedScroll / 620 - horizontalOffset - verticalOffset, 1);
-      word.style.setProperty("--ambient-word-ink", rgb(rampColor(ramp, tone)));
-      word.dataset.ambientTone = tone.toFixed(4);
-      word.dataset.ambientInkFamily = usesDarkInk ? "dark" : "light";
-    });
-  };
-
   const render = (time = performance.now()) => {
     frame = 0;
     if (anchors.length < 2) measure();
@@ -186,7 +133,6 @@
     }
 
     updateClouds(paletteAt(renderedScroll));
-    updateWords();
     document.documentElement.dataset.ambientMotion = renderedScroll === targetScroll ? "settled" : "moving";
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     progress.firstElementChild.style.transform = `scaleX(${maxScroll > 0 ? window.scrollY / maxScroll : 0})`;
