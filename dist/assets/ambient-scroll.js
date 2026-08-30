@@ -1,18 +1,35 @@
 (() => {
-  const palettes = [
-    { base: [10, 30, 28], glowOne: [21, 69, 58], glowTwo: [43, 63, 82] },
-    { base: [25, 59, 59], glowOne: [67, 111, 90], glowTwo: [60, 78, 108] },
-    { base: [205, 213, 199], glowOne: [228, 219, 181], glowTwo: [155, 194, 181] },
-    { base: [241, 229, 204], glowOne: [241, 191, 150], glowTwo: [190, 213, 196] },
-    { base: [205, 166, 177], glowOne: [225, 166, 144], glowTwo: [160, 177, 193] },
-    { base: [31, 46, 49], glowOne: [48, 75, 66], glowTwo: [45, 45, 76] },
-    { base: [7, 20, 22], glowOne: [19, 47, 42], glowTwo: [31, 32, 58] },
+  const BLACK = { base: [6, 14, 15], glowOne: [18, 38, 34], glowTwo: [24, 34, 47] };
+  const WHITE = { base: [240, 241, 235], glowOne: [255, 251, 239], glowTwo: [207, 225, 218] };
+  const GREEN = { base: [25, 59, 59], glowOne: [52, 96, 82], glowTwo: [45, 66, 78] };
+  const palettes = [BLACK, WHITE, GREEN, WHITE, BLACK, BLACK, BLACK];
+  const lightInkRamp = [
+    [255, 253, 247], [224, 239, 231], [218, 229, 235],
+    [235, 241, 225], [246, 237, 226], [255, 253, 247],
+  ];
+  const darkInkRamp = [
+    [7, 24, 22], [25, 59, 59], [15, 45, 53],
+    [32, 50, 44], [12, 37, 33], [7, 24, 22],
   ];
   const anchorSelectors = ["#the-run", "#map", "#updates", "#articles", "#why", "#rsvp", ".site-footer"];
+  const darkInkSections = "#map, #articles";
+  const fixedInkSelector = [
+    ".tracker-nav", ".tracker-hero", ".tracker-button", ".tracker-cta",
+    ".week-card.has-image", ".mission-clock-grid", ".mobile-photo-break",
+    ".partner-logo-wall", ".site-footer-partners", ".sr-only", "[aria-live]",
+    "input", "textarea", "select", "option", "script", "style", "noscript",
+    "svg", "canvas",
+  ].join(", ");
   const clamp = (value, minimum = 0, maximum = 1) => Math.min(maximum, Math.max(minimum, value));
   const smoothstep = (value) => value * value * (3 - 2 * value);
   const mix = (start, end, amount) => start.map((channel, index) => channel + (end[index] - channel) * amount);
   const rgb = (value) => value.map(Math.round).join(" ");
+  const positiveModulo = (value, divisor) => ((value % divisor) + divisor) % divisor;
+  const rampColor = (ramp, amount) => {
+    const position = positiveModulo(amount, 1) * (ramp.length - 1);
+    const index = Math.min(ramp.length - 2, Math.floor(position));
+    return mix(ramp[index], ramp[index + 1], smoothstep(position - index));
+  };
 
   const background = document.createElement("div");
   background.className = "ambient-scroll-background";
@@ -22,7 +39,6 @@
     cloud.className = `ambient-scroll-cloud ambient-scroll-cloud-${name}`;
     background.append(cloud);
   });
-
   const progress = document.createElement("div");
   progress.className = "ambient-scroll-progress";
   progress.setAttribute("aria-hidden", "true");
@@ -32,12 +48,58 @@
 
   const clouds = [...background.querySelectorAll(".ambient-scroll-cloud")];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const activeWords = new Set();
   let anchors = [];
   let frame = 0;
   let targetScroll = window.scrollY;
   let renderedScroll = targetScroll;
   let scrollVelocity = 0;
   let previousTime = 0;
+
+  const wordObserver = "IntersectionObserver" in window
+    ? new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) activeWords.add(entry.target);
+          else activeWords.delete(entry.target);
+        });
+        requestRender();
+      }, { rootMargin: "120px 60px" })
+    : null;
+
+  const registerWord = (word) => {
+    if (wordObserver) wordObserver.observe(word);
+    else activeWords.add(word);
+  };
+
+  const shouldSkipTextNode = (node) => {
+    if (!node.nodeValue.trim()) return true;
+    const parent = node.parentElement;
+    return !parent || parent.closest(".ambient-word") || parent.closest(fixedInkSelector);
+  };
+
+  const instrumentTextNode = (node) => {
+    if (shouldSkipTextNode(node)) return;
+    const fragment = document.createDocumentFragment();
+    const leadingWhitespace = node.nodeValue.match(/^\s+/)?.[0] || "";
+    if (leadingWhitespace) fragment.append(document.createTextNode(leadingWhitespace));
+    const content = node.nodeValue.slice(leadingWhitespace.length);
+    (content.match(/\S+(?:\s+|$)/g) || []).forEach((part) => {
+      const word = document.createElement("span");
+      word.className = "ambient-word";
+      word.textContent = part;
+      fragment.append(word);
+      registerWord(word);
+    });
+    node.replaceWith(fragment);
+  };
+
+  const instrumentRoot = (root) => {
+    if (!(root instanceof Element) || root.matches(".ambient-word") || root.closest(".ambient-word")) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(instrumentTextNode);
+  };
 
   const measure = () => {
     anchors = anchorSelectors
@@ -53,7 +115,7 @@
     const end = anchors[index + 1] ?? document.documentElement.scrollHeight;
     const start = anchors[index] ?? 0;
     const interval = Math.max(1, end - start);
-    const transitionLength = Math.min(interval, Math.max(260, interval * 0.22));
+    const transitionLength = Math.min(interval, Math.max(320, interval * 0.3));
     const transitionStart = end - transitionLength;
     const amount = smoothstep(clamp((focus - transitionStart) / transitionLength));
     const current = palettes[Math.min(index, palettes.length - 1)];
@@ -66,19 +128,41 @@
   };
 
   const updateClouds = (palette) => {
-    const lag = clamp(targetScroll - renderedScroll, -260, 260);
-    const phase = renderedScroll / Math.max(760, window.innerHeight * 1.2);
-    const velocityLean = clamp(scrollVelocity * 0.012, -18, 18);
+    const lag = clamp(targetScroll - renderedScroll, -360, 360);
+    const phase = renderedScroll / Math.max(720, window.innerHeight * 1.08);
+    const velocityLean = clamp(scrollVelocity * 0.016, -26, 26);
     const transforms = [
-      `translate3d(${Math.sin(phase * 0.82) * window.innerWidth * 0.026}px, ${Math.cos(phase * 0.58) * 20 - lag * 0.16}px, 0) rotate(${Math.sin(phase * 0.44) * 2.2 + velocityLean * 0.08}deg) scale(${1.07 + Math.sin(phase * 0.36) * 0.025})`,
-      `translate3d(${Math.cos(phase * 0.67) * window.innerWidth * -0.03}px, ${Math.sin(phase * 0.7) * 24 - lag * 0.11}px, 0) rotate(${Math.cos(phase * 0.39) * -3 - velocityLean * 0.06}deg) scale(${1.09 + Math.cos(phase * 0.31) * 0.03})`,
-      `translate3d(${Math.sin(phase * 0.49 + 1.4) * window.innerWidth * 0.022}px, ${Math.cos(phase * 0.47 + 0.8) * 18 + lag * 0.07}px, 0) rotate(${Math.sin(phase * 0.33 + 0.6) * 1.8}deg) scale(${1.05 + Math.sin(phase * 0.29) * 0.02})`,
+      `translate3d(${Math.sin(phase * 0.86) * window.innerWidth * 0.052}px, ${Math.cos(phase * 0.56) * 34 - lag * 0.3}px, 0) rotate(${Math.sin(phase * 0.46) * 3 + velocityLean * 0.1}deg) scale(${1.08 + Math.sin(phase * 0.38) * 0.04})`,
+      `translate3d(${Math.cos(phase * 0.7) * window.innerWidth * -0.058}px, ${Math.sin(phase * 0.72) * 42 - lag * 0.2}px, 0) rotate(${Math.cos(phase * 0.4) * -4 - velocityLean * 0.08}deg) scale(${1.1 + Math.cos(phase * 0.33) * 0.045})`,
+      `translate3d(${Math.sin(phase * 0.52 + 1.4) * window.innerWidth * 0.042}px, ${Math.cos(phase * 0.48 + 0.8) * 30 + lag * 0.12}px, 0) rotate(${Math.sin(phase * 0.35 + 0.6) * 2.4}deg) scale(${1.06 + Math.sin(phase * 0.3) * 0.03})`,
     ];
     clouds.forEach((cloud, index) => { cloud.style.transform = transforms[index]; });
     document.documentElement.style.setProperty("--ambient-base", rgb(palette.base));
     document.documentElement.style.setProperty("--ambient-glow-one", rgb(palette.glowOne));
     document.documentElement.style.setProperty("--ambient-glow-two", rgb(palette.glowTwo));
     document.documentElement.style.setProperty("--ambient-cloud-lag", Math.abs(lag).toFixed(2));
+    document.documentElement.style.setProperty("--ambient-rendered-scroll", renderedScroll.toFixed(2));
+  };
+
+  const updateWords = () => {
+    const measurements = [];
+    activeWords.forEach((word) => {
+      if (!word.isConnected) return activeWords.delete(word);
+      if (word.closest("[hidden]")) return;
+      const rect = word.getBoundingClientRect();
+      if (rect.bottom < -120 || rect.top > window.innerHeight + 120 || rect.width === 0 || rect.height === 0) return;
+      measurements.push({ word, x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.5 });
+    });
+    measurements.forEach(({ word, x, y }) => {
+      const usesDarkInk = Boolean(word.closest(darkInkSections));
+      const ramp = usesDarkInk ? darkInkRamp : lightInkRamp;
+      const horizontalOffset = clamp(x / Math.max(1, window.innerWidth)) * 0.32;
+      const verticalOffset = clamp(y / Math.max(1, window.innerHeight)) * 0.055;
+      const tone = positiveModulo(renderedScroll / 620 - horizontalOffset - verticalOffset, 1);
+      word.style.setProperty("--ambient-word-ink", rgb(rampColor(ramp, tone)));
+      word.dataset.ambientTone = tone.toFixed(4);
+      word.dataset.ambientInkFamily = usesDarkInk ? "dark" : "light";
+    });
   };
 
   const render = (time = performance.now()) => {
@@ -92,8 +176,8 @@
       scrollVelocity = 0;
     } else {
       const displacement = targetScroll - renderedScroll;
-      scrollVelocity += displacement * 18 * deltaTime;
-      scrollVelocity *= Math.exp(-6.2 * deltaTime);
+      scrollVelocity += displacement * 15 * deltaTime;
+      scrollVelocity *= Math.exp(-4.8 * deltaTime);
       renderedScroll += scrollVelocity * deltaTime;
       if (Math.abs(displacement) < 0.1 && Math.abs(scrollVelocity) < 0.1) {
         renderedScroll = targetScroll;
@@ -102,6 +186,7 @@
     }
 
     updateClouds(paletteAt(renderedScroll));
+    updateWords();
     document.documentElement.dataset.ambientMotion = renderedScroll === targetScroll ? "settled" : "moving";
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     progress.firstElementChild.style.transform = `scaleX(${maxScroll > 0 ? window.scrollY / maxScroll : 0})`;
@@ -114,6 +199,18 @@
     targetScroll = window.scrollY;
     if (!frame) frame = requestAnimationFrame(render);
   };
+
+  document.querySelectorAll(".tracker-content, .site-footer").forEach(instrumentRoot);
+  const mutationObserver = new MutationObserver((records) => {
+    records.forEach((record) => record.addedNodes.forEach((node) => {
+      if (node instanceof Element && !node.matches(".ambient-word")) instrumentRoot(node);
+      else if (node.nodeType === Node.TEXT_NODE) instrumentTextNode(node);
+    }));
+    measure();
+    requestRender();
+  });
+  const trackerPage = document.querySelector(".tracker-page");
+  if (trackerPage) mutationObserver.observe(trackerPage, { childList: true, subtree: true });
 
   measure();
   render();
