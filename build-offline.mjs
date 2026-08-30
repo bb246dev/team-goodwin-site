@@ -175,7 +175,14 @@ document.querySelector("[data-offline-partner-form]")?.addEventListener("submit"
     );
   }
 
-  if (pageName === "updates.html" || pageName === "faq.html") {
+  if (
+    pageName === "updates.html" ||
+    pageName === "faq.html" ||
+    pageName === "privacy.html" ||
+    pageName === "terms.html" ||
+    pageName === "participation-terms.html" ||
+    pageName === "accessibility.html"
+  ) {
     out = out.replace('<base href="index.html">', '<base href="/">');
     out = out.replace(/(href|src)="assets\/partners\//g, '$1="/assets/partners/');
   }
