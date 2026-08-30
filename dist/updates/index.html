@@ -44,80 +44,75 @@
       color: inherit;
     }
 
-    .tracker-nav {
-      position: sticky;
+    .tracker-topbar {
+      position: fixed;
       z-index: 30;
       top: 0;
+      left: 0;
+      right: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 24px;
-      padding: 24px clamp(20px, 4vw, 64px);
-      background: rgba(255, 255, 255, 0.92);
-      border-bottom: 1px solid var(--tracker-line);
-      color: var(--tracker-ink);
-      backdrop-filter: blur(14px);
+      padding: 24px clamp(20px, 4vw, 48px);
+      color: var(--color-white);
+      mix-blend-mode: difference;
+      pointer-events: none;
     }
 
-    .tracker-mark {
-      display: flex;
-      align-items: flex-end;
-      flex: 0 0 auto;
-      gap: 6px clamp(12px, 1.8vw, 18px);
-      line-height: 1;
-      text-decoration: none;
-      opacity: 0.9;
-      transition: opacity 180ms ease;
+    .tracker-topbar a {
+      pointer-events: auto;
     }
 
-    .tracker-mark:hover,
-    .tracker-mark:focus-visible {
-      opacity: 1;
-    }
-
-    .tracker-mark img {
-      display: block;
-      width: clamp(132px, 14vw, 210px);
-      height: auto;
-    }
-
-    .tracker-mark span {
-      color: inherit;
-      font-size: clamp(0.64rem, 0.85vw, 0.82rem);
-      font-weight: 600;
-      letter-spacing: 0.34em;
-      line-height: 1;
-      text-transform: uppercase;
-      white-space: nowrap;
-      transform: translateY(-0.02em);
-    }
-
-    .tracker-navlinks {
+    .tracker-logo {
       display: flex;
       align-items: center;
-      gap: clamp(16px, 2.4vw, 34px);
-      color: var(--tracker-muted);
-      font-size: 0.95rem;
+      flex: 0 0 auto;
+      gap: 18px;
+      line-height: 1;
+      text-decoration: none;
+      color: var(--color-white);
     }
 
-    .tracker-navlinks a {
+    .tracker-logo img {
+      display: block;
+      width: min(260px, 40vw);
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .tracker-topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 16px;
+    }
+
+    .tracker-topbar-nav a {
       color: inherit;
       text-decoration: none;
       transition: color 160ms ease;
     }
 
-    .tracker-navlinks a:hover,
-    .tracker-navlinks a:focus-visible {
-      color: var(--color-accent);
+    .tracker-topbar-nav a:hover,
+    .tracker-topbar-nav a:focus-visible {
+      color: var(--color-white);
     }
 
-    .tracker-cta {
+    .tracker-join {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
       border: 1px solid rgba(25, 59, 59, 0.28);
       border-radius: 999px;
-      padding: 11px 22px;
+      padding: 0 26px;
       background: var(--color-accent);
       color: var(--color-white);
-      font-weight: 600;
+      font-weight: 800;
+      text-decoration: none;
+      mix-blend-mode: normal;
     }
 
     .updates-page {
@@ -282,7 +277,9 @@
     }
 
     .site-footer-partners {
-      padding: 48px clamp(24px, 5vw, 54px) 44px;
+      margin-top: 4px;
+      padding: 42px clamp(24px, 4vw, 48px) 46px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
       background: #0A0A0A;
       color: #FFFFFF;
       text-align: center;
@@ -295,8 +292,10 @@
     .partner-logo-wall {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 34px clamp(28px, 4vw, 54px);
       align-items: center;
+      justify-items: center;
+      column-gap: 32px;
+      row-gap: 34px;
       margin-top: 38px;
     }
 
@@ -304,11 +303,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 38px;
+      min-width: 0;
+      min-height: 42px;
     }
 
     .partner-logo-item img {
       width: auto;
+      max-width: min(168px, 100%);
       max-height: 34px;
       opacity: 0.78;
       object-fit: contain;
@@ -319,12 +320,75 @@
       opacity: 1;
     }
 
+    @media (min-width: 941px) {
+      .partner-logo-item:nth-child(1) {
+        order: 1;
+      }
+
+      .partner-logo-item:nth-child(2) {
+        order: 2;
+      }
+
+      .partner-logo-item:nth-child(4) {
+        order: 3;
+      }
+
+      .partner-logo-item:nth-child(5) {
+        order: 4;
+      }
+
+      .partner-logo-item:nth-child(6) {
+        order: 5;
+      }
+
+      .partner-logo-item:nth-child(7) {
+        order: 6;
+      }
+
+      .partner-logo-item:nth-child(8) {
+        order: 7;
+      }
+
+      .partner-logo-item:nth-child(9) {
+        order: 8;
+      }
+
+      .partner-logo-item:nth-child(10) {
+        order: 9;
+      }
+
+      .partner-logo-item:nth-child(11) {
+        order: 10;
+      }
+
+      .partner-logo-item:nth-child(3) {
+        order: 11;
+      }
+
+      .partner-logo-item:nth-child(12) {
+        order: 12;
+      }
+
+      .partner-logo-item:nth-child(13) {
+        order: 13;
+      }
+
+      .partner-logo-item:nth-child(14) {
+        order: 14;
+      }
+
+      .partner-logo-item:nth-child(15) {
+        order: 15;
+      }
+    }
+
     .site-footer .site-footer-partner-disclaimer {
-      max-width: none;
-      margin: 36px 0 0;
-      color: rgba(255, 255, 255, 0.48);
-      font-size: 0.72rem;
-      line-height: 1.55;
+      max-width: 620px;
+      margin: 30px auto 0;
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 0.68rem;
+      line-height: 1.45;
+      text-align: center;
     }
 
     .site-footer-legal {
@@ -359,7 +423,7 @@
     }
 
     @media (max-width: 840px) {
-      .tracker-navlinks a:not(.tracker-cta) {
+      .tracker-topbar-nav a:not(.tracker-join) {
         display: none;
       }
 
@@ -381,19 +445,15 @@
     }
 
     @media (max-width: 430px) {
-      .tracker-nav {
+      .tracker-topbar {
         padding: 18px 22px;
       }
 
-      .tracker-mark span {
-        display: none;
+      .tracker-logo img {
+        width: 190px;
       }
 
-      .tracker-mark img {
-        width: 148px;
-      }
-
-      .tracker-cta {
+      .tracker-join {
         padding: 10px 16px;
         font-size: 0.9rem;
       }
@@ -449,39 +509,53 @@
       }
 
       .site-footer-partners {
-        padding: 38px 20px 34px;
+        margin-inline: 0;
+        padding: 32px 0 34px;
+        overflow: visible;
+      }
+
+      .site-footer-partners .tracker-eyebrow {
+        padding-inline: 20px;
+        text-align: left;
       }
 
       .partner-logo-wall {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
         gap: 28px 22px;
+        margin-top: 28px;
+        padding: 0 20px 4px;
+        overflow: visible;
       }
 
       .partner-logo-item {
+        min-width: 0;
         min-height: 30px;
       }
 
       .partner-logo-item img {
-        max-height: 24px;
+        max-width: 92px;
+        max-height: 26px;
       }
     }
   </style>
 </head>
 <body>
   <main class="updates-page">
-    <nav class="tracker-nav" aria-label="Primary navigation">
-      <a class="tracker-mark" href="live-tracking.html" aria-label="Goodwin Generated Mission America home">
+    <header class="tracker-topbar" aria-label="Site navigation">
+      <a class="tracker-logo" href="/live-tracking/" aria-label="Goodwin home">
         <img src="assets/goodwin-logo.png" alt="Goodwin">
-        <span>Endurance</span>
       </a>
-      <div class="tracker-navlinks">
-        <a href="the-run.html">The Run</a>
-        <a href="fifty-runs.html">50 States</a>
-        <a href="updates.html" aria-current="page">News</a>
-        <a href="will.html">Will</a>
-        <a class="tracker-cta" href="live-tracking.html#rsvp">Join the Run</a>
-      </div>
-    </nav>
+      <nav class="tracker-topbar-nav" aria-label="Primary navigation">
+        <a href="/live-tracking/#the-run">The Run</a>
+        <a href="/live-tracking/#map">50 States</a>
+        <a href="/updates/" aria-current="page">News</a>
+        <a href="/live-tracking/#why">Will</a>
+        <a class="tracker-join" href="/live-tracking/#rsvp">Join the Run</a>
+      </nav>
+    </header>
 
     <div class="updates-content">
       <section class="updates-hero">
@@ -509,10 +583,10 @@
         </div>
         <nav class="site-footer-nav" aria-label="Footer navigation">
           <ul class="site-footer-link-group">
-            <li><a href="the-run.html">The Run</a></li>
-            <li><a href="live-tracking.html#map">Live Map</a></li>
-            <li><a href="updates.html">Running Live Archive</a></li>
-            <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
+            <li><a href="/the-run/">The Run</a></li>
+            <li><a href="/live-tracking/#map">Live Map</a></li>
+            <li><a href="/updates/">Running Live Archive</a></li>
+            <li><a href="/fifty-runs/">50 Runs, 50 States</a></li>
           </ul>
           <ul class="site-footer-link-group">
             <li><a href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer">Will — Instagram</a></li>

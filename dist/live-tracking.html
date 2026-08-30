@@ -3327,7 +3327,7 @@
         <section class="ticker-panel" aria-label="Goodwin Generated Mission America live ticker">
           <div class="ticker-head">
             <div class="tracker-eyebrow">Latest Updates</div>
-            <a href="updates.html">View All Updates</a>
+            <a href="/updates/">View All Updates</a>
           </div>
           <div class="ticker-track" data-ticker-items>
             <div class="ticker-item"><time>Loading</time><span>Fetching Goodwin Generated Mission America updates.</span></div>
@@ -3653,7 +3653,7 @@
             </div>
           </div>
         </div>
-        <div class="button-row inside-section-cta"><a class="tracker-button secondary is-accent" href="faq.html">View FAQ</a></div>
+        <div class="button-row inside-section-cta"><a class="tracker-button secondary is-accent" href="/faq/">View FAQ</a></div>
       </section>
 
       <div class="mobile-photo-break mobile-photo-break-portrait">
@@ -3683,12 +3683,12 @@
           <article class="article-card">
             <div class="tracker-eyebrow">IMPACT</div>
             <h3>50 states. Thousands of reasons.</h3>
-            <div class="button-row"><a class="tracker-button secondary" href="faq.html">Why It Matters →</a></div>
+            <div class="button-row"><a class="tracker-button secondary" href="/faq/">Why It Matters →</a></div>
           </article>
           <article class="article-card">
             <div class="tracker-eyebrow">GIVING</div>
             <h3>Turn miles into impact.</h3>
-            <div class="button-row"><a class="tracker-button secondary" href="faq.html#donate">Support the Mission →</a></div>
+            <div class="button-row"><a class="tracker-button secondary" href="/faq/#donate">Support the Mission →</a></div>
           </article>
         </div>
       </section>
@@ -3720,7 +3720,7 @@
             <ul class="site-footer-link-group">
               <li><a href="the-run.html">The Run</a></li>
               <li><a href="#map">Live Map</a></li>
-              <li><a href="updates.html">Running Live Archive</a></li>
+              <li><a href="/updates/">Running Live Archive</a></li>
               <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
             </ul>
             <ul class="site-footer-link-group">
@@ -3871,6 +3871,22 @@
     }
 
     initInsideDesktopAnswers();
+
+    function initFaqCtaFilePreviewFallback() {
+      if (window.location.protocol !== "file:") return;
+      const faqCta = document.querySelector('#articles .inside-section-cta a[href="/faq/"]');
+      if (!faqCta) return;
+      faqCta.addEventListener("click", (event) => {
+        event.preventDefault();
+        const currentPath = window.location.pathname;
+        const target = currentPath.includes("/source-html/")
+          ? new URL("../dist/faq/index.html", window.location.href)
+          : new URL("faq/index.html", window.location.href);
+        window.location.href = target.href;
+      });
+    }
+
+    initFaqCtaFilePreviewFallback();
 
     function initInsideMobileAccordion() {
       const accordion = document.querySelector("[data-inside-accordion]");

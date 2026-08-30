@@ -175,7 +175,7 @@ document.querySelector("[data-offline-partner-form]")?.addEventListener("submit"
     );
   }
 
-  if (pageName === "updates.html") {
+  if (pageName === "updates.html" || pageName === "faq.html") {
     out = out.replace('<base href="index.html">', '<base href="/">');
   }
 
