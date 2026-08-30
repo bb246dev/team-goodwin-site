@@ -4076,26 +4076,13 @@
 
     initMissionAmericaIntro();
 
-    const fallbackTickerUpdates = [
-      {
-        date: "2026-10-09",
-        time: "06:00 EDT",
-        title: "Goodwin Generated Mission America opens in Honolulu",
-        body: "The first marathon sets the baseline for 24 days of state-by-state progress."
-      },
-      {
-        date: "2026-10-10",
-        time: "07:30 AKDT",
-        title: "Alaska transfer window complete",
-        body: "The team moves from the island start into the frontier leg and toward the mainland."
-      },
-      {
-        date: "2026-10-10",
-        time: "18:15 PDT",
-        title: "Mainland rhythm begins in Oregon",
-        body: "The support crew settles into the repeatable run, recover, travel, reset cadence."
-      }
-    ];
+    const missionUpdatesSheet = {
+      endpoint: "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",
+      gid: "0",
+      cacheKey: "goodwin-generated-mission-america-updates-v1",
+      cacheMs: 2 * 60 * 1000
+    };
+    const updatesDebug = new URLSearchParams(window.location.search).get("updatesDebug") === "1";
 
     function escapeHtml(value) {
       return String(value || "").replace(/[&<>"']/g, (char) => ({
@@ -4108,19 +4095,156 @@
     }
 
     function formatUpdateStamp(update) {
-      return [update.date, update.time].filter(Boolean).join(" | ");
+      return update.dateTime || [update.date, update.time].filter(Boolean).join(" | ");
     }
 
-    function normalizeTickerUpdates(payload) {
-      const updates = Array.isArray(payload) ? payload : Array.isArray(payload?.updates) ? payload.updates : [];
-      return updates
-        .map((update) => ({
-          date: update.date || "",
-          time: update.time || "",
-          title: update.title || "Goodwin Generated Mission America update",
-          body: update.body || update.text || ""
-        }))
-        .filter((update) => update.title || update.body);
+    function parseGoogleDate(value) {
+      const match = String(value || "").match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);
+      if (!match) return Date.parse(value);
+      return new Date(
+        Number(match[1]),
+        Number(match[2]),
+        Number(match[3]),
+        Number(match[4] || 0),
+        Number(match[5] || 0),
+        Number(match[6] || 0)
+      ).getTime();
+    }
+
+    function isPublishedValue(value) {
+      return value === true || String(value || "").trim().toLowerCase() === "true";
+    }
+
+    function googleCell(row, index, preferFormatted = true) {
+      const cell = row?.c?.[index];
+      if (!cell) return "";
+      if (preferFormatted && cell.f != null && cell.f !== "") return cell.f;
+      if (cell.v != null) return cell.v;
+      if (cell.f != null) return cell.f;
+      return "";
+    }
+
+    function validUpdateUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      try {
+        const url = new URL(raw, window.location.href);
+        return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    function normalizeSheetUpdates(payload) {
+      const table = payload?.table;
+      const columns = Array.isArray(table?.cols) ? table.cols : [];
+      const rows = Array.isArray(table?.rows) ? table.rows : [];
+      const headerIndex = new Map(columns.map((column, index) => [String(column.label || "").trim(), index]));
+      const required = ["Date/Time", "Headline", "Update", "Optional Link", "Published"];
+      if (!required.every((header) => headerIndex.has(header))) {
+        throw new Error("Google Sheet update headers are missing or renamed.");
+      }
+      return rows
+        .map((row, index) => {
+          const dateTime = String(googleCell(row, headerIndex.get("Date/Time")) || "").trim();
+          const rawDate = googleCell(row, headerIndex.get("Date/Time"), false);
+          const title = String(googleCell(row, headerIndex.get("Headline")) || "").trim();
+          const body = String(googleCell(row, headerIndex.get("Update")) || "").trim();
+          const link = validUpdateUrl(googleCell(row, headerIndex.get("Optional Link")));
+          const published = isPublishedValue(googleCell(row, headerIndex.get("Published"), false));
+          const sortValue = parseGoogleDate(rawDate || dateTime);
+          return {
+            dateTime,
+            title,
+            body,
+            link,
+            published,
+            sortValue: Number.isFinite(sortValue) ? sortValue : 0,
+            sourceIndex: index
+          };
+        })
+        .filter((update) => update.published && (update.dateTime || update.title || update.body || update.link))
+        .sort((a, b) => (b.sortValue - a.sortValue) || (b.sourceIndex - a.sourceIndex));
+    }
+
+    function readCachedSheetUpdates(allowExpired = false) {
+      try {
+        const cached = JSON.parse(localStorage.getItem(missionUpdatesSheet.cacheKey) || "null");
+        if (!cached || !Array.isArray(cached.updates)) return null;
+        if (!allowExpired && Date.now() - Number(cached.savedAt || 0) > missionUpdatesSheet.cacheMs) return null;
+        return cached.updates;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function writeCachedSheetUpdates(updates) {
+      try {
+        localStorage.setItem(missionUpdatesSheet.cacheKey, JSON.stringify({ savedAt: Date.now(), updates }));
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+
+    function requestSheetUpdates() {
+      return new Promise((resolve, reject) => {
+        const callbackName = `__goodwinMissionUpdates${Date.now()}${Math.random().toString(36).slice(2)}`;
+        const params = new URLSearchParams({
+          gid: missionUpdatesSheet.gid,
+          tqx: `out:json;responseHandler:${callbackName}`,
+          cacheBust: String(Date.now())
+        });
+        const script = document.createElement("script");
+        const timeout = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Google Sheet updates request timed out."));
+        }, 10000);
+        const cleanup = () => {
+          window.clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+        };
+        window[callbackName] = (payload) => {
+          cleanup();
+          resolve(payload);
+        };
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Google Sheet updates request failed."));
+        };
+        script.src = `${missionUpdatesSheet.endpoint}?${params.toString()}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadSheetUpdates({ bypassCache = false } = {}) {
+      const cached = updatesDebug || bypassCache ? null : readCachedSheetUpdates();
+      if (cached) return cached;
+      try {
+        const updates = normalizeSheetUpdates(await requestSheetUpdates());
+        writeCachedSheetUpdates(updates);
+        return updates;
+      } catch (error) {
+        console.warn(error);
+        const stale = readCachedSheetUpdates(true);
+        if (stale) return stale;
+        throw error;
+      }
+    }
+
+    function renderUpdateTitle(update) {
+      if (!update.link) return `<strong>${escapeHtml(update.title)}</strong>`;
+      const url = new URL(update.link, window.location.href);
+      const externalAttributes = url.origin === window.location.origin ? "" : ' target="_blank" rel="noopener noreferrer"';
+      return `<a href="${escapeHtml(update.link)}"${externalAttributes}><strong>${escapeHtml(update.title)}</strong></a>`;
+    }
+
+    function renderTickerUnavailable() {
+      return '<div class="ticker-item"><time>Updates</time><span>Latest updates are temporarily unavailable.</span></div>';
+    }
+
+    function renderTickerEmpty() {
+      return '<div class="ticker-item"><time>Updates</time><span>Updates from the road are coming.</span></div>';
     }
 
     let missionTrackingStatusPromise = null;
@@ -4178,37 +4302,33 @@
       return null;
     }
 
-    async function loadTickerUpdates() {
+    async function loadTickerUpdates(options = {}) {
       const ticker = document.querySelector("[data-ticker-items]");
       if (!ticker) return;
-      const sources = ["../assets/ticker-updates.json", "assets/ticker-updates.json"];
-      let updates = fallbackTickerUpdates;
-      const trackingStatus = await loadMissionTrackingStatus();
-      for (const source of sources) {
-        try {
-          const response = await fetch(source, { headers: { Accept: "application/json" } });
-          if (!response.ok) throw new Error(`Ticker returned ${response.status}`);
-          const parsed = normalizeTickerUpdates(await response.json());
-          if (parsed.length) {
-            updates = parsed;
-            break;
-          }
-        } catch (error) {
-          console.warn(error);
-        }
+      await loadMissionTrackingStatus();
+      let updates = [];
+      try {
+        updates = await loadSheetUpdates(options);
+      } catch (error) {
+        ticker.innerHTML = renderTickerUnavailable();
+        return;
       }
-      const liveUpdate = liveTickerUpdateFromStatus(trackingStatus);
-      const firstFive = (liveUpdate ? [liveUpdate, ...updates] : updates).slice(0, 5);
-      const rendered = firstFive.map((update) => `
+      const latestUpdates = updates.slice(0, 3);
+      if (!latestUpdates.length) {
+        ticker.innerHTML = renderTickerEmpty();
+        return;
+      }
+      const rendered = latestUpdates.map((update) => `
         <div class="ticker-item">
           <time>${escapeHtml(formatUpdateStamp(update))}</time>
-          <span><strong>${escapeHtml(update.title)}</strong> ${escapeHtml(update.body)}</span>
+          <span>${renderUpdateTitle(update)} ${escapeHtml(update.body)}</span>
         </div>
       `).join("");
       ticker.innerHTML = rendered + rendered;
     }
 
     loadTickerUpdates();
+    window.setInterval(() => loadTickerUpdates({ bypassCache: true }), missionUpdatesSheet.cacheMs);
 
     const instagramProfileUrl = "https://www.instagram.com/williamgoodge?igsi=amphOWpyaXdubzE=";
 

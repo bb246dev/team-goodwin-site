@@ -18,18 +18,30 @@
     </section>
   </main>
   <script>
+    const sheetConfig={endpoint:"https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",gid:"0",cacheKey:"goodwin-generated-mission-america-updates-v1",cacheMs:2*60*1000};
+    const updatesDebug=new URLSearchParams(window.location.search).get("updatesDebug")==="1";
     function esc(value){return String(value||"").replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-    async function loadArchive(){
+    function parseGoogleDate(value){const match=String(value||"").match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);if(!match)return Date.parse(value);return new Date(Number(match[1]),Number(match[2]),Number(match[3]),Number(match[4]||0),Number(match[5]||0),Number(match[6]||0)).getTime()}
+    function googleCell(row,index,preferFormatted=true){const cell=row?.c?.[index];if(!cell)return "";if(preferFormatted&&cell.f!=null&&cell.f!=="")return cell.f;if(cell.v!=null)return cell.v;if(cell.f!=null)return cell.f;return ""}
+    function validUrl(value){const raw=String(value||"").trim();if(!raw)return "";try{const url=new URL(raw,window.location.href);return url.protocol==="http:"||url.protocol==="https:"?url.href:""}catch(error){return ""}}
+    function normalizeSheetUpdates(payload){const table=payload?.table;const columns=Array.isArray(table?.cols)?table.cols:[];const rows=Array.isArray(table?.rows)?table.rows:[];const headerIndex=new Map(columns.map((column,index)=>[String(column.label||"").trim(),index]));const required=["Date/Time","Headline","Update","Optional Link","Published"];if(!required.every((header)=>headerIndex.has(header)))throw new Error("Google Sheet update headers are missing or renamed.");return rows.map((row,index)=>{const dateTime=String(googleCell(row,headerIndex.get("Date/Time"))||"").trim();const rawDate=googleCell(row,headerIndex.get("Date/Time"),false);const title=String(googleCell(row,headerIndex.get("Headline"))||"").trim();const body=String(googleCell(row,headerIndex.get("Update"))||"").trim();const link=validUrl(googleCell(row,headerIndex.get("Optional Link")));const published=googleCell(row,headerIndex.get("Published"),false)===true||String(googleCell(row,headerIndex.get("Published"),false)||"").trim().toLowerCase()==="true";const sortValue=parseGoogleDate(rawDate||dateTime);return{dateTime,title,body,link,published,sortValue:Number.isFinite(sortValue)?sortValue:0,sourceIndex:index}}).filter((update)=>update.published&&(update.dateTime||update.title||update.body||update.link)).sort((a,b)=>(b.sortValue-a.sortValue)||(b.sourceIndex-a.sourceIndex))}
+    function readCache(allowExpired=false){try{const cached=JSON.parse(localStorage.getItem(sheetConfig.cacheKey)||"null");if(!cached||!Array.isArray(cached.updates))return null;if(!allowExpired&&Date.now()-Number(cached.savedAt||0)>sheetConfig.cacheMs)return null;return cached.updates}catch(error){return null}}
+    function writeCache(updates){try{localStorage.setItem(sheetConfig.cacheKey,JSON.stringify({savedAt:Date.now(),updates}))}catch(error){console.warn(error)}}
+    function requestSheet(){return new Promise((resolve,reject)=>{const callbackName=`__goodwinMissionUpdates${Date.now()}${Math.random().toString(36).slice(2)}`;const params=new URLSearchParams({gid:sheetConfig.gid,tqx:`out:json;responseHandler:${callbackName}`,cacheBust:String(Date.now())});const script=document.createElement("script");const timeout=window.setTimeout(()=>{cleanup();reject(new Error("Google Sheet updates request timed out."))},10000);const cleanup=()=>{window.clearTimeout(timeout);delete window[callbackName];script.remove()};window[callbackName]=(payload)=>{cleanup();resolve(payload)};script.onerror=()=>{cleanup();reject(new Error("Google Sheet updates request failed."))};script.src=`${sheetConfig.endpoint}?${params.toString()}`;document.head.appendChild(script)})}
+    async function loadUpdates({bypassCache=false}={}){const cached=updatesDebug||bypassCache?null:readCache();if(cached)return cached;try{const updates=normalizeSheetUpdates(await requestSheet());writeCache(updates);return updates}catch(error){console.warn(error);const stale=readCache(true);if(stale)return stale;throw error}}
+    function renderTitle(update){if(!update.link)return esc(update.title);const url=new URL(update.link,window.location.href);const external=url.origin===window.location.origin?"":' target="_blank" rel="noopener noreferrer"';return `<a href="${esc(update.link)}"${external}>${esc(update.title)}</a>`}
+    async function loadArchive(options={}){
       const container=document.querySelector("[data-updates-archive]");
-      const fallback={updates:[{date:"2026-10-09",time:"06:00 EDT",title:"Goodwin Generated Mission America opens in Honolulu",body:"Will begins the first marathon of the 50-state sequence."}]};
-      let payload=fallback;
-      for(const source of ["../assets/ticker-updates.json","assets/ticker-updates.json"]){
-        try{const response=await fetch(source,{headers:{Accept:"application/json"}});if(!response.ok)throw new Error(response.status);payload=await response.json();break}catch(error){console.warn(error)}
+      try{
+        const updates=await loadUpdates(options);
+        if(!updates.length){container.innerHTML='<article class="update"><time>Updates</time><div><h2>Updates from the road are coming.</h2></div></article>';return}
+        container.innerHTML=updates.map((update)=>`<article class="update"><time>${esc(update.dateTime)}</time><div><h2>${renderTitle(update)}</h2><p>${esc(update.body)}</p></div></article>`).join("");
+      }catch(error){
+        container.innerHTML='<article class="update"><time>Updates</time><div><h2>Latest updates are temporarily unavailable.</h2></div></article>';
       }
-      const updates=Array.isArray(payload?.updates)?payload.updates:[];
-      container.innerHTML=updates.map((update)=>`<article class="update"><time>${esc([update.date,update.time].filter(Boolean).join(" | "))}</time><div><h2>${esc(update.title)}</h2><p>${esc(update.body)}</p></div></article>`).join("");
     }
     loadArchive();
+    window.setInterval(()=>loadArchive({bypassCache:true}),sheetConfig.cacheMs);
   </script>
 </body>
 </html>
