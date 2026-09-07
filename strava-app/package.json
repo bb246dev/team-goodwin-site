@@ -1,0 +1,16 @@
+{
+  "name": "goodwin-strava-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "main": "passenger.cjs",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "mysql2": "3.24.2"
+  }
+}

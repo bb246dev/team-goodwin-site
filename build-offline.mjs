@@ -9,7 +9,11 @@ mkdirSync(dist, { recursive: true });
 cpSync(join(root, "assets"), join(dist, "assets"), { recursive: true });
 cpSync(join(root, "fonts"), join(dist, "fonts"), { recursive: true });
 if (existsSync(join(root, "api"))) {
-  cpSync(join(root, "api"), join(dist, "api"), { recursive: true });
+  cpSync(join(root, "api"), join(dist, "api"), {
+    recursive: true,
+    // Strava modules are server-only and must not enter the static export.
+    filter: (path) => !/[/\\]strava(?:[-.]|$)/.test(path),
+  });
 }
 
 const pages = [
@@ -309,6 +313,7 @@ const deployAssetPaths = [
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.js",
   "assets/ticker-updates.json",
+  "assets/strava-race-map.mjs",
   "assets/goodwin-favicon.png",
   "assets/goodwin-webclip.png",
   "assets/goodwin-logo.png",

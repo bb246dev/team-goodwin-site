@@ -1,3 +1,9 @@
 Mission-America-offline-export.zip
 original-*-verify.png
 tmp/
+node_modules/
+.env
+.env.*
+!.env.example
+.goodwin-strava-config.json
+goodwin-strava-config.json

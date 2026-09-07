@@ -3621,6 +3621,7 @@
         </section>
         <div class="tracker-map-stage" aria-label="Goodwin Generated Mission America live map">
           <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Goodwin Generated Mission America route map"></div>
+          <p class="sr-only" data-race-map-status aria-live="polite">0 of 50 races completed.</p>
           <div class="tracking-map-key" aria-label="Goodwin Generated Mission America tracking layers">
             <span><img src="assets/map-runner-bobblehead-small.png" alt="">Runner</span>
             <span><svg viewBox="-17 -23 34 46" aria-hidden="true" focusable="false"><path class="legend-plane" d="M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z"></path></svg>Flight</span>
@@ -4720,7 +4721,7 @@
 
     initWordmarkFade();
 
-    const routeStops = [
+    const staticRouteStops = [
       { n: 1, state: "Hawaii", abbr: "HI", city: "Honolulu", date: "Oct 9", lat: 21.3099, lng: -157.8581 },
       { n: 2, state: "Alaska", abbr: "AK", city: "Anchorage", date: "Oct 10", lat: 61.2181, lng: -149.9003 },
       { n: 3, state: "Oregon", abbr: "OR", city: "Portland", date: "Oct 10", lat: 45.5152, lng: -122.6784 },
@@ -4773,16 +4774,20 @@
       { n: 50, state: "New York", abbr: "NY", city: "New York City", date: "Nov 1", lat: 40.7128, lng: -74.006 }
     ];
 
+    let routeStops = staticRouteStops;
+    let missionRaceStatus = { active: false, completedRaces: 0, totalRaces: 50 };
+    let missionRaceMapModule = null;
+    let missionMapTopology = null;
+    let missionRacePoller = null;
+    let missionMapLoadPromise = null;
     const startDate = new Date("2026-10-09T06:00:00-04:00");
-    const endDate = new Date("2026-11-01T18:00:00-05:00");
-    const userProgress = Number(window.missionTrackingProgress);
-    const dateProgress = (Date.now() - startDate.getTime()) / (endDate.getTime() - startDate.getTime());
-    const previewProgress = 0;
-    const progress = Number.isFinite(userProgress)
-      ? userProgress
-      : Date.now() < startDate.getTime()
-        ? previewProgress
-        : Math.max(0, Math.min(1, dateProgress));
+
+    function missionMapProgress() {
+      const suppliedProgress = Number(window.missionTrackingProgress);
+      if (Number.isFinite(suppliedProgress)) return Math.max(0, Math.min(1, suppliedProgress));
+      const total = Number(missionRaceStatus.totalRaces) || 50;
+      return Math.max(0, Math.min(1, Number(missionRaceStatus.completedRaces) / total || 0));
+    }
 
     function interpolateRoute(progressValue) {
       const routePosition = progressValue * (routeStops.length - 1);
@@ -4797,16 +4802,13 @@
       return { segmentIndex, livePoint };
     }
 
-    const { segmentIndex, livePoint } = interpolateRoute(progress);
-    const currentIndex = Math.min(routeStops.length - 1, Math.floor(progress * (routeStops.length - 1)));
-    const complete = Math.min(50, Math.floor(progress * 50));
     const mapAssetBase = location.pathname.includes("/source-html/") ? "../assets/" : "assets/";
     const mapEntityAssets = {
       runner: `${mapAssetBase}map-runner-bobblehead-small.png`,
       rv: `${mapAssetBase}map-rv-green-small.png`
     };
     const mapTrackingDefaults = {
-      runner: { progress },
+      runner: { progress: 0 },
       flight: { active: false },
       rv: { pathStops: [3, 4, 5, 6], progress: 0.64 }
     };
@@ -5112,9 +5114,24 @@
       svg.appendChild(group);
     }
 
-    function renderMissionMap(topo) {
+    function activityRoutePoints(stop, centroids) {
+      const coordinates = missionRaceMapModule?.decodeSummaryPolyline(stop.activity?.summaryPolyline);
+      if (!coordinates || coordinates.length < 2) return [];
+      const anchor = routePoint(stop, centroids);
+      const projectedAnchor = displayPoint(projectLower48(stop.lat, stop.lng), stop.abbr);
+      if (!anchor || !projectedAnchor) return [];
+      return coordinates.map(([latitude, longitude]) => {
+        const projected = displayPoint(projectLower48(latitude, longitude), stop.abbr);
+        return [
+          anchor[0] + projected[0] - projectedAnchor[0],
+          anchor[1] + projected[1] - projectedAnchor[1]
+        ];
+      });
+    }
+
+    function renderMissionMap(topo, replace = false) {
       const mapEl = document.getElementById("mission-map");
-      if (!mapEl || mapEl.dataset.mapReady) return;
+      if (!mapEl || (mapEl.dataset.mapReady && !replace)) return;
       mapEl.dataset.mapReady = "true";
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
@@ -5141,6 +5158,9 @@
       });
       svg.appendChild(stateLayer);
 
+      const progress = missionMapProgress();
+      const { segmentIndex } = interpolateRoute(progress);
+      const currentIndex = Math.min(routeStops.length - 1, Math.floor(progress * (routeStops.length - 1)));
       const routePoints = routeStops.map((stop) => routePoint(stop, centroids)).filter(Boolean);
       const liveStart = routePoints[segmentIndex];
       const liveEnd = routePoints[Math.min(routePoints.length - 1, segmentIndex + 1)];
@@ -5166,6 +5186,15 @@
       completePath.setAttribute("class", "map-route complete");
       completePath.setAttribute("d", routePath(completedPoints));
       routeLayer.appendChild(completePath);
+      routeStops.forEach((stop) => {
+        const activityPoints = activityRoutePoints(stop, centroids);
+        if (activityPoints.length < 2) return;
+        const activityPath = document.createElementNS(svgNS, "path");
+        activityPath.setAttribute("class", "map-route complete map-activity-route");
+        activityPath.setAttribute("d", routePath(activityPoints));
+        activityPath.dataset.raceId = stop.raceId;
+        routeLayer.appendChild(activityPath);
+      });
       svg.appendChild(routeLayer);
 
       const travelLayer = document.createElementNS(svgNS, "g");
@@ -5241,12 +5270,13 @@
         circle.setAttribute("cx", point[0]);
         circle.setAttribute("cy", point[1]);
         circle.setAttribute("r", stop.n === 1 || stop.n === 50 ? "6" : "4.8");
-        circle.setAttribute("class", `map-stop${index === currentIndex ? " is-current" : ""}${stop.n === 1 || stop.n === 50 ? " is-terminal" : ""}`);
+        circle.setAttribute("class", `map-stop${index === currentIndex ? " is-current" : ""}${stop.status === "completed" ? " is-completed" : ""}${stop.n === 1 || stop.n === 50 ? " is-terminal" : ""}`);
         circle.setAttribute("tabindex", "0");
         circle.setAttribute("role", "button");
-        circle.setAttribute("aria-label", `${stop.n}. ${stop.city}, ${stop.state}, ${stop.date}`);
+        const statusLabel = stop.status === "completed" ? ", completed" : "";
+        circle.setAttribute("aria-label", `${stop.n}. ${stop.city}, ${stop.state}, ${stop.date}${statusLabel}`);
         const title = document.createElementNS(svgNS, "title");
-        title.textContent = `${stop.n}. ${stop.city}, ${stop.state} | ${stop.date}`;
+        title.textContent = `${stop.n}. ${stop.city}, ${stop.state} | ${stop.date}${statusLabel}`;
         circle.appendChild(title);
         const selectStop = () => {
           svg.querySelectorAll(".map-stop").forEach((item) => item.classList.remove("is-current"));
@@ -5316,32 +5346,113 @@
         if (!event.target.closest(".map-stop")) resetStopCard();
       });
 
-      document.addEventListener("pointerdown", (event) => {
-        if (!mapEl.contains(event.target)) resetStopCard();
+      mapEl.resetStopCard = resetStopCard;
+      if (!mapEl.dataset.outsideResetBound) {
+        mapEl.dataset.outsideResetBound = "true";
+        document.addEventListener("pointerdown", (event) => {
+          if (!mapEl.contains(event.target)) mapEl.resetStopCard?.();
+        });
+      }
+    }
+
+    function raceMapSignature(stops, status) {
+      return JSON.stringify({
+        completedRaces: status.completedRaces,
+        races: stops.map((stop) => [
+          stop.raceId || `ggma-2026-${String(stop.n).padStart(2, "0")}`,
+          stop.n, stop.state, stop.city, stop.date, stop.status || "scheduled",
+          stop.activity?.stravaActivityId || null, stop.activity?.summaryPolyline || null
+        ])
       });
     }
 
-    async function loadMissionMap() {
+    function updateRaceMapAccessibility() {
+      const completed = Number(missionRaceStatus.completedRaces) || 0;
+      const total = Number(missionRaceStatus.totalRaces) || 50;
+      const text = `${completed} of ${total} races completed.`;
+      const status = document.querySelector("[data-race-map-status]");
+      const map = document.getElementById("mission-map");
+      if (status) status.textContent = text;
+      if (map) map.setAttribute("aria-label", `Interactive Goodwin Generated Mission America route map. ${text}`);
+    }
+
+    function applyPublicRaceSnapshot(snapshot) {
+      if (snapshot?.source !== "api") return;
+      const previousSignature = raceMapSignature(routeStops, missionRaceStatus);
+      routeStops = snapshot.races;
+      missionRaceStatus = snapshot.status;
+      const changed = raceMapSignature(routeStops, missionRaceStatus) !== previousSignature;
+      if (changed) renderRunItinerary();
+      updateRaceMapAccessibility();
+      if (missionMapTopology && changed) {
+        renderMissionMap(missionMapTopology, true);
+      }
+    }
+
+    async function loadMissionMapTopology() {
       const sources = ["assets/us-states-albers-10m.json", "../assets/us-states-albers-10m.json"];
-      await loadMissionTrackingStatus();
       for (const source of sources) {
         try {
           const response = await fetch(source, { headers: { Accept: "application/json" } });
           if (!response.ok) throw new Error(`Map returned ${response.status}`);
-          renderMissionMap(await response.json());
-          return;
+          return response.json();
         } catch (error) {
           console.warn(error);
         }
       }
-      if (window.missionAmericaMapTopology) {
-        renderMissionMap(window.missionAmericaMapTopology);
-        return;
-      }
-      document.getElementById("mission-map").textContent = "Map data could not load. Serve this page from the preview server to view the interactive U.S. route map.";
+      return window.missionAmericaMapTopology || null;
     }
 
-    loadMissionMap();
+    async function loadMissionMap() {
+      if (missionMapLoadPromise) return missionMapLoadPromise;
+      missionMapLoadPromise = (async () => {
+        const trackingPromise = loadMissionTrackingStatus();
+        missionMapTopology = await loadMissionMapTopology();
+        await trackingPromise;
+        if (missionMapTopology) {
+          renderMissionMap(missionMapTopology);
+        } else {
+          document.getElementById("mission-map").textContent = "Map data could not load. Serve this page from the preview server to view the interactive U.S. route map.";
+        }
+        await new Promise((resolve) => window.requestAnimationFrame(resolve));
+        const snapshot = await import("/assets/strava-race-map.mjs")
+          .then(async (raceMapModule) => {
+            missionRaceMapModule = raceMapModule;
+            return raceMapModule.loadPublicRaceSnapshot({ staticStops: staticRouteStops });
+          })
+          .catch(() => {
+            console.warn("Public race data unavailable; using the static schedule.");
+            return null;
+          });
+        applyPublicRaceSnapshot(snapshot);
+        if (snapshot?.source === "api" && snapshot.status.active && missionRaceMapModule) {
+          missionRacePoller?.stop();
+          missionRacePoller = missionRaceMapModule.createPublicRacePoller({
+            load: () => missionRaceMapModule.loadPublicRaceSnapshot({ staticStops: staticRouteStops }),
+            onSnapshot: applyPublicRaceSnapshot
+          });
+          await missionRacePoller.start(snapshot);
+        }
+      })();
+      return missionMapLoadPromise;
+    }
+
+    function loadMissionMapNearViewport() {
+      const mapStage = document.querySelector(".tracker-map-stage");
+      if (!mapStage || !("IntersectionObserver" in window)) {
+        void loadMissionMap();
+        return;
+      }
+      const observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        void loadMissionMap();
+      }, { rootMargin: "300px 0px" });
+      observer.observe(mapStage);
+    }
+
+    updateRaceMapAccessibility();
+    loadMissionMapNearViewport();
 
     document.querySelector("[data-follow-form]")?.addEventListener("submit", (event) => {
       event.preventDefault();
