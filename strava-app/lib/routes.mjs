@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import {
   StravaError, requiredSecret, secretEquals, randomSecret, hashSecret, tokenEncryptionKey,
 } from "./security.mjs";
@@ -15,6 +16,16 @@ const STATE_LIFETIME = 600;
 const CONNECTION_LINK_LIFETIME = 86_400;
 const MAX_WEBHOOK_BYTES = 16_384;
 const MAX_ADMIN_BODY_BYTES = 4_096;
+const MAX_QUERY_BYTES = 4_096;
+const WEBHOOK_RETENTION_SECONDS = 14 * 86_400;
+const WEBHOOK_MAX_FUTURE_SECONDS = 300;
+const WEBHOOK_RATE_WINDOW_SECONDS = 60;
+const WEBHOOK_RATE_EVENT_LIMIT = 120;
+const ADMIN_RATE_WINDOW_SECONDS = 300;
+const ADMIN_RATE_FAILURE_LIMIT = 10;
+// The final retry crosses the 60-second lease boundary so a queued event can
+// reclaim work even when the preceding Passenger worker stalls until expiry.
+const WEBHOOK_RETRY_DELAYS = [250, 1_000, 4_000, 10_000, 50_000];
 const ROUTES = new Set([
   "/api/strava/connect", "/api/strava/connect-link", "/api/strava/connect-athlete",
   "/api/strava/callback", "/api/strava/status", "/api/strava/webhook", "/api/strava/candidates",
@@ -57,6 +68,130 @@ function readStateCookie(request) {
 
 function connectionLinkFailure() {
   return stravaResponse({ error: "strava_connection_link_invalid" }, 400);
+}
+
+function safeLog(logger, category, metadata = {}) {
+  try {
+    logger.info(category, metadata);
+  } catch { /* Operational logging must never change request behavior. */ }
+}
+
+function webhookSubscriptionId(env) {
+  const value = typeof env?.STRAVA_WEBHOOK_SUBSCRIPTION_ID === "string"
+    ? env.STRAVA_WEBHOOK_SUBSCRIPTION_ID.trim() : "";
+  if (!/^[1-9]\d{0,15}$/.test(value)) return null;
+  const number = Number(value);
+  return Number.isSafeInteger(number) && number > 0 ? value : null;
+}
+
+function canonicalJson(value) {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function webhookEventKey(event) {
+  return createHash("sha256").update(canonicalJson({
+    subscription_id: event.subscription_id,
+    owner_id: event.owner_id,
+    object_type: event.object_type,
+    object_id: event.object_id,
+    aspect_type: event.aspect_type,
+    event_time: event.event_time,
+    updates: event.updates || null,
+  })).digest("hex");
+}
+
+function adminClientKey(clientAddress) {
+  const value = typeof clientAddress === "string" && /^[0-9a-f:.]{1,64}$/i.test(clientAddress)
+    ? clientAddress.toLowerCase() : "unknown";
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function scheduleWebhookBackground(dependencies, task, delay = 0) {
+  if (typeof dependencies.scheduleBackground !== "function") return false;
+  dependencies.scheduleBackground(task, delay);
+  return true;
+}
+
+async function processWebhookEvent(eventKey, env, dependencies, attempt = 0) {
+  const logger = dependencies.logger || console;
+  const now = dependencies.now || (() => Math.floor(Date.now() / 1000));
+  const store = createStravaStore(env);
+  const owner = randomSecret();
+  try {
+    const claim = await store.claimWebhookEvent(eventKey, owner, now());
+    if (claim.status === "duplicate") {
+      safeLog(logger, "strava_webhook_duplicate_ignored");
+      return;
+    }
+    if (claim.status === "stale") {
+      safeLog(logger, "strava_webhook_stale_ignored", { activity_id: claim.activityId });
+      return;
+    }
+    if (claim.status === "busy") {
+      if (attempt < WEBHOOK_RETRY_DELAYS.length) {
+        safeLog(logger, "strava_webhook_activity_queued", { retry: attempt + 1 });
+        scheduleWebhookBackground(
+          dependencies,
+          () => processWebhookEvent(eventKey, env, dependencies, attempt + 1),
+          WEBHOOK_RETRY_DELAYS[attempt],
+        );
+      } else {
+        safeLog(logger, "strava_webhook_activity_deferred");
+      }
+      return;
+    }
+    const connection = await store.getConnection();
+    if (!connection || connection.athlete_id !== claim.ownerId) {
+      await store.finishWebhookEvent(eventKey, owner, { status: "ignored", advance: false }, now());
+      safeLog(logger, "strava_webhook_wrong_athlete_ignored", { activity_id: claim.activityId });
+      return;
+    }
+    if (claim.aspectType === "delete") {
+      await store.deleteRaceActivityCandidate(claim.activityId, claim.eventTime, now());
+    } else if (typeof dependencies.processWebhookActivity === "function") {
+      await dependencies.processWebhookActivity(claim.activityId);
+    } else {
+      await createStravaService(env, dependencies).fetchActivityCandidate(claim.activityId);
+    }
+    await store.finishWebhookEvent(eventKey, owner, { status: "succeeded", advance: true }, now());
+    safeLog(logger, "strava_webhook_activity_succeeded", {
+      activity_id: claim.activityId,
+      aspect_type: claim.aspectType,
+    });
+  } catch (error) {
+    await store.finishWebhookEvent(eventKey, owner, { status: "failed", advance: false }, now()).catch(() => {});
+    safeLog(logger, "strava_webhook_activity_failed", {
+      error: error instanceof StravaError ? error.code : "strava_activity_candidate_failed",
+    });
+    if (attempt < WEBHOOK_RETRY_DELAYS.length) {
+      scheduleWebhookBackground(
+        dependencies,
+        () => processWebhookEvent(eventKey, env, dependencies, attempt + 1),
+        WEBHOOK_RETRY_DELAYS[attempt],
+      );
+    }
+  }
+}
+
+export async function resumeWebhookEvents(env, dependencies = {}) {
+  const logger = dependencies.logger || console;
+  const now = dependencies.now || (() => Math.floor(Date.now() / 1000));
+  const store = createStravaStore(env);
+  const eventKeys = await store.listRecoverableWebhookEventKeys(now());
+  for (const eventKey of eventKeys) {
+    scheduleWebhookBackground(
+      dependencies,
+      () => processWebhookEvent(eventKey, env, dependencies),
+    );
+  }
+  if (eventKeys.length > 0) {
+    safeLog(logger, "strava_webhook_recovery_queued", { event_count: eventKeys.length });
+  }
+  return eventKeys.length;
 }
 
 function publicHeaders(request, timestamp) {
@@ -137,11 +272,20 @@ async function webhookPayload(request) {
     }
     const event = JSON.parse(new TextDecoder().decode(bytes));
     const positiveId = (value) => Number.isSafeInteger(value) && value > 0;
+    const validUpdates = (value) => {
+      if (value === undefined) return true;
+      if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+      const entries = Object.entries(value);
+      return entries.length <= 16 && entries.every(([key, item]) =>
+        /^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(key)
+        && (item === null || typeof item === "boolean" || Number.isFinite(item)
+          || (typeof item === "string" && item.length <= 1_024)));
+    };
     if (!event || typeof event !== "object" || Array.isArray(event) ||
       !["athlete", "activity"].includes(event.object_type) ||
       !["create", "update", "delete"].includes(event.aspect_type) ||
       ![event.object_id, event.owner_id, event.subscription_id, event.event_time].every(positiveId) ||
-      (event.updates !== undefined && (!event.updates || typeof event.updates !== "object" || Array.isArray(event.updates)))) {
+      !validUpdates(event.updates)) {
       throw new StravaError("strava_invalid_webhook", 400);
     }
     return event;
@@ -208,7 +352,11 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
   const callback = path === "/api/strava/callback";
   const callbackHeaders = callback ? { "Set-Cookie": stateCookie("", 0) } : {};
   const now = dependencies.now || (() => Math.floor(Date.now() / 1000));
+  const logger = dependencies.logger || console;
   try {
+    if (Buffer.byteLength(url.search, "utf8") > MAX_QUERY_BYTES) {
+      return stravaResponse({ error: "request_uri_too_long" }, 414, callbackHeaders);
+    }
     const webhook = path === "/api/strava/webhook";
     const connectionLink = path === "/api/strava/connect-link";
     const athleteConnect = path === "/api/strava/connect-athlete";
@@ -249,51 +397,84 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
         return stravaResponse({ "hub.challenge": challenge });
       }
       const event = await webhookPayload(request);
-      // Acknowledge valid activity events outside the race window without beginning
-      // processing. Any future activity-detail fetch must remain below this gate.
-      if (event.object_type === "activity" && !operationalWindowAt(now())) {
+      const timestamp = now();
+      safeLog(logger, "strava_webhook_received", {
+        object_type: event.object_type,
+        aspect_type: event.aspect_type,
+        object_id: event.object_id,
+      });
+      const expectedSubscription = webhookSubscriptionId(env);
+      if (!expectedSubscription) {
+        safeLog(logger, "strava_webhook_config_unavailable");
         return stravaResponse({ accepted: true });
       }
-      const logger = dependencies.logger || console;
-      // Strava does not sign event POSTs. Treat them as hints and log only allowlisted metadata.
-      // A future sync must validate owner/subscription and confirm the event with Strava.
-      try {
-        logger.info("strava_webhook", {
-          object_type: event.object_type,
-          aspect_type: event.aspect_type,
+      if (String(event.subscription_id) !== expectedSubscription) {
+        safeLog(logger, "strava_webhook_wrong_subscription_ignored");
+        return stravaResponse({ accepted: true });
+      }
+      if (event.event_time > timestamp + WEBHOOK_MAX_FUTURE_SECONDS) {
+        safeLog(logger, "strava_webhook_future_event_ignored");
+        return stravaResponse({ accepted: true });
+      }
+      if (event.object_type !== "activity") {
+        safeLog(logger, "strava_webhook_non_activity_ignored");
+        return stravaResponse({ accepted: true });
+      }
+      if (event.aspect_type !== "delete" && !operationalWindowAt(timestamp)) {
+        safeLog(logger, "strava_webhook_window_closed_ignored", { object_id: event.object_id });
+        return stravaResponse({ accepted: true });
+      }
+      const store = createStravaStore(env);
+      const connection = await store.getConnection();
+      if (!connection || connection.athlete_id !== String(event.owner_id)) {
+        safeLog(logger, "strava_webhook_wrong_athlete_ignored", { object_id: event.object_id });
+        return stravaResponse({ accepted: true });
+      }
+      if (!await store.consumeWebhookRateLimit(
+        timestamp,
+        WEBHOOK_RATE_WINDOW_SECONDS,
+        WEBHOOK_RATE_EVENT_LIMIT,
+      )) {
+        safeLog(logger, "strava_webhook_rate_limit_triggered");
+        return stravaResponse({ accepted: true });
+      }
+      const eventKey = webhookEventKey(event);
+      const registration = await store.registerWebhookEvent(eventKey, event, timestamp, WEBHOOK_RETENTION_SECONDS);
+      if (!registration.registered) safeLog(logger, "strava_webhook_duplicate_ignored", { object_id: event.object_id });
+      if (registration.shouldSchedule) {
+        safeLog(logger, "strava_webhook_activity_queued", {
           object_id: event.object_id,
-          owner_id: event.owner_id,
-          event_time: event.event_time,
+          aspect_type: event.aspect_type,
         });
-      } catch { /* Logging must not cause Strava retries. */ }
-      if (event.object_type === "activity" && ["create", "update"].includes(event.aspect_type)
-        && typeof dependencies.scheduleBackground === "function") {
-        dependencies.scheduleBackground(async () => {
-          try {
-            const connection = await createStravaStore(env).getConnection();
-            if (!connection || connection.athlete_id !== String(event.owner_id)) {
-              throw new StravaError("strava_activity_owner_mismatch", 403);
-            }
-            await createStravaService(env, dependencies).fetchActivityCandidate(event.object_id);
-          } catch (error) {
-            try {
-              logger.info("strava_activity_candidate_error", {
-                object_id: event.object_id,
-                error: error instanceof StravaError ? error.code : "strava_activity_candidate_failed",
-              });
-            } catch { /* Background diagnostics must remain best-effort and secret-free. */ }
-          }
-        });
+        scheduleWebhookBackground(dependencies, () => processWebhookEvent(eventKey, env, dependencies));
       }
       return stravaResponse({ accepted: true });
     }
     if (url.origin !== STRAVA_PUBLIC_ORIGIN) {
       return stravaResponse({ error: "strava_requires_production_origin" }, 400, callbackHeaders);
     }
-    if (!callback && !athleteConnect && !await authorizedAdmin(request, env)) {
-      return stravaResponse({ error: "unauthorized" }, 401, {
-        "WWW-Authenticate": 'Basic realm="Goodwin Strava administration", charset="UTF-8"',
-      });
+    let store;
+    if (!callback && !athleteConnect) {
+      store = createStravaStore(env);
+      const clientKey = adminClientKey(dependencies.clientAddress);
+      if (!await authorizedAdmin(request, env)) {
+        const rate = await store.recordAdminAuthFailure(
+          clientKey,
+          now(),
+          ADMIN_RATE_WINDOW_SECONDS,
+          ADMIN_RATE_FAILURE_LIMIT,
+        );
+        if (rate.limited) {
+          safeLog(logger, "strava_admin_rate_limit_triggered", { route: path });
+          return stravaResponse({ error: "rate_limited" }, 429, {
+            "Retry-After": String(rate.retryAfter),
+          });
+        }
+        return stravaResponse({ error: "unauthorized" }, 401, {
+          "WWW-Authenticate": 'Basic realm="Goodwin Strava administration", charset="UTF-8"',
+        });
+      }
+      await store.clearAdminAuthFailures(clientKey).catch(() => {});
     }
     if (path === "/api/strava/status") {
       const timestamp = now();
@@ -302,7 +483,7 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
         ...raceWindowStatusAt(timestamp),
       });
     }
-    const store = createStravaStore(env);
+    store ||= createStravaStore(env);
     if (candidateReview) {
       return stravaResponse({
         candidates: await store.listPendingRaceCandidates(),

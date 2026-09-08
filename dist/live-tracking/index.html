@@ -73,6 +73,11 @@
       overflow-x: hidden;
     }
 
+    .mobile-ambient-background,
+    .mobile-ambient-debug {
+      display: none;
+    }
+
     .tracker-nav {
       position: fixed;
       z-index: 30;
@@ -491,9 +496,9 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: 28% 45%;
-      opacity: 0.58;
-      filter: saturate(0.78) contrast(1.05);
+      object-position: center center;
+      opacity: 1;
+      filter: none;
       transform: scale(1.08);
     }
 
@@ -502,6 +507,18 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(90deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.45) 30%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 70%);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tracker-hero {
+        background-image: url("assets/hero-runner-Ci5y42DW.jpg");
+        background-size: cover;
+        background-position: center center;
+      }
+
+      .tracker-hero-bg {
+        display: none;
+      }
     }
 
     .tracker-map-stage {
@@ -2522,6 +2539,98 @@
     }
 
     @media (max-width: 430px) {
+      body.has-mobile-ambient-background {
+        --ambient-ink: 245 243 238;
+        background: transparent;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background {
+        --base: 10 10 10;
+        --glow-one: 18 32 32;
+        --glow-two: 25 59 59;
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100vw;
+        height: 100dvh;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            circle at 14% 12%,
+            rgb(var(--glow-one) / 72%),
+            transparent 52%
+          ),
+          radial-gradient(
+            circle at 86% 82%,
+            rgb(var(--glow-two) / 66%),
+            transparent 55%
+          ),
+          rgb(var(--base));
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(circle at 25% 25%, rgb(255 255 255 / 16%) 0 1px, transparent 1px),
+          radial-gradient(circle at 75% 75%, rgb(0 0 0 / 18%) 0 1px, transparent 1px);
+        background-size: 34px 34px, 43px 43px;
+        opacity: 0.03;
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-background::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            125deg,
+            rgb(255 255 255 / 4%),
+            transparent 45%,
+            rgb(0 0 0 / 7%)
+          );
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .mobile-ambient-debug {
+        display: block;
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        z-index: 80;
+        max-width: calc(100vw - 24px);
+        padding: 9px 10px;
+        border: 1px solid rgb(255 255 255 / 32%);
+        background: rgb(10 10 10 / 82%);
+        color: var(--color-white);
+        font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        white-space: pre;
+        pointer-events: none;
+      }
+
+      body.has-mobile-ambient-background .tracker-page {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+      }
+
+      body.has-mobile-ambient-background .tracker-section > .section-head h2,
+      body.has-mobile-ambient-background .tracker-section > .section-head p {
+        color: rgb(var(--ambient-ink));
+      }
+
+      body.has-mobile-ambient-background .tracker-section > .section-head .tracker-eyebrow {
+        color: rgb(var(--ambient-ink) / 72%);
+      }
+
+      body.has-mobile-ambient-background .site-footer {
+        background: var(--color-white);
+      }
+
       .tracker-nav {
         position: absolute;
         inset: 0 0 auto 0;
@@ -3169,6 +3278,16 @@
       .mission-intro {
         display: none !important;
       }
+
+      body.has-mobile-ambient-background .mobile-ambient-background,
+      body.has-mobile-ambient-background .mobile-ambient-debug {
+        display: none;
+      }
+
+      body.has-mobile-ambient-background,
+      body.has-mobile-ambient-background .tracker-page {
+        background: var(--color-white);
+      }
     }
 
     @media (min-width: 360px) and (max-width: 410px) {
@@ -3276,263 +3395,31 @@
         height: 20px;
       }
     }
-
-    /* Simplified editorial system: one page surface, restrained rules, purposeful accents. */
-    body,
-    .tracker-page {
-      background: #f5f5f2;
-    }
-
-    .tracker-content {
-      background: transparent;
-    }
-
-    .tracker-section {
-      background: transparent;
-      border-top-color: rgba(10, 10, 10, 0.18);
-    }
-
-    .section-head {
-      align-items: flex-start;
-      margin-bottom: clamp(28px, 4vw, 48px);
-    }
-
-    .section-head h2 {
-      max-width: 720px;
-      font-size: clamp(2.65rem, 5.2vw, 4.9rem);
-      line-height: 0.96;
-    }
-
-    .tracker-eyebrow {
-      color: var(--color-accent);
-    }
-
-    .feature-row {
-      gap: 0;
-      border-width: 1px 0;
-      background: transparent;
-    }
-
-    .feature-card {
-      min-height: 190px;
-      padding-inline: clamp(0px, 3vw, 38px);
-      background: transparent;
-      border-right: 1px solid var(--tracker-line);
-      transform: none;
-    }
-
-    .feature-card:first-child {
-      padding-left: 0;
-    }
-
-    .feature-card:last-child {
-      padding-right: 0;
-      border-right: 0;
-    }
-
-    .feature-card:hover {
-      background: transparent;
-      color: var(--color-accent);
-      transform: none;
-    }
-
-    .feature-card h2 {
-      font-size: clamp(2.2rem, 3.4vw, 3.8rem);
-    }
-
-    .tracker-grid,
-    .metric-row,
-    .tracking-status-grid,
-    .updates-list,
-    .article-grid,
-    .run-grid {
-      background: transparent;
-    }
-
-    .tracker-panel,
-    .metric,
-    .tracking-status-grid div,
-    .update-item,
-    .article-card,
-    .run-card,
-    .inside-desktop-answer-row,
-    .inside-desktop-answer-content {
-      background: transparent;
-    }
-
-    .tracker-panel {
-      padding-inline: 0;
-    }
-
-    .metric-row,
-    .tracking-status-grid {
-      border-width: 1px 0;
-    }
-
-    .metric,
-    .tracking-status-grid div {
-      border-right: 1px solid var(--tracker-line);
-    }
-
-    .metric:last-child,
-    .tracking-status-grid div:last-child {
-      border-right: 0;
-    }
-
-    .follow-panel {
-      border-width: 1px 0;
-      background: transparent;
-      padding-inline: 0;
-    }
-
-    .week-grid {
-      gap: 14px;
-      border: 0;
-      background: transparent;
-    }
-
-    .week-card {
-      min-height: 340px;
-    }
-
-    .article-grid,
-    .run-grid {
-      gap: 0;
-      border-width: 1px 0;
-    }
-
-    .article-card,
-    .run-card {
-      border-right: 1px solid var(--tracker-line);
-    }
-
-    .article-card:nth-child(3n),
-    .run-card:nth-child(3n) {
-      border-right: 0;
-    }
-
-    #articles .article-card:first-child,
-    #why,
-    #why .article-card {
-      background: transparent;
-      color: var(--tracker-ink);
-    }
-
-    #articles .article-card:first-child h3,
-    #articles .article-card:first-child p,
-    #articles .article-card:first-child .tracker-eyebrow,
-    #articles .article-card:first-child .article-card-affordance,
-    #why .section-head h2,
-    #why .article-card h3 {
-      color: var(--tracker-ink);
-    }
-
-    #why .tracker-eyebrow {
-      color: var(--color-accent);
-    }
-
-    #why .section-head p,
-    #why .article-card p {
-      color: var(--tracker-muted);
-    }
-
-    #why .article-grid {
-      border-color: var(--tracker-line);
-      background: transparent;
-    }
-
-    #rsvp {
-      max-width: 1180px;
-      padding: clamp(44px, 6vw, 76px);
-      border-top: 0;
-      background: var(--color-accent);
-      color: var(--color-white);
-    }
-
-    #rsvp .section-head h2,
-    #rsvp .section-head p,
-    #rsvp .tracker-eyebrow {
-      color: var(--color-white);
-    }
-
-    #rsvp .section-head p {
-      opacity: 0.78;
-    }
-
-    .site-footer {
-      background: transparent;
-    }
-
-    @media (max-width: 940px) {
-      .feature-card,
-      .article-card,
-      .run-card {
-        border-right: 0;
-        border-bottom: 1px solid var(--tracker-line);
-      }
-
-      .feature-card {
-        min-height: 0;
-        padding: 26px 0;
-      }
-
-      .feature-card:last-child,
-      .article-card:last-child,
-      .run-card:last-child {
-        border-bottom: 0;
-      }
-
-      .tracker-panel,
-      .follow-panel {
-        padding-inline: 0;
-      }
-
-      #rsvp {
-        width: calc(100vw - 40px);
-        padding: 48px 24px 54px;
-      }
-    }
-
-    @media (max-width: 430px) {
-      .tracker-content {
-        padding-top: 24px;
-      }
-
-      .tracker-section {
-        padding-block: 42px;
-      }
-
-      .section-head h2 {
-        font-size: clamp(2.15rem, 10vw, 3.05rem);
-      }
-
-      .week-grid {
-        gap: 12px;
-        background: transparent;
-      }
-
-      #articles,
-      #why {
-        background: transparent;
-      }
-
-      #why {
-        padding-inline: 0;
-      }
-
-      #why .article-grid {
-        margin-inline: 0;
-      }
-
-      #why .article-card {
-        padding-inline: 0;
-      }
-
-      #rsvp {
-        background: var(--color-accent);
-      }
-    }
   </style>
+<style data-social-footer-styles>.site-footer,.global-site-footer{box-sizing:border-box;background:#0a0a0a!important;color:#fff;padding-inline:clamp(22px,4vw,48px)}
+    .site-footer-brand img,.global-site-footer-brand img{filter:brightness(0) invert(1)}
+    .site-footer .site-footer-nav > .site-footer-link-group:first-child a,.global-site-footer .global-site-footer-nav > .global-site-footer-link-group:first-child a{color:rgba(255,255,255,.72)}
+    .site-footer .site-footer-nav > .site-footer-link-group:first-child a:hover,.site-footer .site-footer-nav > .site-footer-link-group:first-child a:focus-visible,.global-site-footer .global-site-footer-nav > .global-site-footer-link-group:first-child a:hover,.global-site-footer .global-site-footer-nav > .global-site-footer-link-group:first-child a:focus-visible{color:#fff}
+    .site-footer .site-footer-nav > .site-footer-link-group:first-child a:focus-visible,.global-site-footer .global-site-footer-nav > .global-site-footer-link-group:first-child a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+    .site-footer .footer-column-heading,.global-site-footer .footer-column-heading{margin:0 0 10px;color:#fff;font-family:inherit;font-size:.76rem;font-weight:700;letter-spacing:.18em;line-height:1.3;text-transform:uppercase}
+    .site-footer .footer-social-links,.global-site-footer .footer-social-links{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;margin:0 0 8px;padding:0;list-style:none}
+    .site-footer .footer-social-links li,.global-site-footer .footer-social-links li{flex:0 0 44px;margin:0;padding:0}
+    .site-footer .footer-social-link,.global-site-footer .footer-social-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;min-height:44px;box-sizing:border-box;color:#fff!important;text-decoration:none;transition:opacity 160ms ease,transform 160ms ease}
+    .site-footer .footer-social-link:link,.site-footer .footer-social-link:visited,.site-footer .footer-social-link:hover,.site-footer .footer-social-link:focus,.site-footer .footer-social-link:focus-visible,.site-footer .footer-social-link:active,.global-site-footer .footer-social-link:link,.global-site-footer .footer-social-link:visited,.global-site-footer .footer-social-link:hover,.global-site-footer .footer-social-link:focus,.global-site-footer .footer-social-link:focus-visible,.global-site-footer .footer-social-link:active{color:#fff!important}
+    .site-footer .footer-social-link:hover,.global-site-footer .footer-social-link:hover{opacity:.72;transform:translateY(-1px)}
+    .site-footer .footer-social-link:focus-visible,.global-site-footer .footer-social-link:focus-visible{outline:2px solid #fff;outline-offset:2px;opacity:1}
+    .site-footer .footer-social-link-disabled,.global-site-footer .footer-social-link-disabled{cursor:default}
+    .site-footer .footer-social-icon,.global-site-footer .footer-social-icon{display:block;width:26px;height:26px;color:#fff!important;fill:currentColor!important;stroke:currentColor}
+    .site-footer .footer-social-icon path,.global-site-footer .footer-social-icon path{fill:currentColor!important}
+    .site-footer .footer-text-links,.global-site-footer .footer-text-links{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+    .site-footer .footer-text-links a,.global-site-footer .footer-text-links a{color:rgba(255,255,255,.72);text-decoration:none;transition:color 160ms ease}
+    .site-footer .footer-text-links a:hover,.site-footer .footer-text-links a:focus-visible,.global-site-footer .footer-text-links a:hover,.global-site-footer .footer-text-links a:focus-visible{color:#fff}
+    .site-footer .footer-text-links a:focus-visible,.global-site-footer .footer-text-links a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+    .site-footer .site-footer-link-disabled,.site-footer .site-footer-legal,.site-footer .site-footer-disclaimer,.site-footer .site-footer-bottom,.global-site-footer .global-site-footer-link-disabled,.global-site-footer .global-site-footer-legal,.global-site-footer .global-site-footer-disclaimer,.global-site-footer .global-site-footer-bottom{color:rgba(255,255,255,.64)}
+    .site-footer .site-footer-legal a,.global-site-footer .global-site-footer-legal a{color:inherit}
+    .site-footer .site-footer-bottom,.global-site-footer .global-site-footer-bottom{border-top-color:rgba(255,255,255,.18)}
+    @media(max-width:640px){.site-footer .footer-social-group,.global-site-footer .footer-social-group{padding-top:18px;border-top:1px solid rgba(255,255,255,.16)}.site-footer .site-footer-link-group:nth-child(n + 2)::before,.global-site-footer .global-site-footer-link-group:nth-child(n + 2)::before{display:none!important}.site-footer .footer-social-links,.global-site-footer .footer-social-links{width:max-content;max-width:100%}}
+    @media(prefers-reduced-motion:reduce){.site-footer .footer-social-link,.global-site-footer .footer-social-link{transition:none}}</style>
 </head>
 <body>
   <main class="tracker-page">
@@ -3553,7 +3440,9 @@
     </nav>
 
     <section class="tracker-hero" id="live" aria-labelledby="page-title">
-      <img class="tracker-hero-bg" src="assets/hero-runner-Ci5y42DW.jpg" alt="Open road at dusk for Goodwin Generated Mission America">
+      <video class="tracker-hero-bg" autoplay muted loop playsinline preload="metadata" poster="assets/hero-runner-Ci5y42DW.jpg" aria-label="William Goodge running during Mission America">
+        <source src="assets/goodge-website.mp4" type="video/mp4">
+      </video>
       <div class="tracker-hero-inner">
         <div class="tracker-headline">
           <div class="mission-logo-stack" aria-hidden="true">
@@ -4010,20 +3899,30 @@
               <li><a href="/updates/">Running Live Archive</a></li>
               <li><a href="fifty-runs.html">50 Runs, 50 States</a></li>
             </ul>
-            <ul class="site-footer-link-group">
-              <li><a href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer">Will — Instagram</a></li>
-              <li><span class="site-footer-link-disabled">Will — TikTok</span></li>
-              <li><a href="https://www.youtube.com/@goodge" target="_blank" rel="noopener noreferrer">Will — YouTube</a></li>
-              <li><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer">Rizkia</a></li>
-              <li><a href="https://live-mission-america-50.pantheonsite.io/#faq" target="_blank" rel="noopener noreferrer">WilliamGoodge.com</a></li>
+            <section class="site-footer-link-group footer-social-group" aria-labelledby="will-goodge-footer-heading">
+            <h2 class="footer-column-heading" id="will-goodge-footer-heading">WILL GOODGE</h2>
+            <ul class="footer-social-links" aria-label="Will Goodge social media">
+              <li><a class="footer-social-link" href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer" aria-label="Will Goodge on Instagram"><svg class="footer-social-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132z"/></svg></a></li>
+              <li><span class="footer-social-link footer-social-link-disabled" role="img" aria-label="Will Goodge on TikTok" aria-disabled="true" data-missing-url="tiktok"><svg class="footer-social-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M448 209.9a210.1 210.1 0 0 1-122.8-39.2v178.7A162.6 162.6 0 1 1 185 188.3v89.9a74.6 74.6 0 1 0 52.2 71.2V0h88a121.2 121.2 0 0 0 1.9 22.2A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"/></svg></span></li>
+              <li><a class="footer-social-link" href="https://www.youtube.com/@goodge" target="_blank" rel="noopener noreferrer" aria-label="Will Goodge on YouTube"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
             </ul>
-            <ul class="site-footer-link-group">
-              <li><a href="https://www.linkedin.com/company/teamgoodwin/" target="_blank" rel="noopener noreferrer">Goodwin — LinkedIn</a></li>
-              <li><a href="https://www.youtube.com/@goodwinsoftwarecompany" target="_blank" rel="noopener noreferrer">Goodwin — YouTube</a></li>
-              <li><a href="https://x.com/goteamgoodwin" target="_blank" rel="noopener noreferrer">Goodwin — X</a></li>
+            <ul class="footer-text-links">
+              <li><a href="https://live-mission-america-50.pantheonsite.io/#faq" target="_blank" rel="noopener noreferrer">WilliamGoodge.com</a></li>
+              <li><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer">Rizkia</a></li>
+            </ul>
+          </section>
+            <section class="site-footer-link-group footer-social-group" aria-labelledby="goodwin-footer-heading">
+            <h2 class="footer-column-heading" id="goodwin-footer-heading">GOODWIN</h2>
+            <ul class="footer-social-links" aria-label="Goodwin social media">
+              <li><a class="footer-social-link" href="https://www.linkedin.com/company/teamgoodwin/" target="_blank" rel="noopener noreferrer" aria-label="Goodwin on LinkedIn"><svg class="footer-social-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 84 0 54.3A53.8 53.8 0 0 1 107.6 54.3c0 29.7-24.1 53.8-53.8 53.8zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z"/></svg></a></li>
+              <li><a class="footer-social-link" href="https://x.com/goteamgoodwin" target="_blank" rel="noopener noreferrer" aria-label="Goodwin on X"><svg class="footer-social-icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.8 318.6 106.5 464H35.8l164.9-188.5L26.8 48h145.6l100.5 132.9L389.2 48zM364.4 421.8h39.1L151.1 88h-42l255.4 333.8z"/></svg></a></li>
+              <li><a class="footer-social-link" href="https://www.youtube.com/@goodwinsoftwarecompany" target="_blank" rel="noopener noreferrer" aria-label="Goodwin on YouTube"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
+            </ul>
+            <ul class="footer-text-links">
               <li><a href="https://teamgoodwin.com/" target="_blank" rel="noopener noreferrer">TeamGoodwin.com</a></li>
               <li><a href="mailto:run@teamgoodwin.com">Contact</a></li>
             </ul>
+          </section>
           </nav>
         </div>
         <div class="site-footer-partners" aria-label="Partners">
@@ -4379,6 +4278,145 @@
 
     initMissionAmericaIntro();
 
+    const MISSION_AMBIENT_BACKGROUND_CONFIG = {
+      mobileQuery: "(max-width: 430px)",
+      reducedMotionQuery: "(prefers-reduced-motion: reduce)",
+      debugParam: "ambientDebug",
+      palettes: [
+        { base: [10, 10, 10], glowOne: [18, 32, 32], glowTwo: [25, 59, 59], ink: [245, 243, 238] },
+        { base: [17, 36, 36], glowOne: [25, 59, 59], glowTwo: [39, 73, 69], ink: [245, 243, 238] },
+        { base: [25, 59, 59], glowOne: [38, 76, 71], glowTwo: [56, 88, 82], ink: [245, 243, 238] },
+        { base: [116, 139, 131], glowOne: [160, 178, 169], glowTwo: [201, 210, 203], ink: [20, 25, 25] },
+        { base: [245, 243, 238], glowOne: [232, 235, 228], glowTwo: [204, 216, 208], ink: [20, 25, 25] },
+        { base: [25, 59, 59], glowOne: [43, 78, 73], glowTwo: [17, 36, 36], ink: [245, 243, 238] },
+        { base: [10, 10, 10], glowOne: [17, 35, 35], glowTwo: [25, 59, 59], ink: [245, 243, 238] }
+      ]
+    };
+
+    let missionAmbientBackgroundInitialized = false;
+
+    function ambientClamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function mix(start, end, amount) {
+      return start.map((channel, index) => Math.round(channel + (end[index] - channel) * amount));
+    }
+
+    function smoothstep(value) {
+      return value * value * (3 - 2 * value);
+    }
+
+    function getMissionAmbientState(pageProgress) {
+      const palettes = MISSION_AMBIENT_BACKGROUND_CONFIG.palettes;
+      const position = ambientClamp(pageProgress, 0, 1) * (palettes.length - 1);
+      const index = Math.min(Math.floor(position), palettes.length - 2);
+      const localProgress = smoothstep(position - index);
+      const current = palettes[index];
+      const next = palettes[index + 1];
+
+      return {
+        pageProgress,
+        index,
+        localProgress,
+        base: mix(current.base, next.base, localProgress),
+        glowOne: mix(current.glowOne, next.glowOne, localProgress),
+        glowTwo: mix(current.glowTwo, next.glowTwo, localProgress),
+        ink: mix(current.ink, next.ink, localProgress)
+      };
+    }
+
+    function waitForMissionAmbientIntroRelease() {
+      return new Promise((resolve) => {
+        const isReleased = () => {
+          const intro = document.querySelector(".mission-intro");
+          const bodyStyle = window.getComputedStyle(document.body);
+          return !intro
+            && !document.body.classList.contains("mission-intro-active")
+            && bodyStyle.overflowY !== "hidden";
+        };
+
+        const check = () => {
+          if (isReleased()) {
+            requestAnimationFrame(resolve);
+            return;
+          }
+
+          requestAnimationFrame(check);
+        };
+
+        check();
+      });
+    }
+
+    async function initMobileAmbientBackground() {
+      if (missionAmbientBackgroundInitialized) return;
+
+      const config = MISSION_AMBIENT_BACKGROUND_CONFIG;
+      const mobileQuery = window.matchMedia(config.mobileQuery);
+      const reducedMotionQuery = window.matchMedia(config.reducedMotionQuery);
+      if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+
+      missionAmbientBackgroundInitialized = true;
+      await waitForMissionAmbientIntroRelease();
+      if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+
+      const debugEnabled = new URLSearchParams(window.location.search).get(config.debugParam) === "1";
+      const layer = document.querySelector(".mobile-ambient-background") || document.createElement("div");
+      layer.className = "mobile-ambient-background";
+      layer.setAttribute("aria-hidden", "true");
+      if (!layer.parentNode) document.body.prepend(layer);
+
+      const debug = debugEnabled ? document.createElement("div") : null;
+      if (debug) {
+        debug.className = "mobile-ambient-debug";
+        debug.setAttribute("aria-hidden", "true");
+        document.body.appendChild(debug);
+      }
+
+      document.body.classList.add("has-mobile-ambient-background");
+
+      let updateQueued = false;
+      const render = () => {
+        updateQueued = false;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const pageProgress = maxScroll > 0
+          ? ambientClamp(window.scrollY / maxScroll, 0, 1)
+          : 0;
+        const state = getMissionAmbientState(pageProgress);
+
+        layer.style.setProperty("--base", state.base.join(" "));
+        layer.style.setProperty("--glow-one", state.glowOne.join(" "));
+        layer.style.setProperty("--glow-two", state.glowTwo.join(" "));
+        document.body.style.setProperty("--ambient-ink", state.ink.join(" "));
+
+        if (debug) {
+          debug.textContent = [
+            `scroll: ${(state.pageProgress * 100).toFixed(1)}%`,
+            `palette: ${state.index}`,
+            `local: ${state.localProgress.toFixed(3)}`,
+            `base: ${state.base.join(", ")}`,
+            `glow-one: ${state.glowOne.join(", ")}`,
+            `glow-two: ${state.glowTwo.join(", ")}`,
+            `ink: ${state.ink.join(", ")}`
+          ].join("\n");
+        }
+      };
+
+      const requestUpdate = () => {
+        if (updateQueued) return;
+        updateQueued = true;
+        requestAnimationFrame(render);
+      };
+
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      window.addEventListener("resize", requestUpdate);
+      mobileQuery.addEventListener?.("change", requestUpdate);
+      render();
+    }
+
+    initMobileAmbientBackground();
+
     const missionUpdatesSheet = {
       endpoint: "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq",
       gid: "0",
@@ -4550,43 +4588,106 @@
       return '<div class="ticker-item"><time>Updates</time><span>Updates from the road are coming.</span></div>';
     }
 
+    const MISSION_TRACKING_POLL_MS = 2 * 60 * 1000;
     let missionTrackingStatusPromise = null;
+    let missionTrackingStatusSnapshot = null;
+    let missionTrackingPollTimer = null;
+    let missionTrackingVisibilityBound = false;
 
-    async function loadMissionTrackingStatus() {
+    function validPublicRvStatus(status) {
+      const rv = status?.rvStatus;
+      const lat = Number(rv?.lat);
+      const lng = Number(rv?.lng);
+      if (rv?.source !== "hapn" || rv.active !== true || rv.stale === true) return null;
+      if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) return null;
+      return { lat, lng, updatedAt: rv.updatedAt || null };
+    }
+
+    function applyMissionTrackingStatus(status) {
+      if (status?.flightStatus) window.missionPublicFlightStatus = status.flightStatus;
+      if (Number.isFinite(Number(status?.progress))) {
+        window.missionMapTracking = {
+          ...(window.missionMapTracking || {}),
+          runner: { ...(window.missionMapTracking?.runner || {}), progress: Number(status.progress) }
+        };
+      }
+      if (status?.flightStatus?.active) {
+        const flight = status.flightStatus;
+        window.missionMapTracking = {
+          ...(window.missionMapTracking || {}),
+          flight: {
+            active: true,
+            fromStop: flight.originStop,
+            toStop: flight.destinationStop,
+            progress: Number(flight.progress) || 0,
+            status: flight.status,
+            nextStop: flight.nextStop
+          }
+        };
+      }
+
+      const publicRv = validPublicRvStatus(status);
+      if (publicRv) {
+        window.missionMapTracking = {
+          ...(window.missionMapTracking || {}),
+          rv: { ...(window.missionMapTracking?.rv || {}), ...publicRv }
+        };
+      } else if (status?.rvStatus?.configured === false || status?.rvStatus?.stale === true) {
+        window.missionMapTracking = {
+          ...(window.missionMapTracking || {}),
+          rv: { ...mapTrackingDefaults.rv }
+        };
+      }
+    }
+
+    async function loadMissionTrackingStatus({ refresh = false } = {}) {
       if (missionTrackingStatusPromise) return missionTrackingStatusPromise;
+      if (!refresh && missionTrackingStatusSnapshot) return missionTrackingStatusSnapshot;
       missionTrackingStatusPromise = (async () => {
         try {
           const response = await fetch("/api/tracking-status", { headers: { Accept: "application/json" } });
           if (!response.ok) throw new Error(`Tracking status returned ${response.status}`);
           const status = await response.json();
-          if (status?.flightStatus) window.missionPublicFlightStatus = status.flightStatus;
-          if (Number.isFinite(Number(status?.progress))) {
-            window.missionMapTracking = {
-              ...(window.missionMapTracking || {}),
-              runner: { ...(window.missionMapTracking?.runner || {}), progress: Number(status.progress) }
-            };
-          }
-          if (status?.flightStatus?.active) {
-            const flight = status.flightStatus;
-            window.missionMapTracking = {
-              ...(window.missionMapTracking || {}),
-              flight: {
-                active: true,
-                fromStop: flight.originStop,
-                toStop: flight.destinationStop,
-                progress: Number(flight.progress) || 0,
-                status: flight.status,
-                nextStop: flight.nextStop
-              }
-            };
+          const previousRv = JSON.stringify(validPublicRvStatus(missionTrackingStatusSnapshot));
+          applyMissionTrackingStatus(status);
+          missionTrackingStatusSnapshot = status;
+          if (missionMapTopology && JSON.stringify(validPublicRvStatus(status)) !== previousRv) {
+            renderMissionMap(missionMapTopology, true);
           }
           return status;
         } catch (error) {
           console.warn(error);
-          return null;
+          return missionTrackingStatusSnapshot;
+        } finally {
+          missionTrackingStatusPromise = null;
         }
       })();
       return missionTrackingStatusPromise;
+    }
+
+    function scheduleMissionTrackingPoll() {
+      window.clearTimeout(missionTrackingPollTimer);
+      missionTrackingPollTimer = null;
+      if (document.hidden) return;
+      missionTrackingPollTimer = window.setTimeout(async () => {
+        await loadMissionTrackingStatus({ refresh: true });
+        scheduleMissionTrackingPoll();
+      }, MISSION_TRACKING_POLL_MS);
+    }
+
+    function startMissionTrackingPoller() {
+      if (!missionTrackingVisibilityBound) {
+        missionTrackingVisibilityBound = true;
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            window.clearTimeout(missionTrackingPollTimer);
+            missionTrackingPollTimer = null;
+            return;
+          }
+          void loadMissionTrackingStatus({ refresh: true }).finally(scheduleMissionTrackingPoll);
+        });
+      }
+      scheduleMissionTrackingPoll();
     }
 
     function liveTickerUpdateFromStatus(status) {
@@ -5045,6 +5146,11 @@
 
     function pointFromTracking(entity, centroids, fallbackPoint) {
       if (!entity) return fallbackPoint;
+      const lat = Number(entity.lat);
+      const lng = Number(entity.lng);
+      if (Number.isFinite(lat) && lat >= 24 && lat <= 50 && Number.isFinite(lng) && lng >= -125 && lng <= -66) {
+        return displayPoint(projectLower48(lat, lng));
+      }
       const fromPoint = pointByStopNumber(entity.fromStop || entity.stop || entity.stopNumber, centroids);
       const toPoint = pointByStopNumber(entity.toStop, centroids);
       if (fromPoint && toPoint) return interpolatePoints(fromPoint, toPoint, entity.segmentProgress ?? entity.progress ?? 0);
@@ -5411,6 +5517,7 @@
         await trackingPromise;
         if (missionMapTopology) {
           renderMissionMap(missionMapTopology);
+          startMissionTrackingPoller();
         } else {
           document.getElementById("mission-map").textContent = "Map data could not load. Serve this page from the preview server to view the interactive U.S. route map.";
         }

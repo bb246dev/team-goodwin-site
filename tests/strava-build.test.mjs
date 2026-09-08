@@ -11,9 +11,27 @@ const env = {
   STRAVA_CLIENT_ID: "123456",
   STRAVA_CLIENT_SECRET: "test-only-client-secret",
   STRAVA_VERIFY_TOKEN: "test-only-webhook-verifier-0000000000",
+  STRAVA_WEBHOOK_SUBSCRIPTION_ID: "123",
   STRAVA_ADMIN_TOKEN: "test-only-administrator-password-000000",
   STRAVA_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
 };
+const publicDiagnosticFields = [
+  "server", "configLoaded", "mysqlModuleLoaded", "mysqlPoolCreated",
+  "databaseReachable", "stravaConfigValid", "startupErrorCategory",
+  "database", "encryptionKeyChars", "encryptionKeyDecodedBytes", "encryptionKeyEndsWithPadding",
+];
+
+async function assertGenericHealth(base, path, expectedStatus, expectedBody) {
+  const response = await fetch(`${base}${path}`);
+  assert.equal(response.status, expectedStatus, path);
+  assert.equal(response.headers.get("cache-control"), "no-store", path);
+  assert.equal(response.headers.get("content-security-policy"), "default-src 'none'; frame-ancestors 'none'; base-uri 'none'", path);
+  assert.equal(response.headers.get("referrer-policy"), "no-referrer", path);
+  assert.equal(response.headers.get("x-content-type-options"), "nosniff", path);
+  const body = await response.json();
+  assert.deepEqual(body, expectedBody, path);
+  for (const field of publicDiagnosticFields) assert.equal(Object.hasOwn(body, field), false, `${path}: ${field}`);
+}
 
 async function runningApplication(t, suppliedStore) {
   const store = suppliedStore || createMemoryStravaStore(() => Math.floor(Date.now() / 1000));
@@ -100,10 +118,13 @@ test("Namecheap website build remains separate from the Strava Node application"
   }
   const response = await siteWorker.fetch(new Request("https://goodwingoodge.com/api/tracking-status?progress=0.5&now=2026-10-10T12:00:00Z"), {});
   assert.equal(response.status, 200);
-  assert.equal((await response.json()).progress, 0.5);
+  assert.equal(response.headers.get("cache-control"), "public, max-age=0, s-maxage=60, stale-while-revalidate=120");
+  const body = await response.json();
+  assert.equal(body.progress, 0.5);
+  assert.deepEqual(body.rvStatus, { source: "hapn", configured: false, active: false });
 });
 
-test("app.js starts and serves visible and Passenger-stripped mount paths", async (t) => {
+test("app.js serves generic health plus visible and Passenger-stripped mount paths", async (t) => {
   const base = await runningApplication(t);
   const authorization = `Basic ${Buffer.from(`strava:${env.STRAVA_ADMIN_TOKEN}`).toString("base64")}`;
   for (const path of ["/api/strava/status", "/strava/status"]) {
@@ -119,8 +140,27 @@ test("app.js starts and serves visible and Passenger-stripped mount paths", asyn
     assert.equal(status.raceWindowStart, "2026-10-09T00:00:00-04:00");
     assert.equal(status.raceWindowEnd, "2026-11-01T23:59:59-05:00");
   }
-  assert.deepEqual(await (await fetch(`${base}/api/health`)).json(), { status: "ok", database: "ok" });
-  assert.deepEqual(await (await fetch(`${base}/health`)).json(), { status: "ok", database: "ok" });
+  await assertGenericHealth(base, "/strava/health", 200, { status: "ok" });
+  await assertGenericHealth(base, "/health", 200, { status: "ok" });
+  assert.equal((await fetch(`${base}/api/health`)).status, 404);
+  for (const path of [
+    "/health-startup", "/api/health-startup",
+    "/node-test/health-startup", "/strava/health-startup",
+  ]) {
+    const response = await fetch(`${base}${path}`);
+    assert.equal(response.status, 404, path);
+    const body = await response.json();
+    assert.deepEqual(body, { error: "not_found" }, path);
+    for (const field of publicDiagnosticFields) assert.equal(Object.hasOwn(body, field), false, `${path}: ${field}`);
+  }
+});
+
+test("public health returns only generic unavailable when the database check fails", async (t) => {
+  const store = createMemoryStravaStore(() => Math.floor(Date.now() / 1000));
+  store.ping = async () => { throw new Error("test-only database failure"); };
+  const base = await runningApplication(t, store);
+  await assertGenericHealth(base, "/strava/health", 503, { status: "unavailable" });
+  await assertGenericHealth(base, "/health", 503, { status: "unavailable" });
 });
 
 test("candidate administration rejects unauthenticated cPanel mount requests", async (t) => {

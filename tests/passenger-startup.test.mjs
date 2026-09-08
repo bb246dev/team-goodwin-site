@@ -14,7 +14,16 @@ const sourceRoot = fileURLToPath(new URL("../strava-app/", import.meta.url));
 const requiredEnvironment = [
   "MYSQL_HOST", "MYSQL_PORT", "MYSQL_DATABASE", "MYSQL_USER", "MYSQL_PASSWORD",
   "STRAVA_CLIENT_ID", "STRAVA_CLIENT_SECRET", "STRAVA_VERIFY_TOKEN",
-  "STRAVA_ADMIN_TOKEN", "STRAVA_TOKEN_ENCRYPTION_KEY",
+  "STRAVA_WEBHOOK_SUBSCRIPTION_ID", "STRAVA_ADMIN_TOKEN", "STRAVA_TOKEN_ENCRYPTION_KEY",
+];
+const publicDiagnosticFields = [
+  "server", "configLoaded", "mysqlModuleLoaded", "mysqlPoolCreated",
+  "databaseReachable", "stravaConfigValid", "startupErrorCategory",
+  "encryptionKeyChars", "encryptionKeyDecodedBytes", "encryptionKeyEndsWithPadding",
+];
+const retiredStartupPaths = [
+  "/health-startup", "/api/health-startup",
+  "/node-test/health-startup", "/strava/health-startup",
 ];
 
 function cleanEnvironment() {
@@ -32,12 +41,19 @@ function completeEnvironment() {
     STRAVA_CLIENT_ID: "123456",
     STRAVA_CLIENT_SECRET: "test-only-client-secret",
     STRAVA_VERIFY_TOKEN: "test-only-webhook-verifier-0000000000",
+    STRAVA_WEBHOOK_SUBSCRIPTION_ID: "123",
     STRAVA_ADMIN_TOKEN: "test-only-administrator-password-000000",
     STRAVA_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
   };
 }
 
-async function inspectStartup(path, mode, env, ready = () => true, healthPath = "/health-startup") {
+async function inspectStartup(
+  path,
+  mode,
+  env,
+  ready = ({ healthStatus }) => healthStatus === 503,
+  healthPath = "/health",
+) {
   const port = await availablePort();
   const args = mode === "passenger"
     ? ["--eval", `globalThis.PhusionPassenger = {}; require(${JSON.stringify(path)});`]
@@ -51,7 +67,10 @@ async function inspectStartup(path, mode, env, ready = () => true, healthPath = 
   child.stdout.on("data", (chunk) => { stdout += chunk; });
   child.stderr.on("data", (chunk) => { stderr += chunk; });
   let health;
+  let healthStatus;
+  let healthHeaders;
   let normalStatus;
+  let retiredHealth;
   try {
     const deadline = Date.now() + 5_000;
     while (Date.now() < deadline) {
@@ -59,9 +78,19 @@ async function inspectStartup(path, mode, env, ready = () => true, healthPath = 
       try {
         const response = await fetch(`http://127.0.0.1:${port}${healthPath}`);
         const candidate = await response.json();
-        if (response.status === 200 && ready(candidate)) {
+        if (ready({ health: candidate, healthStatus: response.status, stderr, stdout })) {
           health = candidate;
+          healthStatus = response.status;
+          healthHeaders = Object.fromEntries(response.headers);
           normalStatus = (await fetch(`http://127.0.0.1:${port}/api/strava/status`)).status;
+          retiredHealth = await Promise.all(retiredStartupPaths.map(async (retiredPath) => {
+            const retiredResponse = await fetch(`http://127.0.0.1:${port}${retiredPath}`);
+            return {
+              path: retiredPath,
+              status: retiredResponse.status,
+              body: await retiredResponse.json(),
+            };
+          }));
           await new Promise((resolve) => setTimeout(resolve, 25));
           break;
         }
@@ -69,7 +98,7 @@ async function inspectStartup(path, mode, env, ready = () => true, healthPath = 
         await new Promise((resolve) => setTimeout(resolve, 25));
       }
     }
-    if (!health) throw new Error(`${mode} startup health did not become ready: ${stdout}${stderr}`);
+    if (!health) throw new Error(`${mode} startup health did not respond as expected: ${stdout}${stderr}`);
   } finally {
     if (child.exitCode === null) child.kill("SIGTERM");
     await new Promise((resolve) => {
@@ -78,7 +107,7 @@ async function inspectStartup(path, mode, env, ready = () => true, healthPath = 
       setTimeout(() => { if (child.exitCode === null) child.kill("SIGKILL"); }, 1_000);
     });
   }
-  return { health, normalStatus, stdout, stderr };
+  return { health, healthStatus, healthHeaders, normalStatus, retiredHealth, stdout, stderr };
 }
 
 async function availablePort() {
@@ -92,41 +121,48 @@ async function availablePort() {
 async function verifyStartup(mode) {
   const path = mode === "passenger" ? passengerPath : appPath;
   const result = await inspectStartup(path, mode, completeEnvironment());
-  assert.deepEqual(Object.keys(result.health), [
-    "server", "configLoaded", "mysqlModuleLoaded", "mysqlPoolCreated",
-    "databaseReachable", "stravaConfigValid", "startupErrorCategory",
-  ]);
-  assert.equal(result.health.server, "running");
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
+  assert.equal(result.healthHeaders["cache-control"], "no-store");
+  assert.equal(result.healthHeaders["content-security-policy"], "default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
+  assert.equal(result.healthHeaders["referrer-policy"], "no-referrer");
+  assert.equal(result.healthHeaders["x-content-type-options"], "nosniff");
+  for (const field of publicDiagnosticFields) assert.equal(Object.hasOwn(result.health, field), false);
+  for (const retired of result.retiredHealth) {
+    assert.equal(retired.status, 404, retired.path);
+    assert.deepEqual(retired.body, { error: "not_found" }, retired.path);
+    for (const field of publicDiagnosticFields) assert.equal(Object.hasOwn(retired.body, field), false, `${retired.path}: ${field}`);
+  }
   assert.equal(result.normalStatus, 503);
 }
 
-test("app.js starts when executed directly", () => verifyStartup("direct"));
+test("app.js starts with a generic unavailable health response", () => verifyStartup("direct"));
 
-test("passenger.cjs requires normally and starts the ES-module application", () => verifyStartup("passenger"));
+test("passenger.cjs starts the ES-module application without exposing startup details", () => verifyStartup("passenger"));
 
-test("retained cPanel mount path reaches startup health before the unavailable handler", async () => {
+test("Passenger-stripped health path remains generic during initialization", async () => {
   const result = await inspectStartup(
     appPath,
     "direct",
     cleanEnvironment(),
-    (health) => health.mysqlModuleLoaded,
-    "/node-test/health-startup",
+    ({ stderr }) => stderr.includes("private config file missing"),
+    "/health",
   );
-  assert.equal(result.health.server, "running");
-  assert.equal(result.health.configLoaded, false);
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
   assert.equal(result.normalStatus, 503);
 });
 
-test("final cPanel Strava mount path reaches the startup diagnostic", async () => {
+test("retained cPanel Strava mount path reaches only generic health during initialization", async () => {
   const result = await inspectStartup(
     appPath,
     "direct",
     cleanEnvironment(),
-    (health) => health.mysqlModuleLoaded,
-    "/strava/health-startup",
+    ({ stderr }) => stderr.includes("private config file missing"),
+    "/strava/health",
   );
-  assert.equal(result.health.server, "running");
-  assert.equal(result.health.configLoaded, false);
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
   assert.equal(result.normalStatus, 503);
 });
 
@@ -166,6 +202,7 @@ test("private config fills only missing environment values from its allowlist", 
     STRAVA_CLIENT_ID: "file-client-id",
     STRAVA_CLIENT_SECRET: "file-client-secret",
     STRAVA_VERIFY_TOKEN: "file-verify-token-000000000000000",
+    STRAVA_WEBHOOK_SUBSCRIPTION_ID: "123",
     STRAVA_ADMIN_TOKEN: "file-admin-token-0000000000000000",
     STRAVA_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 9).toString("base64"),
     UNRELATED_VALUE: "must-not-load",
@@ -205,9 +242,9 @@ test("startup diagnostics report missing configuration without exposing configur
     ...cleanEnvironment(),
     MYSQL_PASSWORD: password,
     STRAVA_CLIENT_SECRET: clientSecret,
-  }, (health) => health.mysqlModuleLoaded);
-  assert.equal(result.health.configLoaded, false);
-  assert.equal(result.health.mysqlPoolCreated, false);
+  }, ({ stderr }) => stderr.includes("missing MYSQL_HOST"));
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
   assert.match(result.stderr, /missing MYSQL_HOST/);
   assert.match(result.stderr, /missing STRAVA_TOKEN_ENCRYPTION_KEY/);
   assert.doesNotMatch(result.stderr, new RegExp(password));
@@ -221,28 +258,37 @@ test("startup diagnostics report an invalid encryption-key format without printi
     ...completeEnvironment(),
     MYSQL_HOST: "",
     STRAVA_TOKEN_ENCRYPTION_KEY: invalidKey,
-  }, (health) => health.mysqlModuleLoaded);
-  assert.equal(result.health.stravaConfigValid, false);
-  assert.equal(result.health.encryptionKeyChars, invalidKey.length);
-  assert.equal(result.health.encryptionKeyDecodedBytes, null);
-  assert.equal(result.health.encryptionKeyEndsWithPadding, false);
+  }, ({ stderr }) => stderr.includes("invalid STRAVA_TOKEN_ENCRYPTION_KEY format"));
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
   assert.doesNotMatch(JSON.stringify(result.health), new RegExp(invalidKey));
   assert.match(result.stderr, /invalid STRAVA_TOKEN_ENCRYPTION_KEY format/);
   assert.doesNotMatch(result.stderr, new RegExp(invalidKey));
 });
 
-test("startup health safely reports the decoded size of a wrongly sized encryption key", async () => {
+test("startup health does not distinguish a wrongly sized encryption key", async () => {
   const invalidKey = Buffer.alloc(31, 11).toString("base64");
   const result = await inspectStartup(appPath, "direct", {
     ...completeEnvironment(),
     MYSQL_HOST: "",
     STRAVA_TOKEN_ENCRYPTION_KEY: invalidKey,
-  }, (health) => health.mysqlModuleLoaded);
-  assert.equal(result.health.stravaConfigValid, false);
-  assert.equal(result.health.encryptionKeyChars, invalidKey.length);
-  assert.equal(result.health.encryptionKeyDecodedBytes, 31);
-  assert.equal(result.health.encryptionKeyEndsWithPadding, true);
+  }, ({ stderr }) => stderr.includes("invalid STRAVA_TOKEN_ENCRYPTION_KEY format"));
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
   assert.doesNotMatch(JSON.stringify(result.health), new RegExp(invalidKey));
+});
+
+test("startup rejects a malformed webhook subscription ID without printing it", async () => {
+  const invalidSubscription = "never-print-invalid-subscription";
+  const result = await inspectStartup(appPath, "direct", {
+    ...completeEnvironment(),
+    MYSQL_HOST: "",
+    STRAVA_WEBHOOK_SUBSCRIPTION_ID: invalidSubscription,
+  }, ({ stderr }) => stderr.includes("invalid STRAVA_WEBHOOK_SUBSCRIPTION_ID format"));
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
+  assert.match(result.stderr, /invalid STRAVA_WEBHOOK_SUBSCRIPTION_ID format/);
+  assert.doesNotMatch(result.stderr, new RegExp(invalidSubscription));
 });
 
 test("startup diagnostics report a missing mysql2 module without exposing configuration", async (t) => {
@@ -261,9 +307,10 @@ test("startup diagnostics report a missing mysql2 module without exposing config
     join(fixture, "app.js"),
     "direct",
     env,
-    (health) => health.startupErrorCategory === "mysql2 module load failure",
+    ({ stderr }) => stderr.includes("mysql2 module load failure"),
   );
-  assert.equal(result.health.mysqlModuleLoaded, false);
+  assert.equal(result.healthStatus, 503);
+  assert.deepEqual(result.health, { status: "unavailable" });
   assert.equal(result.normalStatus, 503);
   assert.match(result.stderr, /mysql2 module load failure/);
   for (const name of requiredEnvironment) assert.doesNotMatch(result.stderr, new RegExp(env[name]));

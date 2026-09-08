@@ -2,6 +2,11 @@ import mysql from "mysql2/promise";
 import { StravaError, requiredSecret } from "./security.mjs";
 
 const LOCK_SECONDS = 60;
+const WEBHOOK_LEASE_SECONDS = 60;
+
+function webhookAspectRank(aspectType) {
+  return { create: 1, update: 2, delete: 3 }[aspectType] || 0;
+}
 
 function mysqlPort(env) {
   const source = requiredSecret(env, "MYSQL_PORT").trim();
@@ -104,6 +109,10 @@ export function createMySqlStravaStore(pool) {
       );
       await pool.execute("SELECT 1 FROM strava_race_activity_matches LIMIT 0");
       await pool.execute("SELECT 1 FROM ggma_race_schedule LIMIT 0");
+      await pool.execute("SELECT 1 FROM strava_webhook_events LIMIT 0");
+      await pool.execute("SELECT 1 FROM strava_webhook_activity_state LIMIT 0");
+      await pool.execute("SELECT 1 FROM strava_webhook_rate_state LIMIT 0");
+      await pool.execute("SELECT 1 FROM strava_admin_auth_failures LIMIT 0");
       const [schedule] = await pool.execute(
         `SELECT COUNT(*) AS race_count, COUNT(DISTINCT race_number) AS number_count,
            MIN(race_number) AS first_race, MAX(race_number) AS last_race
@@ -277,6 +286,234 @@ export function createMySqlStravaStore(pool) {
       } finally {
         connection.release();
       }
+    },
+
+    async registerWebhookEvent(eventKey, event, now, retentionSeconds) {
+      await pool.execute("DELETE FROM strava_webhook_events WHERE expires_at <= ? LIMIT 100", [now]);
+      const [inserted] = await pool.execute(
+        `INSERT IGNORE INTO strava_webhook_events
+           (event_key, activity_id, subscription_id, owner_id, aspect_type, event_time,
+            processing_status, created_at, updated_at, expires_at)
+         VALUES (?, ?, ?, ?, ?, ?, 'queued', ?, ?, ?)`,
+        [eventKey, event.object_id, event.subscription_id, event.owner_id, event.aspect_type,
+          event.event_time, now, now, now + retentionSeconds],
+      );
+      if (inserted.affectedRows === 1) return { registered: true, shouldSchedule: true };
+      const [rows] = await pool.execute(
+        `SELECT processing_status, lease_expires_at
+         FROM strava_webhook_events WHERE event_key = ? LIMIT 1`,
+        [eventKey],
+      );
+      const row = rows[0];
+      return {
+        registered: false,
+        shouldSchedule: Boolean(row && (row.processing_status === "queued" || row.processing_status === "failed"
+          || (row.processing_status === "processing" && Number(row.lease_expires_at || 0) <= now))),
+      };
+    },
+
+    async listRecoverableWebhookEventKeys(now) {
+      const [rows] = await pool.execute(
+        `SELECT event_key FROM strava_webhook_events
+         WHERE processing_status IN ('queued', 'failed')
+           OR (processing_status = 'processing' AND COALESCE(lease_expires_at, 0) <= ?)
+         ORDER BY created_at ASC LIMIT 50`,
+        [now],
+      );
+      return rows.map((row) => String(row.event_key));
+    },
+
+    async consumeWebhookRateLimit(now, windowSeconds, limit) {
+      await pool.execute(
+        `INSERT INTO strava_webhook_rate_state (id, window_started_at, event_count, updated_at)
+         VALUES (1, ?, 1, ?)
+         ON DUPLICATE KEY UPDATE
+           event_count = IF(window_started_at <= ?, 1, LEAST(event_count + 1, 65535)),
+           window_started_at = IF(window_started_at <= ?, VALUES(window_started_at), window_started_at),
+           updated_at = VALUES(updated_at)`,
+        [now, now, now - windowSeconds, now - windowSeconds],
+      );
+      const [rows] = await pool.execute(
+        "SELECT event_count FROM strava_webhook_rate_state WHERE id = 1 LIMIT 1",
+      );
+      return Number(rows[0]?.event_count || 0) <= limit;
+    },
+
+    async claimWebhookEvent(eventKey, owner, now) {
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+        const [events] = await connection.execute(
+          `SELECT activity_id, owner_id, aspect_type, event_time, processing_status, lease_expires_at
+           FROM strava_webhook_events WHERE event_key = ? FOR UPDATE`,
+          [eventKey],
+        );
+        const event = events[0];
+        if (!event || ["succeeded", "ignored"].includes(event.processing_status)) {
+          await connection.rollback();
+          return { status: "duplicate" };
+        }
+        if (event.processing_status === "processing" && Number(event.lease_expires_at || 0) > now) {
+          await connection.rollback();
+          return { status: "busy" };
+        }
+        await connection.execute(
+          `INSERT IGNORE INTO strava_webhook_activity_state
+             (activity_id, latest_event_time, latest_aspect_rank, updated_at)
+           VALUES (?, 0, 0, ?)`,
+          [event.activity_id, now],
+        );
+        const [states] = await connection.execute(
+          `SELECT latest_event_time, latest_aspect_rank, latest_event_key, lease_owner, lease_expires_at
+           FROM strava_webhook_activity_state WHERE activity_id = ? FOR UPDATE`,
+          [event.activity_id],
+        );
+        const state = states[0];
+        if (state.lease_owner && Number(state.lease_expires_at || 0) > now) {
+          await connection.rollback();
+          return { status: "busy" };
+        }
+        const eventTime = Number(event.event_time);
+        const rank = webhookAspectRank(event.aspect_type);
+        const latestTime = Number(state.latest_event_time);
+        const latestRank = Number(state.latest_aspect_rank);
+        if (eventTime < latestTime || (eventTime === latestTime
+          && (rank < latestRank || (rank === latestRank && state.latest_event_key === eventKey)))) {
+          await connection.execute(
+            `UPDATE strava_webhook_events
+             SET processing_status = 'ignored', lease_owner = NULL, lease_expires_at = NULL,
+               processed_at = ?, updated_at = ? WHERE event_key = ?`,
+            [now, now, eventKey],
+          );
+          await connection.commit();
+          return { status: "stale", activityId: String(event.activity_id) };
+        }
+        await connection.execute(
+          `UPDATE strava_webhook_events
+           SET processing_status = 'processing', lease_owner = ?, lease_expires_at = ?, updated_at = ?
+           WHERE event_key = ?`,
+          [owner, now + WEBHOOK_LEASE_SECONDS, now, eventKey],
+        );
+        await connection.execute(
+          `UPDATE strava_webhook_activity_state
+           SET lease_owner = ?, lease_expires_at = ?, updated_at = ? WHERE activity_id = ?`,
+          [owner, now + WEBHOOK_LEASE_SECONDS, now, event.activity_id],
+        );
+        await connection.commit();
+        return {
+          status: "claimed",
+          activityId: String(event.activity_id),
+          ownerId: String(event.owner_id),
+          aspectType: event.aspect_type,
+          eventTime,
+        };
+      } catch (error) {
+        await connection.rollback().catch(() => {});
+        throw error;
+      } finally {
+        connection.release();
+      }
+    },
+
+    async finishWebhookEvent(eventKey, owner, outcome, now) {
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+        const [events] = await connection.execute(
+          `SELECT activity_id, aspect_type, event_time, lease_owner
+           FROM strava_webhook_events WHERE event_key = ? FOR UPDATE`,
+          [eventKey],
+        );
+        const event = events[0];
+        if (!event || event.lease_owner !== owner) {
+          await connection.rollback();
+          return false;
+        }
+        const finalStatus = ["succeeded", "ignored", "failed"].includes(outcome.status)
+          ? outcome.status : "failed";
+        await connection.execute(
+          `UPDATE strava_webhook_events
+           SET processing_status = ?, lease_owner = NULL, lease_expires_at = NULL,
+             processed_at = ?, updated_at = ? WHERE event_key = ? AND lease_owner = ?`,
+          [finalStatus, finalStatus === "failed" ? null : now, now, eventKey, owner],
+        );
+        if (outcome.advance) {
+          await connection.execute(
+            `UPDATE strava_webhook_activity_state
+             SET latest_event_time = ?, latest_aspect_rank = ?, latest_event_key = ?, lease_owner = NULL,
+               lease_expires_at = NULL, updated_at = ?
+             WHERE activity_id = ? AND lease_owner = ?`,
+            [event.event_time, webhookAspectRank(event.aspect_type), eventKey, now, event.activity_id, owner],
+          );
+        } else {
+          await connection.execute(
+            `UPDATE strava_webhook_activity_state
+             SET lease_owner = NULL, lease_expires_at = NULL, updated_at = ?
+             WHERE activity_id = ? AND lease_owner = ?`,
+            [now, event.activity_id, owner],
+          );
+        }
+        await connection.commit();
+        return true;
+      } catch (error) {
+        await connection.rollback().catch(() => {});
+        throw error;
+      } finally {
+        connection.release();
+      }
+    },
+
+    async deleteRaceActivityCandidate(activityId, eventTime, now) {
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+        await connection.execute(
+          "DELETE FROM strava_race_activity_matches WHERE activity_id = ?",
+          [activityId],
+        );
+        await connection.execute(
+          `UPDATE strava_race_activity_candidates
+           SET classification_status = 'excluded', scheduled_marathon_id = NULL,
+             scheduled_state_code = NULL, match_confidence = NULL, match_method = NULL,
+             exclusion_reason = 'strava_activity_deleted', reviewed_at = NULL, reviewed_by = NULL,
+             source_updated_at = GREATEST(COALESCE(source_updated_at, 0), ?), updated_at = ?
+           WHERE activity_id = ?`,
+          [eventTime, now, activityId],
+        );
+        await connection.commit();
+      } catch (error) {
+        await connection.rollback().catch(() => {});
+        throw error;
+      } finally {
+        connection.release();
+      }
+    },
+
+    async recordAdminAuthFailure(clientKey, now, windowSeconds, limit) {
+      await pool.execute("DELETE FROM strava_admin_auth_failures WHERE expires_at <= ? LIMIT 100", [now]);
+      await pool.execute(
+        `INSERT INTO strava_admin_auth_failures
+           (client_key, window_started_at, failure_count, updated_at, expires_at)
+         VALUES (?, ?, 1, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           failure_count = IF(window_started_at <= ?, 1, LEAST(failure_count + 1, 65535)),
+           window_started_at = IF(window_started_at <= ?, VALUES(window_started_at), window_started_at),
+           updated_at = VALUES(updated_at), expires_at = VALUES(expires_at)`,
+        [clientKey, now, now, now + 86_400, now - windowSeconds, now - windowSeconds],
+      );
+      const [rows] = await pool.execute(
+        `SELECT window_started_at, failure_count
+         FROM strava_admin_auth_failures WHERE client_key = ? LIMIT 1`,
+        [clientKey],
+      );
+      const row = rows[0];
+      const failureCount = Number(row?.failure_count || 0);
+      const retryAfter = Math.max(1, windowSeconds - (now - Number(row?.window_started_at || now)));
+      return { limited: failureCount > limit, retryAfter };
+    },
+
+    async clearAdminAuthFailures(clientKey) {
+      await pool.execute("DELETE FROM strava_admin_auth_failures WHERE client_key = ?", [clientKey]);
     },
 
     async assignRaceCandidate(activityId, raceId, now) {

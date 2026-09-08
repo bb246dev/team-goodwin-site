@@ -17,19 +17,22 @@ registration are separate, later operations.
    `migrations/002_strava_connection_links_mysql.sql`, then
    `migrations/003_strava_race_activity_candidates_mysql.sql`, then
    `migrations/004_ggma_race_schedule_mysql.sql`, then
-   `migrations/005_strava_candidate_runtime_fields_mariadb.sql`. Finally import
+   `migrations/005_strava_candidate_runtime_fields_mariadb.sql`, then
+   `migrations/006_strava_webhook_admin_hardening_mariadb.sql`. Finally import
    `seeds/001_ggma_2026_race_schedule_mysql.sql`.
    If an earlier generated-column version of migration 004 failed with MariaDB
    error 1901, keep the schedule table and import
    `migrations/004b_ggma_race_schedule_mariadb_repair.sql` instead of retrying
-   migration 004. Then import migration 005 followed by the same seed file.
+   migration 004. Then import migrations 005 and 006 followed by the same seed file.
    Migration 005 adds the nullable candidate activity fields required by the
    current runtime, including the public map API.
 4. Confirm these InnoDB tables exist: `strava_connection`,
    `strava_oauth_states`, `strava_refresh_lock`, and
    `strava_connection_links`, plus `strava_race_activity_candidates` and
-   `ggma_race_schedule` and `strava_race_activity_matches`. Confirm the schedule
-   contains exactly 50 rows numbered 1 through 50.
+   `ggma_race_schedule`, `strava_race_activity_matches`,
+   `strava_webhook_events`, `strava_webhook_activity_state`,
+   `strava_webhook_rate_state`, and `strava_admin_auth_failures`. Confirm the
+   schedule contains exactly 50 rows numbered 1 through 50.
 
 MySQL/MariaDB is used because a Passenger application can run multiple Node
 processes. The transactional shared tables keep OAuth state and rotating refresh
@@ -57,6 +60,7 @@ the deployment ZIP, logs or source control. Its exact JSON structure is:
   "STRAVA_CLIENT_ID": "your-strava-client-id",
   "STRAVA_CLIENT_SECRET": "your-strava-client-secret",
   "STRAVA_VERIFY_TOKEN": "your-random-webhook-verification-token",
+  "STRAVA_WEBHOOK_SUBSCRIPTION_ID": "your-decimal-strava-subscription-id",
   "STRAVA_ADMIN_TOKEN": "your-random-administrator-token",
   "STRAVA_TOKEN_ENCRYPTION_KEY": "your-base64-encoded-32-byte-key"
 }
@@ -64,7 +68,7 @@ the deployment ZIP, logs or source control. Its exact JSON structure is:
 
 All values must be JSON strings. The application uses a nonempty `process.env`
 value first and reads the matching private-file value only when that environment
-value is missing or empty. Remove the ten application variables from cPanel's
+value is missing or empty. Remove the eleven application variables from cPanel's
 **Environment Variables** interface after creating the private file so its wrapper
 does not emit malformed shell exports. Restart the application afterward.
 
@@ -78,6 +82,11 @@ The configuration keys are:
 - `STRAVA_CLIENT_ID` — supplied by Strava.
 - `STRAVA_CLIENT_SECRET` — supplied by Strava.
 - `STRAVA_VERIFY_TOKEN` — an independent random verifier of at least 32 characters.
+- `STRAVA_WEBHOOK_SUBSCRIPTION_ID` — the existing Strava subscription's positive
+  decimal ID as a JSON string. It must contain only digits, must not have a sign
+  or leading zero, and must fit JavaScript's safe-integer range. Keep the actual
+  production value only in the private config/password manager, never in source,
+  the ZIP, a URL, or a log.
 - `STRAVA_ADMIN_TOKEN` — an independent random administrator password of at least
   32 characters. The Basic Auth username is `strava`.
 - `STRAVA_TOKEN_ENCRYPTION_KEY` — standard base64 for exactly 32 random bytes.
@@ -121,10 +130,11 @@ the application listener port; the code does not bind to public ports 80 or 443.
 
 ## Production routes
 
-- `GET /strava/health-startup` is a temporary, secret-free Passenger startup diagnostic.
-  It reports only initialization booleans and a sanitized error category. Normal
-  production routes return 503 until configuration, MySQL and Strava validation
-  all succeed.
+- `GET /strava/health` is the only public health contract. It returns exactly
+  `{"status":"ok"}` with HTTP 200 after initialization and a successful database
+  ping, or `{"status":"unavailable"}` with HTTP 503 otherwise. It never identifies
+  the failing component. The former `/strava/health-startup` diagnostic is retired
+  and returns HTTP 404.
 - `GET /strava/connect` requires HTTP Basic or Bearer administrator auth.
 - `POST /strava/connect-link` requires administrator auth and creates one remote
   athlete link that expires after 24 hours.
@@ -143,7 +153,10 @@ the application listener port; the code does not bind to public ports 80 or 443.
 - `GET /strava/public/race-status` is read-only and public. It returns the
   operational-window state and completed/total race counts.
 - `GET /strava/webhook` performs Strava's verification challenge.
-- `POST /strava/webhook` validates and acknowledges a bounded event body.
+- `POST /strava/webhook` validates and acknowledges a bounded event body. Only
+  the configured subscription and connected athlete can enqueue activity work.
+  Event registration, deduplication, per-activity ordering/leases, and burst
+  limits are shared through MariaDB across Passenger processes.
 
 ## GGMA 2026 operational window
 
@@ -183,13 +196,31 @@ all 50 published race numbers, dates, state names and city wording. The source
 does not publish start times, timezones or race coordinates, so those database
 fields remain null.
 
-In-window activity create/update webhooks are acknowledged immediately and then
-schedule a background detail fetch. The fetched activity must belong to the
-connected athlete and its actual `start_date` must fall inside the operational
-window. Matching considers the activity's local start date, distance, city/state
-evidence, optional start/end coordinates when schedule coordinates are later
-available, race order context and races already included. Date alone never
-auto-confirms a match, including on two- and three-race days.
+In-window activity create/update webhooks are durably registered and acknowledged
+before background detail work. The fetched activity must belong to the connected
+athlete and its actual `start_date` must fall inside the operational window.
+Matching considers the activity's local start date, distance, city/state evidence,
+optional start/end coordinates when schedule coordinates are later available,
+race order context and races already included. Date alone never auto-confirms a
+match, including on two- and three-race days.
+
+The webhook event key is a SHA-256 digest of the validated subscription, owner,
+object type/ID, aspect, event time, and canonical updates object. The digest and
+minimum numeric/type metadata are retained for 14 days; raw payloads are not
+stored. A unique key prevents duplicate processing. A 60-second per-activity
+database lease serializes Passenger workers, and the last successfully applied
+event time/aspect rank prevents an older event from replacing a newer result.
+For the same timestamp, delete outranks update and update outranks create. Failed
+work is retried on a short bounded schedule. Passenger startup scans up to 50
+queued, failed, or lease-expired events and schedules them again, so interrupted
+work does not depend on a duplicate provider delivery to resume.
+
+Delete events never fetch Strava. They may be applied outside the ingestion
+window so a deleted activity stops being publicly eligible: the one-to-one match
+is removed and any existing candidate is marked excluded with a fixed reason.
+Create/update events outside the window remain acknowledged and ignored. Valid
+subscription/athlete-shaped webhook bursts are capped at 120 events per 60-second
+shared window; excess requests are acknowledged and logged without enqueueing.
 
 The broad candidate distance range is 38,000–47,000 meters. A recording is only
 eligible for automatic matching inside the narrower 40,000–45,000 meter range
@@ -248,3 +279,33 @@ race responses allow the exact origin `https://goodwingoodge.com`, set
 seconds during the operational window and 300 seconds outside it. Errors and all
 administrator responses remain non-cacheable. The separate `/api/public/*`
 internal namespace remains unavailable.
+
+## Administrator throttling and credential rotation
+
+The shared administrator gate continues to accept Basic Auth username `strava`
+or a Bearer token and compares the configured token in constant time. Credentials
+are never accepted from query strings, logged, cached, or returned. Failed
+authentication is counted in MariaDB by SHA-256 of Passenger's peer address:
+the first 10 failures in a rolling five-minute window remain generic HTTP 401;
+later failures return generic HTTP 429 with `Retry-After`. A valid credential is
+never locked out and clears that peer's failure record. This is proportionate
+application protection, not a substitute for provider WAF/MFA controls; if the
+host exposes only one proxy peer address, failures share one bucket, but valid
+operator credentials still bypass it.
+
+To rotate `STRAVA_ADMIN_TOKEN` in a separately authorized maintenance window:
+
+1. Generate a new password-manager-held random token of at least 32 characters
+   (64+ is preferred). Do not place it in a shell argument, URL, ticket, or log.
+2. Preserve a private owner-only backup of the current config and record its
+   checksum without printing its contents.
+3. Replace only the private JSON field, keep file mode `0600`, validate JSON
+   locally without echoing the value, and restart Passenger once.
+4. Confirm the new credential works on `/strava/status`, the old credential
+   returns 401, responses remain `no-store`, and public/callback/webhook routes
+   remain healthy.
+5. If validation fails, restore the private backup, restart once, and confirm the
+   former credential works. Destroy obsolete copies after the rollback window.
+
+TG-M05 does not rotate the live administrator token and does not add MFA or an IP
+allowlist. Those perimeter decisions remain separate.

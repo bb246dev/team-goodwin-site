@@ -1,0 +1,12 @@
+{
+  "capturedAt": "2026-09-06",
+  "productionDocumentSha256": "edfe3abd43998cf94655c92a1a7cda8e1137bc5f37a50b4858e10b1689910d51",
+  "productionTrackerSha256": "743faaf0d6c76c80e9ee50443bbe1d03f6589f1983c51b0e4376d08f64bc2faf",
+  "candidateTrackerSha256": "a6c9fea694c1bb73181ed1a9ca9801169326bd8194c576e453b2d4faf2928c54",
+  "raceModuleSha256": "7a750659403f256d7a5305b84f164da7a75041d362627e016c6e5457c9de9b80",
+  "uploadOrder": [
+    "public_html/assets/strava-race-map.mjs",
+    "public_html/assets/tracker-base.js"
+  ],
+  "htmlModificationRequired": false
+}

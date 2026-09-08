@@ -11,6 +11,7 @@ const required = [
   "migrations/004_ggma_race_schedule_mysql.sql",
   "migrations/004b_ggma_race_schedule_mariadb_repair.sql",
   "migrations/005_strava_candidate_runtime_fields_mariadb.sql",
+  "migrations/006_strava_webhook_admin_hardening_mariadb.sql",
   "seeds/001_ggma_2026_race_schedule_mysql.sql",
 ];
 
@@ -37,21 +38,40 @@ for (const path of allFiles) {
 }
 
 const source = allFiles.map((path) => readFileSync(path, "utf8")).join("\n");
+const applicationSource = readFileSync(join(root, "app.js"), "utf8");
 for (const route of [
   "/api/strava/connect", "/api/strava/connect-link", "/api/strava/connect-athlete",
   "/api/strava/callback", "/api/strava/status", "/api/strava/webhook",
 ]) {
   if (!source.includes(route)) throw new Error(`Deployment package is missing ${route}`);
 }
-for (const diagnostic of [
-  "/health-startup", "configLoaded", "mysqlModuleLoaded", "mysqlPoolCreated",
-  "databaseReachable", "stravaConfigValid", "startupErrorCategory",
+for (const healthContract of [
+  '"/health", "/strava/health"',
+  '{ status: healthy ? "ok" : "unavailable" }',
+  '{ status: "ok" }',
+  '{ status: "unavailable" }',
 ]) {
-  if (!source.includes(diagnostic)) throw new Error(`Deployment package is missing startup diagnostic: ${diagnostic}`);
+  if (!applicationSource.includes(healthContract)) {
+    throw new Error(`Deployment package is missing generic health contract: ${healthContract}`);
+  }
+}
+for (const retiredPath of [
+  "/health-startup", "/api/health-startup",
+  "/node-test/health-startup", "/strava/health-startup",
+]) {
+  if (!applicationSource.includes(retiredPath)) {
+    throw new Error(`Deployment package does not explicitly retire startup path: ${retiredPath}`);
+  }
+}
+if (/JSON\.stringify\(\s*state\s*\)/.test(applicationSource)
+  || /status:\s*["']ok["']\s*,\s*database:/.test(applicationSource)) {
+  throw new Error("Deployment package exposes detailed startup or database health state");
 }
 for (const table of [
   "strava_connection", "strava_oauth_states", "strava_refresh_lock",
   "strava_connection_links", "strava_race_activity_candidates", "strava_race_activity_matches", "ggma_race_schedule",
+  "strava_webhook_events", "strava_webhook_activity_state", "strava_webhook_rate_state",
+  "strava_admin_auth_failures",
 ]) {
   if (!source.includes(table)) throw new Error(`Deployment package is missing ${table}`);
 }
@@ -125,6 +145,29 @@ for (const field of ["moving_time_seconds", "elapsed_time_seconds", "elevation_g
     throw new Error(`Candidate runtime continuation migration is missing idempotent field: ${field}`);
   }
 }
+const hardeningMigration = readFileSync(
+  join(root, "migrations/006_strava_webhook_admin_hardening_mariadb.sql"),
+  "utf8",
+);
+for (const table of [
+  "strava_webhook_events", "strava_webhook_activity_state", "strava_webhook_rate_state",
+  "strava_admin_auth_failures",
+]) {
+  if (!hardeningMigration.includes(`CREATE TABLE IF NOT EXISTS ${table}`)) {
+    throw new Error(`TG-M05 migration is missing additive table: ${table}`);
+  }
+}
+if (/GENERATED\s+ALWAYS|DROP\s+(?:TABLE|COLUMN)|TRUNCATE\s+|DELETE\s+FROM|UPDATE\s+/i.test(hardeningMigration)) {
+  throw new Error("TG-M05 migration is not purely additive");
+}
+for (const sourceContract of [
+  "STRAVA_WEBHOOK_SUBSCRIPTION_ID",
+  "registerWebhookEvent", "listRecoverableWebhookEventKeys", "resumeWebhookEvents",
+  "consumeWebhookRateLimit", "claimWebhookEvent", "finishWebhookEvent",
+  "recordAdminAuthFailure", "clearAdminAuthFailures",
+]) {
+  if (!source.includes(sourceContract)) throw new Error(`TG-M05 package is missing: ${sourceContract}`);
+}
 if (/GENERATED\s+ALWAYS|DROP\s+(?:TABLE|COLUMN)|DELETE\s+FROM|UPDATE\s+/i.test(continuationMigration)) {
   throw new Error("Candidate runtime continuation migration is not purely additive");
 }
@@ -150,7 +193,6 @@ if (JSON.stringify(Object.keys(manifest.dependencies || {})) !== JSON.stringify(
   throw new Error("The cPanel package dependency set is not minimal");
 }
 
-const applicationSource = readFileSync(join(root, "app.js"), "utf8");
 const productionStartup = applicationSource.slice(applicationSource.indexOf("export async function startApplication"));
 const listenIndex = productionStartup.indexOf("server.listen(port, host)");
 if (listenIndex < 0 || listenIndex > productionStartup.indexOf("loadStartupEnvironment(processEnvironment)")

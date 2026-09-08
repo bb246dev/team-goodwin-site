@@ -1,4 +1,8 @@
 import { publicFlightStatus } from "./flight-tracking-core.mjs";
+import {
+  publicHapnRvStatus,
+  unavailableHapnRvStatus,
+} from "../integrations/hapn/hapn-tracking-core.mjs";
 
 const ROUTE_STOPS = [
   { n: 1, state: "Hawaii", city: "Honolulu", lat: 21.3099, lng: -157.8581 },
@@ -100,15 +104,27 @@ export function mockTrackingStatusFromUrl(url, env = {}) {
   return status;
 }
 
+export async function trackingStatusFromUrl(url, env = {}, fetchImpl = fetch) {
+  const status = mockTrackingStatusFromUrl(url, env);
+  try {
+    status.rvStatus = await publicHapnRvStatus({ env, fetchImpl });
+  } catch {
+    status.rvStatus = unavailableHapnRvStatus(true);
+  }
+  return status;
+}
+
+const TRACKING_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=120";
+
 export default async function handler(request, response) {
-  response.setHeader("Cache-Control", "no-cache");
-  response.status(200).json(mockTrackingStatusFromUrl(request.url));
+  response.setHeader("Cache-Control", TRACKING_CACHE_CONTROL);
+  response.status(200).json(await trackingStatusFromUrl(request.url, process.env));
 }
 
 export async function onRequestGet({ request, env }) {
-  return Response.json(mockTrackingStatusFromUrl(request.url, env), {
+  return Response.json(await trackingStatusFromUrl(request.url, env), {
     headers: {
-      "Cache-Control": "no-cache",
+      "Cache-Control": TRACKING_CACHE_CONTROL,
     },
   });
 }

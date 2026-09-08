@@ -13,6 +13,7 @@ function setup(t) {
   const env = {
     STRAVA_STORE: store, STRAVA_CLIENT_ID: "123456", STRAVA_CLIENT_SECRET: "test-only-client-secret",
     STRAVA_VERIFY_TOKEN: "test-only-webhook-verifier-0000000000",
+    STRAVA_WEBHOOK_SUBSCRIPTION_ID: "123",
     STRAVA_ADMIN_TOKEN: "test-only-administrator-password-000000",
     STRAVA_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
   };
@@ -521,9 +522,13 @@ test("webhook POST acknowledges immediately and logs only allowlisted metadata",
   );
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { accepted: true });
-  assert.deepEqual(s.calls, [{ log: ["strava_webhook", {
-    object_type: "activity", aspect_type: "create", object_id: 987, owner_id: 456, event_time: 1788430000,
-  }] }]);
+  assert.deepEqual(s.calls, [
+    { log: ["strava_webhook_received", {
+      object_type: "activity", aspect_type: "create", object_id: 987,
+    }] },
+    { log: ["strava_webhook_wrong_athlete_ignored", { object_id: 987 }] },
+  ]);
+  assert.doesNotMatch(JSON.stringify(s.calls), /private title|test-secret|refresh_token|access_token/);
   assert.equal(s.store.inspectConnection(), null);
   assert.equal((await s.route("webhook", post(event), {
     now: raceNow,
@@ -545,7 +550,10 @@ test("activity webhooks outside the operational window are acknowledged and igno
     });
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { accepted: true });
-    assert.deepEqual(calls, []);
+    assert.deepEqual(calls, [
+      ["strava_webhook_received", { object_type: "activity", aspect_type: "create", object_id: 987 }],
+      ["strava_webhook_window_closed_ignored", { object_id: 987 }],
+    ]);
   }
 });
 
@@ -624,7 +632,7 @@ test("an in-window webhook for another owner cannot trigger a Strava fetch", asy
     async fetchImpl() { fetched = true; return Response.json({}); },
   });
   assert.equal(response.status, 200);
-  await backgroundTask();
+  assert.equal(backgroundTask, undefined);
   assert.equal(fetched, false);
   assert.equal(s.store.inspectRaceCandidates().length, 0);
 });
