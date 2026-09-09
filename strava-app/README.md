@@ -62,13 +62,19 @@ the deployment ZIP, logs or source control. Its exact JSON structure is:
   "STRAVA_VERIFY_TOKEN": "your-random-webhook-verification-token",
   "STRAVA_WEBHOOK_SUBSCRIPTION_ID": "your-decimal-strava-subscription-id",
   "STRAVA_ADMIN_TOKEN": "your-random-administrator-token",
-  "STRAVA_TOKEN_ENCRYPTION_KEY": "your-base64-encoded-32-byte-key"
+  "STRAVA_TOKEN_ENCRYPTION_KEY": "your-base64-encoded-32-byte-key",
+  "HAPN_CLIENT_ID": "your-hapn-client-id",
+  "HAPN_CLIENT_SECRET": "your-hapn-client-secret",
+  "HAPN_DEVICE_IMEI": "your-hapn-device-imei",
+  "HAPN_STALE_AFTER_SECONDS": "900",
+  "HAPN_RETENTION_SECONDS": "21600",
+  "HAPN_PUBLIC_COORDINATE_DECIMALS": "3"
 }
 ```
 
 All values must be JSON strings. The application uses a nonempty `process.env`
 value first and reads the matching private-file value only when that environment
-value is missing or empty. Remove the eleven application variables from cPanel's
+value is missing or empty. Remove the application variables from cPanel's
 **Environment Variables** interface after creating the private file so its wrapper
 does not emit malformed shell exports. Restart the application afterward.
 
@@ -90,6 +96,13 @@ The configuration keys are:
 - `STRAVA_ADMIN_TOKEN` — an independent random administrator password of at least
   32 characters. The Basic Auth username is `strava`.
 - `STRAVA_TOKEN_ENCRYPTION_KEY` — standard base64 for exactly 32 random bytes.
+- `HAPN_CLIENT_ID`, `HAPN_CLIENT_SECRET`, and `HAPN_DEVICE_IMEI` — HAPN API #2
+  secrets used only by the server-side RV adapter.
+- `HAPN_STALE_AFTER_SECONDS` — optional freshness threshold; defaults to 900.
+- `HAPN_RETENTION_SECONDS` — optional coordinate retention ceiling; defaults to
+  21600 and must be at least the freshness threshold.
+- `HAPN_PUBLIC_COORDINATE_DECIMALS` — optional public precision from 2 through 5;
+  defaults to 3.
 Generate the three internal values locally without saving them in the repository.
 Run each command separately in a trusted terminal and place its output directly in
 the matching private JSON string:
@@ -152,6 +165,9 @@ the application listener port; the code does not bind to public ports 80 or 443.
   candidates that are both included and present in the one-to-one match table.
 - `GET /strava/public/race-status` is read-only and public. It returns the
   operational-window state and completed/total race counts.
+- `GET /strava/public/tracking-status` is the read-only, same-origin HAPN API #2
+  projection. It exposes only availability, staleness, observation time, and a
+  rounded RV position while within retention. Unsupported methods return 405.
 - `GET /strava/webhook` performs Strava's verification challenge.
 - `POST /strava/webhook` validates and acknowledges a bounded event body. Only
   the configured subscription and connected athlete can enqueue activity work.

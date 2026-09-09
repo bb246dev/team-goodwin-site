@@ -1,8 +1,4 @@
 import { publicFlightStatus } from "./flight-tracking-core.mjs";
-import {
-  publicHapnRvStatus,
-  unavailableHapnRvStatus,
-} from "../integrations/hapn/hapn-tracking-core.mjs";
 
 const ROUTE_STOPS = [
   { n: 1, state: "Hawaii", city: "Honolulu", lat: 21.3099, lng: -157.8581 },
@@ -104,19 +100,18 @@ export function mockTrackingStatusFromUrl(url, env = {}) {
   return status;
 }
 
-export async function trackingStatusFromUrl(url, env = {}, fetchImpl = fetch) {
-  const status = mockTrackingStatusFromUrl(url, env);
-  try {
-    status.rvStatus = await publicHapnRvStatus({ env, fetchImpl });
-  } catch {
-    status.rvStatus = unavailableHapnRvStatus(true);
-  }
-  return status;
+export function trackingStatusFromUrl(url, env = {}) {
+  return mockTrackingStatusFromUrl(url, env);
 }
 
 const TRACKING_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=120";
 
 export default async function handler(request, response) {
+  if (request.method && request.method !== "GET") {
+    response.setHeader("Allow", "GET");
+    response.status(405).json({ error: "method_not_allowed" });
+    return;
+  }
   response.setHeader("Cache-Control", TRACKING_CACHE_CONTROL);
   response.status(200).json(await trackingStatusFromUrl(request.url, process.env));
 }

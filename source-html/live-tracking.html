@@ -4554,128 +4554,9 @@
       return '<div class="ticker-item"><time>Updates</time><span>Updates from the road are coming.</span></div>';
     }
 
-    const MISSION_TRACKING_POLL_MS = 2 * 60 * 1000;
-    let missionTrackingStatusPromise = null;
-    let missionTrackingStatusSnapshot = null;
-    let missionTrackingPollTimer = null;
-    let missionTrackingVisibilityBound = false;
-
-    function validPublicRvStatus(status) {
-      const rv = status?.rvStatus;
-      const lat = Number(rv?.lat);
-      const lng = Number(rv?.lng);
-      if (rv?.source !== "hapn" || rv.active !== true || rv.stale === true) return null;
-      if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) return null;
-      return { lat, lng, updatedAt: rv.updatedAt || null };
-    }
-
-    function applyMissionTrackingStatus(status) {
-      if (status?.flightStatus) window.missionPublicFlightStatus = status.flightStatus;
-      if (Number.isFinite(Number(status?.progress))) {
-        window.missionMapTracking = {
-          ...(window.missionMapTracking || {}),
-          runner: { ...(window.missionMapTracking?.runner || {}), progress: Number(status.progress) }
-        };
-      }
-      if (status?.flightStatus?.active) {
-        const flight = status.flightStatus;
-        window.missionMapTracking = {
-          ...(window.missionMapTracking || {}),
-          flight: {
-            active: true,
-            fromStop: flight.originStop,
-            toStop: flight.destinationStop,
-            progress: Number(flight.progress) || 0,
-            status: flight.status,
-            nextStop: flight.nextStop
-          }
-        };
-      }
-
-      const publicRv = validPublicRvStatus(status);
-      if (publicRv) {
-        window.missionMapTracking = {
-          ...(window.missionMapTracking || {}),
-          rv: { ...(window.missionMapTracking?.rv || {}), ...publicRv }
-        };
-      } else if (status?.rvStatus?.configured === false || status?.rvStatus?.stale === true) {
-        window.missionMapTracking = {
-          ...(window.missionMapTracking || {}),
-          rv: { ...mapTrackingDefaults.rv }
-        };
-      }
-    }
-
-    async function loadMissionTrackingStatus({ refresh = false } = {}) {
-      if (missionTrackingStatusPromise) return missionTrackingStatusPromise;
-      if (!refresh && missionTrackingStatusSnapshot) return missionTrackingStatusSnapshot;
-      missionTrackingStatusPromise = (async () => {
-        try {
-          const response = await fetch("/api/tracking-status", { headers: { Accept: "application/json" } });
-          if (!response.ok) throw new Error(`Tracking status returned ${response.status}`);
-          const status = await response.json();
-          const previousRv = JSON.stringify(validPublicRvStatus(missionTrackingStatusSnapshot));
-          applyMissionTrackingStatus(status);
-          missionTrackingStatusSnapshot = status;
-          if (missionMapTopology && JSON.stringify(validPublicRvStatus(status)) !== previousRv) {
-            renderMissionMap(missionMapTopology, true);
-          }
-          return status;
-        } catch (error) {
-          console.warn(error);
-          return missionTrackingStatusSnapshot;
-        } finally {
-          missionTrackingStatusPromise = null;
-        }
-      })();
-      return missionTrackingStatusPromise;
-    }
-
-    function scheduleMissionTrackingPoll() {
-      window.clearTimeout(missionTrackingPollTimer);
-      missionTrackingPollTimer = null;
-      if (document.hidden) return;
-      missionTrackingPollTimer = window.setTimeout(async () => {
-        await loadMissionTrackingStatus({ refresh: true });
-        scheduleMissionTrackingPoll();
-      }, MISSION_TRACKING_POLL_MS);
-    }
-
-    function startMissionTrackingPoller() {
-      if (!missionTrackingVisibilityBound) {
-        missionTrackingVisibilityBound = true;
-        document.addEventListener("visibilitychange", () => {
-          if (document.hidden) {
-            window.clearTimeout(missionTrackingPollTimer);
-            missionTrackingPollTimer = null;
-            return;
-          }
-          void loadMissionTrackingStatus({ refresh: true }).finally(scheduleMissionTrackingPoll);
-        });
-      }
-      scheduleMissionTrackingPoll();
-    }
-
-    function liveTickerUpdateFromStatus(status) {
-      const flight = status?.flightStatus || window.missionPublicFlightStatus;
-      if (!flight?.active) return null;
-      const destination = flight.nextStop || flight.destinationCity;
-      if (flight.status === "IN TRANSIT" && destination) {
-        return { date: "Live", time: "", title: "In transit", body: `Next stop: ${destination}.` };
-      }
-      if (flight.status === "ARRIVED" && destination) {
-        return { date: "Live", time: "", title: "Arrived", body: `Ground transfer toward ${destination}.` };
-      }
-      if ((flight.status === "DELAYED" || flight.status === "TRAVEL UPDATE") && destination) {
-        return { date: "Live", time: "", title: flight.status === "DELAYED" ? "Delayed" : "Travel update", body: `Next stop: ${destination}.` };
-      }
-      return null;
-    }
-
     async function loadTickerUpdates(options = {}) {
       const ticker = document.querySelector("[data-ticker-items]");
       if (!ticker) return;
-      await loadMissionTrackingStatus();
       let updates = [];
       try {
         updates = await loadSheetUpdates(options);
@@ -4845,7 +4726,7 @@
     let missionRaceStatus = { active: false, completedRaces: 0, totalRaces: 50 };
     let missionRaceMapModule = null;
     let missionMapTopology = null;
-    let missionRacePoller = null;
+    let missionProviderCoordinator = null;
     let missionMapLoadPromise = null;
     const startDate = new Date("2026-10-09T06:00:00-04:00");
 
@@ -4879,7 +4760,31 @@
       flight: { active: false },
       rv: { pathStops: [3, 4, 5, 6], progress: 0.64 }
     };
+    let missionMapSnapshot = {
+      locations: {
+        runner: { ...mapTrackingDefaults.runner },
+        flight: { ...mapTrackingDefaults.flight },
+        rv: { ...mapTrackingDefaults.rv }
+      }
+    };
     const MAP_FLIGHT_PREVIEW = false;
+    const flightAirports = {
+      HNL: { lat: 21.3187, lng: -157.9225, insetOffset: [6, 2] },
+      ANC: { lat: 61.1743, lng: -149.9985, insetOffset: [5, -4] },
+      PDX: { lat: 45.5898, lng: -122.5951 },
+      SLC: { lat: 40.7899, lng: -111.9791 },
+      CMH: { lat: 39.9980, lng: -82.8919 },
+      LAX: { lat: 33.9416, lng: -118.4085 },
+      MIA: { lat: 25.7959, lng: -80.2870 },
+      ATL: { lat: 33.6407, lng: -84.4277 }
+    };
+    const flightItinerary = [
+      { from: "HNL", to: "ANC" },
+      { from: "ANC", to: "PDX" },
+      { from: "PDX", to: "SLC" },
+      { from: "CMH", to: "LAX" },
+      { from: "MIA", to: "ATL" }
+    ];
 
     function updateCountdown() {
       const remaining = Math.max(0, startDate.getTime() - Date.now());
@@ -5135,6 +5040,30 @@
         .filter(Boolean);
     }
 
+    function flightAirportPoint(code, centroids) {
+      const airport = flightAirports[code];
+      if (!airport) return null;
+      if ((code === "HNL" || code === "ANC") && centroids[code === "HNL" ? "HI" : "AK"]) {
+        const anchor = centroids[code === "HNL" ? "HI" : "AK"];
+        const offset = airport.insetOffset || [0, 0];
+        return [anchor[0] + offset[0], anchor[1] + offset[1]];
+      }
+      return displayPoint(projectLower48(airport.lat, airport.lng), "");
+    }
+
+    function appendStaticFlightLegs(layer, svgNS, centroids) {
+      flightItinerary.forEach((flight) => {
+        const start = flightAirportPoint(flight.from, centroids);
+        const end = flightAirportPoint(flight.to, centroids);
+        if (!start || !end) return;
+        const flightPath = document.createElementNS(svgNS, "path");
+        flightPath.setAttribute("class", "map-route flight");
+        flightPath.setAttribute("d", routePath([start, end]));
+        flightPath.setAttribute("aria-hidden", "true");
+        layer.appendChild(flightPath);
+      });
+    }
+
     function appendImageMarker(svg, svgNS, point, imageHref, label, className) {
       if (!point) return;
       const group = document.createElementNS(svgNS, "g");
@@ -5243,11 +5172,7 @@
         ]
         : routePoints[currentIndex];
       const completedPoints = routePoints.slice(0, segmentIndex + 1).concat([liveSvgPoint]);
-      const trackingData = {
-        runner: { ...mapTrackingDefaults.runner, ...(window.missionMapTracking?.runner || window.missionRunnerTracking || {}) },
-        flight: { ...mapTrackingDefaults.flight, ...(window.missionMapTracking?.flight || window.missionFlightTracking || {}) },
-        rv: { ...mapTrackingDefaults.rv, ...(window.missionMapTracking?.rv || window.missionRvTracking || {}) }
-      };
+      const trackingData = missionMapSnapshot.locations;
 
       const routeLayer = document.createElementNS(svgNS, "g");
       const futurePath = document.createElementNS(svgNS, "path");
@@ -5292,6 +5217,11 @@
         travelLayer.appendChild(rvPath);
       }
       svg.appendChild(travelLayer);
+
+      const flightLayer = document.createElementNS(svgNS, "g");
+      flightLayer.setAttribute("class", "map-flight-layer");
+      appendStaticFlightLegs(flightLayer, svgNS, centroids);
+      svg.insertBefore(flightLayer, routeLayer);
 
       const stopCard = document.createElementNS(svgNS, "g");
       stopCard.setAttribute("class", "map-stop-card");
@@ -5401,11 +5331,7 @@
 
       const runnerPoint = pointFromTracking(trackingData.runner, centroids, liveSvgPoint);
       const rvPoint = pointFromTracking(
-        {
-          fromStop: trackingData.rv.fromStop || trackingData.rv.pathStops?.[0],
-          toStop: trackingData.rv.toStop || trackingData.rv.pathStops?.[trackingData.rv.pathStops.length - 1],
-          progress: trackingData.rv.progress
-        },
+        trackingData.rv,
         centroids,
         rvStopPath[rvStopPath.length - 1] || routePoints[Math.min(routePoints.length - 1, currentIndex + 2)]
       );
@@ -5453,6 +5379,7 @@
       const previousSignature = raceMapSignature(routeStops, missionRaceStatus);
       routeStops = snapshot.races;
       missionRaceStatus = snapshot.status;
+      if (missionRaceMapModule) missionMapSnapshot = missionRaceMapModule.applyRaceSnapshot(missionMapSnapshot, snapshot);
       const changed = raceMapSignature(routeStops, missionRaceStatus) !== previousSignature;
       if (changed) renderRunItinerary();
       updateRaceMapAccessibility();
@@ -5478,33 +5405,54 @@
     async function loadMissionMap() {
       if (missionMapLoadPromise) return missionMapLoadPromise;
       missionMapLoadPromise = (async () => {
-        const trackingPromise = loadMissionTrackingStatus();
         missionMapTopology = await loadMissionMapTopology();
-        await trackingPromise;
         if (missionMapTopology) {
           renderMissionMap(missionMapTopology);
-          startMissionTrackingPoller();
         } else {
           document.getElementById("mission-map").textContent = "Map data could not load. Serve this page from the preview server to view the interactive U.S. route map.";
+          return;
         }
         await new Promise((resolve) => window.requestAnimationFrame(resolve));
-        const snapshot = await import("/assets/strava-race-map.mjs")
-          .then(async (raceMapModule) => {
-            missionRaceMapModule = raceMapModule;
-            return raceMapModule.loadPublicRaceSnapshot({ staticStops: staticRouteStops });
-          })
-          .catch(() => {
-            console.warn("Public race data unavailable; using the static schedule.");
-            return null;
+        try {
+          missionRaceMapModule = await import("/assets/strava-race-map.mjs");
+          missionMapSnapshot = missionRaceMapModule.createMapSnapshot({
+            staticStops: staticRouteStops,
+            runner: mapTrackingDefaults.runner,
+            flight: mapTrackingDefaults.flight,
+            rv: mapTrackingDefaults.rv
           });
-        applyPublicRaceSnapshot(snapshot);
-        if (snapshot?.source === "api" && snapshot.status.active && missionRaceMapModule) {
-          missionRacePoller?.stop();
-          missionRacePoller = missionRaceMapModule.createPublicRacePoller({
-            load: () => missionRaceMapModule.loadPublicRaceSnapshot({ staticStops: staticRouteStops }),
-            onSnapshot: applyPublicRaceSnapshot
+          const configuredHapnPollMs = Number(window.MISSION_HAPN_POLL_MS);
+          const hapnPollMs = Number.isFinite(configuredHapnPollMs)
+            ? Math.max(60_000, Math.min(10 * 60_000, configuredHapnPollMs))
+            : missionRaceMapModule.HAPN_REFRESH_MS;
+          missionProviderCoordinator?.stop();
+          missionProviderCoordinator = missionRaceMapModule.createMultiProviderCoordinator({
+            providers: [
+              {
+                name: "strava",
+                intervalMs: missionRaceMapModule.ACTIVE_REFRESH_MS,
+                load: () => missionRaceMapModule.loadPublicRaceSnapshot({ staticStops: staticRouteStops }),
+                apply: applyPublicRaceSnapshot,
+                successful: (snapshot) => snapshot?.source === "api",
+                continueWhile: (snapshot) => snapshot?.status?.active === true
+              },
+              {
+                name: "hapn",
+                intervalMs: hapnPollMs,
+                enabled: missionRaceMapModule.inMissionRaceWindow,
+                load: missionRaceMapModule.loadPublicRvLocation,
+                apply: (patch) => {
+                  const previous = missionMapSnapshot;
+                  missionMapSnapshot = missionRaceMapModule.applyMapDomainPatch(missionMapSnapshot, patch);
+                  if (missionMapSnapshot !== previous && missionMapTopology) renderMissionMap(missionMapTopology, true);
+                },
+                successful: (patch) => patch?.available === true && patch.stale === false
+              }
+            ]
           });
-          await missionRacePoller.start(snapshot);
+          missionProviderCoordinator.start();
+        } catch {
+          console.warn("Live provider data unavailable; using the complete static map.");
         }
       })();
       return missionMapLoadPromise;

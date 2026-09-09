@@ -5,6 +5,7 @@ const root = "dist/goodwin-strava-api";
 const required = [
   "passenger.cjs", "app.js", "package.json", "package-lock.json", "README.md",
   "lib/mysql-store.mjs",
+  "lib/hapn-route.mjs", "lib/hapn-tracking-core.mjs",
   "lib/race-matching.mjs", "lib/race-window.mjs", "lib/routes.mjs", "lib/security.mjs", "lib/service.mjs", "lib/store.mjs",
   "migrations/001_strava_oauth_mysql.sql", "migrations/002_strava_connection_links_mysql.sql",
   "migrations/003_strava_race_activity_candidates_mysql.sql",
@@ -86,6 +87,15 @@ for (const route of ["/api/strava/candidates", "/assign"]) {
 }
 for (const route of ["/api/strava/public/races", "/api/strava/public/race-status"]) {
   if (!source.includes(route)) throw new Error(`Deployment package is missing public race route: ${route}`);
+}
+if (!source.includes("/api/strava/public/tracking-status")) {
+  throw new Error("Deployment package is missing the HAPN API #2 public route");
+}
+for (const control of [
+  "HAPN_STATUS_RESPONSE_MAX_BYTES", "redirect: \"error\"", "hapn_device_mismatch",
+  "HAPN_RETENTION_SECONDS", "Cross-Origin-Resource-Policy", "method_not_allowed",
+]) {
+  if (!source.includes(control)) throw new Error(`HAPN package is missing security control: ${control}`);
 }
 const routesSource = readFileSync(join(root, "lib/routes.mjs"), "utf8");
 const adminCheckIndex = routesSource.indexOf("!await authorizedAdmin(request, env)");

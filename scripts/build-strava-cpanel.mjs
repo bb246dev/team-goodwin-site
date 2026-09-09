@@ -8,5 +8,9 @@ const entries = ["passenger.cjs", "app.js", "package.json", "package-lock.json",
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
 for (const entry of entries) cpSync(join(source, entry), join(output, entry), { recursive: true });
+cpSync(
+  join("integrations", "hapn", "hapn-tracking-core.mjs"),
+  join(output, "lib", "hapn-tracking-core.mjs"),
+);
 
 console.log(`Built isolated cPanel application in ${output}`);

@@ -6,6 +6,11 @@ import { resolve } from "node:path";
 import { handleStravaRequest, resumeWebhookEvents } from "./lib/routes.mjs";
 import { requiredSecret, StravaError, tokenEncryptionKey } from "./lib/security.mjs";
 import { STRAVA_PUBLIC_ORIGIN } from "./lib/service.mjs";
+import {
+  HAPN_PUBLIC_PATH,
+  createHapnPublicRateLimiter,
+  handleHapnPublicRequest,
+} from "./lib/hapn-route.mjs";
 
 const REQUIRED_STARTUP_VALUES = [
   "MYSQL_HOST",
@@ -20,6 +25,15 @@ const REQUIRED_STARTUP_VALUES = [
   "STRAVA_ADMIN_TOKEN",
   "STRAVA_TOKEN_ENCRYPTION_KEY",
 ];
+const OPTIONAL_STARTUP_VALUES = [
+  "HAPN_CLIENT_ID",
+  "HAPN_CLIENT_SECRET",
+  "HAPN_DEVICE_IMEI",
+  "HAPN_STALE_AFTER_SECONDS",
+  "HAPN_RETENTION_SECONDS",
+  "HAPN_PUBLIC_COORDINATE_DECIMALS",
+];
+const PRIVATE_CONFIG_VALUES = [...REQUIRED_STARTUP_VALUES, ...OPTIONAL_STARTUP_VALUES];
 const PRIVATE_CONFIG_PATH = "/home/goodfjcw/.goodwin-strava-config.json";
 const PRIVATE_CONFIG_MAX_BYTES = 16_384;
 const SAFE_STARTUP_CATEGORIES = new Set([
@@ -68,16 +82,25 @@ function configuredValue(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function currentDate(now) {
+  if (typeof now !== "function") return new Date();
+  const value = now();
+  if (value instanceof Date) return value;
+  if (typeof value === "number" && Number.isFinite(value) && value < 1_000_000_000_000) {
+    return new Date(value * 1_000);
+  }
+  return new Date(value);
+}
+
 export function loadStartupEnvironment(processEnvironment = process.env, configPath = PRIVATE_CONFIG_PATH) {
   const env = { ...processEnvironment };
-  if (REQUIRED_STARTUP_VALUES.every((name) => configuredValue(env[name]))) {
-    return { env, diagnosticCategories: [] };
-  }
+  const requiredEnvironmentComplete = REQUIRED_STARTUP_VALUES.every((name) => configuredValue(env[name]));
 
   let contents;
   try {
     contents = readFileSync(configPath);
   } catch (error) {
+    if (requiredEnvironmentComplete) return { env, diagnosticCategories: [] };
     const category = error?.code === "ENOENT" ? "private config file missing" : "private config file unavailable";
     return { env, diagnosticCategories: [category] };
   }
@@ -86,10 +109,10 @@ export function loadStartupEnvironment(processEnvironment = process.env, configP
     if (contents.length > PRIVATE_CONFIG_MAX_BYTES) throw new Error("invalid config size");
     const config = JSON.parse(contents.toString("utf8"));
     if (!config || typeof config !== "object" || Array.isArray(config)) throw new Error("invalid config object");
-    for (const name of REQUIRED_STARTUP_VALUES) {
+    for (const name of PRIVATE_CONFIG_VALUES) {
       if (Object.hasOwn(config, name) && typeof config[name] !== "string") throw new Error("invalid config value");
     }
-    for (const name of REQUIRED_STARTUP_VALUES) {
+    for (const name of PRIVATE_CONFIG_VALUES) {
       if (!configuredValue(env[name]) && configuredValue(config[name])) env[name] = config[name];
     }
     return { env, diagnosticCategories: [] };
@@ -121,7 +144,7 @@ function startupConfigurationDiagnostics(env) {
 
 function sanitizeStartupMessage(error, env) {
   let message = typeof error?.message === "string" ? error.message : "startup failed";
-  const protectedValues = REQUIRED_STARTUP_VALUES
+  const protectedValues = PRIVATE_CONFIG_VALUES
     .map((name) => env?.[name])
     .filter((value) => typeof value === "string" && value.length > 0)
     .sort((left, right) => right.length - left.length);
@@ -296,6 +319,7 @@ export function createApplication({
   const runtimeStore = store;
   const runtime = { ...env, STRAVA_STORE: runtimeStore };
   const backgroundDependencies = { fetchImpl, now, logger, scheduleBackground };
+  const hapnRateLimiter = createHapnPublicRateLimiter();
 
   scheduleBackground(async () => {
     try {
@@ -323,11 +347,19 @@ export function createApplication({
       }
       const request = fetchRequest(incoming);
       const path = new URL(request.url).pathname.replace(/\/+$/, "");
-      const response = reservedPublicRoute(path) || await handleStravaRequest(
-        request,
-        runtime,
-        { fetchImpl, now, logger, scheduleBackground, clientAddress: incoming.socket?.remoteAddress },
-      );
+      const clientAddress = incoming.socket?.remoteAddress || "unknown";
+      const response = path === HAPN_PUBLIC_PATH
+        ? await handleHapnPublicRequest(request, runtime, {
+          fetchImpl,
+          now: () => currentDate(now),
+          rateLimiter: hapnRateLimiter,
+          clientAddress,
+        })
+        : reservedPublicRoute(path) || await handleStravaRequest(
+          request,
+          runtime,
+          { fetchImpl, now, logger, scheduleBackground, clientAddress },
+        );
       await writeResponse(response, outgoing);
     } catch {
       if (!outgoing.headersSent) {

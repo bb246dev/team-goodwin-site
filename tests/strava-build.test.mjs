@@ -7,6 +7,8 @@ import { createMySqlPool, createMySqlStravaStore } from "../strava-app/lib/mysql
 import { hashSecret } from "../strava-app/lib/security.mjs";
 import { createMemoryStravaStore } from "./helpers/memory-strava-store.mjs";
 
+const siteWorkerSource = readFileSync(new URL("../dist/server/index.js", import.meta.url), "utf8");
+
 const env = {
   STRAVA_CLIENT_ID: "123456",
   STRAVA_CLIENT_SECRET: "test-only-client-secret",
@@ -121,7 +123,8 @@ test("Namecheap website build remains separate from the Strava Node application"
   assert.equal(response.headers.get("cache-control"), "public, max-age=0, s-maxage=60, stale-while-revalidate=120");
   const body = await response.json();
   assert.equal(body.progress, 0.5);
-  assert.deepEqual(body.rvStatus, { source: "hapn", configured: false, active: false });
+  assert.equal("rvStatus" in body, false);
+  assert.doesNotMatch(siteWorkerSource, /HAPN_(?:CLIENT_ID|CLIENT_SECRET|DEVICE_IMEI)|publicHapnRvStatus|iotgps|usehapn/);
 });
 
 test("app.js serves generic health plus visible and Passenger-stripped mount paths", async (t) => {
@@ -143,6 +146,16 @@ test("app.js serves generic health plus visible and Passenger-stripped mount pat
   await assertGenericHealth(base, "/strava/health", 200, { status: "ok" });
   await assertGenericHealth(base, "/health", 200, { status: "ok" });
   assert.equal((await fetch(`${base}/api/health`)).status, 404);
+
+  for (const path of ["/api/strava/public/tracking-status", "/strava/public/tracking-status"]) {
+    const response = await fetch(`${base}${path}`);
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { available: false });
+    assert.equal(response.headers.get("access-control-allow-origin"), null);
+    const rejected = await fetch(`${base}${path}`, { method: "POST" });
+    assert.equal(rejected.status, 405);
+    assert.equal(rejected.headers.get("allow"), "GET");
+  }
   for (const path of [
     "/health-startup", "/api/health-startup",
     "/node-test/health-startup", "/strava/health-startup",

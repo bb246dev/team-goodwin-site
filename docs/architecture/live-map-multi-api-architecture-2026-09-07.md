@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-07
 
-**Status:** Design approved for implementation planning; API #2 and API #3 not implemented
+**Status:** HAPN API #2 is live and passed final production acceptance; API #3 remains unimplemented and subject to its own intake and security checkpoint
 
 **Scope:** Browser-side normalization, source ownership, failure isolation, polling, security controls, tests, and performance gates for the Team Goodwin live map
 
@@ -10,9 +10,15 @@
 
 ## 1. Purpose and non-goals
 
-This architecture makes the current Strava integration and two future providers inputs to a normalized map-data layer. Provider payloads must terminate at an adapter boundary. Map rendering and DOM code consume only a validated, provider-neutral snapshot.
+This architecture makes the current Strava integration and HAPN API #2 inputs to a normalized map-data layer, with API #3 reserved for later work. Provider payloads must terminate at an adapter boundary. Map rendering and DOM code consume only a validated, provider-neutral snapshot.
 
-This document does not select, call, or implement API #2 or API #3. It does not change the current Strava endpoints, polling behavior, static map, styling, production configuration, or deployment package.
+API #2 is HAPN and owns only the RV's observed live vehicle location. API #3 remains unassigned and unimplemented. HAPN cannot overwrite the static schedule or geometry, Strava activity/completion, planned flight data, or runner location.
+
+The normalized ownership key is `rvLocation`. Production polling is bounded to
+the inclusive operational window `2026-10-09T00:00:00-04:00` through
+`2026-11-01T23:59:59-05:00`. Outside that window, and whenever HAPN is stale,
+unavailable, invalid, or unauthorized by valid race status, the known-good
+static RV remains authoritative.
 
 The invariant is:
 
@@ -57,7 +63,7 @@ The default race-window/status object is:
 }
 ```
 
-Optional browser tracking globals can currently express runner, flight, or RV positions using coordinates or route progress. They are presentation inputs, not a sufficiently validated cross-provider contract, and future APIs must not write to them directly.
+Legacy browser tracking globals are not part of the provider contract. HAPN emits a validated `rvLocation` domain patch, the ownership-aware reducer creates a new normalized `MapSnapshot`, and rendering reads the normalized model.
 
 ### 2.2 Strava public races
 
@@ -116,7 +122,7 @@ These behaviors are compatibility requirements for the first implementation of t
 versioned static data -----------------------+
                                                \
 first-party Strava endpoints -> Strava adapter  \
-future first-party endpoint -> API #2 adapter ---> validated domain patches
+first-party RV endpoint -> HAPN API #2 adapter ---> validated domain patches
 future first-party endpoint -> API #3 adapter  /            |
                                                             v
                                                ownership-aware reducer
@@ -254,7 +260,7 @@ The exact TypeScript or JSDoc representation can be chosen during implementation
 
 ## 4. Source ownership and precedence
 
-API #2 and API #3 cannot be assigned authority until their purposes and timestamp guarantees are known. They receive no implicit override rights.
+HAPN is explicitly API #2 and has authority only over the RV observed-location domain. API #3 remains unassigned and receives no implicit override rights.
 
 | Domain/field | Authority | Fallback | May another provider override? | Stale behavior |
 | --- | --- | --- | --- | --- |
@@ -266,7 +272,7 @@ API #2 and API #3 cannot be assigned authority until their purposes and timestam
 | Activity metrics and race polyline | Strava matched activity | No dynamic metric/polyline | No | Retain verified historical result; do not synthesize new progress |
 | Race-window active state and completed count | Strava race status, validated with races | Static inactive/0/50, or last-known-good while retainable | No | Mark stale; stop treating it as current after retention expires |
 | Runner observed location | Designated live-location provider, **TBD** | Last-known-good within configured retention; then static runner presentation | Only one explicitly assigned authority per entity/field | Show as stale with an “as of” time if product approves; never imply current location |
-| RV observed location | Designated vehicle/logistics provider, **TBD** | Last-known-good within configured retention; then planned/static RV state | Only one explicitly assigned authority per entity/field | Same stale rules as live location |
+| RV observed location | **HAPN (API #2)** | Last-known-good within the configured six-hour default retention ceiling; then planned/static RV state | No. HAPN owns only `vehicle:rv` observed position | Stale/unavailable input cannot erase an eligible last-known-good value; after retention expires, coordinates are removed and the static RV is used |
 | Flight observed location/status | Designated flight/logistics provider, **TBD** | Planned flight leg/static display | Only one explicitly assigned authority per entity/field | Stale observed state is labelled; planned path remains distinct |
 | Provider health/freshness | Coordinator, based on validated results and local clocks | `unavailable`/`invalid` | Providers cannot author their own UI health state | Never blocks static map or other providers |
 
@@ -330,7 +336,7 @@ requestTimeoutMs
 maximumBackoffMs
 ```
 
-No final freshness threshold is assigned to API #2 or API #3 in this document. It depends on provider cadence, product meaning, rate limits, and safety/privacy needs.
+HAPN API #2 defaults to `freshForMs = 900000` and `retainStaleForMs = 21600000`; both are bounded server-side configuration. API #3 has no freshness threshold because it remains unassigned and unimplemented.
 
 Rules:
 
@@ -380,7 +386,7 @@ No future provider is implementation-ready until all of these controls have an o
 
 - The browser calls first-party Goodwin endpoints where practical. It does not call a credentialed provider directly.
 - Existing `/strava/public/races` and `/strava/public/race-status` remain unchanged and are wrapped by the Strava adapter.
-- Future endpoint naming must be provider-neutral at the renderer boundary. A later implementation may use separate first-party endpoints or a single `/api/map/snapshot`; routing ownership under the existing cPanel/Passenger layout must be resolved before choosing either.
+- HAPN is exposed by the authoritative cPanel/Passenger application at `GET /strava/public/tracking-status`. The endpoint and renderer contract are provider-neutral; the browser never contacts HAPN directly.
 - Even if the server aggregates providers, the public response retains per-domain `source`, time, and freshness metadata so stale/fallback behavior is explicit.
 - The browser applies a decoded-size guard in addition to the server response cap, validates the public normalized schema, aborts timed-out requests, and rejects unknown schema versions.
 - Provider strings cannot select HTML, CSS selectors, DOM IDs, script/module URLs, map layer types, or arbitrary navigation targets.
@@ -404,7 +410,7 @@ Scheduler behavior:
 9. Schema-invalid and oversized results use a longer cooldown than a single network failure and are not immediately retried in a tight loop.
 10. The scheduler exposes only sanitized provider freshness to the renderer and never blocks a render awaiting all providers.
 
-API #2 and API #3 intervals remain configurable and undecided. The implementation gate requires provider rate limits, update cadence, acceptable staleness, and event-window needs.
+HAPN defaults to a configurable 120-second cadence during the Mission America race window. API #3 remains undecided and unimplemented.
 
 ## 10. Test matrix
 
@@ -504,7 +510,7 @@ API #2 and API #3 each require a provider-specific security checkpoint before me
 
 No new provider is complete solely because its happy-path marker appears on the map.
 
-## 13. Implementation sequence (future work only)
+## 13. Implementation sequence
 
 1. Introduce model types/validators and a static-to-normalized adapter with snapshot-equivalence tests.
 2. Wrap the existing two-endpoint Strava behavior in one adapter without changing endpoints, cadence, UI, or fallback behavior.
@@ -514,11 +520,11 @@ No new provider is complete solely because its happy-path marker appears on the 
 6. Validate and deploy API #2 independently before beginning API #3.
 7. Repeat the provider-specific checkpoint and isolated rollout for API #3.
 
-This sequence is descriptive only; none of it is implemented by this design task.
+Steps 1 through 6 are complete for HAPN API #2, including its isolated deployment and final production validation. API #3 remains a separate effort and must complete its own intake, provider-specific security checkpoint, tests, and isolated rollout.
 
 ## 14. Information required for each new API
 
-Before API #2 or API #3 can be designed in detail, provide:
+The following inputs are resolved for HAPN API #2. They remain the required intake checklist before API #3 or any later provider can be designed in detail:
 
 1. Provider/product name, documentation URL, production and sandbox base hostnames, and whether a test account exists.
 2. Exact map purpose: activity, runner location, RV/logistics, flight, progress, weather, or another named domain.
@@ -537,8 +543,8 @@ Before API #2 or API #3 can be designed in detail, provide:
 
 ## 15. Readiness decision
 
-**Architecture readiness: PASS for provider discovery and implementation planning.**
+**Architecture readiness: PASS for HAPN API #2 production operation and for separately gated future-provider intake.**
 
 The normalized boundary, ownership rules, failure isolation, configurable staleness model, security contract, coordinated polling model, test matrix, and performance gates are sufficient to prevent API #2 or API #3 from directly coupling to rendering or DOM logic.
 
-**Provider implementation readiness: BLOCKED pending the information in Section 14 for each provider.** No source authority, live-data freshness, public precision, request limit, or polling interval should be guessed.
+**HAPN API #2 implementation and final production acceptance: PASS / COMPLETE.** The server-side first-party projection is live and validated, the production frontend assets match the corrected controlled-candidate hashes, and the pre-race production browser acceptance passed on 2026-09-09. HAPN owns only the RV observed-location domain and remains gated by the configured race window. **API #3 may proceed only as a separate effort after completing the Section 14 intake and provider-specific security checkpoint; it remains unimplemented.**

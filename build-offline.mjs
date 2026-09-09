@@ -15,9 +15,6 @@ if (existsSync(join(root, "api"))) {
     filter: (path) => !/[/\\]strava(?:[-.]|$)/.test(path),
   });
 }
-if (existsSync(join(root, "integrations", "hapn"))) {
-  cpSync(join(root, "integrations", "hapn"), join(dist, "integrations", "hapn"), { recursive: true });
-}
 
 const pages = [
   ["source-html/index.raw.html", "index.html"],
@@ -448,8 +445,6 @@ const deployAssets = Object.fromEntries(
 
 const trackingCoreSource = readFileSync(join(root, "api", "flight-tracking-core.mjs"), "utf8")
   .replace(/\bexport\s+/g, "");
-const hapnTrackingCoreSource = readFileSync(join(root, "integrations", "hapn", "hapn-tracking-core.mjs"), "utf8")
-  .replace(/\bexport\s+/g, "");
 
 writeFileSync(
   join(dist, "server", "index.js"),
@@ -487,7 +482,6 @@ writeFileSync(
 const assets = ${JSON.stringify(deployAssets)};
 const instagramFeed = ${JSON.stringify(deployInstagramFeed)};
 ${trackingCoreSource}
-${hapnTrackingCoreSource}
 
 export default {
   async fetch(request, env) {
@@ -509,14 +503,14 @@ export default {
     }
 
     if (clean === "api/tracking-status") {
+      if (request.method !== "GET") {
+        return Response.json({ error: "method_not_allowed" }, {
+          status: 405,
+          headers: { "cache-control": "no-store", "allow": "GET" }
+        });
+      }
       const { searchParams } = new URL(request.url);
       const pinnedProgress = Number(searchParams.get("progress"));
-      let rvStatus;
-      try {
-        rvStatus = await publicHapnRvStatus({ env });
-      } catch {
-        rvStatus = unavailableHapnRvStatus(true);
-      }
       return Response.json({
         source: "mock",
         mode: "simulated",
@@ -525,8 +519,7 @@ export default {
         flightStatus: publicFlightStatus({
           now: searchParams.get("now") || new Date(),
           env
-        }),
-        rvStatus
+        })
       }, { headers: { "cache-control": "public, max-age=0, s-maxage=60, stale-while-revalidate=120" } });
     }
 

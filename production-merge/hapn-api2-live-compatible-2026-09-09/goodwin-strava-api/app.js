@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
-import { handleStravaRequest, resumeWebhookEvents } from "./lib/routes.mjs";
+import { handleStravaRequest } from "./lib/routes.mjs";
 import { requiredSecret, StravaError, tokenEncryptionKey } from "./lib/security.mjs";
 import { STRAVA_PUBLIC_ORIGIN } from "./lib/service.mjs";
 import {
@@ -21,7 +21,6 @@ const REQUIRED_STARTUP_VALUES = [
   "STRAVA_CLIENT_ID",
   "STRAVA_CLIENT_SECRET",
   "STRAVA_VERIFY_TOKEN",
-  "STRAVA_WEBHOOK_SUBSCRIPTION_ID",
   "STRAVA_ADMIN_TOKEN",
   "STRAVA_TOKEN_ENCRYPTION_KEY",
 ];
@@ -29,9 +28,6 @@ const OPTIONAL_STARTUP_VALUES = [
   "HAPN_CLIENT_ID",
   "HAPN_CLIENT_SECRET",
   "HAPN_DEVICE_IMEI",
-  "HAPN_STALE_AFTER_SECONDS",
-  "HAPN_RETENTION_SECONDS",
-  "HAPN_PUBLIC_COORDINATE_DECIMALS",
 ];
 const PRIVATE_CONFIG_VALUES = [...REQUIRED_STARTUP_VALUES, ...OPTIONAL_STARTUP_VALUES];
 const PRIVATE_CONFIG_PATH = "/home/goodfjcw/.goodwin-strava-config.json";
@@ -64,32 +60,15 @@ const MYSQL_CONNECTION_CODES = new Set([
   "PROTOCOL_CONNECTION_LOST",
   "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR",
 ]);
-const PUBLIC_HEALTH_PATHS = new Set(["/health", "/strava/health"]);
-const RETIRED_STARTUP_PATHS = new Set([
-  "/health-startup",
-  "/api/health-startup",
-  "/node-test/health-startup",
-  "/strava/health-startup",
-]);
-const HEALTH_HEADERS = {
-  "Cache-Control": "no-store",
-  "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
-  "Referrer-Policy": "no-referrer",
-  "X-Content-Type-Options": "nosniff",
-};
 
 function configuredValue(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
 function currentDate(now) {
-  if (typeof now !== "function") return new Date();
-  const value = now();
-  if (value instanceof Date) return value;
-  if (typeof value === "number" && Number.isFinite(value) && value < 1_000_000_000_000) {
-    return new Date(value * 1_000);
-  }
-  return new Date(value);
+  if (typeof now === "function") return now();
+  if (now instanceof Date) return now;
+  return new Date();
 }
 
 export function loadStartupEnvironment(processEnvironment = process.env, configPath = PRIVATE_CONFIG_PATH) {
@@ -133,13 +112,29 @@ function startupConfigurationDiagnostics(env) {
   if (typeof key === "string" && key.trim() && !/^[A-Za-z0-9+/]{43}=$/.test(key)) {
     categories.push("invalid STRAVA_TOKEN_ENCRYPTION_KEY format");
   }
-  const subscriptionId = env?.STRAVA_WEBHOOK_SUBSCRIPTION_ID;
-  if (typeof subscriptionId === "string" && subscriptionId.trim()
-    && (!/^[1-9]\d{0,15}$/.test(subscriptionId.trim())
-      || !Number.isSafeInteger(Number(subscriptionId.trim())))) {
-    categories.push("invalid STRAVA_WEBHOOK_SUBSCRIPTION_ID format");
-  }
   return categories;
+}
+
+function decodedBase64ByteCount(value) {
+  const match = /^([A-Za-z0-9+/]*)(={0,2})$/.exec(value);
+  if (!match) return null;
+  const [, payload, padding] = match;
+  const remainder = payload.length % 4;
+  if (remainder === 1) return null;
+  if (padding.length > 0 && (payload.length + padding.length) % 4 !== 0) return null;
+  try {
+    const decoded = Buffer.from(value, "base64");
+    const canonicalPayload = decoded.toString("base64").replace(/=+$/, "");
+    return canonicalPayload === payload ? decoded.length : null;
+  } catch {
+    return null;
+  }
+}
+
+function addEncryptionKeyFailureDetails(state, key) {
+  state.encryptionKeyChars = key.length;
+  state.encryptionKeyDecodedBytes = decodedBase64ByteCount(key);
+  state.encryptionKeyEndsWithPadding = key.endsWith("=");
 }
 
 function sanitizeStartupMessage(error, env) {
@@ -198,31 +193,31 @@ function waitForServer(server) {
   });
 }
 
-function requestPath(rawUrl) {
-  return new URL(rawUrl || "/", "http://passenger.local").pathname.replace(/\/+$/, "") || "/";
+function startupState() {
+  return {
+    server: "running",
+    configLoaded: false,
+    mysqlModuleLoaded: false,
+    mysqlPoolCreated: false,
+    databaseReachable: false,
+    stravaConfigValid: false,
+    startupErrorCategory: "initializing",
+  };
 }
 
-function publicHealthPath(rawUrl) {
-  return PUBLIC_HEALTH_PATHS.has(requestPath(rawUrl));
+function startupPath(rawUrl) {
+  const path = new URL(rawUrl || "/", "http://passenger.local").pathname.replace(/\/+$/, "") || "/";
+  return path === "/health-startup"
+    || path === "/api/health-startup"
+    || path === "/node-test/health-startup"
+    || path === "/strava/health-startup";
 }
 
-function retiredStartupPath(rawUrl) {
-  return RETIRED_STARTUP_PATHS.has(requestPath(rawUrl));
-}
-
-function writeJson(outgoing, statusCode, body) {
-  outgoing.statusCode = statusCode;
+function writeStartupHealth(outgoing, state) {
+  outgoing.statusCode = 200;
   outgoing.setHeader("Content-Type", "application/json; charset=utf-8");
-  for (const [name, value] of Object.entries(HEALTH_HEADERS)) outgoing.setHeader(name, value);
-  outgoing.end(JSON.stringify(body));
-}
-
-function writePublicHealth(outgoing, healthy) {
-  writeJson(outgoing, healthy ? 200 : 503, { status: healthy ? "ok" : "unavailable" });
-}
-
-function writeRetiredStartupNotFound(outgoing) {
-  writeJson(outgoing, 404, { error: "not_found" });
+  outgoing.setHeader("Cache-Control", "no-store");
+  outgoing.end(JSON.stringify(state));
 }
 
 function writeStartupUnavailable(outgoing) {
@@ -232,17 +227,13 @@ function writeStartupUnavailable(outgoing) {
   outgoing.end(JSON.stringify({ error: "strava_unavailable" }));
 }
 
-function startupListener(activeListener) {
+function startupListener(state, activeListener) {
   return (incoming, outgoing) => {
-    if (retiredStartupPath(incoming.url)) {
-      writeRetiredStartupNotFound(outgoing);
+    if (incoming.method === "GET" && startupPath(incoming.url)) {
+      writeStartupHealth(outgoing, state);
       return;
     }
     const listener = activeListener();
-    if (incoming.method === "GET" && publicHealthPath(incoming.url) && !listener) {
-      writePublicHealth(outgoing, false);
-      return;
-    }
     if (!listener) {
       writeStartupUnavailable(outgoing);
       return;
@@ -255,10 +246,6 @@ async function validateStravaConfiguration(env) {
   requiredSecret(env, "STRAVA_CLIENT_ID");
   requiredSecret(env, "STRAVA_CLIENT_SECRET");
   requiredSecret(env, "STRAVA_VERIFY_TOKEN", 32);
-  const subscriptionId = requiredSecret(env, "STRAVA_WEBHOOK_SUBSCRIPTION_ID").trim();
-  if (!/^[1-9]\d{0,15}$/.test(subscriptionId) || !Number.isSafeInteger(Number(subscriptionId))) {
-    throw new StravaError("strava_not_configured");
-  }
   requiredSecret(env, "STRAVA_ADMIN_TOKEN", 32);
   await tokenEncryptionKey(env);
 }
@@ -309,57 +296,40 @@ function reservedPublicRoute(path) {
 
 export function createApplication({
   env = process.env, store, pool, fetchImpl = fetch, now, logger = console,
-  scheduleBackground = (task, delay = 0) => {
-    const run = () => void task();
-    return delay > 0 ? setTimeout(run, delay) : setImmediate(run);
-  },
+  scheduleBackground = (task) => setImmediate(() => void task()),
 } = {}) {
   if (!store) throw new StravaError("strava_storage_unavailable");
   const databasePool = pool || null;
   const runtimeStore = store;
   const runtime = { ...env, STRAVA_STORE: runtimeStore };
-  const backgroundDependencies = { fetchImpl, now, logger, scheduleBackground };
   const hapnRateLimiter = createHapnPublicRateLimiter();
-
-  scheduleBackground(async () => {
-    try {
-      await resumeWebhookEvents(runtime, backgroundDependencies);
-    } catch {
-      try { logger.info("strava_webhook_recovery_failed"); } catch { /* Logging is best effort. */ }
-    }
-  });
 
   const listener = async (incoming, outgoing) => {
     try {
-      if (incoming.method === "GET" && publicHealthPath(incoming.url)) {
-        try {
-          await runtimeStore.ping();
-          await writeResponse(new Response(JSON.stringify({ status: "ok" }), {
-            headers: { ...HEALTH_HEADERS, "Content-Type": "application/json; charset=utf-8" },
-          }), outgoing);
-        } catch {
-          await writeResponse(new Response(JSON.stringify({ status: "unavailable" }), {
-            status: 503,
-            headers: { ...HEALTH_HEADERS, "Content-Type": "application/json; charset=utf-8" },
-          }), outgoing);
-        }
-        return;
-      }
       const request = fetchRequest(incoming);
       const path = new URL(request.url).pathname.replace(/\/+$/, "");
-      const clientAddress = incoming.socket?.remoteAddress || "unknown";
-      const response = path === HAPN_PUBLIC_PATH
-        ? await handleHapnPublicRequest(request, runtime, {
+      let response;
+      if (path === "/api/health") {
+        try {
+          await runtimeStore.ping();
+          response = Response.json({ status: "ok", database: "ok" }, { headers: { "Cache-Control": "no-store" } });
+        } catch {
+          response = Response.json({ status: "unavailable" }, { status: 503, headers: { "Cache-Control": "no-store" } });
+        }
+      } else if (path === HAPN_PUBLIC_PATH) {
+        response = await handleHapnPublicRequest(request, runtime, {
           fetchImpl,
           now: () => currentDate(now),
           rateLimiter: hapnRateLimiter,
-          clientAddress,
-        })
-        : reservedPublicRoute(path) || await handleStravaRequest(
+          clientAddress: incoming.socket?.remoteAddress || "unknown",
+        });
+      } else {
+        response = reservedPublicRoute(path) || await handleStravaRequest(
           request,
           runtime,
-          { fetchImpl, now, logger, scheduleBackground, clientAddress },
+          { fetchImpl, now, logger, scheduleBackground },
         );
+      }
       await writeResponse(response, outgoing);
     } catch {
       if (!outgoing.headersSent) {
@@ -396,9 +366,10 @@ export function startInitializedApplication(options = {}) {
 }
 
 export async function startApplication(processEnvironment = process.env) {
+  const state = startupState();
   let application = null;
   let databasePool = null;
-  const server = createServer(startupListener(() => application?.listener));
+  const server = createServer(startupListener(state, () => application?.listener));
   server.headersTimeout = 10_000;
   server.requestTimeout = 15_000;
   server.keepAliveTimeout = 5_000;
@@ -422,22 +393,25 @@ export async function startApplication(processEnvironment = process.env) {
 
   const recordCategories = (categories, env) => {
     if (categories.length === 0) return;
+    if (state.startupErrorCategory === "initializing") state.startupErrorCategory = categories[0];
     writeStartupDiagnostics({ startupCategories: categories }, env);
   };
 
   const loaded = loadStartupEnvironment(processEnvironment);
   const { env } = loaded;
-  const configLoaded = loaded.diagnosticCategories.length === 0;
+  state.configLoaded = loaded.diagnosticCategories.length === 0;
   recordCategories(loaded.diagnosticCategories, env);
 
   const configurationCategories = startupConfigurationDiagnostics(env);
+  if (configurationCategories.includes("invalid STRAVA_TOKEN_ENCRYPTION_KEY format")) {
+    addEncryptionKeyFailureDetails(state, env.STRAVA_TOKEN_ENCRYPTION_KEY);
+  }
   recordCategories(configurationCategories, env);
 
   const stravaCategories = configurationCategories.filter((category) => category.includes("STRAVA_"));
-  let stravaConfigValid = false;
   try {
     await validateStravaConfiguration(env);
-    stravaConfigValid = true;
+    state.stravaConfigValid = true;
   } catch {
     if (stravaCategories.length === 0) recordCategories(["invalid Strava configuration"], env);
   }
@@ -445,11 +419,13 @@ export async function startApplication(processEnvironment = process.env) {
   let storeModule;
   try {
     storeModule = await import("./lib/mysql-store.mjs");
+    state.mysqlModuleLoaded = true;
   } catch (error) {
     const moduleError = error?.code === "ERR_MODULE_NOT_FOUND" && /mysql2/i.test(error?.message || "")
       ? { startupCategory: "mysql2 module load failure" }
       : error;
     const categories = startupDiagnostics(moduleError, env);
+    state.startupErrorCategory = categories[0];
     writeStartupDiagnostics({ startupCategories: categories }, env);
     return;
   }
@@ -459,8 +435,10 @@ export async function startApplication(processEnvironment = process.env) {
 
   try {
     databasePool = storeModule.createMySqlPool(env);
+    state.mysqlPoolCreated = true;
   } catch {
     const categories = ["MySQL connection initialization failure"];
+    state.startupErrorCategory = categories[0];
     writeStartupDiagnostics({ startupCategories: categories }, env);
     return;
   }
@@ -469,18 +447,22 @@ export async function startApplication(processEnvironment = process.env) {
   try {
     runtimeStore = storeModule.createMySqlStravaStore(databasePool);
     await runtimeStore.ping();
+    state.databaseReachable = true;
   } catch (error) {
     const categories = startupDiagnostics(error, env);
+    state.startupErrorCategory = categories[0];
     writeStartupDiagnostics({ startupCategories: categories }, env);
     return;
   }
 
-  if (!configLoaded || configurationCategories.length > 0 || !stravaConfigValid) return;
+  if (!state.configLoaded || configurationCategories.length > 0 || !state.stravaConfigValid) return;
 
   try {
     application = createApplication({ env, store: runtimeStore, pool: databasePool });
+    state.startupErrorCategory = "none";
   } catch (error) {
     const categories = startupDiagnostics(error, env);
+    state.startupErrorCategory = categories[0];
     writeStartupDiagnostics({ startupCategories: categories }, env);
   }
 }

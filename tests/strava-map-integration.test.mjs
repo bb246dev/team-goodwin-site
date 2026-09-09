@@ -241,9 +241,12 @@ test("the map and both Strava requests remain behind the near-viewport lazy-load
   assert.ok(lazyStart > 0 && observer > lazyStart && observerLoad > observer && invocation > observerLoad);
   assert.match(html.slice(lazyStart, invocation), /rootMargin: "300px 0px"/);
   assert.ok(html.indexOf('import("/assets/strava-race-map.mjs")') < lazyStart);
+  assert.doesNotMatch(html, /["']\/api\/tracking-status["']/);
+  assert.doesNotMatch(html, /window\.missionMapTracking/);
 
   const moduleSource = readFileSync(new URL("../assets/strava-race-map.mjs", import.meta.url), "utf8");
   for (const endpoint of [PUBLIC_RACES_ENDPOINT, PUBLIC_RACE_STATUS_ENDPOINT]) assert.ok(moduleSource.includes(endpoint));
+  assert.ok(moduleSource.includes("/strava/public/tracking-status"));
   for (const privateRoute of ["/strava/status", "/strava/candidates", "/strava/connect", "/strava/webhook"]) {
     assert.ok(!moduleSource.includes(privateRoute));
   }

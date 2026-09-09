@@ -205,6 +205,9 @@ test("private config fills only missing environment values from its allowlist", 
     STRAVA_WEBHOOK_SUBSCRIPTION_ID: "123",
     STRAVA_ADMIN_TOKEN: "file-admin-token-0000000000000000",
     STRAVA_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 9).toString("base64"),
+    HAPN_CLIENT_ID: "file-hapn-client-id",
+    HAPN_CLIENT_SECRET: "file-hapn-client-secret",
+    HAPN_DEVICE_IMEI: "868239050345326",
     UNRELATED_VALUE: "must-not-load",
   };
   writeFileSync(configPath, JSON.stringify(config), { mode: 0o600 });
@@ -214,8 +217,20 @@ test("private config fills only missing environment values from its allowlist", 
   assert.equal(loaded.env.MYSQL_HOST, "environment-host");
   assert.equal(loaded.env.MYSQL_PORT, "3306");
   assert.equal(loaded.env.STRAVA_CLIENT_SECRET, "file-client-secret");
+  assert.equal(loaded.env.HAPN_CLIENT_ID, "file-hapn-client-id");
+  assert.equal(loaded.env.HAPN_CLIENT_SECRET, "file-hapn-client-secret");
+  assert.equal(loaded.env.HAPN_DEVICE_IMEI, "868239050345326");
   assert.equal(loaded.env.UNRELATED_VALUE, undefined);
   assert.deepEqual(original, { MYSQL_HOST: "environment-host", MYSQL_PORT: "" });
+});
+
+test("private config rejects a numeric HAPN device identifier as malformed", (t) => {
+  const fixture = realpathSync(mkdtempSync(join(tmpdir(), "goodwin-hapn-config-")));
+  t.after(() => rmSync(fixture, { recursive: true, force: true }));
+  const configPath = join(fixture, ".goodwin-strava-config.json");
+  writeFileSync(configPath, JSON.stringify({ HAPN_DEVICE_IMEI: 868239050345326 }), { mode: 0o600 });
+  const loaded = loadStartupEnvironment(completeEnvironment(), configPath);
+  assert.deepEqual(loaded.diagnosticCategories, ["private config file malformed"]);
 });
 
 test("private config failures return fixed diagnostics without paths or contents", (t) => {
