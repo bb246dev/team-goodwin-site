@@ -1,0 +1,26 @@
+.partner-logo-item:has(> a[aria-label="Visit Spyroll Studios"]) {
+  width: 100%;
+}
+
+.partner-logo-item a[aria-label="Visit Spyroll Studios"] {
+  width: min(143.042775px, 85.144509%);
+}
+
+.partner-logo-item a[aria-label="Visit Spyroll Studios"] img {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 430px) {
+  .partner-logo-item a[aria-label="Visit Spyroll Studios"] {
+    width: min(78.332948px, 85.144509%);
+  }
+}
+
+@media (max-width: 760px) {
+  body.has-ambient-scroll .partner-logo-item a[aria-label="Visit Spyroll Studios"] {
+    width: min(112.390751px, 85.144509%);
+  }
+}
