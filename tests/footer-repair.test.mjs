@@ -43,12 +43,13 @@ test("malformed production footer fails closed", () => {
   assert.throws(() => repairFooter(malformed), /footer_group_count/);
 });
 
-test("mobile footer uses two social columns above a full-width two-column navigation", () => {
+test("mobile footer places full-width navigation above two social columns with the approved divider", () => {
   assert.match(footerCss, /@media \(max-width: 640px\)/);
   assert.match(footerCss, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
-  assert.match(footerCss, /nth-child\(2\)[\s\S]*?grid-column: 1;\s*grid-row: 1;/);
-  assert.match(footerCss, /nth-child\(3\)[\s\S]*?grid-column: 2;\s*grid-row: 1;/);
-  assert.match(footerCss, /link-group:first-child[\s\S]*?grid-column: 1 \/ -1;\s*grid-row: 2;/);
+  assert.match(footerCss, /nth-child\(2\)[\s\S]*?grid-column: 1;\s*grid-row: 2;\s*margin-top: 32px;/);
+  assert.match(footerCss, /nth-child\(3\)[\s\S]*?grid-column: 2;\s*grid-row: 2;\s*margin-top: 32px;/);
+  assert.match(footerCss, /link-group:first-child[\s\S]*?grid-column: 1 \/ -1;\s*grid-row: 1;[\s\S]*?border-top: 0;/);
+  assert.match(footerCss, /link-group:first-child::after[\s\S]*?right: 0;\s*bottom: -16px;\s*left: 0;\s*border-top: 1px solid rgba\(255, 255, 255, 0\.18\);/);
   assert.match(footerCss, /\.footer-social-icon,[\s\S]*?width: 20px;\s*height: 20px;/);
   assert.match(footerCss, /\.footer-social-link,[\s\S]*?width: 44px;\s*height: 44px;/);
   assert.match(footerCss, /\.footer-text-links li:first-child a,[\s\S]*?white-space: nowrap;/);
