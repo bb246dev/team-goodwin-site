@@ -42,7 +42,7 @@ function statusPayload(overrides = {}) {
   return {
     active: false,
     raceWindowId: "ggma-2026",
-    raceWindowStart: "2026-10-09T00:00:00-04:00",
+    raceWindowStart: "2026-10-09T09:00:00-04:00",
     raceWindowEnd: "2026-11-01T23:59:59-05:00",
     completedRaces: 0,
     totalRaces: 50,
@@ -117,7 +117,7 @@ test("raceId is preferred for the static-geometry join, with raceNumber as fallb
 test("a completed race receives only its public activity and a missing polyline remains renderable", async () => {
   const activity = {
     stravaActivityId: "987654321",
-    startTime: "2026-10-09T12:00:00.000Z",
+    startTime: "2026-10-09T14:00:00.000Z",
     distanceMeters: 42_195.2,
     movingTimeSeconds: 10_800,
     elapsedTimeSeconds: 11_000,

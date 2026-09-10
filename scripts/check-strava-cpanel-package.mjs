@@ -76,7 +76,7 @@ for (const table of [
 ]) {
   if (!source.includes(table)) throw new Error(`Deployment package is missing ${table}`);
 }
-for (const boundary of ["2026-10-09T00:00:00-04:00", "2026-11-01T23:59:59-05:00"]) {
+for (const boundary of ["2026-10-09T09:00:00-04:00", "2026-11-01T23:59:59-05:00"]) {
   if (!source.includes(boundary)) throw new Error(`Deployment package is missing operational boundary: ${boundary}`);
 }
 for (const statusField of ["raceWindowActive", "raceWindowId", "raceWindowStart", "raceWindowEnd"]) {

@@ -140,7 +140,7 @@ test("app.js serves generic health plus visible and Passenger-stripped mount pat
     assert.equal(status.connected, false);
     assert.equal(typeof status.raceWindowActive, "boolean");
     assert.equal(status.raceWindowId, "ggma-2026");
-    assert.equal(status.raceWindowStart, "2026-10-09T00:00:00-04:00");
+    assert.equal(status.raceWindowStart, "2026-10-09T09:00:00-04:00");
     assert.equal(status.raceWindowEnd, "2026-11-01T23:59:59-05:00");
   }
   await assertGenericHealth(base, "/strava/health", 200, { status: "ok" });
@@ -191,8 +191,8 @@ test("candidate administration rejects unauthenticated cPanel mount requests", a
     activity_name: "Sensitive test candidate",
     activity_type: "Run",
     sport_type: "Run",
-    start_date_utc: "2026-10-09T12:00:00.000Z",
-    start_date_local: "2026-10-09T08:00:00",
+    start_date_utc: "2026-10-09T13:00:00.000Z",
+    start_date_local: "2026-10-09T09:00:00",
     timezone: "America/New_York",
     distance_meters: 42195,
     moving_time_seconds: 14400,

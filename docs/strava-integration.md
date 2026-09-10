@@ -91,7 +91,7 @@ destructive changes to existing application data.
 ## Activity-processing window
 
 The only configured operational window is `ggma-2026`, from
-`2026-10-09T00:00:00-04:00` through `2026-11-01T23:59:59-05:00`, inclusive.
+`2026-10-09T09:00:00-04:00` through `2026-11-01T23:59:59-05:00`, inclusive.
 The offsets are intentional because New York changes from EDT to EST on November
 1. Valid webhook POSTs are acknowledged outside the window, but they cannot begin
 a Strava activity-detail fetch or ingestion. There is no post-window grace

@@ -22,7 +22,7 @@ const activeRaceStatus = {
   source: "api",
   active: true,
   raceWindowId: "ggma-2026",
-  raceWindowStart: "2026-10-09T00:00:00-04:00",
+  raceWindowStart: "2026-10-09T09:00:00-04:00",
   raceWindowEnd: "2026-11-01T23:59:59-05:00",
 };
 
@@ -180,7 +180,7 @@ test("failure backoff is capped, jittered and enters cooldown after repeated fai
 });
 
 test("HAPN polling is bounded to the Mission America race window", () => {
-  const start = Date.parse("2026-10-09T00:00:00-04:00");
+  const start = Date.parse("2026-10-09T09:00:00-04:00");
   const end = Date.parse("2026-11-01T23:59:59-05:00");
   assert.equal(inMissionRaceWindow(start - 1), false);
   assert.equal(inMissionRaceWindow(start), true);

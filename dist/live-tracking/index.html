@@ -4762,7 +4762,10 @@
     let missionMapTopology = null;
     let missionProviderCoordinator = null;
     let missionMapLoadPromise = null;
-    const startDate = new Date("2026-10-09T06:00:00-04:00");
+    const MISSION_WINDOW_START = "2026-10-09T09:00:00-04:00";
+    const MISSION_WINDOW_END = "2026-11-01T23:59:59-05:00";
+    const startDate = new Date(MISSION_WINDOW_START);
+    const endDate = new Date(MISSION_WINDOW_END);
 
     function missionMapProgress() {
       const suppliedProgress = Number(window.missionTrackingProgress);
@@ -4820,16 +4823,30 @@
       { from: "MIA", to: "ATL" }
     ];
 
-    function updateCountdown() {
-      const remaining = Math.max(0, startDate.getTime() - Date.now());
-      const days = Math.floor(remaining / 86400000);
-      const hours = Math.floor((remaining % 86400000) / 3600000);
-      const minutes = Math.floor((remaining % 3600000) / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
+    function missionWindowStateAt(nowMs) {
+      if (nowMs < startDate.getTime()) return "countdown";
+      if (nowMs <= endDate.getTime()) return "active";
+      return "complete";
+    }
+
+    function updateCountdown(nowMs = Date.now()) {
+      const state = missionWindowStateAt(nowMs);
+      const displayedMilliseconds = state === "countdown"
+        ? startDate.getTime() - nowMs
+        : Math.min(nowMs, endDate.getTime()) - startDate.getTime();
+      const days = Math.floor(displayedMilliseconds / 86400000);
+      const hours = Math.floor((displayedMilliseconds % 86400000) / 3600000);
+      const minutes = Math.floor((displayedMilliseconds % 3600000) / 60000);
+      const seconds = Math.floor((displayedMilliseconds % 60000) / 1000);
       document.getElementById("countdown-days").textContent = String(days).padStart(2, "0");
       document.getElementById("countdown-hours").textContent = String(hours).padStart(2, "0");
       document.getElementById("countdown-minutes").textContent = String(minutes).padStart(2, "0");
       document.getElementById("countdown-seconds").textContent = String(seconds).padStart(2, "0");
+      const clock = document.querySelector("[data-countdown-clock]");
+      const heading = clock?.closest(".tracker-panel")?.querySelector(".tracker-panel-heading");
+      if (heading) heading.textContent = state === "countdown" ? "Countdown to race day" : state === "active" ? "RACE IS ON" : "MISSION COMPLETE";
+      if (clock) clock.dataset.missionClockState = state;
+      return state;
     }
 
     const rsvpMobileMedia = window.matchMedia("(max-width: 430px)");
@@ -4910,10 +4927,18 @@
       container.innerHTML = routeStops.map(getRouteStopMarkup).join("");
     }
 
-    updateCountdown();
+    const initialMissionClockState = updateCountdown();
     renderRunItinerary();
     rsvpMobileMedia.addEventListener("change", renderRunItinerary);
-    window.setInterval(updateCountdown, 1000);
+    let missionClockTimer = null;
+    if (initialMissionClockState !== "complete") {
+      missionClockTimer = window.setInterval(() => {
+        if (updateCountdown() === "complete") {
+          window.clearInterval(missionClockTimer);
+          missionClockTimer = null;
+        }
+      }, 1000);
+    }
 
     const stateAbbr = {
       Alabama: "AL", Alaska: "AK", Arizona: "AZ", Arkansas: "AR", California: "CA", Colorado: "CO", Connecticut: "CT", Delaware: "DE", Florida: "FL", Georgia: "GA", Hawaii: "HI", Idaho: "ID", Illinois: "IL", Indiana: "IN", Iowa: "IA", Kansas: "KS", Kentucky: "KY", Louisiana: "LA", Maine: "ME", Maryland: "MD", Massachusetts: "MA", Michigan: "MI", Minnesota: "MN", Mississippi: "MS", Missouri: "MO", Montana: "MT", Nebraska: "NE", Nevada: "NV", "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY", "North Carolina": "NC", "North Dakota": "ND", Ohio: "OH", Oklahoma: "OK", Oregon: "OR", Pennsylvania: "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD", Tennessee: "TN", Texas: "TX", Utah: "UT", Vermont: "VT", Virginia: "VA", Washington: "WA", "West Virginia": "WV", Wisconsin: "WI", Wyoming: "WY"

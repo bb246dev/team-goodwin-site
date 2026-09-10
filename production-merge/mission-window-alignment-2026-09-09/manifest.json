@@ -1,0 +1,31 @@
+{
+  "release": "mission-window-alignment-2026-09-09",
+  "baseCommit": "0061af00c9d5ba9dc82954077a279be84438f78d",
+  "missionWindow": {
+    "start": "2026-10-09T09:00:00-04:00",
+    "end": "2026-11-01T23:59:59-05:00"
+  },
+  "files": [
+    {
+      "path": "public_html/assets/tracker-base.js",
+      "beforeSha256": "42ff22f91263e81529a09d2bef6f61f014eb96492ae9366a65c32654bffa6b98",
+      "beforeBytes": 83592,
+      "afterSha256": "3acba0931937b41d78fd4cca318772c96f3beead5bfceb0836738ff17fefcc4a",
+      "afterBytes": 84793
+    },
+    {
+      "path": "public_html/assets/strava-race-map.mjs",
+      "beforeSha256": "4d8b6e1b33b701651fa5219e5a12736dee5d0605ac7810fa8a1d1eb427629dae",
+      "beforeBytes": 15109,
+      "afterSha256": "7a0d5f7f6f4ff4a733670df6c2c1a4b0daa0a55d9c6f4972b45ef48ad685b31d",
+      "afterBytes": 15109
+    },
+    {
+      "path": "goodwin-strava-api/lib/race-window.mjs",
+      "beforeSha256": "977a51b7bd30de3830335ab3aee219fb63d6aa3f51cc994b109a4178e07d70e6",
+      "beforeBytes": 2296,
+      "afterSha256": "43144d0e7d0bdca9e62b1b92ee89ad89695dad13244f44e7741634d7657978d0",
+      "afterBytes": 2296
+    }
+  ]
+}
