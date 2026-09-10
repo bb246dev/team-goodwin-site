@@ -16,7 +16,7 @@ const ASSIGNMENT_PATTERN = /["'`]?\b([A-Za-z0-9_-]*(?:(?:password|passwd|secret|
 const DOTENV_ASSIGNMENT_PATTERN = /^[ \t]*(?:export[ \t]+)?([A-Z_][A-Z0-9_]*)[ \t]*=[ \t]*([^\r\n]{12,})$/gm;
 const CREDENTIAL_KEY_PATTERN = /(?:password|passwd|secret|token|api_?key|access_?key|private_?key|credential)/i;
 const AUTHORIZATION_PATTERN = /["'`]?\bauthorization\b["'`]?\s*[:=]\s*["'`]?(?:bearer|basic)\s+([A-Za-z0-9._~+\/=:-]{12,})/gi;
-const PLACEHOLDER_PATTERN = /(?:^|[^a-z0-9])(?:test|example|placeholder|replace|changeme|your|dummy|redacted|not-a-real)(?:$|[^a-z0-9])/i;
+const EXPLICIT_PLACEHOLDER_PATTERN = /^(?:test|example|placeholder|replace|changeme|your|dummy|redacted|not-a-real)(?:$|[-_:])/i;
 const SAFE_BINARY_EXTENSIONS = new Set([".avif", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".webp", ".woff", ".woff2"]);
 const FORBIDDEN_BINARY_EXTENSIONS = new Set([".7z", ".class", ".db", ".dll", ".dylib", ".exe", ".gz", ".jar", ".rar", ".so", ".sqlite", ".tar", ".wasm", ".zip"]);
 
@@ -34,14 +34,17 @@ function isCredentialFreeServiceUrl(value) {
       return /^(?:https:\/\/|\/|template-value\/)/i.test(structuralUrl)
         && structuralUrl.split("/").every((segment) => segment.length <= 24 || !/(?:prod|live|secret|token|key|credential|signature|signed|auth)/i.test(segment));
     }
+    if (/^(?:\.{0,2}\/)?[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)*$/.test(value)) return true;
     const absoluteHttps = /^https:\/\//i.test(value);
     const originRelative = /^\/(?!\/)/.test(value);
     if (!absoluteHttps && !originRelative) return false;
     const url = new URL(value, "https://goodwingoodge.com");
     if (url.protocol !== "https:" || url.username || url.password || url.hash) return false;
-    const approvedPublicQuery = /^(?:www\.)?instagram\.com$/i.test(url.hostname)
-      && [...url.searchParams.keys()].every((key) => key === "igsi");
-    if (url.search && !approvedPublicQuery) return false;
+    const publicQueryKeys = new Set(["igsi", "si", "sponsor", "utm_campaign", "utm_content", "utm_medium", "utm_source", "utm_term", "v"]);
+    for (const [key, queryValue] of url.searchParams) {
+      if (CREDENTIAL_KEY_PATTERN.test(key) || /^(?:auth|expires?|policy|sig|signature|signed)$/i.test(key)) return false;
+      if (queryValue.length > 24 && !publicQueryKeys.has(key.toLowerCase())) return false;
+    }
     const approvedPublicDocument = url.hostname === "docs.google.com"
       && /^\/spreadsheets\/d\/[A-Za-z0-9_-]{20,80}\/gviz\/tq$/.test(url.pathname);
     if (!approvedPublicDocument && url.pathname.split("/").some((segment) => segment.length > 24)) return false;
@@ -63,18 +66,18 @@ export function secretFindings(text) {
       if (!isCredentialFreeServiceUrl(value)) findings.push("credential assignment");
       continue;
     }
-    if (!PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
+    if (!EXPLICIT_PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
   }
   for (const match of text.matchAll(DOTENV_ASSIGNMENT_PATTERN)) {
     const key = match[1];
-    const value = match[2].trim();
+    const value = match[2].replace(/\s+#.*$/, "").trim();
     if (!CREDENTIAL_KEY_PATTERN.test(key)) continue;
     if (/(?:url|uri|endpoint)$/i.test(key)) {
       if (!isCredentialFreeServiceUrl(value)) findings.push("credential assignment");
-    } else if (!PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
+    } else if (!EXPLICIT_PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
   }
   for (const match of text.matchAll(AUTHORIZATION_PATTERN)) {
-    if (!PLACEHOLDER_PATTERN.test(match[1])) findings.push("authorization credential");
+    if (!EXPLICIT_PLACEHOLDER_PATTERN.test(match[1])) findings.push("authorization credential");
   }
   return [...new Set(findings)];
 }

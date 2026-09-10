@@ -166,6 +166,9 @@ test("secret detection catches definite credentials but permits explicit example
     "STRAVA_TOKEN=abcdefghijklmnopqrstuvwxyz123456",
     "DATABASE_PASSWORD=correct-horse-battery-staple!",
     "API_TOKEN=abc$def&ghi?jklmnop",
+    "DATABASE_PASSWORD=actualsupersecretvalue123! # example only?",
+    "API_TOKEN=actualcredentialvalue123$ # test migration",
+    "API_KEY=actual-example-value-abcdefghijklmnop",
     'TOKEN_URL="https://api.example.com/callback?token=prod-supersecret123456"',
     "TOKEN_URL=https://api.example.com/callback?token=prod-supersecret123456",
     'API_ENDPOINT="https://api.example.com/key/prod-supersecret123456"',
@@ -179,6 +182,9 @@ test("secret detection catches definite credentials but permits explicit example
   assert.deepEqual(secretFindings('const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";'), []);
   assert.deepEqual(secretFindings('const instagramProfileUrl = "https://www.instagram.com/williamgoodge?igsi=public-profile-id";'), []);
   assert.deepEqual(secretFindings('const PUBLIC_RACES_ENDPOINT = "/strava/public/races";'), []);
+  assert.deepEqual(secretFindings('const videoUrl = "https://www.youtube.com/watch?v=abc123def45&si=public-share-id";'), []);
+  assert.deepEqual(secretFindings('const iconUrl = "marker-icon.png";'), []);
+  assert.deepEqual(secretFindings('const packageUrl = "https://github.com/mysqljs/sql-escaper?sponsor=1";'), []);
   assert.deepEqual(secretFindings('const STRAVA_CALLBACK_URL = `${STRAVA_PUBLIC_ORIGIN}/strava/callback`;'), []);
   assert.deepEqual(secretFindings('const HAPN_API_BASE_URL = `${HAPN_API_ORIGIN}/v1`;'), []);
   assert.deepEqual(secretFindings('const url = `${HAPN_API_BASE_URL}/devices/${encodeURIComponent(config.imei)}/status`;'), []);
