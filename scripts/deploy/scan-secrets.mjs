@@ -25,8 +25,8 @@ export function secretFindings(text) {
   }
   for (const match of text.matchAll(ASSIGNMENT_PATTERN)) {
     const key = match[1];
-    if (/(?:url|uri|endpoint)$/i.test(key)) continue;
     const value = match.slice(2).find(Boolean) || "";
+    if (/(?:url|uri|endpoint)$/i.test(key) && /^https:\/\/[^\s@]+$/i.test(value)) continue;
     if (!PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
   }
   for (const match of text.matchAll(AUTHORIZATION_PATTERN)) {

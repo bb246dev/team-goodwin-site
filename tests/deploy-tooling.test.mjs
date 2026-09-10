@@ -165,6 +165,7 @@ test("secret detection catches definite credentials but permits explicit example
   assert.deepEqual(secretFindings("Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456"), ["authorization credential"]);
   assert.deepEqual(secretFindings("{\"Authorization\":\"Bearer abcdefghijklmnopqrstuvwxyz123456\"}"), ["authorization credential"]);
   assert.deepEqual(secretFindings('const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";'), []);
+  assert.deepEqual(secretFindings("TOKEN_URL='prod-secret-value-abcdefghijklmnop'"), ["credential assignment"]);
   assert.deepEqual(secretFindings("const password = requiredSecret(env, 'DATABASE_PASSWORD'); const token = randomSecret();"), []);
 });
 
