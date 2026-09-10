@@ -164,15 +164,24 @@ test("secret detection catches definite credentials but permits explicit example
     "HAPN_API_KEY=abcdefghijklmnopqrstuv123456",
     "DATABASE_PASSWORD=S3cur3P4ssw0rdValue",
     "STRAVA_TOKEN=abcdefghijklmnopqrstuvwxyz123456",
+    "DATABASE_PASSWORD=correct-horse-battery-staple!",
+    "API_TOKEN=abc$def&ghi?jklmnop",
     'TOKEN_URL="https://api.example.com/callback?token=prod-supersecret123456"',
+    "TOKEN_URL=https://api.example.com/callback?token=prod-supersecret123456",
     'API_ENDPOINT="https://api.example.com/key/prod-supersecret123456"',
     'CREDENTIAL_URI="https://api.example.com/?api_key=abcdefghijklmnopqrstuv"',
+    'SIGNED_URL="https://cdn.example.com/file?signature=abcdefghijklmnopqrstuvwxyz123456"',
+    'TOKEN_URL="https://api.example.com/callback?sig=abcdefghijklmnopqrstuvwxyz123456"',
+    'API_ENDPOINT="https://api.example.com/abcdefghijklmnopqrstuvwxyz1234567890"',
   ]) assert.deepEqual(secretFindings(source), ["credential assignment"]);
   assert.deepEqual(secretFindings("Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456"), ["authorization credential"]);
   assert.deepEqual(secretFindings("{\"Authorization\":\"Bearer abcdefghijklmnopqrstuvwxyz123456\"}"), ["authorization credential"]);
   assert.deepEqual(secretFindings('const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";'), []);
   assert.deepEqual(secretFindings('const instagramProfileUrl = "https://www.instagram.com/williamgoodge?igsi=public-profile-id";'), []);
   assert.deepEqual(secretFindings('const PUBLIC_RACES_ENDPOINT = "/strava/public/races";'), []);
+  assert.deepEqual(secretFindings('const STRAVA_CALLBACK_URL = `${STRAVA_PUBLIC_ORIGIN}/strava/callback`;'), []);
+  assert.deepEqual(secretFindings('const HAPN_API_BASE_URL = `${HAPN_API_ORIGIN}/v1`;'), []);
+  assert.deepEqual(secretFindings('const url = `${HAPN_API_BASE_URL}/devices/${encodeURIComponent(config.imei)}/status`;'), []);
   assert.deepEqual(secretFindings("TOKEN_URL='prod-secret-value-abcdefghijklmnop'"), ["credential assignment"]);
   assert.deepEqual(secretFindings("const password = requiredSecret(env, 'DATABASE_PASSWORD'); const token = randomSecret();"), []);
 });

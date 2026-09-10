@@ -13,7 +13,7 @@ const DEFINITE_SECRET_PATTERNS = [
   { name: "credential-bearing URL", pattern: /\b(?:ftp|https?):\/\/[A-Za-z0-9._%+-]+:[^@\s/"'{}[\],]+@/i },
 ];
 const ASSIGNMENT_PATTERN = /["'`]?\b([A-Za-z0-9_-]*(?:(?:password|passwd|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credential)[A-Za-z0-9_-]*|(?:url|uri|endpoint)))\b["'`]?\s*[:=]\s*(?:"([^"\r\n]{12,})"|'([^'\r\n]{12,})'|`([^`\r\n]{12,})`)/gi;
-const DOTENV_ASSIGNMENT_PATTERN = /^[ \t]*(?:export[ \t]+)?([A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*([A-Za-z0-9_+\/=:@%.-]{12,})[ \t]*(?:#.*)?$/gim;
+const DOTENV_ASSIGNMENT_PATTERN = /^[ \t]*(?:export[ \t]+)?([A-Z_][A-Z0-9_]*)[ \t]*=[ \t]*([^\r\n]{12,})$/gm;
 const CREDENTIAL_KEY_PATTERN = /(?:password|passwd|secret|token|api_?key|access_?key|private_?key|credential)/i;
 const AUTHORIZATION_PATTERN = /["'`]?\bauthorization\b["'`]?\s*[:=]\s*["'`]?(?:bearer|basic)\s+([A-Za-z0-9._~+\/=:-]{12,})/gi;
 const PLACEHOLDER_PATTERN = /(?:^|[^a-z0-9])(?:test|example|placeholder|replace|changeme|your|dummy|redacted|not-a-real)(?:$|[^a-z0-9])/i;
@@ -22,13 +22,30 @@ const FORBIDDEN_BINARY_EXTENSIONS = new Set([".7z", ".class", ".db", ".dll", ".d
 
 function isCredentialFreeServiceUrl(value) {
   try {
+    if (value.includes("${")) {
+      if (/[?#@]/.test(value)) return false;
+      let invalidExpression = false;
+      const structuralUrl = value.replace(/\$\{([^{}]+)\}/g, (_match, expression) => {
+        const safeExpression = /^(?:[A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)*|encodeURIComponent\([A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)*\))$/.test(expression);
+        if (!safeExpression || CREDENTIAL_KEY_PATTERN.test(expression) || /(?:signature|signed|auth)/i.test(expression)) invalidExpression = true;
+        return "template-value";
+      });
+      if (invalidExpression || structuralUrl.includes("${") || structuralUrl.includes("}")) return false;
+      return /^(?:https:\/\/|\/|template-value\/)/i.test(structuralUrl)
+        && structuralUrl.split("/").every((segment) => segment.length <= 24 || !/(?:prod|live|secret|token|key|credential|signature|signed|auth)/i.test(segment));
+    }
     const absoluteHttps = /^https:\/\//i.test(value);
     const originRelative = /^\/(?!\/)/.test(value);
     if (!absoluteHttps && !originRelative) return false;
     const url = new URL(value, "https://goodwingoodge.com");
     if (url.protocol !== "https:" || url.username || url.password || url.hash) return false;
-    if ([...url.searchParams.keys()].some((key) => CREDENTIAL_KEY_PATTERN.test(key) || /auth/i.test(key))) return false;
-    return url.pathname.split("/").every((segment) => segment.length <= 16 || !/(?:prod|live|secret|token|key|credential)/i.test(segment));
+    const approvedPublicQuery = /^(?:www\.)?instagram\.com$/i.test(url.hostname)
+      && [...url.searchParams.keys()].every((key) => key === "igsi");
+    if (url.search && !approvedPublicQuery) return false;
+    const approvedPublicDocument = url.hostname === "docs.google.com"
+      && /^\/spreadsheets\/d\/[A-Za-z0-9_-]{20,80}\/gviz\/tq$/.test(url.pathname);
+    if (!approvedPublicDocument && url.pathname.split("/").some((segment) => segment.length > 24)) return false;
+    return !/(?:prod|live|secret|credential|signature|signed)/i.test(url.pathname);
   } catch {
     return false;
   }
@@ -49,7 +66,12 @@ export function secretFindings(text) {
     if (!PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
   }
   for (const match of text.matchAll(DOTENV_ASSIGNMENT_PATTERN)) {
-    if (CREDENTIAL_KEY_PATTERN.test(match[1]) && !PLACEHOLDER_PATTERN.test(match[2])) findings.push("credential assignment");
+    const key = match[1];
+    const value = match[2].trim();
+    if (!CREDENTIAL_KEY_PATTERN.test(key)) continue;
+    if (/(?:url|uri|endpoint)$/i.test(key)) {
+      if (!isCredentialFreeServiceUrl(value)) findings.push("credential assignment");
+    } else if (!PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
   }
   for (const match of text.matchAll(AUTHORIZATION_PATTERN)) {
     if (!PLACEHOLDER_PATTERN.test(match[1])) findings.push("authorization credential");
