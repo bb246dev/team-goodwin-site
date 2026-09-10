@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
@@ -7,11 +7,14 @@ import { buildRelease } from "../scripts/deploy/build-release.mjs";
 import { compareProduction } from "../scripts/deploy/compare-production.mjs";
 import { createLocalProductionClient } from "../scripts/deploy/ftps-client.mjs";
 import { uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
-import { sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
-import { secretFindings } from "../scripts/deploy/scan-secrets.mjs";
+import { resolveManifestInput, sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
+import { scanManifestSources, secretFindings } from "../scripts/deploy/scan-secrets.mjs";
+import { validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
+import { createValidatedWorkspace } from "../scripts/deploy/run-validation.mjs";
 
 const PROTECTED_SOURCE_CONTENT = "export const map = true;\n";
 const PROTECTED_REMOTE_CONTENT = "old protected map\n";
+const TEST_COMMIT = "1".repeat(40);
 
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), "goodwin-deploy-test-"));
@@ -34,7 +37,7 @@ function validManifest(overrides = {}) {
     releaseType: "micro",
     description: "Test manifest",
     protectedPathsApproved: [],
-    files: [{ source: "assets/site.css", destination: "public_html/assets/site.css", publicPath: "/assets/site.css" }],
+    files: [{ source: "assets/site.css", destination: "public_html/assets/site.css", publicPath: "/assets/site.css", expectedRemoteAbsent: true }],
     validation: { targetedTests: ["tests/site.test.mjs"], browserRoutes: ["/"], apiChecks: [] },
     ...overrides,
   };
@@ -60,6 +63,19 @@ async function writeManifest(root, manifest) {
   const path = join(root, `manifest-${Math.random().toString(16).slice(2)}.json`);
   await writeFile(path, `${JSON.stringify(manifest, null, 2)}\n`);
   return path;
+}
+
+async function buildTestRelease(root, manifestPath, releaseDirectory, expectedType = "static", expectedRelease = "micro") {
+  const manifest = await validateManifestObject(JSON.parse(await readFile(manifestPath, "utf8")), { root, expectedType, expectedRelease });
+  const inventoryPath = join(root, `inventory-${Math.random().toString(16).slice(2)}.json`);
+  await writeFile(inventoryPath, `${JSON.stringify({
+    schemaVersion: 1,
+    allowedBuildOutputLocations: ["dist"],
+    changedFiles: [],
+    outputFiles: {},
+    sources: Object.fromEntries(manifest.files.map((file) => [file.source, { sha256: file.newSha256, size: file.size }])),
+  }, null, 2)}\n`);
+  return buildRelease({ manifestPath, outputDirectory: releaseDirectory, root, expectedType, expectedRelease, releaseCommit: TEST_COMMIT, validatedInventoryPath: inventoryPath });
 }
 
 test("valid manifest is accepted and hashes its source", async (t) => {
@@ -106,10 +122,11 @@ test("protected files require an exact manifest approval", async (t) => {
   assert.deepEqual(accepted.protectedPathsApproved, [protectedFile.destination]);
 });
 
-test("protected files fail closed when the expected existing remote hash is omitted", async (t) => {
+test("every file requires exactly one prior state and rejects both", async (t) => {
   const root = await fixture(t);
   const manifest = protectedManifest({ expectedRemoteSha256: undefined });
-  await assert.rejects(validateManifestObject(manifest, { root }), /requires an expected existing remote expectedRemoteSha256/);
+  await assert.rejects(validateManifestObject(manifest, { root }), /exactly one prior state/);
+  await assert.rejects(validateManifestObject(protectedManifest({ expectedRemoteAbsent: true }), { root }), /exactly one prior state/);
 });
 
 test("approved new/source hash must match the local source", async (t) => {
@@ -127,7 +144,7 @@ test("duplicate destinations are rejected", async (t) => {
 test("missing source is rejected", async (t) => {
   const root = await fixture(t);
   await assert.rejects(validateManifestObject(validManifest({
-    files: [{ source: "assets/missing.css", destination: "public_html/assets/missing.css", publicPath: "/assets/missing.css" }],
+    files: [{ source: "assets/missing.css", destination: "public_html/assets/missing.css", publicPath: "/assets/missing.css", expectedRemoteAbsent: true }],
   }), { root }), /existing regular file/);
 });
 
@@ -138,9 +155,16 @@ test("secret detection catches definite credentials but permits explicit example
 
 async function preparedRelease(t) {
   const root = await fixture(t);
-  const manifestPath = await writeManifest(root, validManifest());
+  const manifestPath = await writeManifest(root, validManifest({
+    files: [{
+      source: "assets/site.css",
+      destination: "public_html/assets/site.css",
+      publicPath: "/assets/site.css",
+      expectedRemoteSha256: sha256("old css\n"),
+    }],
+  }));
   const releaseDirectory = join(root, "release");
-  const release = await buildRelease({ manifestPath, outputDirectory: releaseDirectory, root, expectedType: "static", expectedRelease: "micro" });
+  const release = await buildTestRelease(root, manifestPath, releaseDirectory);
   const productionRoot = join(root, "production");
   await mkdir(join(productionRoot, "public_html", "assets"), { recursive: true });
   await writeFile(join(productionRoot, "public_html", "assets", "site.css"), "old css\n");
@@ -151,7 +175,7 @@ async function preparedProtectedRelease(t, manifest = protectedManifest()) {
   const root = await fixture(t);
   const manifestPath = await writeManifest(root, manifest);
   const releaseDirectory = join(root, "release");
-  const release = await buildRelease({ manifestPath, outputDirectory: releaseDirectory, root, expectedType: "static", expectedRelease: "micro" });
+  const release = await buildTestRelease(root, manifestPath, releaseDirectory);
   const productionRoot = join(root, "production");
   await mkdir(join(productionRoot, "public_html", "assets"), { recursive: true });
   await writeFile(join(productionRoot, "public_html", "assets", "strava-race-map.mjs"), PROTECTED_REMOTE_CONTENT);
@@ -163,7 +187,7 @@ test("dry-run compares production and uploads nothing", async (t) => {
   const client = createLocalProductionClient(prepared.productionRoot, true);
   const outputDirectory = join(prepared.root, "plan-dry");
   const { plan } = await compareProduction({
-    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, mode: "dry-run", client,
+    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, backupDirectory: join(prepared.root, "backups-dry"), mode: "dry-run", client,
   });
   assert.equal(plan.mode, "dry-run");
   assert.equal(plan.summary.changed, 1);
@@ -175,10 +199,11 @@ test("deployment plan records hashes, destinations, and size comparison", async 
   const outputDirectory = join(prepared.root, "plan-details");
   const { plan } = await compareProduction({
     releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, mode: "deploy",
+    backupDirectory: join(prepared.root, "backups-details"),
     client: createLocalProductionClient(prepared.productionRoot, true),
   });
   assert.equal(plan.files[0].destination, "public_html/assets/site.css");
-  assert.equal(plan.files[0].oldExpectedSha256, null);
+  assert.equal(plan.files[0].oldExpectedSha256, sha256("old css\n"));
   assert.match(plan.files[0].oldObservedSha256, /^[a-f0-9]{64}$/);
   assert.equal(plan.files[0].newExpectedSha256, prepared.release.files[0].newSha256);
   assert.equal(plan.files[0].newObservedSha256, null);
@@ -190,14 +215,15 @@ test("rollback manifest preserves existing file and both hashes", async (t) => {
   const outputDirectory = join(prepared.root, "plan-rollback");
   const { rollback } = await compareProduction({
     releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, mode: "dry-run",
+    backupDirectory: join(prepared.root, "backups-rollback"),
     client: createLocalProductionClient(prepared.productionRoot, true),
   });
-  assert.equal(rollback.files[0].rollbackAction, "restore-backup");
-  assert.equal(rollback.files[0].oldExpectedSha256, null);
+  assert.equal(rollback.files[0].rollbackAction, "restore-runner-local-backup-during-this-job");
+  assert.equal(rollback.files[0].oldExpectedSha256, sha256("old css\n"));
   assert.match(rollback.files[0].oldObservedSha256, /^[a-f0-9]{64}$/);
   assert.equal(rollback.files[0].newExpectedSha256, prepared.release.files[0].newSha256);
   assert.equal(rollback.files[0].newObservedSha256, null);
-  assert.equal(await readFile(join(outputDirectory, rollback.files[0].backupPath), "utf8"), "old css\n");
+  assert.equal(await readFile(join(prepared.root, "backups-rollback", rollback.files[0].backupId), "utf8"), "old css\n");
 });
 
 test("matching expected remote hash is accepted and recorded distinctly", async (t) => {
@@ -205,6 +231,7 @@ test("matching expected remote hash is accepted and recorded distinctly", async 
   const outputDirectory = join(prepared.root, "plan-protected-match");
   const { plan } = await compareProduction({
     releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, mode: "deploy",
+    backupDirectory: join(prepared.root, "backups-protected-match"),
     client: createLocalProductionClient(prepared.productionRoot, true),
   });
   assert.equal(plan.files[0].oldExpectedSha256, sha256(PROTECTED_REMOTE_CONTENT));
@@ -219,6 +246,7 @@ test("mismatched expected remote hash aborts comparison before upload", async (t
   await assert.rejects(compareProduction({
     releasePath: join(prepared.releaseDirectory, "release.json"),
     outputDirectory: join(prepared.root, "plan-protected-mismatch"),
+    backupDirectory: join(prepared.root, "backups-protected-mismatch"),
     mode: "deploy",
     client: createLocalProductionClient(prepared.productionRoot, true),
   }), /Existing remote hash mismatch/);
@@ -230,22 +258,25 @@ test("rollback backup preserves the exact protected remote original", async (t) 
   const outputDirectory = join(prepared.root, "plan-protected-backup");
   const { rollback } = await compareProduction({
     releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, mode: "dry-run",
+    backupDirectory: join(prepared.root, "backups-protected"),
     client: createLocalProductionClient(prepared.productionRoot, true),
   });
   assert.equal(rollback.files[0].oldExpectedSha256, sha256(PROTECTED_REMOTE_CONTENT));
   assert.equal(rollback.files[0].oldObservedSha256, sha256(PROTECTED_REMOTE_CONTENT));
-  assert.equal(await readFile(join(outputDirectory, rollback.files[0].backupPath), "utf8"), PROTECTED_REMOTE_CONTENT);
+  assert.equal(await readFile(join(prepared.root, "backups-protected", rollback.files[0].backupId), "utf8"), PROTECTED_REMOTE_CONTENT);
 });
 
 test("local test adapter exercises per-file deployment and hash verification", async (t) => {
   const prepared = await preparedRelease(t);
   const client = createLocalProductionClient(prepared.productionRoot, true);
   const planDirectory = join(prepared.root, "plan-upload");
-  await compareProduction({ releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, mode: "deploy", client });
+  const backupDirectory = join(prepared.root, "backups-upload");
+  await compareProduction({ releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client });
   const report = await uploadRelease({
     releasePath: join(prepared.releaseDirectory, "release.json"),
     planPath: join(planDirectory, "deployment-plan.json"),
     outputDirectory: join(prepared.root, "upload-results"),
+    backupDirectory,
     client,
     productionConfirmation: true,
   });
@@ -260,8 +291,9 @@ test("remote file changing after preflight aborts before the upload call", async
   const prepared = await preparedProtectedRelease(t);
   const baseClient = createLocalProductionClient(prepared.productionRoot, true);
   const planDirectory = join(prepared.root, "plan-race");
+  const backupDirectory = join(prepared.root, "backups-race");
   await compareProduction({
-    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, mode: "deploy", client: baseClient,
+    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client: baseClient,
   });
   let downloads = 0;
   let uploads = 0;
@@ -282,9 +314,10 @@ test("remote file changing after preflight aborts before the upload call", async
     releasePath: join(prepared.releaseDirectory, "release.json"),
     planPath: join(planDirectory, "deployment-plan.json"),
     outputDirectory: join(prepared.root, "upload-race-results"),
+    backupDirectory,
     client: racingClient,
     productionConfirmation: true,
-  }), /Existing remote hash changed before upload/);
+  }), /Remote prior state changed before upload/);
   assert.equal(uploads, 0);
 });
 
@@ -292,13 +325,15 @@ test("protected upload verifies the new hash and records all expected and observ
   const prepared = await preparedProtectedRelease(t);
   const client = createLocalProductionClient(prepared.productionRoot, true);
   const planDirectory = join(prepared.root, "plan-protected-upload");
+  const backupDirectory = join(prepared.root, "backups-protected-upload");
   await compareProduction({
-    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, mode: "deploy", client,
+    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client,
   });
   const report = await uploadRelease({
     releasePath: join(prepared.releaseDirectory, "release.json"),
     planPath: join(planDirectory, "deployment-plan.json"),
     outputDirectory: join(prepared.root, "protected-upload-results"),
+    backupDirectory,
     client,
     productionConfirmation: true,
   });
@@ -307,12 +342,13 @@ test("protected upload verifies the new hash and records all expected and observ
     destination: "public_html/assets/strava-race-map.mjs",
     status: "uploaded-and-verified",
     oldExpectedSha256: sha256(PROTECTED_REMOTE_CONTENT),
+    expectedRemoteAbsent: false,
     oldObservedSha256: sha256(PROTECTED_REMOTE_CONTENT),
     newExpectedSha256: sha256(PROTECTED_SOURCE_CONTENT),
     newObservedSha256: sha256(PROTECTED_SOURCE_CONTENT),
   });
   assert.equal(await readFile(join(prepared.productionRoot, "public_html", "assets", "strava-race-map.mjs"), "utf8"), PROTECTED_SOURCE_CONTENT);
-  assert.equal(await readFile(join(planDirectory, "backup", "0001-strava-race-map.mjs"), "utf8"), PROTECTED_REMOTE_CONTENT);
+  assert.equal(await readFile(join(backupDirectory, "0001-backup.bin"), "utf8"), PROTECTED_REMOTE_CONTENT);
   assert.deepEqual((await readdir(join(prepared.root, "protected-upload-results"))).sort(), ["deployment-results.json"]);
 });
 
@@ -345,4 +381,193 @@ test("production workflows remain manual-only, serialized, least-privilege, and 
     assert.match(workflow, /default: dry-run/);
     assert.match(workflow, /environment: production/);
   }
+});
+
+test("expected-absent destination that appears before upload aborts without upload", async (t) => {
+  const root = await fixture(t);
+  const manifestPath = await writeManifest(root, validManifest());
+  const releaseDirectory = join(root, "release-absent");
+  await buildTestRelease(root, manifestPath, releaseDirectory);
+  const productionRoot = join(root, "production-absent");
+  await mkdir(join(productionRoot, "public_html", "assets"), { recursive: true });
+  const client = createLocalProductionClient(productionRoot, true);
+  const planDirectory = join(root, "plan-absent");
+  const backupDirectory = join(root, "backups-absent");
+  await compareProduction({ releasePath: join(releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client });
+  await writeFile(join(productionRoot, "public_html", "assets", "site.css"), "created concurrently\n");
+  let uploads = 0;
+  const observingClient = { download: client.download, async upload(...args) { uploads += 1; return client.upload(...args); } };
+  await assert.rejects(uploadRelease({
+    releasePath: join(releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"),
+    outputDirectory: join(root, "results-absent"), backupDirectory, client: observingClient, productionConfirmation: true,
+  }), /Remote prior-state mismatch before upload/);
+  assert.equal(uploads, 0);
+  assert.equal(await readFile(join(productionRoot, "public_html", "assets", "site.css"), "utf8"), "created concurrently\n");
+});
+
+test("raw backups remain permission-restricted and outside artifact metadata", async (t) => {
+  const prepared = await preparedRelease(t);
+  const outputDirectory = join(prepared.root, "metadata-only");
+  const backupDirectory = join(prepared.root, "runner-local-backups");
+  await compareProduction({
+    releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory, backupDirectory, mode: "dry-run",
+    client: createLocalProductionClient(prepared.productionRoot, true),
+  });
+  assert.deepEqual((await readdir(outputDirectory)).sort(), ["deployment-plan.json", "rollback-manifest.json"]);
+  assert.equal((await stat(backupDirectory)).mode & 0o777, 0o700);
+  assert.equal((await stat(join(backupDirectory, "0001-backup.bin"))).mode & 0o777, 0o600);
+  assert.doesNotMatch(await readFile(join(outputDirectory, "rollback-manifest.json"), "utf8"), /old css/);
+});
+
+test("secret scanner handles large text and scans rather than skips NUL-containing text", async (t) => {
+  const root = await fixture(t);
+  await writeFile(join(root, "assets", "large.css"), `/* safe */\n${"a".repeat(5_500_000)}`);
+  const large = await validateManifestObject(validManifest({ files: [{
+    source: "assets/large.css", destination: "public_html/assets/large.css", publicPath: "/assets/large.css", expectedRemoteAbsent: true,
+  }] }), { root });
+  assert.equal((await scanManifestSources(large))[0].status, "scanned-text");
+  await writeFile(join(root, "assets", "nul.css"), Buffer.from("a\0const admin_token = 'real-production-value-1234567890';"));
+  const nul = await validateManifestObject(validManifest({ files: [{
+    source: "assets/nul.css", destination: "public_html/assets/nul.css", publicPath: "/assets/nul.css", expectedRemoteAbsent: true,
+  }] }), { root });
+  await assert.rejects(scanManifestSources(nul), /credential assignment/);
+});
+
+test("only explicitly classified, hash-pinned safe binary assets are accepted", async (t) => {
+  const root = await fixture(t);
+  const png = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), Buffer.from("safe-image")]);
+  await writeFile(join(root, "assets", "safe.png"), png);
+  const approved = await validateManifestObject(validManifest({ files: [{
+    source: "assets/safe.png", destination: "public_html/assets/safe.png", publicPath: "/assets/safe.png",
+    contentType: "binary-asset", expectedSha256: sha256(png), expectedRemoteAbsent: true,
+  }] }), { root });
+  assert.equal((await scanManifestSources(approved))[0].status, "approved-binary-asset");
+
+  for (const [name, content, classification, message] of [
+    ["disguised.png", Buffer.from("MZ executable"), "binary-asset", /signature/],
+    ["archive.zip", Buffer.from("PK\\x03\\x04archive"), "binary-asset", /type is not permitted/],
+    ["unclassified.png", png, undefined, /require explicit contentType binary-asset/],
+  ]) {
+    await writeFile(join(root, "assets", name), content);
+    const candidate = await validateManifestObject(validManifest({ files: [{
+      source: `assets/${name}`, destination: `public_html/assets/${name}`, publicPath: `/assets/${name}`,
+      ...(classification ? { contentType: classification, expectedSha256: sha256(content) } : {}), expectedRemoteAbsent: true,
+    }] }), { root });
+    await assert.rejects(scanManifestSources(candidate), message);
+  }
+});
+
+function runtimePayload(releaseGeneration = TEST_COMMIT) {
+  return {
+    releaseGeneration,
+    pid: 123,
+    processStartedAt: "2026-09-10T12:00:00.000Z",
+    processUptimeSeconds: 10,
+    raceWindowStart: "2026-09-10T12:00:00.000Z",
+    raceWindowEnd: "2026-09-11T12:00:00.000Z",
+    raceWindowModuleVersion: "1",
+  };
+}
+
+test("runtime generation requires an exact commit match", () => {
+  assert.equal(validateRuntimePayload(runtimePayload(), TEST_COMMIT).releaseGeneration, TEST_COMMIT);
+  assert.throws(() => validateRuntimePayload(runtimePayload("2".repeat(40)), TEST_COMMIT), /stale/);
+  const missing = runtimePayload(); delete missing.releaseGeneration;
+  assert.throws(() => validateRuntimePayload(missing, TEST_COMMIT), /missing approved field/);
+  assert.throws(() => validateRuntimePayload(runtimePayload("malformed"), TEST_COMMIT), /invalid/);
+});
+
+test("release metadata uses explicit commit and ignores reserved GITHUB_SHA", async (t) => {
+  const root = await fixture(t);
+  const manifestPath = await writeManifest(root, validManifest());
+  const previous = process.env.GITHUB_SHA;
+  process.env.GITHUB_SHA = "f".repeat(40);
+  try {
+    const release = await buildTestRelease(root, manifestPath, join(root, "explicit-release"));
+    assert.equal(release.sourceCommit, TEST_COMMIT);
+  } finally {
+    if (previous === undefined) delete process.env.GITHUB_SHA; else process.env.GITHUB_SHA = previous;
+  }
+});
+
+test("isolated build accepts sixteen tracked-output changes plus new output and records hashes", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "goodwin-build-regression-"));
+  t.after(async () => { const { rm } = await import("node:fs/promises"); await rm(root, { recursive: true, force: true }); });
+  await mkdir(join(root, "dist"));
+  await mkdir(join(root, "tests"));
+  await mkdir(join(root, "deploy", "manifests"), { recursive: true });
+  for (let index = 0; index < 16; index += 1) await writeFile(join(root, "dist", `tracked-${index}.html`), `before-${index}\n`);
+  await writeFile(join(root, "tests", "site.test.mjs"), "// fixture\n");
+  await writeFile(join(root, "build.mjs"), `import { writeFileSync } from "node:fs";\nfor (let i=0;i<16;i++) writeFileSync(\`dist/tracked-\${i}.html\`, \`after-\${i}\\n\`);\nwriteFileSync("dist/new-output.css", "new\\n");\n`);
+  await writeFile(join(root, "package.json"), JSON.stringify({ scripts: { build: "node build.mjs" } }));
+  const manifest = validManifest({
+    releaseType: "standard",
+    files: [{ source: "dist/tracked-0.html", destination: "public_html/tracked-0.html", publicPath: "/tracked-0/", expectedRemoteAbsent: true }],
+    validation: {
+      targetedTests: ["tests/site.test.mjs"], browserRoutes: ["/", "/live-tracking/"],
+      apiChecks: ["/strava/health", "/strava/public/race-status", "/strava/public/tracking-status"].map((path, index) => ({ name: `API check ${index + 1}`, path, expectedStatus: 200, requiredJsonFields: [] })),
+    },
+  });
+  const manifestPath = join(root, "deploy", "manifests", "regression.json");
+  await writeFile(manifestPath, JSON.stringify(manifest));
+  const workspace = `${root}-workspace`;
+  const inventoryPath = join(root, "inventory.json");
+  const result = await createValidatedWorkspace({ root, workspace, inventoryPath, manifestPath, releaseType: "standard" });
+  assert.equal(result.changedFiles.length, 17);
+  assert.equal(result.changedFiles.filter((path) => /^dist\/tracked-/.test(path)).length, 16);
+  assert.match(result.outputFiles["dist/tracked-0.html"].sha256, /^[a-f0-9]{64}$/);
+  await writeFile(join(root, "build.mjs"), `import { writeFileSync } from "node:fs";\nwriteFileSync("dist/tracked-0.html", "changed\\n");\nwriteFileSync("unexpected.txt", "outside output\\n");\n`);
+  await assert.rejects(createValidatedWorkspace({
+    root, workspace: `${root}-forbidden-workspace`, inventoryPath: join(root, "forbidden-inventory.json"), manifestPath, releaseType: "standard",
+  }), /outside allowed output locations.*unexpected\.txt/);
+  const { rm } = await import("node:fs/promises");
+  await rm(workspace, { recursive: true, force: true });
+  await rm(`${root}-forbidden-workspace`, { recursive: true, force: true });
+});
+
+test("corrupt runner-local rollback backup aborts before upload", async (t) => {
+  const prepared = await preparedRelease(t);
+  const client = createLocalProductionClient(prepared.productionRoot, true);
+  const planDirectory = join(prepared.root, "plan-corrupt-backup");
+  const backupDirectory = join(prepared.root, "backups-corrupt");
+  await compareProduction({ releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client });
+  await writeFile(join(backupDirectory, "0001-backup.bin"), "corrupt\n");
+  let uploads = 0;
+  await assert.rejects(uploadRelease({
+    releasePath: join(prepared.releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"),
+    outputDirectory: join(prepared.root, "results-corrupt"), backupDirectory,
+    client: { download: client.download, async upload(...args) { uploads += 1; return client.upload(...args); } }, productionConfirmation: true,
+  }), /rollback backup is missing or corrupt/);
+  assert.equal(uploads, 0);
+});
+
+test("workflow guards, secret scope, cleanup, and artifact allowlists remain fail closed", async () => {
+  const workflowUrls = [
+    new URL("../.github/workflows/deploy-static-production.yml", import.meta.url),
+    new URL("../.github/workflows/deploy-backend-production.yml", import.meta.url),
+    new URL("../.github/workflows/verify-backend-production.yml", import.meta.url),
+  ];
+  for (const url of workflowUrls) {
+    const workflow = await readFile(url, "utf8");
+    assert.match(workflow, /PRODUCTION_DEPLOYMENTS_ENABLED: \$\{\{ vars\.PRODUCTION_DEPLOYMENTS_ENABLED \}\}[\s\S]{0,120}test "\$PRODUCTION_DEPLOYMENTS_ENABLED" = "true"/);
+    assert.doesNotMatch(workflow, /\n    env:\n(?:      .*\n)*      NAMECHEAP_FTPS_PASSWORD:/);
+    assert.doesNotMatch(workflow, /GITHUB_SHA:\s*\$\{\{ inputs\.deployed_commit/);
+    for (const step of workflow.split(/\n      - name:/).slice(1)) {
+      if (/\n        uses:/.test(step)) assert.doesNotMatch(step.split(/\n      - name:/)[0], /\$\{\{ secrets\./);
+    }
+  }
+  for (const url of workflowUrls.slice(0, 2)) {
+    const workflow = await readFile(url, "utf8");
+    assert.match(workflow, /if: inputs\.mode == 'deploy'[\s\S]{0,800}ftps-upload\.mjs/);
+    assert.match(workflow, /Delete runner-local backups and credential temporary files[\s\S]{0,160}if: always\(\)/);
+    assert.doesNotMatch(workflow, /^\s+deployment-plan\/$/m);
+    assert.doesNotMatch(workflow, /^\s+.*backup.*\/$/m);
+  }
+});
+
+test("example manifests, including all-zero remote placeholders, cannot enter deploy mode", async () => {
+  await assert.rejects(
+    resolveManifestInput("deploy/manifests/examples/standard-static.json", process.cwd(), "deploy"),
+    /Example manifests are dry-run only/,
+  );
 });

@@ -1,21 +1,25 @@
 #!/usr/bin/env node
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { basename, join, resolve } from "node:path";
+import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 import { productionClient } from "./ftps-client.mjs";
 
-export async function compareProduction({ releasePath, outputDirectory, mode = "dry-run", client }) {
+export async function compareProduction({ releasePath, outputDirectory, backupDirectory, mode = "dry-run", client }) {
   if (!['dry-run', 'deploy'].includes(mode)) throw new Error("mode must be dry-run or deploy");
   const release = await loadRelease(releasePath);
   const output = resolve(outputDirectory);
+  if (!backupDirectory) throw new Error("backupDirectory is required and must remain runner-local");
+  const backups = resolve(backupDirectory);
+  if (backups === output || backups.startsWith(`${output}/`)) throw new Error("Runner-local backups must be outside the artifact metadata directory");
   await mkdir(output, { recursive: false });
-  await mkdir(join(output, "backup"), { recursive: false });
+  await mkdir(backups, { recursive: false, mode: 0o700 });
+  await chmod(backups, 0o700);
   const planFiles = [];
   const rollbackFiles = [];
   for (let index = 0; index < release.files.length; index += 1) {
     const file = release.files[index];
-    const backupPath = `backup/${String(index + 1).padStart(4, "0")}-${basename(file.destination)}`;
-    const absoluteBackupPath = join(output, backupPath);
+    const backupId = `${String(index + 1).padStart(4, "0")}-backup.bin`;
+    const absoluteBackupPath = join(backups, backupId);
     const remote = await client.download(file.destination, absoluteBackupPath, { allowMissing: true });
     let oldObservedSha256 = null;
     let oldSize = null;
@@ -23,14 +27,19 @@ export async function compareProduction({ releasePath, outputDirectory, mode = "
       const oldContent = await readFile(absoluteBackupPath);
       oldObservedSha256 = sha256(oldContent);
       oldSize = oldContent.byteLength;
+      await chmod(absoluteBackupPath, 0o600);
     }
     const oldExpectedSha256 = file.expectedRemoteSha256 ?? null;
+    const expectedRemoteAbsent = file.expectedRemoteAbsent === true;
     const newExpectedSha256 = file.expectedSha256 ?? file.newSha256;
     if (oldExpectedSha256 && !remote.exists) {
       throw new Error(`Expected existing remote file is missing: ${file.destination}; expected ${oldExpectedSha256}`);
     }
     if (oldExpectedSha256 && oldObservedSha256 !== oldExpectedSha256) {
       throw new Error(`Existing remote hash mismatch for ${file.destination}: expected ${oldExpectedSha256}, observed ${oldObservedSha256}`);
+    }
+    if (expectedRemoteAbsent && remote.exists) {
+      throw new Error(`Expected remote destination to be absent but it exists: ${file.destination}; observed ${oldObservedSha256}`);
     }
     const status = !remote.exists ? "new" : oldObservedSha256 === newExpectedSha256 ? "unchanged" : "changed";
     planFiles.push({
@@ -40,6 +49,7 @@ export async function compareProduction({ releasePath, outputDirectory, mode = "
       status,
       productionExists: remote.exists,
       oldExpectedSha256,
+      expectedRemoteAbsent,
       oldObservedSha256,
       newExpectedSha256,
       newObservedSha256: null,
@@ -51,12 +61,14 @@ export async function compareProduction({ releasePath, outputDirectory, mode = "
       destination: file.destination,
       changed: status !== "unchanged",
       productionExisted: remote.exists,
-      backupPath: remote.exists ? backupPath : null,
+      backupAvailableRunnerLocal: remote.exists,
+      backupId: remote.exists ? backupId : null,
       oldExpectedSha256,
+      expectedRemoteAbsent,
       oldObservedSha256,
       newExpectedSha256,
       newObservedSha256: null,
-      rollbackAction: status === "unchanged" ? "none" : remote.exists ? "restore-backup" : "manual-remove-new-file",
+      rollbackAction: status === "unchanged" ? "none" : remote.exists ? "restore-runner-local-backup-during-this-job" : "manual-remove-new-file-no-automated-delete",
     });
   }
   const summary = {
@@ -112,10 +124,11 @@ function printPlan(plan) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (!args.release || !args.output) throw new Error("--release and --output are required");
+  if (!args.release || !args.output || !args["backup-dir"]) throw new Error("--release, --output, and --backup-dir are required");
   const { plan } = await compareProduction({
     releasePath: args.release,
     outputDirectory: args.output,
+    backupDirectory: args["backup-dir"],
     mode: args.mode || "dry-run",
     client: productionClient(args),
   });

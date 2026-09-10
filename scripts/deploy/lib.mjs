@@ -35,10 +35,10 @@ const TOP_LEVEL_KEYS = new Set([
   "files",
   "validation",
 ]);
-const FILE_KEYS = new Set(["source", "destination", "publicPath", "expectedSha256", "expectedRemoteSha256"]);
+const FILE_KEYS = new Set(["source", "destination", "publicPath", "contentType", "expectedSha256", "expectedRemoteSha256", "expectedRemoteAbsent"]);
 const VALIDATION_KEYS = new Set(["targetedTests", "browserRoutes", "apiChecks"]);
 const API_CHECK_KEYS = new Set(["name", "path", "expectedStatus", "requiredJsonFields"]);
-const RELEASE_KEYS = new Set([...TOP_LEVEL_KEYS, "createdAt", "sourceCommit"]);
+const RELEASE_KEYS = new Set([...TOP_LEVEL_KEYS, "createdAt", "sourceCommit", "validatedOutputInventorySha256", "sourceValidation"]);
 const RELEASE_FILE_KEYS = new Set([...FILE_KEYS, "newSha256", "size", "packagedPath"]);
 
 export function parseArgs(argv) {
@@ -231,11 +231,19 @@ export async function validateManifestObject(manifest, options = {}) {
     if (file.expectedRemoteSha256 !== undefined && (typeof file.expectedRemoteSha256 !== "string" || !SHA256_PATTERN.test(file.expectedRemoteSha256))) {
       throw new Error(`files[${index}].expectedRemoteSha256 must be a lowercase SHA-256`);
     }
+    if (file.expectedRemoteAbsent !== undefined && file.expectedRemoteAbsent !== true) {
+      throw new Error(`files[${index}].expectedRemoteAbsent must be true when supplied`);
+    }
+    const hasExpectedRemoteHash = file.expectedRemoteSha256 !== undefined;
+    const expectsRemoteAbsent = file.expectedRemoteAbsent === true;
+    if (hasExpectedRemoteHash === expectsRemoteAbsent) {
+      throw new Error(`files[${index}] must declare exactly one prior state: expectedRemoteSha256 or expectedRemoteAbsent: true`);
+    }
+    if (file.contentType !== undefined && !["text", "binary-asset"].includes(file.contentType)) {
+      throw new Error(`files[${index}].contentType must be text or binary-asset`);
+    }
     if (protectedDestination && !file.expectedSha256) {
       throw new Error(`Protected destination requires an approved new/source expectedSha256: ${destination}`);
-    }
-    if (protectedDestination && !file.expectedRemoteSha256) {
-      throw new Error(`Protected destination requires an expected existing remote expectedRemoteSha256: ${destination}`);
     }
 
     const absoluteSource = resolve(repoRoot, source);
@@ -352,7 +360,24 @@ export async function loadRelease(path) {
   if (release.sourceCommit !== null && release.sourceCommit !== undefined && !/^[a-f0-9]{40}$/.test(release.sourceCommit)) {
     throw new Error("release.sourceCommit must be a full lowercase Git commit SHA");
   }
+  if (typeof release.validatedOutputInventorySha256 !== "string" || !SHA256_PATTERN.test(release.validatedOutputInventorySha256)) {
+    throw new Error("release.validatedOutputInventorySha256 must be a lowercase SHA-256");
+  }
+  if (!Array.isArray(release.sourceValidation) || release.sourceValidation.length !== release.files.length) {
+    throw new Error("release.sourceValidation must record every packaged file");
+  }
+  for (let index = 0; index < release.sourceValidation.length; index += 1) {
+    const record = release.sourceValidation[index];
+    if (!record || record.source !== release.files[index].source || !["scanned-text", "approved-binary-asset"].includes(record.status)
+      || record.sha256 !== release.files[index].newSha256 || record.size !== release.files[index].size) {
+      throw new Error(`release.sourceValidation[${index}] is invalid`);
+    }
+  }
   const releaseRoot = resolve(path, "..");
+  const inventoryContent = await readFile(resolve(releaseRoot, "validated-output-inventory.json")).catch(() => null);
+  if (!inventoryContent || sha256(inventoryContent) !== release.validatedOutputInventorySha256) {
+    throw new Error("Validated output inventory integrity check failed");
+  }
   for (let index = 0; index < release.files.length; index += 1) {
     const file = release.files[index];
     if (!SHA256_PATTERN.test(file.newSha256)) throw new Error(`release.files[${index}].newSha256 is invalid`);

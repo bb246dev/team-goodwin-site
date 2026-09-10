@@ -8,7 +8,8 @@
     {
       "source": "assets/styles-ulvf0Dcj.css",
       "destination": "public_html/assets/styles-ulvf0Dcj.css",
-      "publicPath": "/assets/styles-ulvf0Dcj.css"
+      "publicPath": "/assets/styles-ulvf0Dcj.css",
+      "expectedRemoteAbsent": true
     }
   ],
   "validation": {

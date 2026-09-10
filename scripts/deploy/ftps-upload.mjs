@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 import { productionClient } from "./ftps-client.mjs";
 
-export async function uploadRelease({ releasePath, planPath, outputDirectory, client, productionConfirmation = false }) {
+export async function uploadRelease({ releasePath, planPath, outputDirectory, backupDirectory, client, productionConfirmation = false }) {
   if (!productionConfirmation) throw new Error("Production upload confirmation is missing");
   const release = await loadRelease(releasePath);
   const plan = JSON.parse(await readFile(planPath, "utf8"));
@@ -17,10 +17,12 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
     const file = release.files[index];
     const planned = plan.files[index];
     const oldExpectedSha256 = file.expectedRemoteSha256 ?? null;
+    const expectedRemoteAbsent = file.expectedRemoteAbsent === true;
     const newExpectedSha256 = file.expectedSha256 ?? file.newSha256;
     if (
       planned.destination !== file.destination
       || planned.oldExpectedSha256 !== oldExpectedSha256
+      || planned.expectedRemoteAbsent !== expectedRemoteAbsent
       || planned.newExpectedSha256 !== newExpectedSha256
       || !["new", "changed", "unchanged"].includes(planned.status)
     ) {
@@ -29,10 +31,21 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
     if (oldExpectedSha256 && planned.oldObservedSha256 !== oldExpectedSha256) {
       throw new Error(`Plan does not record an approved existing remote hash for ${file.destination}`);
     }
+    if (oldExpectedSha256 && (!planned.productionExists || planned.status !== (oldExpectedSha256 === newExpectedSha256 ? "unchanged" : "changed"))) {
+      throw new Error(`Plan status does not match the pinned existing destination for ${file.destination}`);
+    }
+    if (expectedRemoteAbsent && (planned.productionExists || planned.status !== "new")) throw new Error(`Plan does not record an absent destination for ${file.destination}`);
   }
   const output = resolve(outputDirectory);
   await mkdir(output, { recursive: true });
-  const verificationDirectory = await mkdtemp(join(tmpdir(), "goodwin-deploy-verify-"));
+  const temporaryRoot = resolve(process.env.DEPLOY_TEMP_ROOT || tmpdir());
+  if (process.env.DEPLOY_TEMP_ROOT) {
+    await mkdir(temporaryRoot, { recursive: true, mode: 0o700 });
+    await chmod(temporaryRoot, 0o700);
+  }
+  const verificationDirectory = await mkdtemp(join(temporaryRoot, "goodwin-deploy-verify-"));
+  if (!backupDirectory) throw new Error("backupDirectory is required");
+  const backups = resolve(backupDirectory);
   const results = [];
   const reportPath = join(output, "deployment-results.json");
   const saveReport = async (completed = false) => {
@@ -40,29 +53,37 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
     await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`);
     return report;
   };
-  const observeRemoteSha256 = async (file, index, phase) => {
+  const observeRemoteState = async (file, index, phase) => {
     const path = join(verificationDirectory, `${String(index + 1).padStart(4, "0")}-${phase}.bin`);
-    await client.download(file.destination, path);
-    return sha256(await readFile(path));
+    const remote = await client.download(file.destination, path, { allowMissing: true });
+    return { exists: remote.exists, sha256: remote.exists ? sha256(await readFile(path)) : null };
   };
   await saveReport(false);
   try {
-    // Check every pinned remote destination before any file can be uploaded.
+    // Check every destination and every local rollback backup before any file can be uploaded.
     for (let index = 0; index < release.files.length; index += 1) {
       const file = release.files[index];
-      if (!file.expectedRemoteSha256) continue;
-      const observed = await observeRemoteSha256(file, index, "preflight");
-      if (observed !== file.expectedRemoteSha256) {
+      const observed = await observeRemoteState(file, index, "preflight");
+      const stateMatches = file.expectedRemoteAbsent === true
+        ? !observed.exists
+        : observed.exists && observed.sha256 === file.expectedRemoteSha256;
+      if (!stateMatches) {
         results.push({
           destination: file.destination,
           status: "failed-remote-precondition",
-          oldExpectedSha256: file.expectedRemoteSha256,
-          oldObservedSha256: observed,
+          oldExpectedSha256: file.expectedRemoteSha256 ?? null,
+          expectedRemoteAbsent: file.expectedRemoteAbsent === true,
+          oldObservedSha256: observed.sha256,
           newExpectedSha256: file.expectedSha256 ?? file.newSha256,
           newObservedSha256: null,
         });
         await saveReport(false);
-        throw new Error(`Existing remote hash mismatch before upload for ${file.destination}: expected ${file.expectedRemoteSha256}, observed ${observed}`);
+        throw new Error(`Remote prior-state mismatch before upload for ${file.destination}`);
+      }
+      if (file.expectedRemoteSha256) {
+        const backupPath = join(backups, `${String(index + 1).padStart(4, "0")}-backup.bin`);
+        const backup = await readFile(backupPath).catch(() => null);
+        if (!backup || sha256(backup) !== file.expectedRemoteSha256) throw new Error(`Runner-local rollback backup is missing or corrupt for ${file.destination}`);
       }
     }
 
@@ -70,6 +91,7 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
       const file = release.files[index];
       const planned = plan.files[index];
       const oldExpectedSha256 = file.expectedRemoteSha256 ?? null;
+      const expectedRemoteAbsent = file.expectedRemoteAbsent === true;
       const newExpectedSha256 = file.expectedSha256 ?? file.newSha256;
       let oldObservedSha256 = planned.oldObservedSha256;
       let newObservedSha256 = null;
@@ -78,6 +100,7 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
           destination: file.destination,
           status: "skipped-unchanged",
           oldExpectedSha256,
+          expectedRemoteAbsent,
           oldObservedSha256,
           newExpectedSha256,
           newObservedSha256: oldObservedSha256,
@@ -87,15 +110,15 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
       }
       console.log(`Uploading manifest file ${index + 1}/${release.files.length}: ${file.destination}`);
       try {
-        // Repeat the protected/opt-in remote precondition immediately before this upload.
-        if (oldExpectedSha256) {
-          oldObservedSha256 = await observeRemoteSha256(file, index, "immediate-pre-upload");
-          if (oldObservedSha256 !== oldExpectedSha256) {
-            throw new Error(`Existing remote hash changed before upload for ${file.destination}: expected ${oldExpectedSha256}, observed ${oldObservedSha256}`);
-          }
+        // Repeat the exact remote prior-state precondition immediately before this upload.
+        const immediate = await observeRemoteState(file, index, "immediate-pre-upload");
+        oldObservedSha256 = immediate.sha256;
+        if (expectedRemoteAbsent ? immediate.exists : !immediate.exists || immediate.sha256 !== oldExpectedSha256) {
+          throw new Error(`Remote prior state changed before upload for ${file.destination}`);
         }
         await client.upload(file.absolutePackagedPath, file.destination);
-        newObservedSha256 = await observeRemoteSha256(file, index, "post-upload");
+        const postUpload = await observeRemoteState(file, index, "post-upload");
+        newObservedSha256 = postUpload.sha256;
         if (newObservedSha256 !== newExpectedSha256) {
           throw new Error(`Post-upload hash mismatch for ${file.destination}: expected ${newExpectedSha256}, observed ${newObservedSha256}`);
         }
@@ -103,6 +126,7 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
           destination: file.destination,
           status: "uploaded-and-verified",
           oldExpectedSha256,
+          expectedRemoteAbsent,
           oldObservedSha256,
           newExpectedSha256,
           newObservedSha256,
@@ -113,6 +137,7 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
           destination: file.destination,
           status: "failed",
           oldExpectedSha256,
+          expectedRemoteAbsent,
           oldObservedSha256,
           newExpectedSha256,
           newObservedSha256,
@@ -130,7 +155,7 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, cl
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (!args.release || !args.plan || !args.output) throw new Error("--release, --plan, and --output are required");
+  if (!args.release || !args.plan || !args.output || !args["backup-dir"]) throw new Error("--release, --plan, --output, and --backup-dir are required");
   const localAdapter = Boolean(args["local-production-root"]);
   const confirmed = localAdapter
     ? args["allow-local-test-adapter"] === true
@@ -139,6 +164,7 @@ async function main() {
     releasePath: args.release,
     planPath: args.plan,
     outputDirectory: args.output,
+    backupDirectory: args["backup-dir"],
     client: productionClient(args),
     productionConfirmation: confirmed,
   });

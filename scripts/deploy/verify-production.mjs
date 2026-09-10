@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { access, chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 import { productionClient } from "./ftps-client.mjs";
@@ -144,12 +144,16 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   console.log(`Browser smoke passed: ${path} at ${viewport.width}x${viewport.height}; ${images.length} same-origin image(s) checked`);
 }
 
-function validateRuntimePayload(payload) {
+export function validateRuntimePayload(payload, expectedReleaseGeneration) {
+  if (!/^[a-f0-9]{40}$/.test(expectedReleaseGeneration || "")) throw new Error("Expected release generation must be a full lowercase Git commit SHA");
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("Runtime status response must be an object");
   for (const field of RUNTIME_FIELDS) {
     if (!Object.hasOwn(payload, field)) throw new Error(`Runtime status is missing approved field: ${field}`);
   }
-  if (!(typeof payload.releaseGeneration === "string" || Number.isSafeInteger(payload.releaseGeneration))) throw new Error("runtime releaseGeneration is invalid");
+  if (typeof payload.releaseGeneration !== "string" || !/^[a-f0-9]{40}$/.test(payload.releaseGeneration)) throw new Error("runtime releaseGeneration is invalid");
+  if (payload.releaseGeneration !== expectedReleaseGeneration) {
+    throw new Error(`Runtime release generation is stale: expected ${expectedReleaseGeneration}, observed ${payload.releaseGeneration}`);
+  }
   if (!Number.isSafeInteger(payload.pid) || payload.pid <= 0) throw new Error("runtime pid is invalid");
   if (!Number.isFinite(Date.parse(payload.processStartedAt))) throw new Error("runtime processStartedAt is invalid");
   if (typeof payload.processUptimeSeconds !== "number" || !Number.isFinite(payload.processUptimeSeconds) || payload.processUptimeSeconds < 0) throw new Error("runtime processUptimeSeconds is invalid");
@@ -158,7 +162,7 @@ function validateRuntimePayload(payload) {
   return Object.fromEntries(RUNTIME_FIELDS.map((field) => [field, payload[field]]));
 }
 
-async function verifyRuntimeStatus(base, adminToken, adminUser = "strava") {
+async function verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, adminUser = "strava") {
   if (!adminToken) throw new Error("STRAVA_ADMIN_TOKEN is required for backend runtime verification");
   if (!/^[A-Za-z0-9._-]{1,64}$/.test(adminUser)) throw new Error("STRAVA_ADMIN_USER is invalid");
   const authorization = `Basic ${Buffer.from(`${adminUser}:${adminToken}`).toString("base64")}`;
@@ -166,14 +170,20 @@ async function verifyRuntimeStatus(base, adminToken, adminUser = "strava") {
   if (response.status !== 200) throw new Error(`Authenticated runtime-status returned ${response.status}; expected 200`);
   const cacheControl = response.headers.get("cache-control") || "";
   if (!/\bno-store\b/i.test(cacheControl) || !/\bprivate\b/i.test(cacheControl)) throw new Error("runtime-status must return Cache-Control: no-store, private");
-  const approved = validateRuntimePayload(await response.json());
-  console.log(`Runtime status passed; approved fields validated: ${Object.keys(approved).join(", ")}`);
+  const approved = validateRuntimePayload(await response.json(), expectedReleaseGeneration);
+  console.log(`Runtime generation matched expected release ${expectedReleaseGeneration}; approved fields validated: ${Object.keys(approved).join(", ")}`);
+  return { expectedReleaseGeneration, observedReleaseGeneration: approved.releaseGeneration };
 }
 
-export async function verifyProduction({ releasePath, client, baseUrl, skipBrowser = false, adminToken, adminUser, allowHttpLocal = false }) {
+export async function verifyProduction({ releasePath, client, baseUrl, skipBrowser = false, adminToken, adminUser, expectedReleaseGeneration, allowHttpLocal = false }) {
   const release = await loadRelease(releasePath);
   const base = productionBaseUrl(baseUrl, allowHttpLocal);
-  const temporaryDirectory = await mkdtemp(join(tmpdir(), "goodwin-production-verify-"));
+  const temporaryRoot = resolve(process.env.DEPLOY_TEMP_ROOT || tmpdir());
+  if (process.env.DEPLOY_TEMP_ROOT) {
+    await mkdir(temporaryRoot, { recursive: true, mode: 0o700 });
+    await chmod(temporaryRoot, 0o700);
+  }
+  const temporaryDirectory = await mkdtemp(join(temporaryRoot, "goodwin-production-verify-"));
   try {
     for (let index = 0; index < release.files.length; index += 1) {
       const file = release.files[index];
@@ -186,8 +196,10 @@ export async function verifyProduction({ releasePath, client, baseUrl, skipBrows
       }
     }
     for (const check of release.validation.apiChecks) await verifyHttpCheck(base, check);
+    let runtimeGeneration = null;
     if (release.deploymentType === "backend") {
-      await verifyRuntimeStatus(base, adminToken, adminUser);
+      if (expectedReleaseGeneration !== release.sourceCommit) throw new Error("Expected runtime generation must exactly match release sourceCommit");
+      runtimeGeneration = await verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, adminUser);
     } else if (!skipBrowser) {
       const chrome = await chromeExecutable();
       const viewports = release.releaseType === "micro"
@@ -201,7 +213,7 @@ export async function verifyProduction({ releasePath, client, baseUrl, skipBrows
         for (const viewport of viewports) await runBrowserSmoke(base, path, viewport, chrome, release.releaseType);
       }
     }
-    return { verifiedAt: new Date().toISOString(), deploymentType: release.deploymentType, releaseType: release.releaseType, sourceCommit: release.sourceCommit };
+    return { verifiedAt: new Date().toISOString(), deploymentType: release.deploymentType, releaseType: release.releaseType, sourceCommit: release.sourceCommit, runtimeGeneration };
   } finally {
     await rm(temporaryDirectory, { recursive: true, force: true });
   }
@@ -217,6 +229,7 @@ async function main() {
     skipBrowser: args["skip-browser"] === true,
     adminToken: process.env.STRAVA_ADMIN_TOKEN,
     adminUser: process.env.STRAVA_ADMIN_USER || "strava",
+    expectedReleaseGeneration: args["expected-release-generation"],
     allowHttpLocal: args["allow-http-local"] === true,
   });
   if (args.output) await writeFile(args.output, `${JSON.stringify(result, null, 2)}\n`, { flag: "wx" });

@@ -10,12 +10,14 @@
     {
       "source": "dist/index.html",
       "destination": "public_html/index.html",
-      "publicPath": "/"
+      "publicPath": "/",
+      "expectedRemoteAbsent": true
     },
     {
       "source": "dist/live-tracking.html",
       "destination": "public_html/live-tracking.html",
-      "publicPath": "/live-tracking/"
+      "publicPath": "/live-tracking/",
+      "expectedRemoteAbsent": true
     },
     {
       "source": "assets/strava-race-map.mjs",

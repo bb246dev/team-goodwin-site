@@ -41,6 +41,7 @@ jobs:
       MANIFEST_PATH: ${{ inputs.manifest }}
       RELEASE_LEVEL: ${{ inputs.release_level }}
       DEPLOY_MODE: ${{ inputs.mode }}
+      RELEASE_COMMIT_SHA: ${{ github.sha }}
     steps:
       - name: Check out selected commit
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -70,9 +71,6 @@ jobs:
             exit 1
           fi
 
-      - name: Scan manifest sources for secrets
-        run: node scripts/deploy/scan-secrets.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL"
-
       - name: Check selected commit diff and workspace
         run: |
           if git rev-parse HEAD^ >/dev/null 2>&1; then
@@ -83,15 +81,18 @@ jobs:
           test -z "$(git status --porcelain)"
 
       - name: Run release-level validation
-        run: node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL"
+        run: node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL" --workspace "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
 
-      - name: Confirm validation did not mutate tracked release sources
+      - name: Confirm isolated validation did not mutate the checkout
         run: |
           git diff --check
-          test -z "$(git status --porcelain --untracked-files=no)"
+          test -z "$(git status --porcelain)"
+
+      - name: Scan every validated candidate source without skips
+        run: node scripts/deploy/scan-secrets.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL" --root "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID"
 
       - name: Build immutable release candidate
-        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL" --output deployment-release
+        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL" --root "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json" --release-commit "$RELEASE_COMMIT_SHA" --output deployment-release
 
       - name: Save release candidate
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -101,6 +102,10 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Clean isolated validation workspace
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
+
   production:
     name: ${{ inputs.mode == 'deploy' && 'Deploy static production' || 'Plan static production dry run' }}
     needs: validate
@@ -109,13 +114,12 @@ jobs:
     env:
       DEPLOY_MODE: ${{ inputs.mode }}
       DEPLOYMENT_ENVIRONMENT: production
-      NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
-      NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
-      NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
-      NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
-      NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
-      PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
     steps:
+      - name: Guard production readiness
+        env:
+          PRODUCTION_DEPLOYMENTS_ENABLED: ${{ vars.PRODUCTION_DEPLOYMENTS_ENABLED }}
+        run: test "$PRODUCTION_DEPLOYMENTS_ENABLED" = "true"
+
       - name: Check out selected commit
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -134,25 +138,52 @@ jobs:
           path: deployment-release
 
       - name: Back up and compare every manifest destination
-        run: node scripts/deploy/compare-production.mjs --release deployment-release/release.json --mode "$DEPLOY_MODE" --output deployment-plan
+        env:
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
+        run: node scripts/deploy/compare-production.mjs --release deployment-release/release.json --mode "$DEPLOY_MODE" --backup-dir "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID" --output deployment-plan
 
       - name: Upload changed manifest files over explicit FTPS
         if: inputs.mode == 'deploy'
         env:
           CONFIRM_PRODUCTION_DEPLOY: "YES"
-        run: node scripts/deploy/ftps-upload.mjs --release deployment-release/release.json --plan deployment-plan/deployment-plan.json --output deployment-results
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
+        run: node scripts/deploy/ftps-upload.mjs --release deployment-release/release.json --plan deployment-plan/deployment-plan.json --backup-dir "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID" --output deployment-results
 
       - name: Verify static production
         if: inputs.mode == 'deploy'
+        env:
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
         run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --output deployment-results/production-verification.json
 
-      - name: Save plan, backups, rollback data, and results
+      - name: Save non-sensitive plan, rollback instructions, and results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: static-production-plan-${{ github.run_id }}
           path: |
-            deployment-plan/
-            deployment-results/
-          if-no-files-found: error
+            deployment-plan/deployment-plan.json
+            deployment-plan/rollback-manifest.json
+            deployment-results/deployment-results.json
+            deployment-results/production-verification.json
+          if-no-files-found: warn
           retention-days: 30
+
+      - name: Delete runner-local backups and credential temporary files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID" "$RUNNER_TEMP/goodwin-ftps-temporary-$GITHUB_RUN_ID"

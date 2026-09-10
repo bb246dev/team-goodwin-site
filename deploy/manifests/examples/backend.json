@@ -7,7 +7,8 @@
   "files": [
     {
       "source": "strava-app/lib/race-window.mjs",
-      "destination": "goodwin-node-test/lib/race-window.mjs"
+      "destination": "goodwin-node-test/lib/race-window.mjs",
+      "expectedRemoteAbsent": true
     }
   ],
   "validation": {

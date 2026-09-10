@@ -18,7 +18,8 @@ function validateFtpsEnvironment(env) {
   if (!password || /[\r\n\0]/.test(password)) throw new Error("NAMECHEAP_FTPS_PASSWORD is missing or invalid");
   if (!/^\d{1,5}$/.test(port) || Number(port) < 1 || Number(port) > 65535) throw new Error("NAMECHEAP_FTPS_PORT is invalid");
   const basePath = env.NAMECHEAP_FTPS_BASE_PATH ? normalizeRelativePath(env.NAMECHEAP_FTPS_BASE_PATH.replace(/^\/+|\/+$/g, ""), "NAMECHEAP_FTPS_BASE_PATH") : "";
-  return { host, username, password, port, basePath };
+  const temporaryRoot = env.DEPLOY_TEMP_ROOT ? resolve(env.DEPLOY_TEMP_ROOT) : tmpdir();
+  return { host, username, password, port, basePath, temporaryRoot, manageTemporaryRoot: Boolean(env.DEPLOY_TEMP_ROOT) };
 }
 
 function remoteUrl(configuration, destination) {
@@ -31,7 +32,11 @@ function remoteUrl(configuration, destination) {
 }
 
 async function runCurl(configuration, extraArguments) {
-  const temporaryDirectory = await mkdtemp(join(tmpdir(), "goodwin-ftps-"));
+  if (configuration.manageTemporaryRoot) {
+    await mkdir(configuration.temporaryRoot, { recursive: true, mode: 0o700 });
+    await chmod(configuration.temporaryRoot, 0o700);
+  }
+  const temporaryDirectory = await mkdtemp(join(configuration.temporaryRoot, "goodwin-ftps-"));
   const configPath = join(temporaryDirectory, "curl.conf");
   const config = [
     `user = "${curlConfigEscape(`${configuration.username}:${configuration.password}`)}"`,

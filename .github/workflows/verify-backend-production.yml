@@ -35,18 +35,16 @@ jobs:
     environment: production
     env:
       DEPLOYED_COMMIT: ${{ inputs.deployed_commit }}
+      RELEASE_COMMIT_SHA: ${{ inputs.deployed_commit }}
       MANIFEST_PATH: ${{ inputs.manifest }}
       RELEASE_LEVEL: ${{ inputs.release_level }}
       DEPLOYMENT_ENVIRONMENT: production
-      NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
-      NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
-      NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
-      NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
-      NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
-      STRAVA_ADMIN_TOKEN: ${{ secrets.STRAVA_ADMIN_TOKEN }}
-      STRAVA_ADMIN_USER: ${{ vars.STRAVA_ADMIN_USER || 'strava' }}
-      PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
     steps:
+      - name: Guard production readiness
+        env:
+          PRODUCTION_DEPLOYMENTS_ENABLED: ${{ vars.PRODUCTION_DEPLOYMENTS_ENABLED }}
+        run: test "$PRODUCTION_DEPLOYMENTS_ENABLED" = "true"
+
       - name: Validate immutable commit input
         run: |
           node -e 'if (!/^[a-f0-9]{40}$/.test(process.env.DEPLOYED_COMMIT)) { console.error("deployed_commit must be a full lowercase SHA"); process.exit(1); }'
@@ -63,16 +61,32 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install locked dependencies
+        run: |
+          npm ci
+          npm --prefix strava-app ci
+
       - name: Validate exact backend manifest
         run: node scripts/deploy/validate-manifest.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL"
 
+      - name: Recreate the isolated validated output
+        run: node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --workspace "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
+
       - name: Rebuild immutable release metadata
-        env:
-          GITHUB_SHA: ${{ inputs.deployed_commit }}
-        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --output deployment-release
+        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --root "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json" --release-commit "$RELEASE_COMMIT_SHA" --output deployment-release
 
       - name: Verify public APIs, FTPS hashes, and authenticated runtime generation
-        run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --output backend-verification.json
+        env:
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          STRAVA_ADMIN_TOKEN: ${{ secrets.STRAVA_ADMIN_TOKEN }}
+          STRAVA_ADMIN_USER: ${{ vars.STRAVA_ADMIN_USER || 'strava' }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
+        run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --expected-release-generation "$RELEASE_COMMIT_SHA" --output backend-verification.json
 
       - name: Save verification result
         if: always()
@@ -82,3 +96,7 @@ jobs:
           path: backend-verification.json
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Delete validation and credential temporary files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json" "$RUNNER_TEMP/goodwin-ftps-temporary-$GITHUB_RUN_ID"
