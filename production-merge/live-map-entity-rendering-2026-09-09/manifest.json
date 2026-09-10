@@ -1,0 +1,20 @@
+{
+  "release": "live-map-entity-rendering-2026-09-09",
+  "baseCommit": "35396ed002603db091bcc26181b5b9c7da12863f",
+  "files": [
+    {
+      "path": "public_html/assets/tracker-base.js",
+      "beforeSha256": "570b8f8431f2202b383d5ce7b74f1027e9dd35ef66adb94a57568f2ed7c26931",
+      "beforeBytes": 83264,
+      "afterSha256": "42ff22f91263e81529a09d2bef6f61f014eb96492ae9366a65c32654bffa6b98",
+      "afterBytes": 83592
+    }
+  ],
+  "preserved": [
+    {
+      "path": "public_html/assets/strava-race-map.mjs",
+      "sha256": "4d8b6e1b33b701651fa5219e5a12736dee5d0605ac7810fa8a1d1eb427629dae",
+      "bytes": 15109
+    }
+  ]
+}
