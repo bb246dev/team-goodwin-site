@@ -160,6 +160,7 @@ jobs:
         run: node scripts/deploy/ftps-upload.mjs --release deployment-release/release.json --plan deployment-plan/deployment-plan.json --backup-dir "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID" --output deployment-results
 
       - name: Verify static production
+        id: static_verification
         if: inputs.mode == 'deploy'
         env:
           NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
@@ -171,6 +172,18 @@ jobs:
           DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
         run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --output deployment-results/production-verification.json
 
+      - name: Roll back verified uploads after functional verification failure
+        if: failure() && inputs.mode == 'deploy' && steps.static_verification.outcome == 'failure'
+        env:
+          CONFIRM_PRODUCTION_DEPLOY: "YES"
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
+        run: node scripts/deploy/ftps-upload.mjs --release deployment-release/release.json --rollback-results deployment-results/deployment-results.json --rollback-output deployment-results/functional-rollback.json --backup-dir "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID"
+
       - name: Save non-sensitive plan, rollback instructions, and results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -181,6 +194,7 @@ jobs:
             deployment-plan/rollback-manifest.json
             deployment-results/deployment-results.json
             deployment-results/production-verification.json
+            deployment-results/functional-rollback.json
           if-no-files-found: warn
           retention-days: 30
 

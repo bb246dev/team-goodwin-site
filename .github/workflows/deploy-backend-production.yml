@@ -157,6 +157,9 @@ jobs:
           NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
           NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
           NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          STRAVA_ADMIN_TOKEN: ${{ secrets.STRAVA_ADMIN_TOKEN }}
+          STRAVA_ADMIN_USER: ${{ vars.STRAVA_ADMIN_USER || 'strava' }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
           DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
         run: node scripts/deploy/ftps-upload.mjs --release deployment-release/release.json --plan deployment-plan/deployment-plan.json --backup-dir "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID" --output deployment-results
 
@@ -172,7 +175,7 @@ jobs:
             echo "2. Wait for Stopped"
             echo "3. Start"
             echo "4. Wait for Started"
-            echo "5. Run the Verify backend production workflow with commit $GITHUB_SHA and this manifest; runtime generation must match the manifest's approved SHA-256"
+            echo "5. Capture the new runtime generation, then run Verify backend production with commit $GITHUB_SHA, this manifest, and that exact generation"
           } >> "$GITHUB_STEP_SUMMARY"
           echo "ACTION REQUIRED: Open cPanel → Setup Node.js App → Stop goodwingoodge.com/strava → wait for Stopped → Start → wait for Started. Then run Verify backend production."
 

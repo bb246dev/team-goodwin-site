@@ -6,7 +6,7 @@ import test from "node:test";
 import { buildRelease } from "../scripts/deploy/build-release.mjs";
 import { compareProduction } from "../scripts/deploy/compare-production.mjs";
 import { createLocalProductionClient, rejectAmbiguousFtpsAbsence } from "../scripts/deploy/ftps-client.mjs";
-import { uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
+import { rollbackCompletedRelease, uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
 import { resolveManifestInput, sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
 import { scanManifestSources, secretFindings } from "../scripts/deploy/scan-secrets.mjs";
 import { sameOriginRedirect, validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
@@ -159,9 +159,13 @@ test("secret detection catches definite credentials but permits explicit example
     "{\"api_key\":\"prod-abcdefghijklmnopqrstuv\"}",
     "API_KEY=prod-abcdefghijklmnopqrstuv",
     "const SESSION_SECRET = `prod-abcdefghijklmnopqrstuv`;",
+    "API_KEY='prod-latest-secret-real-value-123456'",
+    "API_KEY='contest-production-abcdefghijklmnop'",
   ]) assert.deepEqual(secretFindings(source), ["credential assignment"]);
   assert.deepEqual(secretFindings("Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456"), ["authorization credential"]);
   assert.deepEqual(secretFindings("{\"Authorization\":\"Bearer abcdefghijklmnopqrstuvwxyz123456\"}"), ["authorization credential"]);
+  assert.deepEqual(secretFindings('const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";'), []);
+  assert.deepEqual(secretFindings("const password = requiredSecret(env, 'DATABASE_PASSWORD'); const token = randomSecret();"), []);
 });
 
 test("FTPS never infers absence from a failed download or directory listing", () => {
@@ -612,7 +616,7 @@ test("corrupt runner-local rollback backup aborts before upload", async (t) => {
   assert.equal(uploads, 0);
 });
 
-test("a failed post-upload check automatically restores and verifies an existing destination", async (t) => {
+test("an unverified upload outcome is never overwritten automatically", async (t) => {
   const prepared = await preparedRelease(t);
   const local = createLocalProductionClient(prepared.productionRoot, true);
   const planDirectory = join(prepared.root, "plan-auto-rollback");
@@ -631,12 +635,54 @@ test("a failed post-upload check automatically restores and verifies an existing
     releasePath: join(prepared.releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"),
     outputDirectory: join(prepared.root, "results-auto-rollback"), backupDirectory, client, productionConfirmation: true,
   }), /Post-upload hash mismatch/);
-  assert.equal(uploads, 2);
-  assert.equal(await readFile(join(prepared.productionRoot, "public_html", "assets", "site.css"), "utf8"), "old css\n");
+  assert.equal(uploads, 1);
+  assert.equal(await readFile(join(prepared.productionRoot, "public_html", "assets", "site.css"), "utf8"), "corrupt post-upload bytes\n");
   const report = JSON.parse(await readFile(join(prepared.root, "results-auto-rollback", "deployment-results.json"), "utf8"));
   assert.deepEqual(report.rollback, [{
-    destination: "public_html/assets/site.css", status: "restored-and-verified", restoredSha256: sha256("old css\n"),
+    destination: "public_html/assets/site.css", status: "manual-recovery-required", reason: "upload outcome was not verified; automatic restore would risk overwriting a concurrent change",
   }]);
+});
+
+test("later upload failure restores only earlier verified files whose remote hash is unchanged", async (t) => {
+  const root = await fixture(t);
+  await writeFile(join(root, "assets", "other.css"), "new other css\n");
+  const manifestPath = await writeManifest(root, validManifest({ files: [
+    { source: "assets/site.css", destination: "public_html/assets/site.css", publicPath: "/assets/site.css", expectedRemoteSha256: sha256("old css\n") },
+    { source: "assets/other.css", destination: "public_html/assets/other.css", publicPath: "/assets/other.css", expectedRemoteSha256: sha256("old other css\n") },
+  ] }));
+  const releaseDirectory = join(root, "partial-release");
+  await buildTestRelease(root, manifestPath, releaseDirectory);
+  const productionRoot = join(root, "partial-production");
+  await mkdir(join(productionRoot, "public_html", "assets"), { recursive: true });
+  await writeFile(join(productionRoot, "public_html", "assets", "site.css"), "old css\n");
+  await writeFile(join(productionRoot, "public_html", "assets", "other.css"), "old other css\n");
+  const local = createLocalProductionClient(productionRoot, true);
+  const planDirectory = join(root, "partial-plan");
+  const backupDirectory = join(root, "partial-backups");
+  await compareProduction({ releasePath: join(releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client: local });
+  let uploads = 0;
+  await assert.rejects(uploadRelease({
+    releasePath: join(releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"), outputDirectory: join(root, "partial-results"), backupDirectory,
+    client: { download: local.download, async upload(...args) { uploads += 1; if (uploads === 2) throw new Error("simulated upload failure"); return local.upload(...args); } }, productionConfirmation: true,
+  }), /simulated upload failure/);
+  assert.equal(uploads, 3);
+  assert.equal(await readFile(join(productionRoot, "public_html", "assets", "site.css"), "utf8"), "old css\n");
+  assert.equal(await readFile(join(productionRoot, "public_html", "assets", "other.css"), "utf8"), "old other css\n");
+});
+
+test("functional verification failure can restore completed static uploads", async (t) => {
+  const prepared = await preparedRelease(t);
+  const client = createLocalProductionClient(prepared.productionRoot, true);
+  const planDirectory = join(prepared.root, "functional-plan");
+  const backupDirectory = join(prepared.root, "functional-backups");
+  const resultsDirectory = join(prepared.root, "functional-results");
+  await compareProduction({ releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client });
+  await uploadRelease({ releasePath: join(prepared.releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"), outputDirectory: resultsDirectory, backupDirectory, client, productionConfirmation: true });
+  const report = await rollbackCompletedRelease({
+    releasePath: join(prepared.releaseDirectory, "release.json"), resultsPath: join(resultsDirectory, "deployment-results.json"), outputPath: join(resultsDirectory, "functional-rollback.json"), backupDirectory, client, productionConfirmation: true,
+  });
+  assert.equal(report.completed, true);
+  assert.equal(await readFile(join(prepared.productionRoot, "public_html", "assets", "site.css"), "utf8"), "old css\n");
 });
 
 test("workflow guards, secret scope, cleanup, and artifact allowlists remain fail closed", async () => {
@@ -661,6 +707,10 @@ test("workflow guards, secret scope, cleanup, and artifact allowlists remain fai
     assert.doesNotMatch(workflow, /^\s+deployment-plan\/$/m);
     assert.doesNotMatch(workflow, /^\s+.*backup.*\/$/m);
   }
+  const staticWorkflow = await readFile(workflowUrls[0], "utf8");
+  assert.match(staticWorkflow, /steps\.static_verification\.outcome == 'failure'[\s\S]{0,1200}--rollback-results/);
+  const backendWorkflow = await readFile(workflowUrls[1], "utf8");
+  assert.match(backendWorkflow, /Upload changed manifest files[\s\S]{0,700}STRAVA_ADMIN_TOKEN:[\s\S]{0,700}ftps-upload\.mjs/);
 });
 
 test("example manifests, including all-zero remote placeholders, cannot enter deploy mode", async () => {
