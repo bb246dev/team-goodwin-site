@@ -197,7 +197,27 @@ export async function rollbackCompletedRelease({ releasePath, resultsPath, outpu
   if (!productionConfirmation) throw new Error("Production rollback confirmation is missing");
   const release = await loadRelease(releasePath);
   const deployment = JSON.parse(await readFile(resultsPath, "utf8"));
-  if (deployment.sourceCommit !== release.sourceCommit || !Array.isArray(deployment.files)) throw new Error("Deployment results do not match release metadata");
+  if (deployment.completed !== true || deployment.sourceCommit !== release.sourceCommit || !Array.isArray(deployment.files) || deployment.files.length !== release.files.length) {
+    throw new Error("Deployment results do not represent the complete release");
+  }
+  for (let index = 0; index < release.files.length; index += 1) {
+    const file = release.files[index];
+    const entry = deployment.files[index];
+    const oldExpectedSha256 = file.expectedRemoteSha256 ?? null;
+    const newExpectedSha256 = file.expectedSha256 ?? file.newSha256;
+    const expectedStatus = oldExpectedSha256 === newExpectedSha256 ? "skipped-unchanged" : "uploaded-and-verified";
+    if (
+      entry.destination !== file.destination
+      || entry.oldExpectedSha256 !== oldExpectedSha256
+      || entry.expectedRemoteAbsent !== (file.expectedRemoteAbsent === true)
+      || entry.oldObservedSha256 !== oldExpectedSha256
+      || entry.newExpectedSha256 !== newExpectedSha256
+      || entry.newObservedSha256 !== newExpectedSha256
+      || entry.status !== expectedStatus
+    ) {
+      throw new Error(`Deployment result mismatch at file ${index + 1}`);
+    }
+  }
   const uploaded = deployment.files.filter((entry) => entry.status === "uploaded-and-verified");
   const temporaryRoot = resolve(process.env.DEPLOY_TEMP_ROOT || tmpdir());
   if (process.env.DEPLOY_TEMP_ROOT) await mkdir(temporaryRoot, { recursive: true, mode: 0o700 });

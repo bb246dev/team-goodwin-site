@@ -12,11 +12,27 @@ const DEFINITE_SECRET_PATTERNS = [
   { name: "live Stripe key", pattern: /\b(?:sk|rk)_live_[A-Za-z0-9]{16,}\b/ },
   { name: "credential-bearing URL", pattern: /\b(?:ftp|https?):\/\/[A-Za-z0-9._%+-]+:[^@\s/"'{}[\],]+@/i },
 ];
-const ASSIGNMENT_PATTERN = /["'`]?\b([A-Za-z0-9_-]*(?:password|passwd|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credential)[A-Za-z0-9_-]*)\b["'`]?\s*[:=]\s*(?:"([^"\r\n]{12,})"|'([^'\r\n]{12,})'|`([^`\r\n]{12,})`|((?:prod|live|secret|token|key)[_:-][A-Za-z0-9_+\/=:-]{8,}))/gi;
+const ASSIGNMENT_PATTERN = /["'`]?\b([A-Za-z0-9_-]*(?:(?:password|passwd|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credential)[A-Za-z0-9_-]*|(?:url|uri|endpoint)))\b["'`]?\s*[:=]\s*(?:"([^"\r\n]{12,})"|'([^'\r\n]{12,})'|`([^`\r\n]{12,})`)/gi;
+const DOTENV_ASSIGNMENT_PATTERN = /^[ \t]*(?:export[ \t]+)?([A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*([A-Za-z0-9_+\/=:@%.-]{12,})[ \t]*(?:#.*)?$/gim;
+const CREDENTIAL_KEY_PATTERN = /(?:password|passwd|secret|token|api_?key|access_?key|private_?key|credential)/i;
 const AUTHORIZATION_PATTERN = /["'`]?\bauthorization\b["'`]?\s*[:=]\s*["'`]?(?:bearer|basic)\s+([A-Za-z0-9._~+\/=:-]{12,})/gi;
 const PLACEHOLDER_PATTERN = /(?:^|[^a-z0-9])(?:test|example|placeholder|replace|changeme|your|dummy|redacted|not-a-real)(?:$|[^a-z0-9])/i;
 const SAFE_BINARY_EXTENSIONS = new Set([".avif", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".webp", ".woff", ".woff2"]);
 const FORBIDDEN_BINARY_EXTENSIONS = new Set([".7z", ".class", ".db", ".dll", ".dylib", ".exe", ".gz", ".jar", ".rar", ".so", ".sqlite", ".tar", ".wasm", ".zip"]);
+
+function isCredentialFreeServiceUrl(value) {
+  try {
+    const absoluteHttps = /^https:\/\//i.test(value);
+    const originRelative = /^\/(?!\/)/.test(value);
+    if (!absoluteHttps && !originRelative) return false;
+    const url = new URL(value, "https://goodwingoodge.com");
+    if (url.protocol !== "https:" || url.username || url.password || url.hash) return false;
+    if ([...url.searchParams.keys()].some((key) => CREDENTIAL_KEY_PATTERN.test(key) || /auth/i.test(key))) return false;
+    return url.pathname.split("/").every((segment) => segment.length <= 16 || !/(?:prod|live|secret|token|key|credential)/i.test(segment));
+  } catch {
+    return false;
+  }
+}
 
 export function secretFindings(text) {
   const findings = [];
@@ -26,8 +42,14 @@ export function secretFindings(text) {
   for (const match of text.matchAll(ASSIGNMENT_PATTERN)) {
     const key = match[1];
     const value = match.slice(2).find(Boolean) || "";
-    if (/(?:url|uri|endpoint)$/i.test(key) && /^https:\/\/[^\s@]+$/i.test(value)) continue;
+    if (/(?:url|uri|endpoint)$/i.test(key)) {
+      if (!isCredentialFreeServiceUrl(value)) findings.push("credential assignment");
+      continue;
+    }
     if (!PLACEHOLDER_PATTERN.test(value)) findings.push("credential assignment");
+  }
+  for (const match of text.matchAll(DOTENV_ASSIGNMENT_PATTERN)) {
+    if (CREDENTIAL_KEY_PATTERN.test(match[1]) && !PLACEHOLDER_PATTERN.test(match[2])) findings.push("credential assignment");
   }
   for (const match of text.matchAll(AUTHORIZATION_PATTERN)) {
     if (!PLACEHOLDER_PATTERN.test(match[1])) findings.push("authorization credential");

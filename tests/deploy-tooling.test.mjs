@@ -161,10 +161,18 @@ test("secret detection catches definite credentials but permits explicit example
     "const SESSION_SECRET = `prod-abcdefghijklmnopqrstuv`;",
     "API_KEY='prod-latest-secret-real-value-123456'",
     "API_KEY='contest-production-abcdefghijklmnop'",
+    "HAPN_API_KEY=abcdefghijklmnopqrstuv123456",
+    "DATABASE_PASSWORD=S3cur3P4ssw0rdValue",
+    "STRAVA_TOKEN=abcdefghijklmnopqrstuvwxyz123456",
+    'TOKEN_URL="https://api.example.com/callback?token=prod-supersecret123456"',
+    'API_ENDPOINT="https://api.example.com/key/prod-supersecret123456"',
+    'CREDENTIAL_URI="https://api.example.com/?api_key=abcdefghijklmnopqrstuv"',
   ]) assert.deepEqual(secretFindings(source), ["credential assignment"]);
   assert.deepEqual(secretFindings("Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456"), ["authorization credential"]);
   assert.deepEqual(secretFindings("{\"Authorization\":\"Bearer abcdefghijklmnopqrstuvwxyz123456\"}"), ["authorization credential"]);
   assert.deepEqual(secretFindings('const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";'), []);
+  assert.deepEqual(secretFindings('const instagramProfileUrl = "https://www.instagram.com/williamgoodge?igsi=public-profile-id";'), []);
+  assert.deepEqual(secretFindings('const PUBLIC_RACES_ENDPOINT = "/strava/public/races";'), []);
   assert.deepEqual(secretFindings("TOKEN_URL='prod-secret-value-abcdefghijklmnop'"), ["credential assignment"]);
   assert.deepEqual(secretFindings("const password = requiredSecret(env, 'DATABASE_PASSWORD'); const token = randomSecret();"), []);
 });
@@ -679,8 +687,22 @@ test("functional verification failure can restore completed static uploads", asy
   const resultsDirectory = join(prepared.root, "functional-results");
   await compareProduction({ releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client });
   await uploadRelease({ releasePath: join(prepared.releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"), outputDirectory: resultsDirectory, backupDirectory, client, productionConfirmation: true });
+  const completedResultsPath = join(resultsDirectory, "deployment-results.json");
+  const completeResults = JSON.parse(await readFile(completedResultsPath, "utf8"));
+  for (const [name, tampered] of [
+    ["incomplete", { ...completeResults, completed: false }],
+    ["missing-file", { ...completeResults, files: [] }],
+    ["mismatched-old-hash", { ...completeResults, files: [{ ...completeResults.files[0], oldObservedSha256: "0".repeat(64) }] }],
+    ["mismatched-hash", { ...completeResults, files: [{ ...completeResults.files[0], newObservedSha256: "0".repeat(64) }] }],
+  ]) {
+    const tamperedPath = join(resultsDirectory, `${name}-results.json`);
+    await writeFile(tamperedPath, `${JSON.stringify(tampered)}\n`);
+    await assert.rejects(rollbackCompletedRelease({
+      releasePath: join(prepared.releaseDirectory, "release.json"), resultsPath: tamperedPath, outputPath: join(resultsDirectory, `${name}-rollback.json`), backupDirectory, client, productionConfirmation: true,
+    }), /complete release|result mismatch/);
+  }
   const report = await rollbackCompletedRelease({
-    releasePath: join(prepared.releaseDirectory, "release.json"), resultsPath: join(resultsDirectory, "deployment-results.json"), outputPath: join(resultsDirectory, "functional-rollback.json"), backupDirectory, client, productionConfirmation: true,
+    releasePath: join(prepared.releaseDirectory, "release.json"), resultsPath: completedResultsPath, outputPath: join(resultsDirectory, "functional-rollback.json"), backupDirectory, client, productionConfirmation: true,
   });
   assert.equal(report.completed, true);
   assert.equal(await readFile(join(prepared.productionRoot, "public_html", "assets", "site.css"), "utf8"), "old css\n");
