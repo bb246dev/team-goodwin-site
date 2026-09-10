@@ -9,6 +9,7 @@ async function main() {
   const manifest = await loadAndValidateManifest(manifestPath, {
     expectedType: args.type,
     expectedRelease: args.release,
+    mode: args.mode,
   });
   const output = publicManifest(manifest);
   if (args.output) await writeFile(args.output, `${JSON.stringify(output, null, 2)}\n`, { flag: "wx" });

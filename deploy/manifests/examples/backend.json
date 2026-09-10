@@ -2,7 +2,8 @@
   "schemaVersion": 1,
   "deploymentType": "backend",
   "releaseType": "major",
-  "expectedReleaseGeneration": "0000000000000000000000000000000000000000000000000000000000000000",
+  "previousReleaseGeneration": "0000000000000000000000000000000000000000000000000000000000000000",
+  "exampleOnly": true,
   "description": "Example race-window module release. Backend destinations are always enumerated exactly.",
   "protectedPathsApproved": [
     "goodwin-node-test/lib/race-window.mjs"

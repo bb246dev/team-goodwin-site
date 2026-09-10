@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import { buildRelease } from "../scripts/deploy/build-release.mjs";
 import { compareProduction } from "../scripts/deploy/compare-production.mjs";
-import { createLocalProductionClient, establishListedAbsence } from "../scripts/deploy/ftps-client.mjs";
+import { createLocalProductionClient, rejectAmbiguousFtpsAbsence } from "../scripts/deploy/ftps-client.mjs";
 import { uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
 import { resolveManifestInput, sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
 import { scanManifestSources, secretFindings } from "../scripts/deploy/scan-secrets.mjs";
@@ -66,7 +66,7 @@ async function writeManifest(root, manifest) {
   return path;
 }
 
-async function buildTestRelease(root, manifestPath, releaseDirectory, expectedType = "static", expectedRelease = "micro") {
+async function buildTestRelease(root, manifestPath, releaseDirectory, expectedType = "static", expectedRelease = "micro", expectedReleaseGeneration) {
   const manifest = await validateManifestObject(JSON.parse(await readFile(manifestPath, "utf8")), { root, expectedType, expectedRelease });
   const inventoryPath = join(root, `inventory-${Math.random().toString(16).slice(2)}.json`);
   await writeFile(inventoryPath, `${JSON.stringify({
@@ -76,7 +76,7 @@ async function buildTestRelease(root, manifestPath, releaseDirectory, expectedTy
     outputFiles: {},
     sources: Object.fromEntries(manifest.files.map((file) => [file.source, { sha256: file.newSha256, size: file.size }])),
   }, null, 2)}\n`);
-  return buildRelease({ manifestPath, outputDirectory: releaseDirectory, root, expectedType, expectedRelease, releaseCommit: TEST_COMMIT, validatedInventoryPath: inventoryPath });
+  return buildRelease({ manifestPath, outputDirectory: releaseDirectory, root, expectedType, expectedRelease, releaseCommit: TEST_COMMIT, expectedReleaseGeneration, validatedInventoryPath: inventoryPath });
 }
 
 test("valid manifest is accepted and hashes its source", async (t) => {
@@ -156,20 +156,16 @@ test("secret detection catches definite credentials but permits explicit example
     "HAPN_API_KEY = 'prod-hapn-value-1234567890'",
     "SESSION_SECRET = 'prod-session-value-1234567890'",
     "token = 'prod-token-value-1234567890'",
+    "{\"api_key\":\"prod-abcdefghijklmnopqrstuv\"}",
+    "API_KEY=prod-abcdefghijklmnopqrstuv",
+    "const SESSION_SECRET = `prod-abcdefghijklmnopqrstuv`;",
   ]) assert.deepEqual(secretFindings(source), ["credential assignment"]);
   assert.deepEqual(secretFindings("Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456"), ["authorization credential"]);
+  assert.deepEqual(secretFindings("{\"Authorization\":\"Bearer abcdefghijklmnopqrstuvwxyz123456\"}"), ["authorization credential"]);
 });
 
-test("FTPS absence classification fails closed on ambiguous or unreadable destinations", () => {
-  assert.deepEqual(establishListedAbsence("public_html/new.html", { status: 22 }, { status: 0, stdout: "index.html\n" }), { exists: false });
-  assert.throws(
-    () => establishListedAbsence("public_html/new.html", { status: 22 }, { status: 22, stdout: "" }),
-    /state is ambiguous/,
-  );
-  assert.throws(
-    () => establishListedAbsence("public_html/new.html", { status: 22 }, { status: 0, stdout: "new.html\n" }),
-    /exists but could not be downloaded/,
-  );
+test("FTPS never infers absence from a failed download or directory listing", () => {
+  assert.throws(() => rejectAmbiguousFtpsAbsence("public_html/.htaccess"), /cannot prove destination absence unambiguously/);
 });
 
 test("redirect validation permits only the requested production origin", () => {
@@ -188,17 +184,30 @@ test("all backend files are protected Major releases with an approved runtime ge
     expectedRemoteAbsent: true,
   };
   const base = validManifest({
-    deploymentType: "backend", releaseType: "major", expectedReleaseGeneration: TEST_RUNTIME_GENERATION,
+    deploymentType: "backend", releaseType: "major", previousReleaseGeneration: "1".repeat(64),
     protectedPathsApproved: [file.destination], files: [file],
     validation: { targetedTests: ["tests/site.test.mjs"], browserRoutes: [], apiChecks: [{ name: "Health", path: "/strava/health", expectedStatus: 200, requiredJsonFields: [] }] },
   });
   assert.equal((await validateManifestObject(base, { root })).files.length, 1);
   const manifestPath = await writeManifest(root, base);
-  const release = await buildTestRelease(root, manifestPath, join(root, "backend-release"), "backend", "major");
+  const release = await buildTestRelease(root, manifestPath, join(root, "backend-release"), "backend", "major", TEST_RUNTIME_GENERATION);
   assert.equal(release.sourceCommit, TEST_COMMIT);
   assert.equal(release.expectedReleaseGeneration, TEST_RUNTIME_GENERATION);
   await assert.rejects(validateManifestObject({ ...base, releaseType: "micro" }, { root }), /Every backend deployment requires a major release/);
-  await assert.rejects(validateManifestObject({ ...base, expectedReleaseGeneration: undefined }, { root }), /expectedReleaseGeneration/);
+  assert.equal(release.previousReleaseGeneration, "1".repeat(64));
+  const productionRoot = join(root, "backend-production");
+  await mkdir(productionRoot);
+  let checkedBaseline = null;
+  await compareProduction({
+    releasePath: join(root, "backend-release", "release.json"), outputDirectory: join(root, "backend-plan"), backupDirectory: join(root, "backend-backups"),
+    client: createLocalProductionClient(productionRoot, true), runtimeBaselineVerifier: async (expected) => { checkedBaseline = expected; },
+  });
+  assert.equal(checkedBaseline, "1".repeat(64));
+  await assert.rejects(compareProduction({
+    releasePath: join(root, "backend-release", "release.json"), outputDirectory: join(root, "backend-plan-no-baseline"), backupDirectory: join(root, "backend-backups-no-baseline"),
+    client: createLocalProductionClient(productionRoot, true),
+  }), /requires authenticated runtime baseline verification/);
+  await assert.rejects(validateManifestObject({ ...base, previousReleaseGeneration: undefined }, { root }), /previousReleaseGeneration/);
   await assert.rejects(validateManifestObject({ ...base, protectedPathsApproved: [] }, { root }), /Protected destination/);
 });
 
@@ -530,11 +539,13 @@ function runtimePayload(releaseGeneration = TEST_RUNTIME_GENERATION) {
 }
 
 test("runtime generation requires an exact approved SHA-256 independent of the Git commit", () => {
-  assert.equal(validateRuntimePayload(runtimePayload(), TEST_RUNTIME_GENERATION).releaseGeneration, TEST_RUNTIME_GENERATION);
-  assert.throws(() => validateRuntimePayload(runtimePayload("3".repeat(64)), TEST_RUNTIME_GENERATION), /stale/);
+  const previous = "1".repeat(64);
+  assert.equal(validateRuntimePayload(runtimePayload(), TEST_RUNTIME_GENERATION, previous).releaseGeneration, TEST_RUNTIME_GENERATION);
+  assert.throws(() => validateRuntimePayload(runtimePayload("3".repeat(64)), TEST_RUNTIME_GENERATION, previous), /stale/);
   const missing = runtimePayload(); delete missing.releaseGeneration;
-  assert.throws(() => validateRuntimePayload(missing, TEST_RUNTIME_GENERATION), /missing approved field/);
-  assert.throws(() => validateRuntimePayload(runtimePayload("malformed"), TEST_RUNTIME_GENERATION), /invalid/);
+  assert.throws(() => validateRuntimePayload(missing, TEST_RUNTIME_GENERATION, previous), /missing approved field/);
+  assert.throws(() => validateRuntimePayload(runtimePayload("malformed"), TEST_RUNTIME_GENERATION, previous), /invalid/);
+  assert.throws(() => validateRuntimePayload(runtimePayload(), TEST_RUNTIME_GENERATION, TEST_RUNTIME_GENERATION), /must differ/);
 });
 
 test("release metadata uses explicit commit and ignores reserved GITHUB_SHA", async (t) => {
@@ -601,6 +612,33 @@ test("corrupt runner-local rollback backup aborts before upload", async (t) => {
   assert.equal(uploads, 0);
 });
 
+test("a failed post-upload check automatically restores and verifies an existing destination", async (t) => {
+  const prepared = await preparedRelease(t);
+  const local = createLocalProductionClient(prepared.productionRoot, true);
+  const planDirectory = join(prepared.root, "plan-auto-rollback");
+  const backupDirectory = join(prepared.root, "backups-auto-rollback");
+  await compareProduction({ releasePath: join(prepared.releaseDirectory, "release.json"), outputDirectory: planDirectory, backupDirectory, mode: "deploy", client: local });
+  let uploads = 0;
+  const client = {
+    download: local.download,
+    async upload(source, destination) {
+      uploads += 1;
+      await local.upload(source, destination);
+      if (uploads === 1) await writeFile(join(prepared.productionRoot, destination), "corrupt post-upload bytes\n");
+    },
+  };
+  await assert.rejects(uploadRelease({
+    releasePath: join(prepared.releaseDirectory, "release.json"), planPath: join(planDirectory, "deployment-plan.json"),
+    outputDirectory: join(prepared.root, "results-auto-rollback"), backupDirectory, client, productionConfirmation: true,
+  }), /Post-upload hash mismatch/);
+  assert.equal(uploads, 2);
+  assert.equal(await readFile(join(prepared.productionRoot, "public_html", "assets", "site.css"), "utf8"), "old css\n");
+  const report = JSON.parse(await readFile(join(prepared.root, "results-auto-rollback", "deployment-results.json"), "utf8"));
+  assert.deepEqual(report.rollback, [{
+    destination: "public_html/assets/site.css", status: "restored-and-verified", restoredSha256: sha256("old css\n"),
+  }]);
+});
+
 test("workflow guards, secret scope, cleanup, and artifact allowlists remain fail closed", async () => {
   const workflowUrls = [
     new URL("../.github/workflows/deploy-static-production.yml", import.meta.url),
@@ -630,4 +668,6 @@ test("example manifests, including all-zero remote placeholders, cannot enter de
     resolveManifestInput("deploy/manifests/examples/standard-static.json", process.cwd(), "deploy"),
     /Example manifests are dry-run only/,
   );
+  const copiedExample = JSON.parse(await readFile(new URL("../deploy/manifests/examples/standard-static.json", import.meta.url), "utf8"));
+  await assert.rejects(validateManifestObject(copiedExample, { requireSources: false, mode: "deploy" }), /Example-only manifests cannot enter deploy mode/);
 });

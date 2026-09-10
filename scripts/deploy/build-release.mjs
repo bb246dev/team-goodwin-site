@@ -5,10 +5,18 @@ import { basename, join, resolve } from "node:path";
 import { isMainModule, loadAndValidateManifest, parseArgs, publicManifest, resolveManifestInput, sha256 } from "./lib.mjs";
 import { scanManifestSources } from "./scan-secrets.mjs";
 
-export async function buildRelease({ manifestPath, outputDirectory, expectedType, expectedRelease, root = process.cwd(), releaseCommit, validatedInventoryPath }) {
+export async function buildRelease({ manifestPath, outputDirectory, expectedType, expectedRelease, root = process.cwd(), releaseCommit, expectedReleaseGeneration, validatedInventoryPath }) {
   if (!/^[a-f0-9]{40}$/.test(releaseCommit || "")) throw new Error("releaseCommit must be an explicitly supplied full lowercase Git commit SHA");
   if (!validatedInventoryPath) throw new Error("validatedInventoryPath is required");
   const manifest = await loadAndValidateManifest(manifestPath, { root, expectedType, expectedRelease });
+  if (expectedReleaseGeneration !== undefined) {
+    if (manifest.deploymentType !== "backend" || !/^[a-f0-9]{64}$/.test(expectedReleaseGeneration)) {
+      throw new Error("expectedReleaseGeneration must be an explicitly supplied backend runtime SHA-256");
+    }
+    if (expectedReleaseGeneration === manifest.previousReleaseGeneration) {
+      throw new Error("expectedReleaseGeneration must differ from the manifest previousReleaseGeneration");
+    }
+  }
   const inventoryContent = await readFile(validatedInventoryPath);
   let inventory;
   try { inventory = JSON.parse(inventoryContent); }
@@ -33,6 +41,7 @@ export async function buildRelease({ manifestPath, outputDirectory, expectedType
   }
   release.createdAt = new Date().toISOString();
   release.sourceCommit = releaseCommit;
+  if (expectedReleaseGeneration !== undefined) release.expectedReleaseGeneration = expectedReleaseGeneration;
   release.validatedOutputInventorySha256 = sha256(inventoryContent);
   release.sourceValidation = sourceValidation;
   await writeFile(join(output, "validated-output-inventory.json"), inventoryContent, { flag: "wx" });
@@ -50,6 +59,7 @@ async function main() {
     expectedRelease: args.release,
     root: resolve(args.root),
     releaseCommit: args["release-commit"],
+    expectedReleaseGeneration: args["expected-release-generation"],
     validatedInventoryPath: resolve(args.inventory),
   });
   console.log(`Built immutable release candidate with ${release.files.length} file(s) at ${resolve(args.output)}`);

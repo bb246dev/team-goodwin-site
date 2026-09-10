@@ -142,6 +142,9 @@ jobs:
           NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
           NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
           NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          STRAVA_ADMIN_TOKEN: ${{ secrets.STRAVA_ADMIN_TOKEN }}
+          STRAVA_ADMIN_USER: ${{ vars.STRAVA_ADMIN_USER || 'strava' }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
           DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
         run: node scripts/deploy/compare-production.mjs --release deployment-release/release.json --mode "$DEPLOY_MODE" --backup-dir "$RUNNER_TEMP/goodwin-rollback-backups-$GITHUB_RUN_ID" --output deployment-plan
 

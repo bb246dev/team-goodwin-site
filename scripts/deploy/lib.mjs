@@ -21,7 +21,8 @@ const TOP_LEVEL_KEYS = new Set([
   "schemaVersion",
   "deploymentType",
   "releaseType",
-  "expectedReleaseGeneration",
+  "previousReleaseGeneration",
+  "exampleOnly",
   "description",
   "protectedPathsApproved",
   "files",
@@ -30,7 +31,7 @@ const TOP_LEVEL_KEYS = new Set([
 const FILE_KEYS = new Set(["source", "destination", "publicPath", "contentType", "expectedSha256", "expectedRemoteSha256", "expectedRemoteAbsent"]);
 const VALIDATION_KEYS = new Set(["targetedTests", "browserRoutes", "apiChecks"]);
 const API_CHECK_KEYS = new Set(["name", "path", "expectedStatus", "requiredJsonFields"]);
-const RELEASE_KEYS = new Set([...TOP_LEVEL_KEYS, "createdAt", "sourceCommit", "validatedOutputInventorySha256", "sourceValidation"]);
+const RELEASE_KEYS = new Set([...TOP_LEVEL_KEYS, "createdAt", "sourceCommit", "expectedReleaseGeneration", "validatedOutputInventorySha256", "sourceValidation"]);
 const RELEASE_FILE_KEYS = new Set([...FILE_KEYS, "newSha256", "size", "packagedPath"]);
 
 export function parseArgs(argv) {
@@ -158,7 +159,7 @@ function validateApiCheck(check, index) {
 }
 
 export async function validateManifestObject(manifest, options = {}) {
-  const { root = process.cwd(), expectedType, expectedRelease, requireSources = true } = options;
+  const { root = process.cwd(), expectedType, expectedRelease, requireSources = true, mode } = options;
   if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) throw new Error("Manifest must be a JSON object");
   assertNoUnknownKeys(manifest, TOP_LEVEL_KEYS, "manifest");
   if (manifest.schemaVersion !== 1) throw new Error("manifest.schemaVersion must be 1");
@@ -169,13 +170,15 @@ export async function validateManifestObject(manifest, options = {}) {
   if (manifest.description !== undefined && (typeof manifest.description !== "string" || manifest.description.length > 300)) {
     throw new Error("manifest.description must be a string of at most 300 characters");
   }
+  if (manifest.exampleOnly !== undefined && manifest.exampleOnly !== true) throw new Error("manifest.exampleOnly must be true when supplied");
+  if (mode === "deploy" && manifest.exampleOnly === true) throw new Error("Example-only manifests cannot enter deploy mode, even after being copied");
   if (manifest.deploymentType === "backend") {
     if (manifest.releaseType !== "major") throw new Error("Every backend deployment requires a major release");
-    if (typeof manifest.expectedReleaseGeneration !== "string" || !SHA256_PATTERN.test(manifest.expectedReleaseGeneration)) {
-      throw new Error("Backend manifest expectedReleaseGeneration must be the approved lowercase SHA-256 reported by runtime-status");
+    if (typeof manifest.previousReleaseGeneration !== "string" || !SHA256_PATTERN.test(manifest.previousReleaseGeneration)) {
+      throw new Error("Backend manifest previousReleaseGeneration must be the approved lowercase pre-deployment SHA-256 reported by runtime-status");
     }
-  } else if (manifest.expectedReleaseGeneration !== undefined) {
-    throw new Error("expectedReleaseGeneration is permitted only for backend manifests");
+  } else if (manifest.previousReleaseGeneration !== undefined) {
+    throw new Error("previousReleaseGeneration is permitted only for backend manifests");
   }
   if (!Array.isArray(manifest.files) || manifest.files.length === 0 || manifest.files.length > 200) {
     throw new Error("manifest.files must contain 1-200 entries");
@@ -346,7 +349,8 @@ export async function loadRelease(path) {
     schemaVersion: release.schemaVersion,
     deploymentType: release.deploymentType,
     releaseType: release.releaseType,
-    expectedReleaseGeneration: release.expectedReleaseGeneration,
+    previousReleaseGeneration: release.previousReleaseGeneration,
+    exampleOnly: release.exampleOnly,
     description: release.description,
     protectedPathsApproved: release.protectedPathsApproved,
     files: release.files.map(({ newSha256, size, packagedPath, ...file }) => file),
@@ -356,6 +360,14 @@ export async function loadRelease(path) {
   if (typeof release.createdAt !== "string" || !Number.isFinite(Date.parse(release.createdAt))) throw new Error("release.createdAt is invalid");
   if (release.sourceCommit !== null && release.sourceCommit !== undefined && !/^[a-f0-9]{40}$/.test(release.sourceCommit)) {
     throw new Error("release.sourceCommit must be a full lowercase Git commit SHA");
+  }
+  if (release.expectedReleaseGeneration !== undefined) {
+    if (release.deploymentType !== "backend" || !SHA256_PATTERN.test(release.expectedReleaseGeneration)) {
+      throw new Error("release.expectedReleaseGeneration must be a backend runtime SHA-256");
+    }
+    if (release.expectedReleaseGeneration === release.previousReleaseGeneration) {
+      throw new Error("Expected runtime generation must differ from the previous generation");
+    }
   }
   if (typeof release.validatedOutputInventorySha256 !== "string" || !SHA256_PATTERN.test(release.validatedOutputInventorySha256)) {
     throw new Error("release.validatedOutputInventorySha256 must be a lowercase SHA-256");
@@ -400,7 +412,8 @@ export function publicManifest(manifest) {
     schemaVersion: manifest.schemaVersion,
     deploymentType: manifest.deploymentType,
     releaseType: manifest.releaseType,
-    expectedReleaseGeneration: manifest.expectedReleaseGeneration,
+    previousReleaseGeneration: manifest.previousReleaseGeneration,
+    exampleOnly: manifest.exampleOnly,
     description: manifest.description,
     protectedPathsApproved: manifest.protectedPathsApproved,
     files: manifest.files.map(({ absoluteSource, ...file }) => file),

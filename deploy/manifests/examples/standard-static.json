@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "deploymentType": "static",
   "releaseType": "standard",
+  "exampleOnly": true,
   "description": "Dry-run template: replace the protected map remote-hash placeholder with an independently approved observed value.",
   "protectedPathsApproved": [
     "public_html/assets/strava-race-map.mjs"

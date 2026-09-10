@@ -47,9 +47,11 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, ba
   if (!backupDirectory) throw new Error("backupDirectory is required");
   const backups = resolve(backupDirectory);
   const results = [];
+  const rollbackResults = [];
+  const attemptedUploads = [];
   const reportPath = join(output, "deployment-results.json");
   const saveReport = async (completed = false) => {
-    const report = { schemaVersion: 1, completed, updatedAt: new Date().toISOString(), sourceCommit: release.sourceCommit, files: results };
+    const report = { schemaVersion: 1, completed, updatedAt: new Date().toISOString(), sourceCommit: release.sourceCommit, files: results, rollback: rollbackResults };
     await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`);
     return report;
   };
@@ -116,6 +118,7 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, ba
         if (expectedRemoteAbsent ? immediate.exists : !immediate.exists || immediate.sha256 !== oldExpectedSha256) {
           throw new Error(`Remote prior state changed before upload for ${file.destination}`);
         }
+        attemptedUploads.push({ file, index });
         await client.upload(file.absolutePackagedPath, file.destination);
         const postUpload = await observeRemoteState(file, index, "post-upload");
         newObservedSha256 = postUpload.sha256;
@@ -148,6 +151,29 @@ export async function uploadRelease({ releasePath, planPath, outputDirectory, ba
       }
     }
     return saveReport(true);
+  } catch (deploymentError) {
+    for (const { file, index } of [...attemptedUploads].reverse()) {
+      if (file.expectedRemoteAbsent === true) {
+        rollbackResults.push({ destination: file.destination, status: "manual-removal-required", reason: "automated remote deletion is prohibited" });
+        continue;
+      }
+      const backupPath = join(backups, `${String(index + 1).padStart(4, "0")}-backup.bin`);
+      try {
+        const backup = await readFile(backupPath);
+        if (sha256(backup) !== file.expectedRemoteSha256) throw new Error("runner-local backup hash changed");
+        await client.upload(backupPath, file.destination);
+        const restored = await observeRemoteState(file, index, "rollback-verification");
+        if (!restored.exists || restored.sha256 !== file.expectedRemoteSha256) throw new Error("restored remote hash did not match the approved original");
+        rollbackResults.push({ destination: file.destination, status: "restored-and-verified", restoredSha256: restored.sha256 });
+      } catch (rollbackError) {
+        rollbackResults.push({ destination: file.destination, status: "rollback-failed", error: rollbackError.message });
+      }
+    }
+    await saveReport(false);
+    if (rollbackResults.some((entry) => entry.status === "rollback-failed")) {
+      throw new Error(`${deploymentError.message}; automatic rollback also failed`);
+    }
+    throw deploymentError;
   } finally {
     await rm(verificationDirectory, { recursive: true, force: true });
   }

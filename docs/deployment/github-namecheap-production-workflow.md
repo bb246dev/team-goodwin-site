@@ -37,6 +37,7 @@ Manifests use `schemaVersion: 1`, live under `deploy/manifests/`, and contain on
   "schemaVersion": 1,
   "deploymentType": "static",
   "releaseType": "micro",
+  "exampleOnly": true,
   "description": "One reviewed change",
   "protectedPathsApproved": [],
   "files": [
@@ -59,14 +60,14 @@ Manifests use `schemaVersion: 1`, live under `deploy/manifests/`, and contain on
 
 `source` and `destination` are independent and both must be explicit. `expectedSha256` is the approved hash of the **new/source** content; validation compares it with the validated workspace source and packaged release. `expectedRemoteSha256` is the separately approved hash of an **existing remote destination** before any upload. These fields are not interchangeable.
 
-Backend manifests additionally require `expectedReleaseGeneration`, the exact 64-character lowercase SHA-256 that the existing `/strava/admin/runtime-status` endpoint must report after the manual Passenger restart. It is a runtime-content generation, not the 40-character Git `sourceCommit`; both values are retained separately in release metadata.
+Backend manifests additionally require `previousReleaseGeneration`, the exact 64-character lowercase generation observed from `/strava/admin/runtime-status` before deployment. After the manual Stop/Start, the operator captures the new generation and supplies it as the verification workflow's required `expected_release_generation` input. Verification requires that exact value, requires it to differ from the pinned previous generation, and records both separately from the 40-character Git `sourceCommit`. A future process generation cannot be derived from the Git commit in advance.
 
 Every file, ordinary or protected, must declare exactly one mutually exclusive prior state:
 
 - `expectedRemoteSha256`: the destination must exist and have this exact SHA-256; or
 - `expectedRemoteAbsent: true`: the destination must not exist.
 
-Omitting both, supplying both, or setting `expectedRemoteAbsent` to anything other than `true` fails closed. Every destination is checked during the all-file preflight and again immediately before its upload. For an expected-absent FTPS destination, a failed download is not treated as absence: the parent directory must be listed successfully and the exact filename must be absent. A permission error, unreadable listed file, or ambiguous listing fails closed. A newly appearing file is never overwritten.
+Omitting both, supplying both, or setting `expectedRemoteAbsent` to anything other than `true` fails closed. Every destination is checked during the all-file preflight and again immediately before its upload. FTP errors and directory listings cannot conclusively distinguish a missing hidden file from an unreadable or filtered file, so the production FTPS client never infers absence after a failed download. An `expectedRemoteAbsent` entry therefore fails closed against FTPS; a genuinely new destination must be created through a separate reviewed provisioning action before this tooling can manage it by pinned hash. The local test adapter supports absent-state tests but cannot enable that path in production.
 
 `contentType` may be `text` or `binary-asset`. Text is the default and is streamed through the fail-closed secret scanner regardless of size; NUL bytes do not cause a text source to be skipped. A binary asset must be explicitly classified, use a strict approved image/font extension and matching file signature, and supply `expectedSha256`. Executables, archives, databases, ambiguous binary data, and invalid UTF-8 text are rejected. Static entries also require an exact `publicPath`; backend entries omit it.
 
@@ -82,9 +83,9 @@ For a protected `.htaccess` release based on the inspected production file, the 
 }
 ```
 
-Never copy one hash into the other merely to satisfy validation. The standard static example contains an all-zero remote placeholder for its protected map entry, so it fails safely against a real server until an independently observed and approved current remote hash replaces it. Example entries marked `expectedRemoteAbsent` likewise fail if the destination exists, and example manifests cannot enter deploy mode.
+Never copy one hash into the other merely to satisfy validation. Every shipped example has `exampleOnly: true`; deploy-mode validation rejects that marker even if the file was copied outside the examples directory. Converting a template into a release requires removing the marker and replacing every placeholder or absent-state example with independently approved real values.
 
-The release-level input must equal `releaseType`. The workflow will not silently upgrade or downgrade it. Example manifests are accepted in dry-run mode but deliberately rejected in deploy mode; copy an approved real release to `deploy/manifests/releases/` first.
+The release-level input must equal `releaseType`. The workflow will not silently upgrade or downgrade it. Example manifests are accepted in dry-run mode but deliberately rejected in deploy mode by both path and content markers; copy a reviewed template under `deploy/manifests/releases/`, remove `exampleOnly`, and replace all example state before use.
 
 ### Root clean routes
 
@@ -150,7 +151,7 @@ The dry run validates and tests locally, calculates new/source hashes, downloads
 
 ## Real static deployment procedure
 
-1. Copy the dry-run manifest from `deploy/manifests/examples/` to a reviewed file under `deploy/manifests/releases/`. Replace every example prior state with either an independently approved existing remote `expectedRemoteSha256` or `expectedRemoteAbsent: true`. For each protected file, also supply an approved new/source `expectedSha256`.
+1. Copy the dry-run manifest from `deploy/manifests/examples/` to a reviewed file under `deploy/manifests/releases/`, remove `exampleOnly`, and replace every example prior state with an independently approved existing remote `expectedRemoteSha256`. For each protected file, also supply an approved new/source `expectedSha256`. Provision new remote paths separately because production FTPS absence cannot be proven safely.
 2. Review a fresh dry-run artifact and confirm every source, destination, public URL, old expected/observed hash, new expected hash, and protected approval.
 3. Re-run **Deploy static production** against the same approved commit and manifest with mode `deploy`.
 4. Approve the protected `production` Environment deployment.
@@ -163,6 +164,8 @@ The deliberate `workflow_dispatch`, readiness-variable guard, non-example manife
 
 Run the backend workflow in dry-run mode first and review its artifact. In deploy mode it uploads and hash-verifies backend files but does not attempt a cPanel restart or claim the new code is active.
 
+Before upload, record the authenticated runtime's current 64-character `releaseGeneration` as the manifest's `previousReleaseGeneration`. It is a baseline observation, not a predicted future value. During both dry-run and deploy comparison, the backend workflow authenticates to the runtime-status endpoint and fails before FTPS work unless the live baseline exactly matches that manifest value.
+
 After a successful backend upload, the workflow emits:
 
 > ACTION REQUIRED: Open cPanel → Setup Node.js App → Stop goodwingoodge.com/strava → wait for Stopped → Start → wait for Started.
@@ -171,9 +174,10 @@ Then run **Verify backend production** with:
 
 - the full 40-character commit SHA used by the upload;
 - the identical backend manifest path; and
-- the identical release level.
+- the identical release level; and
+- the exact new 64-character generation observed only after the completed manual Stop/Start.
 
-The verification workflow checks out that immutable commit, reconstructs its release from an isolated validated workspace, compares its packaged file hashes with production, and then requires the runtime `releaseGeneration` to equal the separate 64-character `expectedReleaseGeneration` pinned in the manifest. A missing, malformed, stale, or commit-shaped 40-character generation fails.
+The verification workflow checks out that immutable commit, reconstructs its release from an isolated validated workspace, stores the explicitly supplied post-restart generation in release metadata, compares packaged file hashes with production, and then requires the authenticated runtime `releaseGeneration` to equal that exact value and differ from the manifest's pre-deployment generation. A missing, malformed, stale, unchanged, or commit-shaped 40-character generation fails. This verifies a specific observed restart generation without pretending that a future process generation is predictable before Stop/Start.
 
 `restart.txt`, FTP overwrite of `restart.txt`, and cPanel **Restart** alone are prohibited because they do not guarantee that Passenger reloads modules. Browser automation against cPanel is also out of scope. Supported cPanel/Namecheap restart automation can be considered only after an authenticated vendor API is explicitly proven.
 
@@ -181,7 +185,7 @@ The verification workflow checks out that immutable commit, reconstructs its rel
 
 The repository-owned Node scripts invoke native `curl` in explicit FTPS mode (`ssl-reqd`, TLS 1.2 minimum). Credentials are written only to a permission-restricted temporary curl configuration, are never placed in YAML or command arguments, and are deleted after each call.
 
-Transfers are sequential and per-file. Before any upload, deploy mode re-downloads every destination and verifies its exact declared prior state, including absence. It repeats that check immediately before each affected upload. Existing destinations also require an intact runner-local rollback backup matching the expected remote hash. Each changed file is uploaded separately, downloaded to a temporary non-artifact path, and checked against the approved new/source SHA-256 before the next file begins. Curl uses bounded retries and `singlecwd`; this small-batch behavior mitigates the Namecheap FTPS 451 behavior seen during larger transfers. There is no delete, mirror, recursive copy, or directory-sync operation.
+Transfers are sequential and per-file. Before any upload, deploy mode re-downloads every existing destination and verifies its exact declared hash. It repeats that check immediately before each affected upload. Existing destinations also require an intact runner-local rollback backup matching the expected remote hash. Each changed file is uploaded separately, downloaded to a temporary non-artifact path, and checked against the approved new/source SHA-256 before the next file begins. If an upload attempt or a later file fails, every attempted pre-existing destination is restored in reverse order and its restored hash is verified before exit. Curl uses bounded retries and `singlecwd`; this small-batch behavior mitigates the Namecheap FTPS 451 behavior seen during larger transfers. There is no delete, mirror, recursive copy, or directory-sync operation.
 
 The URL scheme inside the curl implementation is `ftp://` because curl uses that scheme for explicit FTPS negotiation; `ssl-reqd` makes an unencrypted session a hard failure. Plain FTP is never permitted.
 
@@ -193,9 +197,9 @@ Before any upload, every manifest destination is observed. Existing files are do
 - `rollback-manifest.json` with the required action for every destination; and
 - deploy-mode upload/verification results with old expected, old observed, new expected, and new observed SHA-256 values when applicable.
 
-No raw downloaded production content is uploaded as an artifact. Existing files have a runner-local restore instruction available only during that workflow job. Files newly introduced by a release have a manual-removal instruction; Stage 1 deliberately has no remote deletion operation. Unchanged files are neither uploaded nor restored.
+No raw downloaded production content is uploaded as an artifact. Existing files have a runner-local restore source available only during that workflow job. On failure, attempted pre-existing files are restored automatically in reverse order and the result is written to metadata. Files newly introduced by a release have a manual-removal instruction; Stage 1 deliberately has no remote deletion operation. Unchanged files are neither uploaded nor restored.
 
-Stage 1 does not provide persistent raw backups after runner teardown. The runner-local backups preserve enough exact content and hashes for an explicitly authorized rollback implementation during the same job, but this workflow does not automatically perform rollback. When the job finishes, an `always()` cleanup step deletes backups and FTPS credential temporary directories. Removing a newly created file remains a manual, separately authorized cPanel/FTPS action because automated deletion is prohibited.
+Stage 1 does not provide persistent raw backups after runner teardown. Automatic rollback is limited to attempted destinations that existed before the run; if restoration itself fails, metadata records the failure and manual recovery is required before runner teardown. When the job finishes, an `always()` cleanup step deletes backups and FTPS credential temporary directories. Removing a newly created file remains a manual, separately authorized cPanel/FTPS action because automated deletion is prohibited.
 
 ## Runtime-status verification
 

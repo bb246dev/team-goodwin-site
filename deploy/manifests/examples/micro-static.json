@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "deploymentType": "static",
   "releaseType": "micro",
+  "exampleOnly": true,
   "description": "Example isolated stylesheet release. Copy this file and replace the entries for a real approved release.",
   "protectedPathsApproved": [],
   "files": [

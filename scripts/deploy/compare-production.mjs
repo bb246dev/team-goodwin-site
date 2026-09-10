@@ -3,10 +3,15 @@ import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 import { productionClient } from "./ftps-client.mjs";
+import { verifyRuntimeBaseline } from "./verify-production.mjs";
 
-export async function compareProduction({ releasePath, outputDirectory, backupDirectory, mode = "dry-run", client }) {
+export async function compareProduction({ releasePath, outputDirectory, backupDirectory, mode = "dry-run", client, runtimeBaselineVerifier }) {
   if (!['dry-run', 'deploy'].includes(mode)) throw new Error("mode must be dry-run or deploy");
   const release = await loadRelease(releasePath);
+  if (release.deploymentType === "backend") {
+    if (typeof runtimeBaselineVerifier !== "function") throw new Error("Backend comparison requires authenticated runtime baseline verification");
+    await runtimeBaselineVerifier(release.previousReleaseGeneration);
+  }
   const output = resolve(outputDirectory);
   if (!backupDirectory) throw new Error("backupDirectory is required and must remain runner-local");
   const backups = resolve(backupDirectory);
@@ -131,6 +136,13 @@ async function main() {
     backupDirectory: args["backup-dir"],
     mode: args.mode || "dry-run",
     client: productionClient(args),
+    runtimeBaselineVerifier: (expected) => verifyRuntimeBaseline(
+      process.env.PRODUCTION_BASE_URL || "https://goodwingoodge.com",
+      process.env.STRAVA_ADMIN_TOKEN,
+      expected,
+      process.env.STRAVA_ADMIN_USER || "strava",
+      args["allow-http-local"] === true,
+    ),
   });
   await printPlan(plan);
 }

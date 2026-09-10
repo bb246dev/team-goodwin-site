@@ -160,8 +160,10 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   console.log(`Browser smoke passed: ${path} at ${viewport.width}x${viewport.height}; ${images.length} same-origin image(s) checked`);
 }
 
-export function validateRuntimePayload(payload, expectedReleaseGeneration) {
+export function validateRuntimePayload(payload, expectedReleaseGeneration, previousReleaseGeneration) {
   if (!/^[a-f0-9]{64}$/.test(expectedReleaseGeneration || "")) throw new Error("Expected release generation must be the approved lowercase runtime SHA-256");
+  if (!/^[a-f0-9]{64}$/.test(previousReleaseGeneration || "")) throw new Error("Previous release generation must be the approved lowercase pre-deployment runtime SHA-256");
+  if (expectedReleaseGeneration === previousReleaseGeneration) throw new Error("Expected runtime generation must differ from the previous generation");
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("Runtime status response must be an object");
   for (const field of RUNTIME_FIELDS) {
     if (!Object.hasOwn(payload, field)) throw new Error(`Runtime status is missing approved field: ${field}`);
@@ -178,7 +180,7 @@ export function validateRuntimePayload(payload, expectedReleaseGeneration) {
   return Object.fromEntries(RUNTIME_FIELDS.map((field) => [field, payload[field]]));
 }
 
-async function verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, adminUser = "strava") {
+async function verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, previousReleaseGeneration, adminUser = "strava") {
   if (!adminToken) throw new Error("STRAVA_ADMIN_TOKEN is required for backend runtime verification");
   if (!/^[A-Za-z0-9._-]{1,64}$/.test(adminUser)) throw new Error("STRAVA_ADMIN_USER is invalid");
   const authorization = `Basic ${Buffer.from(`${adminUser}:${adminToken}`).toString("base64")}`;
@@ -186,9 +188,28 @@ async function verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, 
   if (response.status !== 200) throw new Error(`Authenticated runtime-status returned ${response.status}; expected 200`);
   const cacheControl = response.headers.get("cache-control") || "";
   if (!/\bno-store\b/i.test(cacheControl) || !/\bprivate\b/i.test(cacheControl)) throw new Error("runtime-status must return Cache-Control: no-store, private");
-  const approved = validateRuntimePayload(await response.json(), expectedReleaseGeneration);
+  const approved = validateRuntimePayload(await response.json(), expectedReleaseGeneration, previousReleaseGeneration);
   console.log(`Runtime generation matched expected release ${expectedReleaseGeneration}; approved fields validated: ${Object.keys(approved).join(", ")}`);
-  return { expectedReleaseGeneration, observedReleaseGeneration: approved.releaseGeneration };
+  return { previousReleaseGeneration, expectedReleaseGeneration, observedReleaseGeneration: approved.releaseGeneration };
+}
+
+export async function verifyRuntimeBaseline(baseUrl, adminToken, expectedPreviousGeneration, adminUser = "strava", allowHttpLocal = false) {
+  if (!adminToken) throw new Error("STRAVA_ADMIN_TOKEN is required for backend runtime baseline verification");
+  if (!/^[A-Za-z0-9._-]{1,64}$/.test(adminUser)) throw new Error("STRAVA_ADMIN_USER is invalid");
+  if (!/^[a-f0-9]{64}$/.test(expectedPreviousGeneration || "")) throw new Error("previousReleaseGeneration must be a lowercase SHA-256");
+  const base = productionBaseUrl(baseUrl, allowHttpLocal);
+  const authorization = `Basic ${Buffer.from(`${adminUser}:${adminToken}`).toString("base64")}`;
+  const response = await fetchChecked(new URL("/strava/admin/runtime-status", base), { headers: { Authorization: authorization } });
+  if (response.status !== 200) throw new Error(`Authenticated runtime baseline returned ${response.status}; expected 200`);
+  const cacheControl = response.headers.get("cache-control") || "";
+  if (!/\bno-store\b/i.test(cacheControl) || !/\bprivate\b/i.test(cacheControl)) throw new Error("runtime-status must return Cache-Control: no-store, private");
+  const payload = await response.json();
+  if (!payload || typeof payload !== "object" || Array.isArray(payload) || typeof payload.releaseGeneration !== "string" || !/^[a-f0-9]{64}$/.test(payload.releaseGeneration)) {
+    throw new Error("runtime baseline releaseGeneration is missing or invalid");
+  }
+  if (payload.releaseGeneration !== expectedPreviousGeneration) throw new Error("Runtime baseline does not match manifest previousReleaseGeneration");
+  console.log(`Runtime baseline matched approved previous generation ${expectedPreviousGeneration}`);
+  return { previousReleaseGeneration: expectedPreviousGeneration, observedReleaseGeneration: payload.releaseGeneration };
 }
 
 export async function verifyProduction({ releasePath, client, baseUrl, skipBrowser = false, adminToken, adminUser, expectedReleaseGeneration, allowHttpLocal = false }) {
@@ -214,9 +235,10 @@ export async function verifyProduction({ releasePath, client, baseUrl, skipBrows
     for (const check of release.validation.apiChecks) await verifyHttpCheck(base, check);
     let runtimeGeneration = null;
     if (release.deploymentType === "backend") {
-      const approvedRuntimeGeneration = expectedReleaseGeneration ?? release.expectedReleaseGeneration;
-      if (approvedRuntimeGeneration !== release.expectedReleaseGeneration) throw new Error("Expected runtime generation must exactly match release expectedReleaseGeneration");
-      runtimeGeneration = await verifyRuntimeStatus(base, adminToken, approvedRuntimeGeneration, adminUser);
+      if (!release.expectedReleaseGeneration || expectedReleaseGeneration !== release.expectedReleaseGeneration) {
+        throw new Error("Expected runtime generation must be explicitly supplied and exactly match release metadata");
+      }
+      runtimeGeneration = await verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, release.previousReleaseGeneration, adminUser);
     } else if (!skipBrowser) {
       const chrome = await chromeExecutable();
       const viewports = release.releaseType === "micro"
