@@ -12,7 +12,8 @@ const DEFINITE_SECRET_PATTERNS = [
   { name: "live Stripe key", pattern: /\b(?:sk|rk)_live_[A-Za-z0-9]{16,}\b/ },
   { name: "credential-bearing URL", pattern: /\b(?:ftp|https?):\/\/[A-Za-z0-9._%+-]+:[^@\s/"'{}[\],]+@/i },
 ];
-const ASSIGNMENT_PATTERN = /\b(?:password|passwd|private[_-]?key|client[_-]?secret|admin[_-]?token|access[_-]?token)\b\s*[:=]\s*["']([^"'\r\n]{12,})["']/gi;
+const ASSIGNMENT_PATTERN = /\b[A-Za-z0-9_-]*(?:password|passwd|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credential)[A-Za-z0-9_-]*\b\s*[:=]\s*["']([^"'\r\n]{12,})["']/gi;
+const AUTHORIZATION_PATTERN = /\bauthorization\b\s*[:=]\s*["']?(?:bearer|basic)\s+([A-Za-z0-9._~+\/=:-]{12,})/gi;
 const PLACEHOLDER_PATTERN = /(?:test|example|placeholder|replace|changeme|your[-_ ]|dummy|redacted|not-a-real)/i;
 const SAFE_BINARY_EXTENSIONS = new Set([".avif", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".webp", ".woff", ".woff2"]);
 const FORBIDDEN_BINARY_EXTENSIONS = new Set([".7z", ".class", ".db", ".dll", ".dylib", ".exe", ".gz", ".jar", ".rar", ".so", ".sqlite", ".tar", ".wasm", ".zip"]);
@@ -24,6 +25,9 @@ export function secretFindings(text) {
   }
   for (const match of text.matchAll(ASSIGNMENT_PATTERN)) {
     if (!PLACEHOLDER_PATTERN.test(match[1])) findings.push("credential assignment");
+  }
+  for (const match of text.matchAll(AUTHORIZATION_PATTERN)) {
+    if (!PLACEHOLDER_PATTERN.test(match[1])) findings.push("authorization credential");
   }
   return [...new Set(findings)];
 }

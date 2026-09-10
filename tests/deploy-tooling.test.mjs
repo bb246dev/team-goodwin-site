@@ -5,16 +5,17 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import { buildRelease } from "../scripts/deploy/build-release.mjs";
 import { compareProduction } from "../scripts/deploy/compare-production.mjs";
-import { createLocalProductionClient } from "../scripts/deploy/ftps-client.mjs";
+import { createLocalProductionClient, establishListedAbsence } from "../scripts/deploy/ftps-client.mjs";
 import { uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
 import { resolveManifestInput, sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
 import { scanManifestSources, secretFindings } from "../scripts/deploy/scan-secrets.mjs";
-import { validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
+import { sameOriginRedirect, validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
 import { createValidatedWorkspace } from "../scripts/deploy/run-validation.mjs";
 
 const PROTECTED_SOURCE_CONTENT = "export const map = true;\n";
 const PROTECTED_REMOTE_CONTENT = "old protected map\n";
 const TEST_COMMIT = "1".repeat(40);
+const TEST_RUNTIME_GENERATION = "2".repeat(64);
 
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), "goodwin-deploy-test-"));
@@ -151,6 +152,65 @@ test("missing source is rejected", async (t) => {
 test("secret detection catches definite credentials but permits explicit examples", () => {
   assert.deepEqual(secretFindings("const admin_token = 'real-production-value-1234567890';"), ["credential assignment"]);
   assert.deepEqual(secretFindings("const admin_token = 'test-only-placeholder-token';"), []);
+  for (const source of [
+    "HAPN_API_KEY = 'prod-hapn-value-1234567890'",
+    "SESSION_SECRET = 'prod-session-value-1234567890'",
+    "token = 'prod-token-value-1234567890'",
+  ]) assert.deepEqual(secretFindings(source), ["credential assignment"]);
+  assert.deepEqual(secretFindings("Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456"), ["authorization credential"]);
+});
+
+test("FTPS absence classification fails closed on ambiguous or unreadable destinations", () => {
+  assert.deepEqual(establishListedAbsence("public_html/new.html", { status: 22 }, { status: 0, stdout: "index.html\n" }), { exists: false });
+  assert.throws(
+    () => establishListedAbsence("public_html/new.html", { status: 22 }, { status: 22, stdout: "" }),
+    /state is ambiguous/,
+  );
+  assert.throws(
+    () => establishListedAbsence("public_html/new.html", { status: 22 }, { status: 0, stdout: "new.html\n" }),
+    /exists but could not be downloaded/,
+  );
+});
+
+test("redirect validation permits only the requested production origin", () => {
+  assert.equal(sameOriginRedirect("https://goodwingoodge.com/start", "/next").href, "https://goodwingoodge.com/next");
+  assert.throws(() => sameOriginRedirect("https://goodwingoodge.com/start", "https://example.com/"), /escaped production origin/);
+});
+
+test("all backend files are protected Major releases with an approved runtime generation", async (t) => {
+  const root = await fixture(t);
+  await mkdir(join(root, "strava-app", "lib"), { recursive: true });
+  await writeFile(join(root, "strava-app", "lib", "routes.mjs"), "export const routes = [];\n");
+  const file = {
+    source: "strava-app/lib/routes.mjs",
+    destination: "goodwin-node-test/lib/routes.mjs",
+    expectedSha256: sha256("export const routes = [];\n"),
+    expectedRemoteAbsent: true,
+  };
+  const base = validManifest({
+    deploymentType: "backend", releaseType: "major", expectedReleaseGeneration: TEST_RUNTIME_GENERATION,
+    protectedPathsApproved: [file.destination], files: [file],
+    validation: { targetedTests: ["tests/site.test.mjs"], browserRoutes: [], apiChecks: [{ name: "Health", path: "/strava/health", expectedStatus: 200, requiredJsonFields: [] }] },
+  });
+  assert.equal((await validateManifestObject(base, { root })).files.length, 1);
+  const manifestPath = await writeManifest(root, base);
+  const release = await buildTestRelease(root, manifestPath, join(root, "backend-release"), "backend", "major");
+  assert.equal(release.sourceCommit, TEST_COMMIT);
+  assert.equal(release.expectedReleaseGeneration, TEST_RUNTIME_GENERATION);
+  await assert.rejects(validateManifestObject({ ...base, releaseType: "micro" }, { root }), /Every backend deployment requires a major release/);
+  await assert.rejects(validateManifestObject({ ...base, expectedReleaseGeneration: undefined }, { root }), /expectedReleaseGeneration/);
+  await assert.rejects(validateManifestObject({ ...base, protectedPathsApproved: [] }, { root }), /Protected destination/);
+});
+
+test(".htaccess is protected and cannot use a Micro release", async (t) => {
+  const root = await fixture(t);
+  await mkdir(join(root, "deploy", "static"), { recursive: true });
+  await writeFile(join(root, "deploy", "static", "reviewed.htaccess"), "RewriteEngine On\n");
+  const manifest = validManifest({
+    protectedPathsApproved: ["public_html/.htaccess"],
+    files: [{ source: "deploy/static/reviewed.htaccess", destination: "public_html/.htaccess", publicPath: "/", expectedSha256: sha256("RewriteEngine On\n"), expectedRemoteAbsent: true }],
+  });
+  await assert.rejects(validateManifestObject(manifest, { root }), /requires a major release/);
 });
 
 async function preparedRelease(t) {
@@ -457,7 +517,7 @@ test("only explicitly classified, hash-pinned safe binary assets are accepted", 
   }
 });
 
-function runtimePayload(releaseGeneration = TEST_COMMIT) {
+function runtimePayload(releaseGeneration = TEST_RUNTIME_GENERATION) {
   return {
     releaseGeneration,
     pid: 123,
@@ -469,12 +529,12 @@ function runtimePayload(releaseGeneration = TEST_COMMIT) {
   };
 }
 
-test("runtime generation requires an exact commit match", () => {
-  assert.equal(validateRuntimePayload(runtimePayload(), TEST_COMMIT).releaseGeneration, TEST_COMMIT);
-  assert.throws(() => validateRuntimePayload(runtimePayload("2".repeat(40)), TEST_COMMIT), /stale/);
+test("runtime generation requires an exact approved SHA-256 independent of the Git commit", () => {
+  assert.equal(validateRuntimePayload(runtimePayload(), TEST_RUNTIME_GENERATION).releaseGeneration, TEST_RUNTIME_GENERATION);
+  assert.throws(() => validateRuntimePayload(runtimePayload("3".repeat(64)), TEST_RUNTIME_GENERATION), /stale/);
   const missing = runtimePayload(); delete missing.releaseGeneration;
-  assert.throws(() => validateRuntimePayload(missing, TEST_COMMIT), /missing approved field/);
-  assert.throws(() => validateRuntimePayload(runtimePayload("malformed"), TEST_COMMIT), /invalid/);
+  assert.throws(() => validateRuntimePayload(missing, TEST_RUNTIME_GENERATION), /missing approved field/);
+  assert.throws(() => validateRuntimePayload(runtimePayload("malformed"), TEST_RUNTIME_GENERATION), /invalid/);
 });
 
 test("release metadata uses explicit commit and ignores reserved GITHUB_SHA", async (t) => {

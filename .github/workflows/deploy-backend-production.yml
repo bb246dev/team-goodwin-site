@@ -7,10 +7,8 @@ on:
         description: Validation and release policy level
         required: true
         type: choice
-        default: standard
+        default: major
         options:
-          - micro
-          - standard
           - major
       mode:
         description: Plan only or upload the approved backend files
@@ -171,7 +169,7 @@ jobs:
             echo "2. Wait for Stopped"
             echo "3. Start"
             echo "4. Wait for Started"
-            echo "5. Run the Verify backend production workflow with commit $GITHUB_SHA and this manifest"
+            echo "5. Run the Verify backend production workflow with commit $GITHUB_SHA and this manifest; runtime generation must match the manifest's approved SHA-256"
           } >> "$GITHUB_STEP_SUMMARY"
           echo "ACTION REQUIRED: Open cPanel → Setup Node.js App → Stop goodwingoodge.com/strava → wait for Stopped → Start → wait for Started. Then run Verify backend production."
 

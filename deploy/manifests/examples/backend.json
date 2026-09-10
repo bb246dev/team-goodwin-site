@@ -1,13 +1,17 @@
 {
   "schemaVersion": 1,
   "deploymentType": "backend",
-  "releaseType": "standard",
+  "releaseType": "major",
+  "expectedReleaseGeneration": "0000000000000000000000000000000000000000000000000000000000000000",
   "description": "Example race-window module release. Backend destinations are always enumerated exactly.",
-  "protectedPathsApproved": [],
+  "protectedPathsApproved": [
+    "goodwin-node-test/lib/race-window.mjs"
+  ],
   "files": [
     {
       "source": "strava-app/lib/race-window.mjs",
       "destination": "goodwin-node-test/lib/race-window.mjs",
+      "expectedSha256": "43144d0e7d0bdca9e62b1b92ee89ad89695dad13244f44e7741634d7657978d0",
       "expectedRemoteAbsent": true
     }
   ],

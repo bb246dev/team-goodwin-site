@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { chmod, copyFile, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
-import { dirname, join, resolve, sep } from "node:path";
+import { basename, dirname, join, posix, resolve, sep } from "node:path";
 import { tmpdir } from "node:os";
 import { normalizeRelativePath } from "./lib.mjs";
 
@@ -29,6 +29,28 @@ function remoteUrl(configuration, destination) {
     .map(encodeURIComponent)
     .join("/");
   return `ftp://${configuration.host}:${configuration.port}/${remotePath}`;
+}
+
+function remoteDirectoryUrl(configuration, destination) {
+  const parent = posix.dirname(normalizeRelativePath(destination, "remote destination"));
+  const parts = [configuration.basePath, parent === "." ? "" : parent]
+    .filter(Boolean)
+    .flatMap((part) => part.split("/"))
+    .map(encodeURIComponent)
+    .join("/");
+  return `ftp://${configuration.host}:${configuration.port}/${parts ? `${parts}/` : ""}`;
+}
+
+export function establishListedAbsence(destination, downloadResult, listingResult) {
+  if (listingResult.status !== 0) {
+    throw new Error(`FTPS destination state is ambiguous for ${destination}: parent directory could not be listed`);
+  }
+  const targetName = basename(destination);
+  const entries = listingResult.stdout.split(/\r?\n/).filter(Boolean);
+  if (entries.includes(targetName)) {
+    throw new Error(`FTPS destination exists but could not be downloaded safely: ${destination} (curl ${downloadResult.status})`);
+  }
+  return { exists: false };
 }
 
 async function runCurl(configuration, extraArguments) {
@@ -77,9 +99,10 @@ export function createFtpsClient(env = process.env) {
       await mkdir(dirname(localPath), { recursive: true });
       const result = await runCurl(configuration, ["--fail", "--output", localPath, remoteUrl(configuration, destination)]);
       if (result.status === 0) return { exists: true };
-      if (allowMissing && /(?:550|not found|file unavailable|no such file|does not exist)/i.test(result.stderr)) {
+      if (allowMissing) {
         await rm(localPath, { force: true });
-        return { exists: false };
+        const listing = await runCurl(configuration, ["--fail", "--list-only", remoteDirectoryUrl(configuration, destination)]);
+        return establishListedAbsence(destination, result, listing);
       }
       throw new Error(`FTPS download failed for ${destination} (curl ${result.status}): ${result.stderr.trim() || "no diagnostic"}`);
     },

@@ -11,10 +11,8 @@ on:
         description: Release level used for the backend upload
         required: true
         type: choice
-        default: standard
+        default: major
         options:
-          - micro
-          - standard
           - major
       manifest:
         description: Exact backend manifest used for the upload
@@ -86,7 +84,7 @@ jobs:
           STRAVA_ADMIN_USER: ${{ vars.STRAVA_ADMIN_USER || 'strava' }}
           PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
           DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
-        run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --expected-release-generation "$RELEASE_COMMIT_SHA" --output backend-verification.json
+        run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --output backend-verification.json
 
       - name: Save verification result
         if: always()

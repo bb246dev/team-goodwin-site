@@ -30,11 +30,27 @@ function productionBaseUrl(value, allowHttpLocal = false) {
   return url;
 }
 
+export function sameOriginRedirect(currentUrl, location) {
+  if (!location) throw new Error("HTTP redirect omitted Location");
+  const current = new URL(currentUrl);
+  const next = new URL(location, current);
+  if (next.origin !== current.origin) throw new Error(`HTTP redirect escaped production origin: ${next.origin}`);
+  return next;
+}
+
 async function fetchChecked(url, options = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 20_000);
   try {
-    return await fetch(url, { redirect: "follow", ...options, signal: controller.signal });
+    let current = new URL(url);
+    for (let redirects = 0; redirects <= 10; redirects += 1) {
+      const response = await fetch(current, { ...options, redirect: "manual", signal: controller.signal });
+      if (![301, 302, 303, 307, 308].includes(response.status)) return response;
+      await response.body?.cancel();
+      if (redirects === 10) throw new Error("HTTP redirect limit exceeded");
+      current = sameOriginRedirect(current, response.headers.get("location"));
+    }
+    throw new Error("HTTP redirect limit exceeded");
   } finally {
     clearTimeout(timer);
   }
@@ -145,12 +161,12 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
 }
 
 export function validateRuntimePayload(payload, expectedReleaseGeneration) {
-  if (!/^[a-f0-9]{40}$/.test(expectedReleaseGeneration || "")) throw new Error("Expected release generation must be a full lowercase Git commit SHA");
+  if (!/^[a-f0-9]{64}$/.test(expectedReleaseGeneration || "")) throw new Error("Expected release generation must be the approved lowercase runtime SHA-256");
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("Runtime status response must be an object");
   for (const field of RUNTIME_FIELDS) {
     if (!Object.hasOwn(payload, field)) throw new Error(`Runtime status is missing approved field: ${field}`);
   }
-  if (typeof payload.releaseGeneration !== "string" || !/^[a-f0-9]{40}$/.test(payload.releaseGeneration)) throw new Error("runtime releaseGeneration is invalid");
+  if (typeof payload.releaseGeneration !== "string" || !/^[a-f0-9]{64}$/.test(payload.releaseGeneration)) throw new Error("runtime releaseGeneration is invalid");
   if (payload.releaseGeneration !== expectedReleaseGeneration) {
     throw new Error(`Runtime release generation is stale: expected ${expectedReleaseGeneration}, observed ${payload.releaseGeneration}`);
   }
@@ -198,8 +214,9 @@ export async function verifyProduction({ releasePath, client, baseUrl, skipBrows
     for (const check of release.validation.apiChecks) await verifyHttpCheck(base, check);
     let runtimeGeneration = null;
     if (release.deploymentType === "backend") {
-      if (expectedReleaseGeneration !== release.sourceCommit) throw new Error("Expected runtime generation must exactly match release sourceCommit");
-      runtimeGeneration = await verifyRuntimeStatus(base, adminToken, expectedReleaseGeneration, adminUser);
+      const approvedRuntimeGeneration = expectedReleaseGeneration ?? release.expectedReleaseGeneration;
+      if (approvedRuntimeGeneration !== release.expectedReleaseGeneration) throw new Error("Expected runtime generation must exactly match release expectedReleaseGeneration");
+      runtimeGeneration = await verifyRuntimeStatus(base, adminToken, approvedRuntimeGeneration, adminUser);
     } else if (!skipBrowser) {
       const chrome = await chromeExecutable();
       const viewports = release.releaseType === "micro"

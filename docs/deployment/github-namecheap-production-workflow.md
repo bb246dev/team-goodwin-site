@@ -59,12 +59,14 @@ Manifests use `schemaVersion: 1`, live under `deploy/manifests/`, and contain on
 
 `source` and `destination` are independent and both must be explicit. `expectedSha256` is the approved hash of the **new/source** content; validation compares it with the validated workspace source and packaged release. `expectedRemoteSha256` is the separately approved hash of an **existing remote destination** before any upload. These fields are not interchangeable.
 
+Backend manifests additionally require `expectedReleaseGeneration`, the exact 64-character lowercase SHA-256 that the existing `/strava/admin/runtime-status` endpoint must report after the manual Passenger restart. It is a runtime-content generation, not the 40-character Git `sourceCommit`; both values are retained separately in release metadata.
+
 Every file, ordinary or protected, must declare exactly one mutually exclusive prior state:
 
 - `expectedRemoteSha256`: the destination must exist and have this exact SHA-256; or
 - `expectedRemoteAbsent: true`: the destination must not exist.
 
-Omitting both, supplying both, or setting `expectedRemoteAbsent` to anything other than `true` fails closed. Every destination is checked during the all-file preflight and again immediately before its upload. A newly appearing file is never overwritten.
+Omitting both, supplying both, or setting `expectedRemoteAbsent` to anything other than `true` fails closed. Every destination is checked during the all-file preflight and again immediately before its upload. For an expected-absent FTPS destination, a failed download is not treated as absence: the parent directory must be listed successfully and the exact filename must be absent. A permission error, unreadable listed file, or ambiguous listing fails closed. A newly appearing file is never overwritten.
 
 `contentType` may be `text` or `binary-asset`. Text is the default and is streamed through the fail-closed secret scanner regardless of size; NUL bytes do not cause a text source to be skipped. A binary asset must be explicitly classified, use a strict approved image/font extension and matching file signature, and supply `expectedSha256`. Executables, archives, databases, ambiguous binary data, and invalid UTF-8 text are rejected. Static entries also require an exact `publicPath`; backend entries omit it.
 
@@ -115,9 +117,9 @@ The following static files require an exact matching value in `protectedPathsApp
 - `public_html/assets/strava-race-map.mjs`
 - `public_html/.htaccess`
 
-The map asset can be a Micro release only when its exact destination is explicitly approved. `.htaccess` is a protected infrastructure file and should be treated as Major operational work. Every protected entry also requires `expectedSha256` for the approved new source plus exactly one approved prior-state declaration (`expectedRemoteSha256` for an existing file or `expectedRemoteAbsent: true` for a genuinely new path); omission fails closed.
+The map asset can be a Micro release only when its exact destination is explicitly approved. `.htaccess` is a protected infrastructure file and is required to use a Major release. Every protected entry also requires `expectedSha256` for the approved new source plus exactly one approved prior-state declaration (`expectedRemoteSha256` for an existing file or `expectedRemoteAbsent: true` for a genuinely new path); omission fails closed.
 
-Backend architecture, startup, dependency, migration, authentication, security, and configuration paths are protected and require both an exact `protectedPathsApproved` entry and a Major release. This includes `passenger.cjs`, `app.js`, `package.json`, `package-lock.json`, `migrations/**`, configuration paths, and auth/security modules. `.env`, credential, secret, and private-key destinations are never allowed.
+Every backend file is treated as protected because filename-based classification cannot reliably distinguish application logic from architecture, authentication, configuration, or data behavior. Every backend manifest therefore requires a Major release, an exact `protectedPathsApproved` entry and approved new/source hash for each destination, and an exact approved runtime-generation SHA-256. `.env`, credential, secret, and private-key destinations are never allowed.
 
 All paths reject absolute paths, `..`, backslashes, wildcard characters, shell metacharacters, control characters, non-normalized paths, duplicates, symlinks, missing sources, and unknown destination roots.
 
@@ -171,7 +173,7 @@ Then run **Verify backend production** with:
 - the identical backend manifest path; and
 - the identical release level.
 
-The verification workflow checks out that immutable commit, reconstructs its release from an isolated validated workspace, compares its packaged file hashes with production, and then requires the runtime `releaseGeneration` to equal that exact full commit SHA. A missing, malformed, or stale generation fails.
+The verification workflow checks out that immutable commit, reconstructs its release from an isolated validated workspace, compares its packaged file hashes with production, and then requires the runtime `releaseGeneration` to equal the separate 64-character `expectedReleaseGeneration` pinned in the manifest. A missing, malformed, stale, or commit-shaped 40-character generation fails.
 
 `restart.txt`, FTP overwrite of `restart.txt`, and cPanel **Restart** alone are prohibited because they do not guarantee that Passenger reloads modules. Browser automation against cPanel is also out of scope. Supported cPanel/Namecheap restart automation can be considered only after an authenticated vendor API is explicitly proven.
 
@@ -209,7 +211,7 @@ The endpoint must return HTTP 200 and `Cache-Control` containing both `no-store`
 - `raceWindowEnd`
 - `raceWindowModuleVersion`
 
-The expected and observed release generations are recorded in the non-sensitive verification result. Only approved field names and generation hashes are written to logs; credential/header values and raw response bodies are never logged.
+The expected and observed release generations are recorded in the non-sensitive verification result. HTTP verification follows redirects manually and rejects any redirect that leaves the configured production origin. Only approved field names and generation hashes are written to logs; credential/header values and raw response bodies are never logged.
 
 ## GitHub Environment and credentials
 
@@ -262,6 +264,7 @@ The validated workspace records the complete `dist/` output inventory plus the h
 ## Residual limitations
 
 - FTPS does not provide an atomic compare-and-swap primitive. There is a narrow unavoidable interval between the immediate prior-state verification and the subsequent upload. Post-upload hashing detects a wrong result but cannot make the operation atomic.
+- Secret scanning is deterministic and scans every byte of every candidate source, but it uses credential signatures and assignment/header patterns rather than an external secret-validity service. Reviewers must still inspect release content; unknown secret formats remain a residual risk.
 - Lexical allowlists and URL-segment encoding prevent client-side traversal, but cannot prove whether the remote server resolves an allowed destination through a server-side symlink.
 - Credential files and backups are removed in `finally` blocks and workflow `always()` cleanup steps. Abrupt host termination can prevent cleanup; GitHub-hosted runners are ephemeral, but this is not a substitute for persistent cleanup guarantees.
 - Raw rollback backups are deliberately not persisted in artifacts. Once the runner job ends, Stage 1 has only metadata and hashes, not the prior contents.
@@ -277,7 +280,7 @@ npm --prefix strava-app ci
 npm run test:deploy
 node scripts/deploy/validate-manifest.mjs --manifest deploy/manifests/examples/micro-static.json --type static --release micro --mode dry-run
 node scripts/deploy/validate-manifest.mjs --manifest deploy/manifests/examples/standard-static.json --type static --release standard --mode dry-run
-node scripts/deploy/validate-manifest.mjs --manifest deploy/manifests/examples/backend.json --type backend --release standard --mode dry-run
+node scripts/deploy/validate-manifest.mjs --manifest deploy/manifests/examples/backend.json --type backend --release major --mode dry-run
 npm test
 npm audit --audit-level=high
 npm --prefix strava-app audit --audit-level=high

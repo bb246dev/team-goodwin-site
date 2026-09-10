@@ -12,15 +12,6 @@ export const STATIC_PROTECTED_PATHS = Object.freeze([
   "public_html/.htaccess",
 ]);
 
-const BACKEND_MAJOR_PATTERNS = Object.freeze([
-  /^goodwin-node-test\/passenger\.cjs$/,
-  /^goodwin-node-test\/app\.js$/,
-  /^goodwin-node-test\/package(?:-lock)?\.json$/,
-  /^goodwin-node-test\/migrations\//,
-  /^goodwin-node-test\/(?:config|configuration)(?:\/|\.|$)/i,
-  /^goodwin-node-test\/.*(?:auth|security).*\.(?:c?js|mjs|json)$/i,
-]);
-
 const CREDENTIAL_PATH_PATTERN = /(^|\/)(?:\.env(?:\..*)?|credentials?(?:\..*)?|secrets?(?:\..*)?|id_(?:rsa|ecdsa|ed25519))(?:$|\/)/i;
 const SAFE_PATH_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+@()/ -]*$/;
 const FORBIDDEN_PATH_PATTERN = /[\\*?\[\]{};$`|&<>!\r\n\0]/;
@@ -30,6 +21,7 @@ const TOP_LEVEL_KEYS = new Set([
   "schemaVersion",
   "deploymentType",
   "releaseType",
+  "expectedReleaseGeneration",
   "description",
   "protectedPathsApproved",
   "files",
@@ -132,13 +124,9 @@ function expectedPublicPath(destination) {
   return `/${destination.slice("public_html/".length)}`;
 }
 
-function isBackendMajorPath(destination) {
-  return BACKEND_MAJOR_PATTERNS.some((pattern) => pattern.test(destination));
-}
-
 export function isProtectedDestination(type, destination) {
   if (type === "static") return STATIC_PROTECTED_PATHS.includes(destination);
-  return isBackendMajorPath(destination);
+  return type === "backend";
 }
 
 function validateTestPath(value, context) {
@@ -181,6 +169,14 @@ export async function validateManifestObject(manifest, options = {}) {
   if (manifest.description !== undefined && (typeof manifest.description !== "string" || manifest.description.length > 300)) {
     throw new Error("manifest.description must be a string of at most 300 characters");
   }
+  if (manifest.deploymentType === "backend") {
+    if (manifest.releaseType !== "major") throw new Error("Every backend deployment requires a major release");
+    if (typeof manifest.expectedReleaseGeneration !== "string" || !SHA256_PATTERN.test(manifest.expectedReleaseGeneration)) {
+      throw new Error("Backend manifest expectedReleaseGeneration must be the approved lowercase SHA-256 reported by runtime-status");
+    }
+  } else if (manifest.expectedReleaseGeneration !== undefined) {
+    throw new Error("expectedReleaseGeneration is permitted only for backend manifests");
+  }
   if (!Array.isArray(manifest.files) || manifest.files.length === 0 || manifest.files.length > 200) {
     throw new Error("manifest.files must contain 1-200 entries");
   }
@@ -205,6 +201,9 @@ export async function validateManifestObject(manifest, options = {}) {
     if (manifest.deploymentType === "static") {
       if (!isAllowedStaticDestination(destination)) throw new Error(`Static destination is outside the allowlist: ${destination}`);
       if (!isAllowedStaticSource(source, destination)) throw new Error(`Static source is unexpected for ${destination}: ${source}`);
+      if (destination === "public_html/.htaccess" && manifest.releaseType !== "major") {
+        throw new Error("A .htaccess deployment requires a major release");
+      }
       if (file.publicPath === undefined) throw new Error(`files[${index}].publicPath is required for static files`);
       const publicPath = normalizePublicPath(file.publicPath, `files[${index}].publicPath`);
       if (publicPath !== expectedPublicPath(destination)) {
@@ -216,9 +215,6 @@ export async function validateManifestObject(manifest, options = {}) {
       }
       if (!isAllowedBackendSource(source)) throw new Error(`Backend source is unexpected: ${source}`);
       if (file.publicPath !== undefined) throw new Error(`files[${index}].publicPath is not permitted for backend files`);
-      if (isBackendMajorPath(destination) && manifest.releaseType !== "major") {
-        throw new Error(`Backend architecture/security/configuration path requires a major release: ${destination}`);
-      }
     }
 
     const protectedDestination = isProtectedDestination(manifest.deploymentType, destination);
@@ -350,6 +346,7 @@ export async function loadRelease(path) {
     schemaVersion: release.schemaVersion,
     deploymentType: release.deploymentType,
     releaseType: release.releaseType,
+    expectedReleaseGeneration: release.expectedReleaseGeneration,
     description: release.description,
     protectedPathsApproved: release.protectedPathsApproved,
     files: release.files.map(({ newSha256, size, packagedPath, ...file }) => file),
@@ -403,6 +400,7 @@ export function publicManifest(manifest) {
     schemaVersion: manifest.schemaVersion,
     deploymentType: manifest.deploymentType,
     releaseType: manifest.releaseType,
+    expectedReleaseGeneration: manifest.expectedReleaseGeneration,
     description: manifest.description,
     protectedPathsApproved: manifest.protectedPathsApproved,
     files: manifest.files.map(({ absoluteSource, ...file }) => file),
