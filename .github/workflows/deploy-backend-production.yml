@@ -1,0 +1,169 @@
+name: Deploy backend production
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_level:
+        description: Validation and release policy level
+        required: true
+        type: choice
+        default: standard
+        options:
+          - micro
+          - standard
+          - major
+      mode:
+        description: Plan only or upload the approved backend files
+        required: true
+        type: choice
+        default: dry-run
+        options:
+          - dry-run
+          - deploy
+      manifest:
+        description: Repository-relative approved manifest under deploy/manifests
+        required: true
+        type: string
+        default: deploy/manifests/examples/backend.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate exact backend release
+    runs-on: ubuntu-latest
+    env:
+      MANIFEST_PATH: ${{ inputs.manifest }}
+      RELEASE_LEVEL: ${{ inputs.release_level }}
+      DEPLOY_MODE: ${{ inputs.mode }}
+    steps:
+      - name: Check out selected commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: |
+          npm ci
+          npm --prefix strava-app ci
+
+      - name: Validate manifest, paths, sources, and hashes
+        run: node scripts/deploy/validate-manifest.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --mode "$DEPLOY_MODE"
+
+      - name: Reject example manifest in deploy mode
+        run: |
+          if [ "$DEPLOY_MODE" = "deploy" ] && [[ "$MANIFEST_PATH" == deploy/manifests/examples/* ]]; then
+            echo "Example manifests are dry-run only. Copy and review one under deploy/manifests/releases/." >&2
+            exit 1
+          fi
+
+      - name: Scan manifest sources for secrets
+        run: node scripts/deploy/scan-secrets.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL"
+
+      - name: Check selected commit diff and workspace
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            git diff --check HEAD^ HEAD
+          else
+            git diff --check
+          fi
+          test -z "$(git status --porcelain)"
+
+      - name: Run release-level validation
+        run: node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL"
+
+      - name: Confirm validation did not mutate tracked release sources
+        run: |
+          git diff --check
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Build immutable release candidate
+        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --output deployment-release
+
+      - name: Save release candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: backend-release-${{ github.run_id }}
+          path: deployment-release/
+          if-no-files-found: error
+          retention-days: 30
+
+  production:
+    name: ${{ inputs.mode == 'deploy' && 'Upload backend production' || 'Plan backend production dry run' }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DEPLOY_MODE: ${{ inputs.mode }}
+      DEPLOYMENT_ENVIRONMENT: production
+      NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+      NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+      NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+      NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+      NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+    steps:
+      - name: Check out selected commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Restore validated release candidate
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: backend-release-${{ github.run_id }}
+          path: deployment-release
+
+      - name: Back up and compare every manifest destination
+        run: node scripts/deploy/compare-production.mjs --release deployment-release/release.json --mode "$DEPLOY_MODE" --output deployment-plan
+
+      - name: Upload changed manifest files over explicit FTPS
+        if: inputs.mode == 'deploy'
+        env:
+          CONFIRM_PRODUCTION_DEPLOY: "YES"
+        run: node scripts/deploy/ftps-upload.mjs --release deployment-release/release.json --plan deployment-plan/deployment-plan.json --output deployment-results
+
+      - name: Write manual Passenger restart gate
+        if: inputs.mode == 'deploy'
+        run: |
+          {
+            echo "## ACTION REQUIRED"
+            echo ""
+            echo "Open cPanel → Setup Node.js App"
+            echo ""
+            echo "1. Stop goodwingoodge.com/strava"
+            echo "2. Wait for Stopped"
+            echo "3. Start"
+            echo "4. Wait for Started"
+            echo "5. Run the Verify backend production workflow with commit $GITHUB_SHA and this manifest"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "ACTION REQUIRED: Open cPanel → Setup Node.js App → Stop goodwingoodge.com/strava → wait for Stopped → Start → wait for Started. Then run Verify backend production."
+
+      - name: Save plan, backups, rollback data, and upload results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: backend-production-plan-${{ github.run_id }}
+          path: |
+            deployment-plan/
+            deployment-results/
+          if-no-files-found: error
+          retention-days: 30

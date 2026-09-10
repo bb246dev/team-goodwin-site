@@ -8,6 +8,7 @@
     "build:site": "node build-offline.mjs",
     "build:cpanel": "node scripts/build-strava-cpanel.mjs",
     "check:cpanel": "node scripts/check-strava-cpanel-package.mjs",
+    "test:deploy": "node --test tests/deploy-tooling.test.mjs",
     "test": "node --test tests/*.test.mjs"
   }
 }

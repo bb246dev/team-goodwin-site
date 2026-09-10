@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Example isolated stylesheet release. Copy this file and replace the entries for a real approved release.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "assets/styles-ulvf0Dcj.css",
+      "destination": "public_html/assets/styles-ulvf0Dcj.css",
+      "publicPath": "/assets/styles-ulvf0Dcj.css"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/footer.test.mjs"
+    ],
+    "browserRoutes": [
+      "/"
+    ],
+    "apiChecks": []
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Dry-run template: replace the protected map remote-hash placeholder with an independently approved observed value.",
+  "protectedPathsApproved": [
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "dist/index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/"
+    },
+    {
+      "source": "dist/live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking/"
+    },
+    {
+      "source": "assets/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "fafab8b4c1e39c0032d880aa76030221002cbe761a5023a20b229b5cae7c6679",
+      "expectedRemoteSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/footer.test.mjs",
+      "tests/strava-map-integration.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "status"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}
