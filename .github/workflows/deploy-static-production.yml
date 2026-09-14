@@ -81,7 +81,7 @@ jobs:
           test -z "$(git status --porcelain)"
 
       - name: Run release-level validation
-        run: node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL" --workspace "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
+        run: GOODWIN_NODE_22="$(command -v node)" node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type static --release "$RELEASE_LEVEL" --workspace "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
 
       - name: Confirm isolated validation did not mutate the checkout
         run: |
