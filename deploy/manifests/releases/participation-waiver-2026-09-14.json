@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Replace the public Participation Terms page with the approved Participation Waiver and Release while preserving its existing URL.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "dist/participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedSha256": "dd39de11e2ddf012c1d663ba1480fc2a8bcd201eb9d7d5289d0909720d3c3dc2",
+      "expectedRemoteSha256": "ede9f30074b87975aff4110cd9b967243d71bb21635835295d5cdd78e7b75ef2"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/participation-waiver.test.mjs"
+    ],
+    "browserRoutes": [
+      "/participation-terms/",
+      "/live-tracking/",
+      "/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "status"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}
