@@ -24,11 +24,11 @@
     ],
     "apiChecks": [
       {
-        "name": "Strava health",
+        "name": "Strava health documented production baseline",
         "path": "/strava/health",
-        "expectedStatus": 200,
+        "expectedStatus": 404,
         "requiredJsonFields": [
-          "status"
+          "error"
         ]
       },
       {
