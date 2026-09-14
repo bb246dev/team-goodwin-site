@@ -9,7 +9,7 @@ import { createLocalProductionClient, rejectAmbiguousFtpsAbsence } from "../scri
 import { rollbackCompletedRelease, uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
 import { resolveManifestInput, sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
 import { scanManifestSources, secretFindings } from "../scripts/deploy/scan-secrets.mjs";
-import { sameOriginRedirect, validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
+import { imageUrlsFromDom, sameOriginRedirect, validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
 import { createValidatedWorkspace } from "../scripts/deploy/run-validation.mjs";
 
 const PROTECTED_SOURCE_CONTENT = "export const map = true;\n";
@@ -199,6 +199,18 @@ test("FTPS never infers absence from a failed download or directory listing", ()
 test("redirect validation permits only the requested production origin", () => {
   assert.equal(sameOriginRedirect("https://goodwingoodge.com/start", "/next").href, "https://goodwingoodge.com/next");
   assert.throws(() => sameOriginRedirect("https://goodwingoodge.com/start", "https://example.com/"), /escaped production origin/);
+});
+
+test("browser image verification honors only a same-origin document base", () => {
+  const pageUrl = new URL("https://goodwingoodge.com/participation-terms/");
+  assert.deepEqual(
+    imageUrlsFromDom('<base href="/"><img src="assets/goodwin-logo.png">', pageUrl),
+    ["https://goodwingoodge.com/assets/goodwin-logo.png"],
+  );
+  assert.throws(
+    () => imageUrlsFromDom('<base href="https://example.com/"><img src="logo.png">', pageUrl),
+    /base escaped production origin/,
+  );
 });
 
 test("all backend files are protected Major releases with an approved runtime generation", async (t) => {

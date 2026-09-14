@@ -118,11 +118,16 @@ async function chromeExecutable() {
   throw new Error("Chrome was not found for the required browser smoke test");
 }
 
-function imageUrlsFromDom(dom, pageUrl) {
+export function imageUrlsFromDom(dom, pageUrl) {
+  const baseHref = dom.match(/<base\b[^>]*\bhref=["']([^"']+)["'][^>]*>/i)?.[1];
+  const documentBase = baseHref ? new URL(baseHref, pageUrl) : pageUrl;
+  if (documentBase.origin !== pageUrl.origin) {
+    throw new Error(`Browser DOM base escaped production origin: ${documentBase.origin}`);
+  }
   const values = new Set();
   for (const match of dom.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi)) {
     if (/^(?:data:|blob:)/i.test(match[1])) continue;
-    const url = new URL(match[1], pageUrl);
+    const url = new URL(match[1], documentBase);
     if (url.origin === pageUrl.origin) values.add(url.href);
   }
   return [...values].slice(0, 200);
