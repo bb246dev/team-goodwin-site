@@ -9,7 +9,7 @@ import { createLocalProductionClient, rejectAmbiguousFtpsAbsence } from "../scri
 import { rollbackCompletedRelease, uploadRelease } from "../scripts/deploy/ftps-upload.mjs";
 import { resolveManifestInput, sha256, validateManifestObject, validationCommandsForRelease } from "../scripts/deploy/lib.mjs";
 import { scanManifestSources, secretFindings } from "../scripts/deploy/scan-secrets.mjs";
-import { imageUrlsFromDom, sameOriginRedirect, validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
+import { homeMediaPresent, imageUrlsFromDom, sameOriginRedirect, validateRuntimePayload } from "../scripts/deploy/verify-production.mjs";
 import { createValidatedWorkspace } from "../scripts/deploy/run-validation.mjs";
 
 const PROTECTED_SOURCE_CONTENT = "export const map = true;\n";
@@ -211,6 +211,12 @@ test("browser image verification honors only a same-origin document base", () =>
     () => imageUrlsFromDom('<base href="https://example.com/"><img src="logo.png">', pageUrl),
     /base escaped production origin/,
   );
+});
+
+test("home media verification recognizes the current hero video and rejects missing media", () => {
+  assert.equal(homeMediaPresent('<video class="tracker-hero-bg" data-hero-video><source data-src="/assets/hero-signal-optimized.mp4" type="video/mp4"></video>'), true);
+  assert.equal(homeMediaPresent('<div class="homepage">No hero media</div>'), false);
+  assert.equal(homeMediaPresent('<div class="legacy-slideshow"></div>'), true);
 });
 
 test("all backend files are protected Major releases with an approved runtime generation", async (t) => {

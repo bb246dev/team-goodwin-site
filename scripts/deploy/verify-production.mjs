@@ -133,6 +133,12 @@ export function imageUrlsFromDom(dom, pageUrl) {
   return [...values].slice(0, 200);
 }
 
+export function homeMediaPresent(dom) {
+  if (/(?:animation-play-state:paused|\bslideshow\b|\bcarousel\b)/i.test(dom)) return true;
+  return /<video\b[^>]*\bdata-hero-video(?:\s|=|>)/i.test(dom)
+    && /<source\b[^>]*(?:\bsrc|\bdata-src)=["'][^"']*\/assets\/hero-signal-optimized\.mp4(?:\?[^"']*)?["']/i.test(dom);
+}
+
 async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   const url = new URL(path, base);
   if (url.origin !== base.origin) throw new Error(`Browser route escaped production origin: ${path}`);
@@ -150,8 +156,8 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   if (result.error) throw result.error;
   if (result.status !== 0 || !/<html\b/i.test(result.stdout)) throw new Error(`Browser smoke failed for ${path} at ${viewport.width}x${viewport.height}`);
   if (/CONSOLE[^\r\n]*(?:Uncaught|\bError\b)/i.test(result.stderr)) throw new Error(`Browser console error detected for ${path} at ${viewport.width}x${viewport.height}`);
-  if (releaseType !== "micro" && path === "/" && !/(?:animation-play-state:paused|\bslideshow\b|\bcarousel\b)/i.test(result.stdout)) {
-    throw new Error("Home slideshow/media rail was not present after browser rendering");
+  if (releaseType !== "micro" && path === "/" && !homeMediaPresent(result.stdout)) {
+    throw new Error("Home media rail was not present after browser rendering");
   }
   if (releaseType !== "micro" && path === "/live-tracking/" && !/id=["']mission-map["']/.test(result.stdout)) {
     throw new Error("Mission America map mount was not present after browser rendering");
