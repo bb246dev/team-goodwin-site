@@ -125,6 +125,7 @@ test("Namecheap website build remains separate from the Strava Node application"
   assert.equal(body.progress, 0.5);
   assert.equal("rvStatus" in body, false);
   assert.doesNotMatch(siteWorkerSource, /HAPN_(?:CLIENT_ID|CLIENT_SECRET|DEVICE_IMEI)|publicHapnRvStatus|iotgps|usehapn/);
+  assert.doesNotMatch(siteWorkerSource, /FLIGHTAWARE_API_KEY|aeroapi\.flightaware\.com|x-apikey/);
 });
 
 test("app.js serves generic health plus visible and Passenger-stripped mount paths", async (t) => {
@@ -362,6 +363,8 @@ test("cPanel source declares Node 22, one dependency and the MySQL migration", (
     "004_ggma_race_schedule_mysql.sql",
     "004b_ggma_race_schedule_mariadb_repair.sql",
     "005_strava_candidate_runtime_fields_mariadb.sql",
+    "006_strava_webhook_admin_hardening_mariadb.sql",
+    "007_flight_tracking_cache_mariadb.sql",
   ]
     .map((name) => readFileSync(new URL(`../strava-app/migrations/${name}`, import.meta.url), "utf8"))
     .join("\n");
@@ -369,6 +372,7 @@ test("cPanel source declares Node 22, one dependency and the MySQL migration", (
     "strava_connection", "strava_oauth_states", "strava_refresh_lock",
     "strava_connection_links", "strava_race_activity_candidates",
     "ggma_race_schedule", "strava_race_activity_matches",
+    "flight_tracking_cache",
   ]) {
     assert.match(migrations, new RegExp(table));
   }

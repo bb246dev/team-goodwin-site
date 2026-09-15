@@ -98,7 +98,7 @@ function normalizePublicStatus(payload) {
     || payload.totalRaces !== EXPECTED_RACE_COUNT) {
     throw new Error("invalid_public_race_status");
   }
-  return {
+  const status = {
     active: payload.active,
     raceWindowId: payload.raceWindowId,
     raceWindowStart: payload.raceWindowStart,
@@ -106,6 +106,96 @@ function normalizePublicStatus(payload) {
     completedRaces: payload.completedRaces,
     totalRaces: payload.totalRaces,
   };
+  if (!Object.hasOwn(payload, "trackingSource")) return status;
+  if (!["flightaware", "manual", "none"].includes(payload.trackingSource)) {
+    throw new Error("invalid_tracking_source");
+  }
+  status.trackingSource = payload.trackingSource;
+  if (payload.trackingSource !== "flightaware") return status;
+  const flight = payload.flight;
+  if (!flight || typeof flight !== "object" || Array.isArray(flight)
+    || !safeText(flight.legId, 96)
+    || !["scheduled", "pre_departure", "departed", "en_route", "landed", "cancelled", "diverted", "unknown"].includes(flight.status)
+    || !safeText(flight.origin, 7) || !safeText(flight.destination, 7)
+    || typeof flight.trackingAvailable !== "boolean" || typeof flight.stale !== "boolean") {
+    throw new Error("invalid_public_flight");
+  }
+  const nullableTime = (value) => value === null
+    || (typeof value === "string" && Number.isFinite(Date.parse(value)));
+  for (const key of [
+    "scheduledDeparture", "actualDeparture", "scheduledArrival", "estimatedArrival", "actualArrival", "updatedAt",
+  ]) {
+    if (!nullableTime(flight[key])) throw new Error("invalid_public_flight");
+  }
+  let position = null;
+  if (flight.trackingAvailable) {
+    const value = flight.position;
+    const lat = Number(value?.lat);
+    const lng = Number(value?.lng);
+    if (!value || typeof value !== "object" || Array.isArray(value)
+      || !Number.isFinite(lat) || lat < -90 || lat > 90
+      || !Number.isFinite(lng) || lng < -180 || lng > 180
+      || typeof value.observedAt !== "string" || !Number.isFinite(Date.parse(value.observedAt))) {
+      throw new Error("invalid_public_flight");
+    }
+    const optionalMetric = (metric, minimum, maximum) => metric === null
+      || (Number.isFinite(Number(metric)) && Number(metric) >= minimum && Number(metric) <= maximum);
+    if (!optionalMetric(value.altitude, -2_000, 100_000)
+      || !optionalMetric(value.groundspeed, 0, 2_000)
+      || !optionalMetric(value.track, 0, 360)) throw new Error("invalid_public_flight");
+    position = {
+      lat,
+      lng,
+      altitude: value.altitude === null ? null : Number(value.altitude),
+      groundspeed: value.groundspeed === null ? null : Number(value.groundspeed),
+      track: value.track === null ? null : Number(value.track),
+      observedAt: new Date(value.observedAt).toISOString(),
+    };
+  } else if (flight.position !== null) {
+    throw new Error("invalid_public_flight");
+  }
+  status.flight = {
+    legId: flight.legId,
+    ident: flight.ident === null ? null : safeText(flight.ident, 128),
+    origin: flight.origin,
+    destination: flight.destination,
+    status: flight.status,
+    scheduledDeparture: flight.scheduledDeparture,
+    actualDeparture: flight.actualDeparture,
+    scheduledArrival: flight.scheduledArrival,
+    estimatedArrival: flight.estimatedArrival,
+    actualArrival: flight.actualArrival,
+    trackingAvailable: flight.trackingAvailable,
+    stale: flight.stale,
+    position,
+    updatedAt: flight.updatedAt,
+  };
+  return status;
+}
+
+function selectedPosition(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const lat = Number(value.lat);
+  const lng = Number(value.lng);
+  return Number.isFinite(lat) && lat >= -90 && lat <= 90
+    && Number.isFinite(lng) && lng >= -180 && lng <= 180
+    ? { lat, lng } : null;
+}
+
+export function selectTrackingPosition({ raceStatus, stravaPosition = null, manualPosition = null } = {}) {
+  const source = raceStatus?.trackingSource || "strava";
+  if (source === "flightaware") {
+    const position = raceStatus?.flight?.trackingAvailable === true && raceStatus.flight.stale === false
+      ? selectedPosition(raceStatus.flight.position) : null;
+    return { source, available: Boolean(position), position };
+  }
+  if (source === "manual") {
+    const position = selectedPosition(manualPosition);
+    return { source, available: Boolean(position), position };
+  }
+  if (source === "none") return { source, available: false, position: null };
+  const position = selectedPosition(stravaPosition);
+  return { source: "strava", available: Boolean(position), position };
 }
 
 function displayDate(value, fallback) {

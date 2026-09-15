@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 const source = "strava-app";
 const output = "dist/goodwin-strava-api";
-const entries = ["passenger.cjs", "app.js", "package.json", "package-lock.json", "README.md", "lib", "migrations", "seeds"];
+const entries = ["passenger.cjs", "app.js", "package.json", "package-lock.json", "README.md", "config", "lib", "migrations", "seeds"];
 
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });

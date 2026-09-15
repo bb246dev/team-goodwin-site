@@ -8,6 +8,10 @@
 
 **Production baseline:** `https://goodwingoodge.com`
 
+> Update (2026-09-15): API #3 now has a disabled FlightAware foundation. This
+> dated document remains the pre-implementation baseline; see
+> `docs/flightaware-integration.md` for the current server/cache/source design.
+
 ## 1. Purpose and non-goals
 
 This architecture makes the current Strava integration and HAPN API #2 inputs to a normalized map-data layer, with API #3 reserved for later work. Provider payloads must terminate at an adapter boundary. Map rendering and DOM code consume only a validated, provider-neutral snapshot.

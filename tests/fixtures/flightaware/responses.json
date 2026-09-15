@@ -1,0 +1,196 @@
+{
+  "commercialScheduled": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "ident_icao": "TST123",
+        "ident_iata": null,
+        "fa_flight_id": "TST123-test-commercial-scheduled",
+        "registration": null,
+        "origin": { "code": "KAAA", "code_icao": "KAAA", "code_iata": null, "code_lid": null },
+        "destination": { "code": "KBBB", "code_icao": "KBBB", "code_iata": null, "code_lid": null },
+        "status": "Scheduled",
+        "cancelled": false,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": null,
+        "actual_in": null,
+        "estimated_in": null,
+        "last_position": null
+      }
+    ]
+  },
+  "commercialAirborne": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "ident_icao": "TST123",
+        "ident_iata": null,
+        "fa_flight_id": "TST123-test-commercial-airborne",
+        "registration": "NTEST1",
+        "origin": { "code": "KAAA", "code_icao": "KAAA", "code_iata": null, "code_lid": null },
+        "destination": { "code": "KBBB", "code_icao": "KBBB", "code_iata": null, "code_lid": null },
+        "status": "En Route",
+        "cancelled": false,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": "2026-10-10T12:08:00Z",
+        "actual_in": null,
+        "estimated_in": "2026-10-10T15:12:00Z",
+        "last_position": {
+          "fa_flight_id": null,
+          "altitude": 351,
+          "groundspeed": 447,
+          "heading": 83,
+          "latitude": 35.25,
+          "longitude": -96.75,
+          "timestamp": "2026-10-10T13:00:00Z"
+        }
+      }
+    ]
+  },
+  "commercialLanded": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "ident_icao": "TST123",
+        "fa_flight_id": "TST123-test-commercial-landed",
+        "registration": "NTEST1",
+        "origin": { "code": "KAAA", "code_icao": "KAAA" },
+        "destination": { "code": "KBBB", "code_icao": "KBBB" },
+        "status": "Arrived / Gate Arrival",
+        "cancelled": false,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": "2026-10-10T12:08:00Z",
+        "estimated_in": "2026-10-10T15:12:00Z",
+        "actual_in": "2026-10-10T15:10:00Z",
+        "last_position": null
+      }
+    ]
+  },
+  "privateAirborne": {
+    "flights": [
+      {
+        "ident": "NTEST2",
+        "ident_icao": null,
+        "ident_iata": null,
+        "fa_flight_id": "NTEST2-test-private-airborne",
+        "registration": "NTEST2",
+        "origin": { "code": "KCCC", "code_icao": "KCCC" },
+        "destination": { "code": "KDDD", "code_icao": "KDDD" },
+        "status": "En Route",
+        "cancelled": false,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T16:00:00Z",
+        "scheduled_in": "2026-10-10T18:00:00Z",
+        "actual_out": "2026-10-10T16:04:00Z",
+        "estimated_in": "2026-10-10T18:02:00Z",
+        "actual_in": null,
+        "last_position": {
+          "fa_flight_id": null,
+          "altitude": 280,
+          "groundspeed": 390,
+          "heading": 210,
+          "latitude": 37.1,
+          "longitude": -91.2,
+          "timestamp": "2026-10-10T17:00:00Z"
+        }
+      }
+    ]
+  },
+  "positionUnavailable": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "ident_icao": "TST123",
+        "fa_flight_id": "TST123-test-position-unavailable",
+        "registration": null,
+        "origin": { "code": "KAAA", "code_icao": "KAAA" },
+        "destination": { "code": "KBBB", "code_icao": "KBBB" },
+        "status": "En Route",
+        "cancelled": false,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": "2026-10-10T12:08:00Z",
+        "actual_in": null,
+        "last_position": null
+      }
+    ]
+  },
+  "stalePosition": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "ident_icao": "TST123",
+        "fa_flight_id": "TST123-test-stale-position",
+        "registration": null,
+        "origin": { "code": "KAAA", "code_icao": "KAAA" },
+        "destination": { "code": "KBBB", "code_icao": "KBBB" },
+        "status": "En Route",
+        "cancelled": false,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": "2026-10-10T12:08:00Z",
+        "actual_in": null,
+        "last_position": {
+          "altitude": 340,
+          "groundspeed": 440,
+          "heading": 82,
+          "latitude": 35.1,
+          "longitude": -96.9,
+          "timestamp": "2026-10-10T12:00:00Z"
+        }
+      }
+    ]
+  },
+  "cancelled": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "fa_flight_id": "TST123-test-cancelled",
+        "registration": null,
+        "origin": { "code": "KAAA" },
+        "destination": { "code": "KBBB" },
+        "status": "Cancelled",
+        "cancelled": true,
+        "diverted": false,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": null,
+        "actual_in": null,
+        "last_position": null
+      }
+    ]
+  },
+  "diverted": {
+    "flights": [
+      {
+        "ident": "TST123",
+        "fa_flight_id": "TST123-test-diverted",
+        "registration": "NTEST1",
+        "origin": { "code": "KAAA" },
+        "destination": { "code": "KBBB" },
+        "status": "Diverted",
+        "cancelled": false,
+        "diverted": true,
+        "scheduled_out": "2026-10-10T12:00:00Z",
+        "scheduled_in": "2026-10-10T15:00:00Z",
+        "actual_out": "2026-10-10T12:08:00Z",
+        "actual_in": null,
+        "last_position": null
+      }
+    ]
+  },
+  "apiError": {
+    "title": "Request failed",
+    "reason": "test fixture",
+    "detail": "test fixture only",
+    "status": 503
+  }
+}

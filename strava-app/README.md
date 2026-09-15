@@ -18,12 +18,13 @@ registration are separate, later operations.
    `migrations/003_strava_race_activity_candidates_mysql.sql`, then
    `migrations/004_ggma_race_schedule_mysql.sql`, then
    `migrations/005_strava_candidate_runtime_fields_mariadb.sql`, then
-   `migrations/006_strava_webhook_admin_hardening_mariadb.sql`. Finally import
+   `migrations/006_strava_webhook_admin_hardening_mariadb.sql`, then
+   `migrations/007_flight_tracking_cache_mariadb.sql`. Finally import
    `seeds/001_ggma_2026_race_schedule_mysql.sql`.
    If an earlier generated-column version of migration 004 failed with MariaDB
    error 1901, keep the schedule table and import
    `migrations/004b_ggma_race_schedule_mariadb_repair.sql` instead of retrying
-   migration 004. Then import migrations 005 and 006 followed by the same seed file.
+   migration 004. Then import migrations 005, 006, and 007 followed by the same seed file.
    Migration 005 adds the nullable candidate activity fields required by the
    current runtime, including the public map API.
 4. Confirm these InnoDB tables exist: `strava_connection`,
@@ -31,8 +32,9 @@ registration are separate, later operations.
    `strava_connection_links`, plus `strava_race_activity_candidates` and
    `ggma_race_schedule`, `strava_race_activity_matches`,
    `strava_webhook_events`, `strava_webhook_activity_state`,
-   `strava_webhook_rate_state`, and `strava_admin_auth_failures`. Confirm the
-   schedule contains exactly 50 rows numbered 1 through 50.
+   `strava_webhook_rate_state`, `strava_admin_auth_failures`, and
+   `flight_tracking_cache`. Confirm the schedule contains exactly 50 rows
+   numbered 1 through 50.
 
 MySQL/MariaDB is used because a Passenger application can run multiple Node
 processes. The transactional shared tables keep OAuth state and rotating refresh
@@ -68,7 +70,8 @@ the deployment ZIP, logs or source control. Its exact JSON structure is:
   "HAPN_DEVICE_IMEI": "your-hapn-device-imei",
   "HAPN_STALE_AFTER_SECONDS": "900",
   "HAPN_RETENTION_SECONDS": "21600",
-  "HAPN_PUBLIC_COORDINATE_DECIMALS": "3"
+  "HAPN_PUBLIC_COORDINATE_DECIMALS": "3",
+  "FLIGHTAWARE_API_KEY": "your-flightaware-aeroapi-v4-key"
 }
 ```
 
@@ -103,6 +106,10 @@ The configuration keys are:
   21600 and must be at least the freshness threshold.
 - `HAPN_PUBLIC_COORDINATE_DECIMALS` — optional public precision from 2 through 5;
   defaults to 3.
+- `FLIGHTAWARE_API_KEY` — optional server-only AeroAPI v4 key. Leave it absent
+  until the account and real endpoints are commissioned. No polling starts merely
+  because this key exists.
+
 Generate the three internal values locally without saving them in the repository.
 Run each command separately in a trusted terminal and place its output directly in
 the matching private JSON string:
@@ -128,6 +135,7 @@ app.js
 package.json
 package-lock.json
 README.md
+config/
 lib/
 migrations/
 seeds/
@@ -164,7 +172,8 @@ the application listener port; the code does not bind to public ports 80 or 443.
   rows in race-number order and attaches sanitized activity summaries only for
   candidates that are both included and present in the one-to-one match table.
 - `GET /strava/public/race-status` is read-only and public. It returns the
-  operational-window state and completed/total race counts.
+  operational-window state and completed/total race counts. It remains unchanged
+  unless an explicit server tracking-source window selects cached flight data.
 - `GET /strava/public/tracking-status` is the read-only, same-origin HAPN API #2
   projection. It exposes only availability, staleness, observation time, and a
   rounded RV position while within retention. Unsupported methods return 405.

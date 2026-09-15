@@ -4,8 +4,11 @@ import { join, relative } from "node:path";
 const root = "dist/goodwin-strava-api";
 const required = [
   "passenger.cjs", "app.js", "package.json", "package-lock.json", "README.md",
+  "config/flight-legs.mjs", "config/tracking-sources.mjs",
   "lib/mysql-store.mjs",
   "lib/hapn-route.mjs", "lib/hapn-tracking-core.mjs",
+  "lib/flightaware/cache.mjs", "lib/flightaware/normalize.mjs", "lib/flightaware/service.mjs",
+  "lib/tracking-source.mjs",
   "lib/race-matching.mjs", "lib/race-window.mjs", "lib/routes.mjs", "lib/security.mjs", "lib/service.mjs", "lib/store.mjs",
   "migrations/001_strava_oauth_mysql.sql", "migrations/002_strava_connection_links_mysql.sql",
   "migrations/003_strava_race_activity_candidates_mysql.sql",
@@ -13,6 +16,7 @@ const required = [
   "migrations/004b_ggma_race_schedule_mariadb_repair.sql",
   "migrations/005_strava_candidate_runtime_fields_mariadb.sql",
   "migrations/006_strava_webhook_admin_hardening_mariadb.sql",
+  "migrations/007_flight_tracking_cache_mariadb.sql",
   "seeds/001_ggma_2026_race_schedule_mysql.sql",
 ];
 
@@ -73,6 +77,7 @@ for (const table of [
   "strava_connection_links", "strava_race_activity_candidates", "strava_race_activity_matches", "ggma_race_schedule",
   "strava_webhook_events", "strava_webhook_activity_state", "strava_webhook_rate_state",
   "strava_admin_auth_failures",
+  "flight_tracking_cache",
 ]) {
   if (!source.includes(table)) throw new Error(`Deployment package is missing ${table}`);
 }
@@ -96,6 +101,12 @@ for (const control of [
   "HAPN_RETENTION_SECONDS", "Cross-Origin-Resource-Policy", "method_not_allowed",
 ]) {
   if (!source.includes(control)) throw new Error(`HAPN package is missing security control: ${control}`);
+}
+for (const control of [
+  "FLIGHTAWARE_API_KEY", "x-apikey", "FLIGHTAWARE_RESPONSE_MAX_BYTES", "redirect: \"error\"",
+  "flightaware_upstream_not_allowed", "trackingAvailable", "TRACKING_SOURCE_WINDOWS",
+]) {
+  if (!source.includes(control)) throw new Error(`FlightAware package is missing security control: ${control}`);
 }
 const routesSource = readFileSync(join(root, "lib/routes.mjs"), "utf8");
 const adminCheckIndex = routesSource.indexOf("!await authorizedAdmin(request, env)");
@@ -169,6 +180,14 @@ for (const table of [
 }
 if (/GENERATED\s+ALWAYS|DROP\s+(?:TABLE|COLUMN)|TRUNCATE\s+|DELETE\s+FROM|UPDATE\s+/i.test(hardeningMigration)) {
   throw new Error("TG-M05 migration is not purely additive");
+}
+const flightCacheMigration = readFileSync(
+  join(root, "migrations/007_flight_tracking_cache_mariadb.sql"),
+  "utf8",
+);
+if (!flightCacheMigration.includes("CREATE TABLE IF NOT EXISTS flight_tracking_cache")
+  || /GENERATED\s+ALWAYS|DROP\s+(?:TABLE|COLUMN)|TRUNCATE\s+|DELETE\s+FROM|UPDATE\s+/i.test(flightCacheMigration)) {
+  throw new Error("Flight tracking cache migration is not purely additive");
 }
 for (const sourceContract of [
   "STRAVA_WEBHOOK_SUBSCRIPTION_ID",

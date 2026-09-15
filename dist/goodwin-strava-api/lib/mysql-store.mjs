@@ -93,6 +93,34 @@ function publicActivity(row) {
   };
 }
 
+function flightTrackingCacheRow(row) {
+  if (!row) return null;
+  const serialized = row.normalized_state_json;
+  if (typeof serialized !== "string" || serialized.length > 65_535) {
+    throw new StravaError("strava_storage_unavailable");
+  }
+  const freshUntil = Number(row.fresh_until);
+  const retainUntil = Number(row.retain_until);
+  const updatedAt = Number(row.updated_at);
+  if (![freshUntil, retainUntil, updatedAt].every(Number.isSafeInteger)) {
+    throw new StravaError("strava_storage_unavailable");
+  }
+  let state;
+  try {
+    state = JSON.parse(serialized);
+  } catch {
+    throw new StravaError("strava_storage_unavailable");
+  }
+  return {
+    legId: row.leg_id,
+    provider: row.provider,
+    state,
+    freshUntil,
+    retainUntil,
+    updatedAt,
+  };
+}
+
 export function createMySqlStravaStore(pool) {
   if (!pool || typeof pool.execute !== "function" || typeof pool.getConnection !== "function") {
     throw new StravaError("strava_storage_unavailable");
@@ -113,6 +141,7 @@ export function createMySqlStravaStore(pool) {
       await pool.execute("SELECT 1 FROM strava_webhook_activity_state LIMIT 0");
       await pool.execute("SELECT 1 FROM strava_webhook_rate_state LIMIT 0");
       await pool.execute("SELECT 1 FROM strava_admin_auth_failures LIMIT 0");
+      await pool.execute("SELECT 1 FROM flight_tracking_cache LIMIT 0");
       const [schedule] = await pool.execute(
         `SELECT COUNT(*) AS race_count, COUNT(DISTINCT race_number) AS number_count,
            MIN(race_number) AS first_race, MAX(race_number) AS last_race
@@ -174,6 +203,37 @@ export function createMySqlStravaStore(pool) {
         if (activity) race.activity = activity;
         return race;
       });
+    },
+
+    async getFlightTrackingState(legId) {
+      const [rows] = await pool.execute(
+        `SELECT leg_id, provider, normalized_state_json, fresh_until, retain_until, updated_at
+         FROM flight_tracking_cache WHERE leg_id = ? LIMIT 1`,
+        [legId],
+      );
+      return flightTrackingCacheRow(rows[0]);
+    },
+
+    async saveFlightTrackingState(entry) {
+      const serialized = JSON.stringify(entry.state);
+      if (serialized.length > 65_535) throw new StravaError("strava_storage_unavailable");
+      await pool.execute(
+        `INSERT INTO flight_tracking_cache
+           (leg_id, provider, normalized_state_json, fresh_until, retain_until, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE provider = VALUES(provider),
+           normalized_state_json = VALUES(normalized_state_json),
+           fresh_until = VALUES(fresh_until), retain_until = VALUES(retain_until),
+           updated_at = VALUES(updated_at)`,
+        [
+          entry.legId,
+          entry.provider,
+          serialized,
+          entry.freshUntil,
+          entry.retainUntil,
+          entry.updatedAt,
+        ],
+      );
     },
 
     async listIncludedRaceIds() {

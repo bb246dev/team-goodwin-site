@@ -10,6 +10,7 @@ export function createMemoryStravaStore(now) {
   const webhookEvents = new Map();
   const webhookActivityState = new Map();
   const adminAuthFailures = new Map();
+  const flightTrackingCache = new Map();
   let webhookRateState = null;
   let raceSchedule = [];
   let connection = null;
@@ -54,6 +55,12 @@ export function createMemoryStravaStore(now) {
           }
           return result;
         }));
+    },
+    async getFlightTrackingState(legId) {
+      return copy(flightTrackingCache.get(legId) || null);
+    },
+    async saveFlightTrackingState(entry) {
+      flightTrackingCache.set(entry.legId, copy(entry));
     },
     async listIncludedRaceIds() {
       return [...raceMatches].flatMap(([raceId, activityId]) => {
@@ -319,6 +326,7 @@ export function createMemoryStravaStore(now) {
     inspectWebhookActivityState: () => copy([...webhookActivityState.entries()]),
     inspectWebhookRateState: () => copy(webhookRateState),
     inspectAdminAuthFailures: () => copy([...adminAuthFailures.entries()]),
+    inspectFlightTrackingCache: () => copy([...flightTrackingCache.entries()]),
     inspectLock: () => copy(lock),
     expireLock: () => { if (lock) lock.expires_at = 0; },
     failNextSaves: (count) => { failedSaves = count; },

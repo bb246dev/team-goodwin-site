@@ -10,6 +10,9 @@ import {
 import {
   operationalWindowAt, publicRaceResultsVisibleAt, raceWindowStatusAt,
 } from "./race-window.mjs";
+import { FLIGHT_LEGS } from "../config/flight-legs.mjs";
+import { TRACKING_SOURCE_WINDOWS } from "../config/tracking-sources.mjs";
+import { buildPublicTrackingOverlay } from "./tracking-source.mjs";
 
 const STATE_COOKIE = "__Host-goodwin-strava-state";
 const STATE_LIFETIME = 600;
@@ -372,17 +375,30 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
     }
     if (publicRaces || publicRaceStatus) {
       const timestamp = now();
-      const races = await createStravaStore(env).listPublicRaces(publicRaceResultsVisibleAt(timestamp));
+      const store = createStravaStore(env);
+      const races = await store.listPublicRaces(publicRaceResultsVisibleAt(timestamp));
       if (publicRaceStatus) {
         const window = raceWindowStatusAt(timestamp);
-        return stravaResponse({
+        const status = {
           active: window.raceWindowActive,
           raceWindowId: window.raceWindowId,
           raceWindowStart: window.raceWindowStart,
           raceWindowEnd: window.raceWindowEnd,
           completedRaces: races.filter((race) => race.status === "completed").length,
           totalRaces: races.length,
-        }, 200, publicHeaders(request, timestamp));
+        };
+        try {
+          const tracking = await buildPublicTrackingOverlay({
+            at: new Date(timestamp * 1_000),
+            windows: dependencies.trackingSourceWindows ?? TRACKING_SOURCE_WINDOWS,
+            flightLegs: dependencies.flightLegs ?? FLIGHT_LEGS,
+            store,
+          });
+          if (tracking) Object.assign(status, tracking);
+        } catch {
+          // Flight configuration/cache failures must not change the established race-status contract.
+        }
+        return stravaResponse(status, 200, publicHeaders(request, timestamp));
       }
       return stravaResponse({ races }, 200, publicHeaders(request, timestamp));
     }
