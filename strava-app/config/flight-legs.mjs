@@ -105,6 +105,75 @@ export function validateFlightLegs(legs) {
   return Object.freeze(validated);
 }
 
-// Authoritative commercial itinerary and private registrations belong here.
-// This is intentionally empty until Team Goodwin supplies verified flight data.
-export const FLIGHT_LEGS = validateFlightLegs([]);
+// Team Goodwin's verified pre-booked itinerary uses origin-local dates while
+// scheduledDeparture is normalized to UTC. Commercial flight idents remain
+// null until the client supplies the booked flight numbers. Tracking stays
+// disabled until those idents and the live FlightAware commissioning plan are
+// confirmed.
+export const FLIGHT_LEGS = validateFlightLegs([
+  {
+    id: "hnl-anc-2026-10-09",
+    type: "commercial",
+    scheduledDate: "2026-10-09",
+    scheduledDeparture: "2026-10-09T23:11:00-10:00",
+    origin: "HNL",
+    destination: "ANC",
+    ident: null,
+    registration: null,
+    faFlightId: null,
+    trackingEnabled: false,
+    notes: "Alaska Airlines; arrives 2026-10-10 07:22 AKDT; commercial flight ident pending.",
+  },
+  {
+    id: "anc-pdx-2026-10-10",
+    type: "commercial",
+    scheduledDate: "2026-10-10",
+    scheduledDeparture: "2026-10-10T15:51:00-08:00",
+    origin: "ANC",
+    destination: "PDX",
+    ident: null,
+    registration: null,
+    faFlightId: null,
+    trackingEnabled: false,
+    notes: "Alaska Airlines; arrives 2026-10-10 20:35 PDT; commercial flight ident pending.",
+  },
+  {
+    id: "pdx-slc-2026-10-11",
+    type: "commercial",
+    scheduledDate: "2026-10-11",
+    scheduledDeparture: "2026-10-11T17:15:00-07:00",
+    origin: "PDX",
+    destination: "SLC",
+    ident: null,
+    registration: null,
+    faFlightId: null,
+    trackingEnabled: false,
+    notes: "Delta Airlines; arrives 2026-10-11 20:10 MDT; commercial flight ident pending.",
+  },
+  {
+    id: "cmh-lax-2026-10-20",
+    type: "commercial",
+    scheduledDate: "2026-10-20",
+    scheduledDeparture: "2026-10-20T19:03:00-04:00",
+    origin: "CMH",
+    destination: "LAX",
+    ident: null,
+    registration: null,
+    faFlightId: null,
+    trackingEnabled: false,
+    notes: "American Airlines; arrives 2026-10-20 21:11 PDT; commercial flight ident pending.",
+  },
+  {
+    id: "mia-atl-2026-10-24",
+    type: "commercial",
+    scheduledDate: "2026-10-24",
+    scheduledDeparture: "2026-10-24T16:21:00-04:00",
+    origin: "MIA",
+    destination: "ATL",
+    ident: null,
+    registration: null,
+    faFlightId: null,
+    trackingEnabled: false,
+    notes: "Delta Airlines; arrives 2026-10-24 18:24 EDT; commercial flight ident pending.",
+  },
+]);

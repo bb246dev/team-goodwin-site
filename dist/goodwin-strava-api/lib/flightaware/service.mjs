@@ -91,8 +91,15 @@ function identifier(value, code) {
   return value;
 }
 
-function dateRange(scheduledDate) {
-  const start = new Date(`${scheduledDate}T00:00:00Z`);
+function scheduledUtcDate(leg) {
+  const departure = leg.scheduledDeparture ? Date.parse(leg.scheduledDeparture) : NaN;
+  return Number.isFinite(departure)
+    ? new Date(departure).toISOString().slice(0, 10)
+    : leg.scheduledDate;
+}
+
+function dateRange(leg) {
+  const start = new Date(`${scheduledUtcDate(leg)}T00:00:00Z`);
   const end = new Date(start.getTime() + 24 * 60 * 60 * 1_000);
   return { start: start.toISOString(), end: end.toISOString() };
 }
@@ -127,7 +134,7 @@ export function selectFlightInstance(payload, leg) {
     if (expectedFlightId) return true;
     if (!airportMatches(flight.origin, leg.origin) || !airportMatches(flight.destination, leg.destination)) return false;
     const time = scheduledTime(flight);
-    return time !== null && new Date(time).toISOString().slice(0, 10) === leg.scheduledDate;
+    return time !== null && new Date(time).toISOString().slice(0, 10) === scheduledUtcDate(leg);
   });
   if (expectedFlightId) {
     if (identityMatches.length === 0) return null;
@@ -187,7 +194,7 @@ export function createFlightAwareService({
   }
 
   async function resolveByIdentity(leg, identity, identType) {
-    const { start, end } = dateRange(leg.scheduledDate);
+    const { start, end } = dateRange(leg);
     const payload = await request(`/flights/${encodeURIComponent(identifier(identity, "flightaware_invalid_ident"))}`, {
       ident_type: identType,
       start,

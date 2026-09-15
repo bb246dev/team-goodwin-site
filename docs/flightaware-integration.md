@@ -1,9 +1,11 @@
 # FlightAware AeroAPI v4 foundation
 
 Prepared on 2026-09-15 for the Team Goodwin cPanel Node application. This is a
-disabled integration foundation: it does not contain a FlightAware key, real
-flight itinerary, private registration, active polling job, live provider call,
-deployment, or public tracker redesign.
+disabled integration foundation: it does not contain a FlightAware key, any
+private-aircraft registration, active polling job, live provider call,
+deployment, or public tracker redesign. The five verified pre-booked commercial
+routes are configured, but their flight idents remain unknown and tracking is
+disabled.
 
 ## What is implemented
 
@@ -22,10 +24,44 @@ The production browser never calls FlightAware. A public request never refreshes
 FlightAware and therefore cannot multiply AeroAPI usage. Existing Strava and HAPN
 routes, polling, response fields, and fallbacks remain unchanged.
 
-The older `api/flight-tracking-core.mjs` and planned flight paths in
-`source-html/live-tracking.html` are legacy static/mock presentation data. They
-were deliberately not treated as an authoritative live itinerary and were not
-copied into the new configuration.
+## Reconciled Team Goodwin itinerary
+
+The configured itinerary was reconciled from the previously supplied Team
+Goodwin pre-booked schedule, the UTC-normalized records in
+`api/flight-tracking-core.mjs`, the local-time production reference in
+`production-merge/hapn-api2-production-base-patch-2026-09-09/public_html/assets/tracker-base.js`,
+the current race schedule seed, and the five planned paths in
+`source-html/live-tracking.html`. The explicit route, local times, timezones,
+and airline records agree across the itinerary and production-reference
+sources.
+
+| Leg | Type | Origin-local departure | Arrival-local time | Airline | Ident | Registration | `faFlightId` |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| HNL-ANC | Commercial | 2026-10-09 23:11 HST | 2026-10-10 07:22 AKDT | Alaska Airlines | Unknown | Not applicable | `null` |
+| ANC-PDX | Commercial | 2026-10-10 15:51 AKDT | 2026-10-10 20:35 PDT | Alaska Airlines | Unknown | Not applicable | `null` |
+| PDX-SLC | Commercial | 2026-10-11 17:15 PDT | 2026-10-11 20:10 MDT | Delta Airlines | Unknown | Not applicable | `null` |
+| CMH-LAX | Commercial | 2026-10-20 19:03 EDT | 2026-10-20 21:11 PDT | American Airlines | Unknown | Not applicable | `null` |
+| MIA-ATL | Commercial | 2026-10-24 16:21 EDT | 2026-10-24 18:24 EDT | Delta Airlines | Unknown | Not applicable | `null` |
+
+`scheduledDate` records the origin-local departure date. The offset-bearing
+source timestamps normalize to UTC in configuration, and the resolver uses the
+normalized UTC departure day for provider matching. This keeps the HNL leg on
+the correct October 9 local itinerary date even though it departs on October 10
+UTC.
+
+An older bundled schedule marks the Salt Lake City and Atlanta arrival modes as
+`charter`, while the later explicit itinerary and production tracker name Delta
+Airlines for both legs. The later, route-specific records are used here. That
+older schedule also marks Little Rock and Miami arrivals as `charter`, but it
+does not supply authoritative airport pairs, departure times, timezones, or
+registrations for those transfers. They are not configured as FlightAware legs.
+Team Goodwin must confirm those private-transfer details before they can be
+added.
+
+The five existing static flight paths correspond one-for-one with the five
+configured legs above. They remain unchanged and continue to be the planned
+visual geometry. Live FlightAware state may later augment those planned legs;
+this change does not implement a visual fallback or modify map rendering.
 
 ## Authoritative configuration
 
@@ -33,7 +69,8 @@ Enter verified flight legs only in:
 
 `strava-app/config/flight-legs.mjs`
 
-`FLIGHT_LEGS` is intentionally empty. Every object must contain:
+`FLIGHT_LEGS` contains the five reconciled routes above. Every object must
+contain:
 
 | Field | Meaning |
 | --- | --- |
@@ -58,11 +95,13 @@ Enter explicit source windows only in:
 
 `strava-app/config/tracking-sources.mjs`
 
-`TRACKING_SOURCE_WINDOWS` is also intentionally empty. Outside a configured
-window, `strava` remains authoritative. A window may explicitly select
-`strava`, `flightaware`, `manual`, or `none`. A `flightaware` window must name an
-existing flight leg. Windows cannot overlap, so the system never guesses which
-source wins.
+`TRACKING_SOURCE_WINDOWS` remains intentionally empty. Commercial flight idents,
+the unresolved charter/private-transfer conflict, and the commissioning window
+policy must be confirmed before source selection can safely change. Outside a
+configured window, `strava` remains authoritative. A window may explicitly
+select `strava`, `flightaware`, `manual`, or `none`. A `flightaware` window must
+name an existing flight leg. Windows cannot overlap, so the system never guesses
+which source wins.
 
 ## Server service and live-mode gate
 
@@ -131,8 +170,9 @@ never invoke FlightAware.
 
 ## Public race API and browser source selection
 
-With the shipped empty source schedule, `/strava/public/race-status` is exactly
-the existing five-field response. No field is renamed or removed.
+With the shipped empty tracking-source schedule,
+`/strava/public/race-status` is exactly the existing five-field response. No
+field is renamed or removed.
 
 During a future explicitly configured FlightAware source window, the response
 may add `trackingSource: "flightaware"` and a minimal `flight` object containing
@@ -183,7 +223,9 @@ Do not enable live use by setting a key alone. Complete these steps in order:
 2. Obtain the AeroAPI v4 key and add `FLIGHTAWARE_API_KEY` to the private
    `/home/goodfjcw/.goodwin-strava-config.json` file, never to the repository or
    `public_html`.
-3. Add verified legs to `strava-app/config/flight-legs.mjs`.
+3. Add the verified commercial flight idents, resolve the outstanding private
+   transfer details, and explicitly enable only approved legs in
+   `strava-app/config/flight-legs.mjs`.
 4. Import migration 007 into the production MariaDB database.
 5. Commission each endpoint against a non-production/live AeroAPI key: confirm
    ICAO/IATA ident behavior, date-range limits, airport code formats, field/tier

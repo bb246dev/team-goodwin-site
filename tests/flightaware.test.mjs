@@ -5,6 +5,7 @@ import {
   FLIGHT_LEGS,
   validateFlightLegs,
 } from "../strava-app/config/flight-legs.mjs";
+import { TRACKING_SOURCE_WINDOWS } from "../strava-app/config/tracking-sources.mjs";
 import {
   selectTrackingSourceAt,
   buildPublicTrackingOverlay,
@@ -17,6 +18,7 @@ import {
 import {
   createFlightAwareService,
   flightAwareConfiguration,
+  selectFlightInstance,
 } from "../strava-app/lib/flightaware/service.mjs";
 import { handleStravaRequest } from "../strava-app/lib/routes.mjs";
 import { selectTrackingPosition } from "../assets/strava-race-map.mjs";
@@ -69,8 +71,38 @@ function memoryFlightCacheStore() {
   };
 }
 
-test("the authoritative flight configuration starts empty and validates nullable private registrations", () => {
-  assert.deepEqual(FLIGHT_LEGS, []);
+test("the authoritative itinerary contains the five verified commercial flight legs", () => {
+  const expected = [
+    ["hnl-anc-2026-10-09", "2026-10-09", "2026-10-10T09:11:00.000Z", "HNL", "ANC"],
+    ["anc-pdx-2026-10-10", "2026-10-10", "2026-10-10T23:51:00.000Z", "ANC", "PDX"],
+    ["pdx-slc-2026-10-11", "2026-10-11", "2026-10-12T00:15:00.000Z", "PDX", "SLC"],
+    ["cmh-lax-2026-10-20", "2026-10-20", "2026-10-20T23:03:00.000Z", "CMH", "LAX"],
+    ["mia-atl-2026-10-24", "2026-10-24", "2026-10-24T20:21:00.000Z", "MIA", "ATL"],
+  ];
+  assert.equal(FLIGHT_LEGS.length, expected.length);
+  assert.equal(new Set(FLIGHT_LEGS.map((item) => item.id)).size, expected.length);
+  assert.deepEqual(FLIGHT_LEGS.map((item) => [
+    item.id,
+    item.scheduledDate,
+    item.scheduledDeparture,
+    item.origin,
+    item.destination,
+  ]), expected);
+  assert.ok(FLIGHT_LEGS.every((item) => item.type === "commercial"));
+  assert.ok(FLIGHT_LEGS.every((item) => item.ident === null));
+  assert.ok(FLIGHT_LEGS.every((item) => item.registration === null));
+  assert.ok(FLIGHT_LEGS.every((item) => item.faFlightId === null));
+  assert.ok(FLIGHT_LEGS.every((item) => item.trackingEnabled === false));
+  assert.deepEqual(TRACKING_SOURCE_WINDOWS, []);
+  assert.doesNotMatch(JSON.stringify(FLIGHT_LEGS), /(?:N12345|TBD123|PRIVATE1)/i);
+  assert.deepEqual(
+    [...FLIGHT_LEGS].sort((left, right) => Date.parse(left.scheduledDeparture) - Date.parse(right.scheduledDeparture)),
+    [...FLIGHT_LEGS],
+  );
+  assert.notEqual(FLIGHT_LEGS[0].scheduledDate, FLIGHT_LEGS[0].scheduledDeparture.slice(0, 10));
+});
+
+test("flight validation still accepts an unknown private registration", () => {
   const [privateLeg] = validateFlightLegs([legFixtures.privateRegistrationTbd]);
   assert.equal(privateLeg.registration, null);
   assert.equal(privateLeg.faFlightId, null);
@@ -78,6 +110,21 @@ test("the authoritative flight configuration starts empty and validates nullable
   assert.throws(() => validateFlightLegs([leg(), leg()]), { code: "invalid_flight_leg_id" });
   assert.throws(() => validateFlightLegs([leg({ scheduledDate: "2026-02-31" })]), { code: "invalid_flight_date" });
   assert.throws(() => validateFlightLegs([leg({ origin: "KAAA", destination: "KAAA" })]), { code: "invalid_flight_route" });
+});
+
+test("timezone-sensitive itinerary matching uses the normalized UTC departure day", () => {
+  const hawaiiLeg = FLIGHT_LEGS[0];
+  const providerFlight = {
+    fa_flight_id: "timezone-test-flight",
+    ident: null,
+    origin: { code_iata: "HNL" },
+    destination: { code_iata: "ANC" },
+    scheduled_out: "2026-10-10T09:11:00Z",
+  };
+  assert.equal(selectFlightInstance({ flights: [providerFlight] }, hawaiiLeg), providerFlight);
+  assert.equal(selectFlightInstance({
+    flights: [{ ...providerFlight, scheduled_out: "2026-10-09T09:11:00Z" }],
+  }, hawaiiLeg), null);
 });
 
 test("FlightAware responses normalize scheduled, airborne, landed, private, cancelled and diverted flights", () => {
