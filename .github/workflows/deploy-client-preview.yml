@@ -1,0 +1,51 @@
+name: Deploy isolated client preview
+
+on:
+  push:
+    branches: [client-preview-open-feeds]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: client-preview-deployment
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    if: github.ref == 'refs/heads/client-preview-open-feeds'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Build and validate preview only
+        run: |
+          node preview/build.mjs
+          node --check preview/dist/assets/tracker-base.js
+          node --check preview/dist/assets/strava-race-map.mjs
+          node --test preview/preview.test.mjs
+      - name: Record live homepage hash before preview upload
+        run: curl --fail --silent --show-error https://goodwingoodge.com/ | sha256sum | cut -d ' ' -f 1 > "$RUNNER_TEMP/production-home-before.sha256"
+      - name: Upload preview subdirectory only
+        env:
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-client-preview-ftps
+        run: node preview/deploy.mjs
+      - name: Verify preview and production boundary
+        run: |
+          node preview/verify.mjs
+          curl --fail --silent --show-error https://goodwingoodge.com/ | sha256sum | cut -d ' ' -f 1 > "$RUNNER_TEMP/production-home-after.sha256"
+          diff "$RUNNER_TEMP/production-home-before.sha256" "$RUNNER_TEMP/production-home-after.sha256"
+      - name: Remove temporary credential files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-client-preview-ftps"

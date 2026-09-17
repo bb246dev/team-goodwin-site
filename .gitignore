@@ -2,6 +2,7 @@ Mission-America-offline-export.zip
 original-*-verify.png
 tmp/
 node_modules/
+preview/dist/
 .env
 .env.*
 !.env.example

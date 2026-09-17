@@ -74,7 +74,7 @@ export function rejectAmbiguousFtpsAbsence(destination) {
   throw new Error(`FTPS cannot prove destination absence unambiguously for ${destination}; new remote files require a separate reviewed provisioning step`);
 }
 
-export function createFtpsClient(env = process.env) {
+export function createFtpsClient(env = process.env, { createDirectories = false } = {}) {
   const configuration = validateFtpsEnvironment(env);
   return {
     async download(destination, localPath, { allowMissing = false } = {}) {
@@ -88,7 +88,7 @@ export function createFtpsClient(env = process.env) {
       throw new Error(`FTPS download failed for ${destination} (curl ${result.status}): ${result.stderr.trim() || "no diagnostic"}`);
     },
     async upload(localPath, destination) {
-      const result = await runCurl(configuration, ["--fail", "--upload-file", localPath, remoteUrl(configuration, destination)]);
+      const result = await runCurl(configuration, ["--fail", ...(createDirectories ? ["--ftp-create-dirs"] : []), "--upload-file", localPath, remoteUrl(configuration, destination)]);
       if (result.status !== 0) throw new Error(`FTPS upload failed for ${destination} (curl ${result.status}): ${result.stderr.trim() || "no diagnostic"}`);
     },
   };
