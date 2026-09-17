@@ -23,7 +23,7 @@ const previewStyles = `<style data-client-preview-styles>
 .client-preview-feed span{display:block;font-size:13px;line-height:1.45}
 .client-preview-feed[data-state="live"],.client-preview-feed[data-state="activity"]{background:#e5f5e8;border-color:#7cbd8a}
 .client-preview-feed[data-state="stale"],.client-preview-feed[data-state="error"]{background:#fff6e9;border-color:#e3c899}
-.client-preview-note{margin:10px 0 0;color:#42645b;font-size:12px;line-height:1.5}
+.client-preview-note{margin:10px 0 0;color:#d9e6e0;font-size:12px;line-height:1.5}
 @media(max-width:640px){.client-preview-feeds{grid-template-columns:1fr}.client-preview-link{left:16px;right:16px;justify-content:center}}
 </style>`;
 
