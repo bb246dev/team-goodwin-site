@@ -310,8 +310,8 @@ export function normalizePublicRvLocation(value, { nowMs = Date.now() } = {}) {
   const lat = Number(value.position.lat);
   const lng = Number(value.position.lng);
   const observedMs = Date.parse(value.observedAt);
-  if (!Number.isFinite(lat) || lat < -90 || lat > 90
-    || !Number.isFinite(lng) || lng < -180 || lng > 180
+  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || lat === 0
+    || !Number.isFinite(lng) || lng < -180 || lng > 180 || lng === 0
     || observedMs > nowMs + 5 * 60 * 1_000) {
     throw new Error("invalid_rv_location");
   }
@@ -367,6 +367,7 @@ export function hapnLivePositioningEnabled(raceStatus, nowMs = Date.now()) {
 export function createPublicRvPoller({
   load,
   onPosition,
+  onStale,
   onFallback,
   isEnabled,
   documentObject = globalThis.document,
@@ -393,7 +394,8 @@ export function createPublicRvPoller({
     }
     if (inFlight) return inFlight;
     inFlight = Promise.resolve().then(load).then((result) => {
-      if (enabled() && result?.available === true && result.stale === false) onPosition(result.position);
+      if (enabled() && result?.available === true && result.stale === false) onPosition(result.position, result);
+      else if (enabled() && result?.available === true && result.stale === true && onStale) onStale(result);
       else onFallback();
       return result;
     }).catch(() => {

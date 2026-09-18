@@ -794,12 +794,54 @@
     let missionRacePoller = null;
     let missionHapnPoller = null;
     let missionHapnRaceStatus = null;
-    let missionHapnLivePosition = null;
+    let missionHapnRv = { kind: "unqueried", position: null, observedAt: null };
     let missionMapLoadPromise = null;
     const MISSION_WINDOW_START = "2026-10-09T09:00:00-04:00";
     const MISSION_WINDOW_END = "2026-11-01T23:59:59-05:00";
     const startDate = new Date(MISSION_WINDOW_START);
     const endDate = new Date(MISSION_WINDOW_END);
+    function validMissionRvFix(result) {
+      const { lat, lng } = result?.position || {};
+      const observedMs = Date.parse(result?.observedAt);
+      if (result?.available !== true || typeof result.stale !== "boolean"
+        || typeof lat !== "number" || !Number.isFinite(lat) || lat === 0 || lat < -90 || lat > 90
+        || typeof lng !== "number" || !Number.isFinite(lng) || lng === 0 || lng < -180 || lng > 180
+        || !Number.isFinite(observedMs)) return null;
+      return { kind: result.stale ? "stale" : "fresh", position: { lat, lng }, observedAt: new Date(observedMs).toISOString() };
+    }
+
+    function updateMissionRvNotice() {
+      let notice = document.getElementById("mission-rv-location-status");
+      if (missionHapnRv.kind === "fresh" || missionHapnRv.kind === "unqueried") {
+        notice?.remove();
+        return;
+      }
+      if (!notice) {
+        notice = document.createElement("p");
+        notice.id = "mission-rv-location-status";
+        notice.className = "legal-note";
+        notice.setAttribute("role", "status");
+        document.querySelector(".tracker-map-stage")?.insertAdjacentElement("afterend", notice);
+      }
+      if (missionHapnRv.kind === "stale") {
+        const updated = new Date(missionHapnRv.observedAt).toLocaleString(undefined, {
+          year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short"
+        });
+        notice.textContent = `RV last known location. Last updated ${updated}. Location is currently stale.`;
+      } else {
+        notice.textContent = "RV location currently unavailable.";
+      }
+    }
+
+    function setMissionHapnLocation(result) {
+      const next = validMissionRvFix(result) || { kind: "unavailable", position: null, observedAt: null };
+      if (next.kind === missionHapnRv.kind && next.observedAt === missionHapnRv.observedAt
+        && next.position?.lat === missionHapnRv.position?.lat
+        && next.position?.lng === missionHapnRv.position?.lng) return;
+      missionHapnRv = next;
+      updateMissionRvNotice();
+      if (missionMapTopology) renderMissionMap(missionMapTopology, true);
+    }
     const pageNowMs = Date.now();
     const userProgress = Number(window.missionTrackingProgress);
     const dateProgress = (pageNowMs - startDate.getTime()) / (endDate.getTime() - startDate.getTime());
@@ -1280,6 +1322,26 @@
 
       group.append(image);
       svg.appendChild(group);
+      return group;
+    }
+
+    function mapViewBoxWithRv(bbox, rvPoint) {
+      const [minX, minY, maxX, maxY] = bbox;
+      const base = { x: minX - 116, y: minY - 18, width: maxX - minX + 160, height: maxY - minY + 56 };
+      if (!rvPoint || !rvPoint.every(Number.isFinite)) return base;
+      const x = Math.min(base.x, rvPoint[0] - 24);
+      const y = Math.min(base.y, rvPoint[1] - 24);
+      return {
+        x, y,
+        width: Math.max(base.x + base.width, rvPoint[0] + 24) - x,
+        height: Math.max(base.y + base.height, rvPoint[1] + 24) - y
+      };
+    }
+
+    function startingMapViewBox(initial, previous) {
+      return previous?.length === 4 && previous.every(Number.isFinite) && previous[2] > 0 && previous[3] > 0
+        ? { x: previous[0], y: previous[1], width: previous[2], height: previous[3] }
+        : { ...initial };
     }
 
     function updateTrackingMapKeyTerminology() {
@@ -1312,14 +1374,12 @@
       mapEl.dataset.mapReady = "true";
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
-      const [minX, minY, maxX, maxY] = topo.bbox;
-      const initialViewBox = {
-        x: minX - 116,
-        y: minY - 18,
-        width: maxX - minX + 160,
-        height: maxY - minY + 56
-      };
-      let currentViewBox = { ...initialViewBox };
+      const previousViewBox = replace ? mapEl.querySelector("svg")?.getAttribute("viewBox")?.split(/\s+/).map(Number) : null;
+      const rvSvgPoint = missionHapnRv.position
+        ? displayPoint(projectLower48(missionHapnRv.position.lat, missionHapnRv.position.lng), "")
+        : null;
+      const initialViewBox = mapViewBoxWithRv(topo.bbox, rvSvgPoint);
+      let currentViewBox = startingMapViewBox(initialViewBox, previousViewBox);
       let finishStopMarker = null;
       let finishEndpointLabel = null;
       const constrainViewBox = (box) => {
@@ -1570,19 +1630,23 @@
       }
 
       const runnerPoint = pointFromTracking(trackingData.runner, centroids, liveSvgPoint);
-      const rvPoint = pointFromTracking(
-        {
-          fromStop: trackingData.rv.fromStop || trackingData.rv.pathStops?.[0],
-          toStop: trackingData.rv.toStop || trackingData.rv.pathStops?.[trackingData.rv.pathStops.length - 1],
-          progress: trackingData.rv.progress
-        },
-        centroids,
-        rvStopPath[rvStopPath.length - 1] || routePoints[Math.min(routePoints.length - 1, currentIndex + 2)]
-      );
-      const displayedRvPoint = missionHapnLivePosition
-        ? displayPoint(projectLower48(missionHapnLivePosition.lat, missionHapnLivePosition.lng), "")
-        : rvPoint;
-      appendImageMarker(svg, svgNS, displayedRvPoint, mapEntityAssets.rv, "rv");
+      const rvMarker = appendImageMarker(svg, svgNS, rvSvgPoint, mapEntityAssets.rv, "rv");
+      if (rvMarker && missionHapnRv.kind === "stale") {
+        rvMarker.classList.add("is-stale");
+        const image = rvMarker.querySelector("image");
+        image.style.filter = "grayscale(1) brightness(1.5)";
+        const staleBadge = document.createElementNS(svgNS, "circle");
+        staleBadge.setAttribute("cx", "22");
+        staleBadge.setAttribute("cy", "-12");
+        staleBadge.setAttribute("r", "6");
+        staleBadge.setAttribute("fill", "#C6A15B");
+        staleBadge.setAttribute("stroke", "#0A0A0A");
+        staleBadge.setAttribute("stroke-width", "1");
+        rvMarker.appendChild(staleBadge);
+        const title = document.createElementNS(svgNS, "title");
+        title.textContent = "RV last known location. Location is currently stale.";
+        rvMarker.appendChild(title);
+      }
       appendImageMarker(svg, svgNS, runnerPoint, mapEntityAssets.runner, "runner");
 
       svg.appendChild(stopCard);
@@ -1763,9 +1827,7 @@
     }
 
     function clearMissionHapnPosition() {
-      if (!missionHapnLivePosition) return;
-      missionHapnLivePosition = null;
-      if (missionMapTopology) renderMissionMap(missionMapTopology, true);
+      setMissionHapnLocation(null);
     }
 
     function disableMissionHapn() {
@@ -1780,7 +1842,7 @@
         : null;
       if (!missionRaceMapModule?.hapnLivePositioningEnabled(missionHapnRaceStatus)) {
         missionHapnPoller?.stop();
-        clearMissionHapnPosition();
+        if (missionHapnRv.kind !== "unqueried") clearMissionHapnPosition();
         return;
       }
       void missionHapnPoller?.start();
@@ -1833,10 +1895,8 @@
             missionHapnPoller = raceMapModule.createPublicRvPoller({
               load: raceMapModule.loadPublicRvLocation,
               isEnabled: () => raceMapModule.hapnLivePositioningEnabled(missionHapnRaceStatus),
-              onPosition: (position) => {
-                missionHapnLivePosition = { ...position };
-                if (missionMapTopology) renderMissionMap(missionMapTopology, true);
-              },
+              onPosition: (_position, result) => setMissionHapnLocation(result),
+              onStale: setMissionHapnLocation,
               onFallback: clearMissionHapnPosition
             });
             return raceMapModule.loadPublicRaceSnapshot({ staticStops: staticRouteStops });
@@ -1846,6 +1906,15 @@
             return null;
           });
         applyPublicRaceSnapshot(snapshot);
+        if (missionRaceMapModule && !missionRaceMapModule.hapnLivePositioningEnabled(missionHapnRaceStatus)) {
+          // The public RV fix can be shown as last known before the race, while
+          // the existing continuous HAPN polling gate remains unchanged.
+          try {
+            setMissionHapnLocation(await missionRaceMapModule.loadPublicRvLocation());
+          } catch {
+            clearMissionHapnPosition();
+          }
+        }
         if (snapshot?.source === "api" && snapshot.status.active && missionRaceMapModule) {
           missionRacePoller?.stop();
           missionRacePoller = missionRaceMapModule.createPublicRacePoller({

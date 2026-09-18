@@ -47,7 +47,7 @@ document.addEventListener("click", (event) => {
 const feedMarkup = `<div class="client-preview-feeds" aria-label="Open tracking feeds">
   <div class="client-preview-feed" data-preview-feed="rv" data-state="loading" role="status" aria-live="polite"><strong>RV tracking · Open for review</strong><span>Connecting to the RV feed…</span></div>
   <div class="client-preview-feed" data-preview-feed="will" data-state="loading" role="status" aria-live="polite"><strong>Will's race feed · Open for review</strong><span>Connecting to the race API…</span></div>
-</div><p class="client-preview-note">Client review: live API data is shown only when available and current. RSVP, sign-up and donation actions are disabled. <span data-preview-action-message aria-live="polite"></span></p>`;
+</div><p class="client-preview-note">Client review: current API data and clearly labeled last-known RV positions are shown when available. RSVP, sign-up and donation actions are disabled. <span data-preview-action-message aria-live="polite"></span></p>`;
 
 function transformHtml(raw, route) {
   let html = raw.replaceAll("\0", "");
@@ -74,7 +74,9 @@ function transformTracker(raw) {
   js = replaceOne(js, 'rv: { pathStops: [3, 4, 5, 6], progress: 0.64 }', 'rv: { pathStops: [] }', "fictional RV path");
   js = replaceOne(js, 'const sources = ["assets/us-states-albers-10m.json", "../assets/us-states-albers-10m.json"];', 'const sources = ["/assets/us-states-albers-10m.json"];', "map topology");
   js = replaceOne(js, 'import("/assets/strava-race-map.mjs")', `import("${prefix}/assets/strava-race-map.mjs")`, "isolated module");
-  js = replaceOne(js, 'appendImageMarker(svg, svgNS, displayedRvPoint, mapEntityAssets.rv, "rv");', 'if (missionHapnLivePosition) appendImageMarker(svg, svgNS, displayedRvPoint, mapEntityAssets.rv, "rv");', "RV marker");
+  if (!js.includes('const rvMarker = appendImageMarker(svg, svgNS, rvSvgPoint, mapEntityAssets.rv, "rv");')) {
+    throw new Error("Approved RV marker source changed");
+  }
   js = replaceOne(js, 'appendImageMarker(svg, svgNS, runnerPoint, mapEntityAssets.runner, "runner");', '// A race result is not a current runner coordinate; no position is invented in preview.', "runner marker");
   js = replaceOne(js, 'a[href="/faq/"]', 'a[href="/client-preview/faq/"]', "preview FAQ selector");
   js = replaceOne(js, 'if (snapshot?.source === "api" && snapshot.status.active && missionRaceMapModule)', 'if (snapshot?.source === "api" && missionRaceMapModule)', "race poller");
@@ -94,7 +96,7 @@ function transformTracker(raw) {
   js = replaceOne(js, 'console.warn("Public race data unavailable; using the static schedule.");', 'console.warn("Public race data unavailable; using the static schedule.");\n            updatePreviewFeed("will", "error");', "race load error");
   js = replaceOne(js, 'return `${RUN_WITH_WILL_FORM_URL}?${params.toString()}`;', 'return "#client-preview-rsvp-disabled";', "RSVP destination");
   const prefixJs = `const previewFeedText = {
-  rv: { loading: "Connecting to the RV feed…", live: "Current RV position from the live feed.", stale: "The latest RV fix is stale. Waiting for a fresh position.", empty: "Feed connected. Waiting for an RV position.", error: "RV feed unavailable. Retrying automatically." },
+  rv: { loading: "Connecting to the RV feed…", live: "Current RV position from the live feed.", stale: "RV last known location is shown on the map. Waiting for a fresh position.", empty: "Feed connected. Waiting for an RV position.", error: "RV feed unavailable. Retrying automatically." },
   will: { loading: "Connecting to the race API…", activity: "Race activity is available from the live API.", empty: "Feed connected. Waiting for Will's first race activity.", error: "Race API unavailable. Showing the planned route." }
 };
 function updatePreviewFeed(name, state) {
