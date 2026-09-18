@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join, resolve } from "node:path";
+import { contentVersion } from "./version.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const output = join(root, "preview", "dist");
@@ -12,6 +14,7 @@ const routes = [
 ];
 const read = (path) => readFileSync(join(output, path), "utf8");
 const tracker = read("assets/tracker-base.js");
+const raceMap = read("assets/strava-race-map.mjs");
 const { createPublicRvPoller, hapnLivePositioningEnabled } = await import("./dist/assets/strava-race-map.mjs");
 
 function trackerBlock(start, end) {
@@ -76,15 +79,41 @@ test("every preview page is isolated from search, analytics and production navig
   }
 });
 
+test("preview tracker and module URLs use their current content hashes", () => {
+  const trackerUrl = `/client-preview/assets/tracker-base.js?v=${contentVersion(tracker)}`;
+  const mapUrl = `/client-preview/assets/strava-race-map.mjs?v=${contentVersion(raceMap)}`;
+  assert.ok(read("index.html").includes(`src="${trackerUrl}"`));
+  assert.ok(read("live-tracking/index.html").includes(`src="${trackerUrl}"`));
+  assert.ok(tracker.includes(`import("${mapUrl}")`));
+  assert.notEqual(contentVersion(tracker), contentVersion(`${tracker}\n// changed`));
+  assert.notEqual(contentVersion(raceMap), contentVersion(`${raceMap}\n// changed`));
+  assert.match(read(".htaccess"), /<FilesMatch "\\\.html\$">\nHeader always set Cache-Control "no-cache, must-revalidate"/);
+});
+
+test("unchanged inputs produce identical preview bytes without changing production sources", () => {
+  const tracked = [
+    "preview/source/index.html",
+    "production-merge/mission-window-alignment-2026-09-09/public_html/assets/tracker-base.js",
+    "production-merge/mission-window-alignment-2026-09-09/public_html/assets/strava-race-map.mjs",
+  ];
+  const generated = ["index.html", "live-tracking/index.html", "assets/tracker-base.js", "assets/strava-race-map.mjs", ".htaccess"];
+  const sourceBefore = tracked.map((file) => readFileSync(join(root, file)));
+  const outputBefore = generated.map((file) => readFileSync(join(output, file)));
+  execFileSync(process.execPath, [join(root, "preview/build.mjs")], { cwd: root });
+  tracked.forEach((file, index) => assert.deepEqual(readFileSync(join(root, file)), sourceBefore[index], `${file} changed`));
+  generated.forEach((file, index) => assert.deepEqual(readFileSync(join(output, file)), outputBefore[index], `${file} changed`));
+  assert.match(readFileSync(join(root, tracked[0]), "utf8"), /src="\/assets\/tracker-base\.js\?v=20260831mobile-critical-path"/);
+  assert.match(readFileSync(join(root, tracked[1]), "utf8"), /import\("\/assets\/strava-race-map\.mjs"\)/);
+});
+
 test("review feed code is loaded only by preview and reads the real public APIs", () => {
   const home = read("index.html");
-  const raceMap = read("assets/strava-race-map.mjs");
   const productionTracker = readFileSync(join(root, "production-merge/mission-window-alignment-2026-09-09/public_html/assets/tracker-base.js"), "utf8");
   const productionMap = readFileSync(join(root, "production-merge/mission-window-alignment-2026-09-09/public_html/assets/strava-race-map.mjs"), "utf8");
-  assert.match(home, /src="\/client-preview\/assets\/tracker-base\.js"/);
+  assert.match(home, /src="\/client-preview\/assets\/tracker-base\.js\?v=[a-f0-9]{64}"/);
   assert.match(home, /data-preview-feed="rv"/);
   assert.match(home, /data-preview-feed="will"/);
-  assert.match(tracker, /import\("\/client-preview\/assets\/strava-race-map\.mjs"\)/);
+  assert.match(tracker, /import\("\/client-preview\/assets\/strava-race-map\.mjs\?v=[a-f0-9]{64}"\)/);
   assert.ok(tracker.includes('const rvMarker = appendImageMarker(svg, svgNS, rvSvgPoint, mapEntityAssets.rv, "rv");'));
   assert.ok(tracker.includes('onStale: setMissionHapnLocation'));
   assert.doesNotMatch(tracker, /missionHapnLivePosition|leaflet|OpenStreetMap|CARTO/i);

@@ -1,5 +1,6 @@
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { contentVersion } from "./version.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const output = join(root, "preview", "dist");
@@ -49,7 +50,7 @@ const feedMarkup = `<div class="client-preview-feeds" aria-label="Open tracking 
   <div class="client-preview-feed" data-preview-feed="will" data-state="loading" role="status" aria-live="polite"><strong>Will's race feed · Open for review</strong><span>Connecting to the race API…</span></div>
 </div><p class="client-preview-note">Client review: current API data and clearly labeled last-known RV positions are shown when available. RSVP, sign-up and donation actions are disabled. <span data-preview-action-message aria-live="polite"></span></p>`;
 
-function transformHtml(raw, route) {
+function transformHtml(raw, route, trackerVersion) {
   let html = raw.replaceAll("\0", "");
   html = html.replace(/\s*<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=[^"]+"><\/script>\s*<script>\s*window\.dataLayer[\s\S]*?gtag\('config', '[^']+'\);\s*<\/script>/g, "");
   html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/gi, "");
@@ -58,7 +59,10 @@ function transformHtml(raw, route) {
   html = html.replace(/\b(href|src|poster|data-src)="(?:\.\.\/)+assets\//g, '$1="/assets/');
   html = html.replace(/\b(href|src|poster|data-src)="(?:\.\.\/)+fonts\//g, '$1="/fonts/');
   html = html.replace(/\bhref="\/(?!\/|assets\/|fonts\/|strava\/|api\/|client-preview\/)([^"]*)"/g, (_full, path) => `href="${prefix}/${path}"`);
-  html = html.replace('src="/assets/tracker-base.js?v=20260831mobile-critical-path"', `src="${prefix}/assets/tracker-base.js"`);
+  if (route === "index" || route === "live-tracking") {
+    html = replaceOne(html, 'src="/assets/tracker-base.js?v=20260831mobile-critical-path"',
+      `src="${prefix}/assets/tracker-base.js?v=${trackerVersion}"`, "versioned tracker script");
+  }
   html = html.replace("</head>", `${previewStyles}\n${previewGuard}\n</head>`);
   if (route === "index" || route === "live-tracking") {
     html = replaceOne(html, '<section class="tracker-section" id="map">', `<section class="tracker-section" id="map">\n${feedMarkup}`, "map section");
@@ -68,12 +72,13 @@ function transformHtml(raw, route) {
   return html;
 }
 
-function transformTracker(raw) {
+function transformTracker(raw, mapVersion) {
   let js = raw;
   js = replaceOne(js, 'const mapAssetBase = location.pathname.includes("/source-html/") ? "../assets/" : "assets/";', 'const mapAssetBase = "/assets/";', "map asset base");
   js = replaceOne(js, 'rv: { pathStops: [3, 4, 5, 6], progress: 0.64 }', 'rv: { pathStops: [] }', "fictional RV path");
   js = replaceOne(js, 'const sources = ["assets/us-states-albers-10m.json", "../assets/us-states-albers-10m.json"];', 'const sources = ["/assets/us-states-albers-10m.json"];', "map topology");
-  js = replaceOne(js, 'import("/assets/strava-race-map.mjs")', `import("${prefix}/assets/strava-race-map.mjs")`, "isolated module");
+  js = replaceOne(js, 'import("/assets/strava-race-map.mjs")',
+    `import("${prefix}/assets/strava-race-map.mjs?v=${mapVersion}")`, "versioned isolated module");
   if (!js.includes('const rvMarker = appendImageMarker(svg, svgNS, rvSvgPoint, mapEntityAssets.rv, "rv");')) {
     throw new Error("Approved RV marker source changed");
   }
@@ -124,14 +129,17 @@ export function hapnLivePositioningEnabled() { return true; }
 
 rmSync(output, { recursive: true, force: true });
 mkdirSync(join(output, "assets"), { recursive: true });
+const productionModule = join(root, "production-merge", "mission-window-alignment-2026-09-09", "public_html", "assets");
+const mapModule = transformRaceModule(readFileSync(join(productionModule, "strava-race-map.mjs"), "utf8"));
+const tracker = transformTracker(readFileSync(join(productionModule, "tracker-base.js"), "utf8"), contentVersion(mapModule));
+const trackerVersion = contentVersion(tracker);
+writeFileSync(join(output, "assets", "strava-race-map.mjs"), mapModule);
+writeFileSync(join(output, "assets", "tracker-base.js"), tracker);
 for (const route of routes) {
   const source = readFileSync(join(root, "preview", "source", `${route}.html`), "utf8");
   const target = route === "index" ? join(output, "index.html") : join(output, route, "index.html");
   mkdirSync(resolve(target, ".."), { recursive: true });
-  writeFileSync(target, transformHtml(source, route));
+  writeFileSync(target, transformHtml(source, route, trackerVersion));
 }
-const productionModule = join(root, "production-merge", "mission-window-alignment-2026-09-09", "public_html", "assets");
-writeFileSync(join(output, "assets", "tracker-base.js"), transformTracker(readFileSync(join(productionModule, "tracker-base.js"), "utf8")));
-writeFileSync(join(output, "assets", "strava-race-map.mjs"), transformRaceModule(readFileSync(join(productionModule, "strava-race-map.mjs"), "utf8")));
-writeFileSync(join(output, ".htaccess"), '<IfModule mod_headers.c>\nHeader always set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n');
+writeFileSync(join(output, ".htaccess"), '<IfModule mod_headers.c>\nHeader always set X-Robots-Tag "noindex, nofollow"\n<FilesMatch "\\.html$">\nHeader always set Cache-Control "no-cache, must-revalidate"\n</FilesMatch>\n</IfModule>\n');
 console.log(`Built isolated preview: ${routes.length} pages, two preview scripts.`);
