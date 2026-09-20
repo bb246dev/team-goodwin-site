@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Align production location-display refresh timing with the tested 30-second architecture while preserving the SVG map and official mission gates.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js",
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "index.location-refresh-2026-09-20.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "450ba894153afa33fd9d16984de0ce0bfc8115569dc6e2f1132d97804b6be6d4",
+      "expectedRemoteSha256": "4e96d5a878a95e93af6b5cbcd926c2dd56d0d7015f8f2a3bd035fafcc893239f"
+    },
+    {
+      "source": "live-tracking.location-refresh-2026-09-20.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking/",
+      "expectedSha256": "450ba894153afa33fd9d16984de0ce0bfc8115569dc6e2f1132d97804b6be6d4",
+      "expectedRemoteSha256": "4e96d5a878a95e93af6b5cbcd926c2dd56d0d7015f8f2a3bd035fafcc893239f"
+    },
+    {
+      "source": "assets/releases/location-refresh-2026-09-20/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "d45a939c5ea5f76fc0246bdb55d3294ecc57856dcf0a9a115624ce5129986592",
+      "expectedRemoteSha256": "a5cefc6b5da47c0a186c175779e571cca0dafde6b0356ce9e0a934158cf5065e"
+    },
+    {
+      "source": "assets/releases/location-refresh-2026-09-20/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "ccaa5f541bb5da832641af2a43a1826c9e824a2824bd88dd4ce141d0b8e83e02",
+      "expectedRemoteSha256": "bf93f69c291f96cd6a80602250d119584d2b4c01137fb1b23011e3c25a800c1c"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/location-refresh-production.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "raceWindowStart", "raceWindowEnd"]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      }
+    ]
+  }
+}
