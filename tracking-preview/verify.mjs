@@ -83,17 +83,20 @@ for (const entry of publicAssets) {
   console.log(`Verified ${url.pathname} sha256:${sha256(asset.bytes)}`);
 }
 
-const productionAssets = manifest.generatedFiles.filter(({ path }) => path.startsWith("site/"));
-if (productionAssets.length < 40) throw new Error("Tracking preview lacks the production homepage asset inventory");
-for (let index = 0; index < productionAssets.length; index += 8) {
-  await Promise.all(productionAssets.slice(index, index + 8).map(async (entry) => {
-    if (!entry.url.startsWith(`${rootPath}site/`) || !entry.url.endsWith(`?v=${entry.sha256.slice(0, 16)}`)) {
-      throw new Error(`Invalid production asset URL: ${entry.url}`);
-    }
-    const url = new URL(entry.url, origin);
-    const asset = await bytesFor(url, { cache: "no-store" });
-    if (!asset.response.headers.get("cache-control")?.includes("immutable")) throw new Error(`${url.pathname} is not immutable`);
-    if (sha256(asset.bytes) !== entry.sha256) throw new Error(`${url.pathname} does not match the deployed manifest`);
+if (manifest.generatedFiles.some(({ path, url }) => path.startsWith("site/") || url.includes(`${rootPath}site/`))) {
+  throw new Error("Tracking preview manifest contains a prohibited copied production site tree");
+}
+if (html.includes(`${rootPath}site/`)) throw new Error("Tracking preview HTML references a prohibited copied production site tree");
+
+const productionAssetPaths = [...new Set(
+  [...html.matchAll(/(?:href|src|poster|data-src)=["'](\/(?:assets|fonts)\/[^"']+)["']/g)]
+    .map((match) => match[1]),
+)];
+if (productionAssetPaths.length < 10) throw new Error("Tracking preview lacks production homepage asset references");
+for (let index = 0; index < productionAssetPaths.length; index += 8) {
+  await Promise.all(productionAssetPaths.slice(index, index + 8).map(async (path) => {
+    const asset = await bytesFor(new URL(path, origin), { cache: "no-store" });
+    if (asset.bytes.length === 0) throw new Error(`${path} returned an empty production asset`);
   }));
 }
 

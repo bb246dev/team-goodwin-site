@@ -1,10 +1,9 @@
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, posix, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const sourceRoot = join(import.meta.dirname, "source");
-const productionSourceRoot = join(sourceRoot, "production");
 const outputRoot = join(import.meta.dirname, "dist", "tracking-preview");
 const assetsRoot = join(outputRoot, "assets");
 const publicPrefix = "/tracking-preview";
@@ -49,71 +48,6 @@ function leafletCss() {
   const end = bundled.indexOf("}}", printRule);
   if (start !== 0 || printRule < 0 || end < 0) throw new Error("Leaflet CSS source changed");
   return bundled.slice(start, end + 2);
-}
-
-function versionedSiteUrl(path, bytes) {
-  return `${publicPrefix}/site/${path}?v=${hash(bytes).slice(0, 16)}`;
-}
-
-function rewriteCssUrls(css, stylesheetPath, urlByPath) {
-  return css.replace(/url\((['"]?)([^)'"?#]+)(?:\?[^)'"#]*)?\1\)/g, (match, _quote, value) => {
-    if (/^(?:data:|https?:|#)/i.test(value)) return match;
-    const resolved = posix.normalize(posix.join(posix.dirname(stylesheetPath), value));
-    const url = urlByPath.get(resolved);
-    return url ? `url("${url}")` : match;
-  });
-}
-
-function rewriteProductionScript(script, urlByPath) {
-  let output = script
-    .replaceAll('"goodwinSplashSeen"', '"trackingPreview:goodwinSplashSeen"')
-    .replaceAll('sessionKey: "missionAmericaIntroSeen"', 'sessionKey: "trackingPreview:missionAmericaIntroSeen"')
-    .replaceAll('cacheKey: "goodwin-generated-mission-america-updates-v1"', 'cacheKey: "trackingPreview:goodwin-generated-mission-america-updates-v1"')
-    .replaceAll('"mission-follow-emails"', '"trackingPreview:mission-follow-emails"')
-    .replaceAll('`mission-comments-${id}`', '`trackingPreview:mission-comments-${id}`');
-  for (const path of [...urlByPath.keys()].sort((a, b) => b.length - a.length)) {
-    const url = urlByPath.get(path);
-    for (const prefix of ["/", "../"]) {
-      output = output.replaceAll(`"${prefix}${path}"`, `"${url}"`);
-      output = output.replaceAll(`'${prefix}${path}'`, `'${url}'`);
-    }
-    if (path.startsWith("assets/intro-")) {
-      const filename = posix.basename(path);
-      const version = hash(readFileSync(join(productionSourceRoot, path))).slice(0, 16);
-      output = output.replaceAll(`file: "${filename}"`, `file: "${filename}?v=${version}"`);
-    }
-  }
-  const legacyMapStart = output.indexOf("    const stateAbbr = {");
-  const legacyMapEndMarker = "    initMissionMapLoading();";
-  const legacyMapEnd = output.indexOf(legacyMapEndMarker, legacyMapStart);
-  if (legacyMapStart < 0 || legacyMapEnd < 0) throw new Error("Production legacy map block changed");
-  output = output.slice(0, legacyMapStart) + output.slice(legacyMapEnd + legacyMapEndMarker.length);
-  output = replaceToken(
-    output,
-    `    function trackAnalyticsEvent(name, params = {}) {
-      try {
-        if (typeof window.gtag === "function") {
-          window.gtag("event", name, params);
-        }
-      } catch (error) {
-        // Analytics must never interrupt navigation or map interaction.
-      }
-    }`,
-    `    function trackAnalyticsEvent(name, params = {}) {
-      void name;
-      void params;
-    }`,
-  );
-  return output;
-}
-
-function rewriteHtmlAssetUrls(html, urlByPath) {
-  let output = html;
-  for (const path of [...urlByPath.keys()].sort((a, b) => b.length - a.length)) {
-    const escaped = path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    output = output.replace(new RegExp(`(?:\\.\\.\\/|\\/)${escaped}(?:\\?[^\\s"']*)?`, "g"), urlByPath.get(path));
-  }
-  return output;
 }
 
 function removeProductionAnalytics(html) {
@@ -171,23 +105,6 @@ function replaceProductionMap(html) {
 rmSync(join(import.meta.dirname, "dist"), { recursive: true, force: true });
 mkdirSync(assetsRoot, { recursive: true });
 
-const productionPaths = visit(productionSourceRoot).sort();
-const productionRaw = new Map(productionPaths.map((path) => [path, readFileSync(join(productionSourceRoot, path))]));
-const rawSiteUrls = new Map([...productionRaw].map(([path, bytes]) => [path, versionedSiteUrl(path, bytes)]));
-const productionProcessed = new Map();
-for (const [path, bytes] of productionRaw) {
-  let content = bytes;
-  if (path.endsWith(".css")) content = Buffer.from(rewriteCssUrls(bytes.toString("utf8"), path, rawSiteUrls));
-  if (path === "assets/tracker-base.js") content = Buffer.from(rewriteProductionScript(bytes.toString("utf8"), rawSiteUrls));
-  productionProcessed.set(path, content);
-}
-const finalSiteUrls = new Map([...productionProcessed].map(([path, bytes]) => [path, versionedSiteUrl(path, bytes)]));
-const productionEntries = [];
-for (const [path, bytes] of productionProcessed) {
-  const entry = writeOutput(`site/${path}`, bytes);
-  productionEntries.push({ ...entry, url: finalSiteUrls.get(path) });
-}
-
 const leafletSource = readFileSync(join(repositoryRoot, "assets", "leaflet-src-DNgeFO4O.js"), "utf8");
 const standaloneLeaflet = replaceToken(
   leafletSource,
@@ -215,10 +132,10 @@ const app = writeAsset("app", ".mjs", appSource);
 
 let html = readFileSync(join(sourceRoot, "index.html"), "utf8");
 if (hash(html) !== productionHomepageSha256) throw new Error("Production homepage snapshot no longer matches its approved hash");
+html = html.replaceAll('../assets/', '/assets/').replaceAll('../fonts/', '/fonts/');
 html = removeProductionMapLoader(html);
 html = removeProductionAnalytics(html);
 html = replaceProductionMap(html);
-html = rewriteHtmlAssetUrls(html, finalSiteUrls);
 html = html.replaceAll('"goodwinSplashSeen"', '"trackingPreview:goodwinSplashSeen"');
 html = replaceToken(
   html,
@@ -254,14 +171,12 @@ const inventory = [
   { ...htaccessEntry, url: `${publicPrefix}/.htaccess` },
   { ...htmlEntry, url: `${publicPrefix}/` },
   ...customAssets,
-  ...productionEntries,
 ];
 const manifest = {
   prefix: publicPrefix,
   productionSource: {
     url: "https://goodwingoodge.com/",
     sha256: productionHomepageSha256,
-    files: productionPaths.map((path) => ({ path, sha256: hash(productionRaw.get(path)) })),
   },
   generatedFiles: inventory,
 };

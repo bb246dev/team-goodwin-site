@@ -111,15 +111,10 @@ test("build output is exact, deterministic, content-versioned, and isolated", ()
   assert.equal(manifest.prefix, "/tracking-preview");
   assert.equal(manifest.productionSource.url, "https://goodwingoodge.com/");
   assert.equal(manifest.productionSource.sha256, sha256(readFileSync(join(import.meta.dirname, "source", "index.html"))));
-  assert.equal(manifest.productionSource.files.length, 48);
-  for (const entry of manifest.productionSource.files) {
-    assert.equal(sha256(readFileSync(join(import.meta.dirname, "source", "production", entry.path))), entry.sha256);
-  }
   for (const entry of manifest.generatedFiles) {
     const bytes = readFileSync(join(outputRoot, entry.path));
     assert.equal(sha256(bytes), entry.sha256);
     if (entry.path.startsWith("assets/")) assert.ok(entry.path.includes(entry.sha256.slice(0, 16)));
-    if (entry.path.startsWith("site/")) assert.ok(entry.url.endsWith(`?v=${entry.sha256.slice(0, 16)}`));
     assert.ok(entry.url.startsWith("/tracking-preview/"));
   }
   const first = manifest.generatedFiles.map((entry) => [entry.path, entry.sha256]);
@@ -134,9 +129,20 @@ test("deployment rejects every path outside tracking-preview", () => {
   assert.match(deploy, /refs\/heads\/codex\/tracking-preview-leaflet/);
   assert.match(deploy, /public_html\/tracking-preview\//);
   assert.match(deploy, /destination\.startsWith\(destinationRoot\)/);
-  assert.doesNotMatch(deploy, /public_html\/(?:assets|client-preview)\//);
+  assert.doesNotMatch(deploy, /public_html\/(?:assets|client-preview|tracking-preview\/site)\//);
   assert.match(workflow, /branches: \[codex\/tracking-preview-leaflet\]/);
   assert.doesNotMatch(workflow, /deploy-(?:static|backend)-production/);
+});
+
+test("preview build and upload inventory prohibit copied production site trees", () => {
+  const files = outputFiles(outputRoot);
+  const html = readOutput("index.html");
+  const deploy = readFileSync(join(import.meta.dirname, "deploy.mjs"), "utf8");
+  assert.ok(files.every((path) => !path.startsWith("site/")));
+  assert.ok(manifest.generatedFiles.every(({ path, url }) => !path.startsWith("site/") && !url.includes("/tracking-preview/site/")));
+  assert.doesNotMatch(html, /\/tracking-preview\/site\//);
+  assert.match(html, /(?:href|src|poster|data-src)="\/(?:assets|fonts)\//);
+  assert.doesNotMatch(deploy, /allowedProductionAsset|site\\\//);
 });
 
 test("public package has no local diagnostics, localhost URLs, secrets, or route escapes", () => {
@@ -150,11 +156,9 @@ test("public package has no local diagnostics, localhost URLs, secrets, or route
   const html = readOutput("index.html");
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
   assert.doesNotMatch(html, /canonical|googletagmanager|localhost|127\.0\.0\.1/i);
-  assert.doesNotMatch(html, /(?:href|src|poster|data-src)=["'](?:\.\.\/|\/)(?:assets|fonts)\//);
-  const productionRuntime = readOutput("site/assets/tracker-base.js");
-  assert.doesNotMatch(productionRuntime, /gtag\(|googletagmanager|id="mission-map"|import\("\/assets\//i);
-  assert.match(productionRuntime, /trackingPreview:goodwinSplashSeen/);
-  assert.match(productionRuntime, /trackingPreview:mission-follow-emails/);
+  assert.doesNotMatch(html, /(?:href|src|poster|data-src)=["']\.\.\/(?:assets|fonts)\//);
+  assert.doesNotMatch(html, /\/tracking-preview\/site\//);
+  assert.match(html, /src="\/assets\/tracker-base\.js\?v=/);
   assert.match(readOutput(".htaccess"), /X-Robots-Tag "noindex, nofollow"/);
   assert.match(readOutput(".htaccess"), /DirectoryIndex index\.html/);
 });
@@ -169,8 +173,8 @@ test("preview duplicates the complete current production homepage and replaces o
     previous = next;
   }
   assert.match(html, /class="tracker-nav"/);
-  assert.match(html, /class="tracker-hero-bg"[^>]*autoplay[^>]*poster="\/tracking-preview\/site\/assets\/hero-video-first-frame\.jpg\?v=/);
-  assert.match(html, /data-src="\/tracking-preview\/site\/assets\/hero-signal-optimized\.mp4\?v=/);
+  assert.match(html, /class="tracker-hero-bg"[^>]*autoplay[^>]*poster="\/assets\/hero-video-first-frame\.jpg"/);
+  assert.match(html, /data-src="\/assets\/hero-signal-optimized\.mp4"/);
   assert.match(html, /class="follow-form"/);
   assert.equal((html.match(/class="inside-accordion-trigger"/g) || []).length, 6);
   assert.match(html, /class="site-footer-partners"/);
@@ -180,7 +184,7 @@ test("preview duplicates the complete current production homepage and replaces o
   assert.match(html, /data-feed="will"/);
   assert.match(html, /Pause Live Follow/);
   assert.match(html, /Full Route/);
-  assert.equal(manifest.generatedFiles.filter(({ path }) => path.startsWith("site/")).length, 48);
+  assert.equal(manifest.generatedFiles.length, 10);
 });
 
 test("OpenStreetMap policy and dark treatment remain compliant", () => {
