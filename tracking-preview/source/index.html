@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="description" content="Client preview of the Goodwin Generated Mission America live tracking map.">
+  <title>Mission America · Tracking Preview</title>
+  <link rel="stylesheet" href="__STYLE_URL__">
+</head>
+<body>
+  <a class="skip-link" href="#tracking-map">Skip to live tracking map</a>
+  <header class="site-header">
+    <div class="wordmark" aria-label="Goodwin Generated Mission America">
+      <span>GOODWIN GENERATED</span>
+      <strong>MISSION AMERICA</strong>
+    </div>
+    <span class="preview-badge">Client tracking preview</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">50 marathons · 50 states · 24 days</p>
+      <h1 id="page-title">Follow the <span class="mission-word">mission</span><br><em>as it moves.</em></h1>
+      <p class="lede">The map opens on the complete countrywide route, then Live Follow focuses on fresh RV or Will coordinates as they arrive. Stale positions remain clearly labeled as last known.</p>
+    </section>
+
+    <section class="tracker-shell" aria-labelledby="tracker-title">
+      <div class="tracker-heading">
+        <div>
+          <p class="eyebrow">Live position</p>
+          <h2 id="tracker-title">Mission tracking</h2>
+        </div>
+        <p class="tracker-note">Live Follow is automatic. Use the controls to pause, follow one subject, or return to the full route.</p>
+      </div>
+
+      <div class="feed-grid" aria-label="Public tracking feed status">
+        <article class="feed-card" data-feed="rv" data-state="loading" role="status" aria-live="polite">
+          <div class="feed-title"><span class="state-dot" aria-hidden="true"></span><strong>RV</strong><span data-feed-state>Connecting</span></div>
+          <p data-feed-detail>Connecting to the public RV feed…</p>
+        </article>
+        <article class="feed-card" data-feed="will" data-state="loading" role="status" aria-live="polite">
+          <div class="feed-title"><span class="state-dot" aria-hidden="true"></span><strong>Will</strong><span data-feed-state>Connecting</span></div>
+          <p data-feed-detail>Connecting to the public race feed…</p>
+        </article>
+      </div>
+
+      <div class="map-frame">
+        <div class="map-controls" data-map-controls role="group" aria-label="Map view controls">
+          <button type="button" data-follow="live" aria-pressed="true">Pause Live Follow</button>
+          <button type="button" data-follow="will" aria-pressed="false" disabled>Follow Will</button>
+          <button type="button" data-follow="rv" aria-pressed="false" disabled>Follow RV</button>
+          <button type="button" data-follow="route" aria-pressed="false">Full Route</button>
+        </div>
+        <div id="tracking-map" class="tracking-map" role="region" aria-label="Interactive street map of the Goodwin Generated Mission America route" tabindex="0">
+          <span class="map-loading">Loading countrywide route…</span>
+        </div>
+      </div>
+      <p class="privacy-note">This preview reads only the intended public tracking endpoints. No credentials or private tracking payloads are sent to the browser.</p>
+    </section>
+  </main>
+  <footer>Goodwin Generated Mission America · Isolated preview</footer>
+  <script type="module" src="__APP_URL__"></script>
+</body>
+</html>

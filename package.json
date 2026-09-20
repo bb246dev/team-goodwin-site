@@ -7,8 +7,10 @@
     "build": "npm run build:site && npm run build:cpanel",
     "build:site": "node build-offline.mjs",
     "build:cpanel": "node scripts/build-strava-cpanel.mjs",
+    "build:tracking-preview": "node tracking-preview/build.mjs",
     "check:cpanel": "node scripts/check-strava-cpanel-package.mjs",
     "test:deploy": "node --test tests/deploy-tooling.test.mjs",
+    "test:tracking-preview": "node tracking-preview/build.mjs && node --test tracking-preview/tracking-preview.test.mjs",
     "test": "node --test tests/*.test.mjs"
   }
 }

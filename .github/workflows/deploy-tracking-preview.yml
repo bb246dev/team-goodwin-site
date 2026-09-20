@@ -1,0 +1,52 @@
+name: Deploy isolated tracking preview
+
+on:
+  push:
+    branches: [codex/tracking-preview-leaflet]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tracking-preview-deployment
+  cancel-in-progress: false
+
+jobs:
+  tracking-preview:
+    if: github.ref == 'refs/heads/codex/tracking-preview-leaflet'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Build and validate tracking preview only
+        run: |
+          node tracking-preview/build.mjs
+          node --check tracking-preview/dist/tracking-preview/assets/app-*.mjs
+          node --check tracking-preview/dist/tracking-preview/assets/feeds-*.mjs
+          node --check tracking-preview/dist/tracking-preview/assets/tracking-map-*.mjs
+          node --test tracking-preview/tracking-preview.test.mjs
+          node tracking-preview/scan-output.mjs
+      - name: Record production and client-preview boundary
+        run: node tracking-preview/boundary.mjs record "$RUNNER_TEMP/tracking-preview-boundary.json"
+      - name: Upload tracking-preview subdirectory only
+        env:
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-tracking-preview-ftps
+        run: node tracking-preview/deploy.mjs
+      - name: Verify live preview and unchanged boundaries
+        run: |
+          node tracking-preview/verify.mjs
+          node tracking-preview/boundary.mjs compare "$RUNNER_TEMP/tracking-preview-boundary.json"
+      - name: Remove temporary credential files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-tracking-preview-ftps"
