@@ -3,63 +3,445 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="description" content="Client preview of the Goodwin Generated Mission America live tracking map.">
-  <title>Mission America · Tracking Preview</title>
-  <link rel="stylesheet" href="__STYLE_URL__">
+  <title>Goodwin Generated Mission America Live Tracker | Goodwin</title>
+  <meta name="description" content="50 Marathons, 50 States, 50 days. Follow William Goodge during Goodwin Generated Mission America's record setting cross-country endurance run.">
+  <link rel="icon" href="/assets/goodwin-favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/goodwin-webclip.png">
+  <link rel="preload" href="/assets/hero-video-first-frame.jpg" as="image" media="(max-width: 768px)" fetchpriority="high">
+  <link rel="stylesheet" href="/fonts/inter.css">
+  <link rel="stylesheet" href="/assets/styles-ulvf0Dcj.css">
+  <script>
+    (() => {
+      const href = "/assets/index-CIGW-MKW.css";
+      let mapStylesheet;
+
+      const loadMapStylesheet = () => {
+        if (mapStylesheet || document.querySelector(`link[href="${href}"]`)) return;
+        mapStylesheet = document.createElement("link");
+        mapStylesheet.rel = "stylesheet";
+        mapStylesheet.href = href;
+        mapStylesheet.dataset.deferredMapStyles = "true";
+        document.head.appendChild(mapStylesheet);
+      };
+
+      const initMapStylesheetLoader = () => {
+        const mapSection = document.getElementById("map");
+        if (!("IntersectionObserver" in window) || !mapSection) {
+          loadMapStylesheet();
+          return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting || entry.intersectionRatio > 0)) return;
+          observer.disconnect();
+          loadMapStylesheet();
+        }, { rootMargin: "800px 0px" });
+
+        observer.observe(mapSection);
+      };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initMapStylesheetLoader, { once: true });
+      } else {
+        initMapStylesheetLoader();
+      }
+    })();
+  </script>
+  <noscript><link rel="stylesheet" href="/assets/index-CIGW-MKW.css"></noscript>
+  <link rel="stylesheet" href="/assets/tracker-base.css?v=20260831mobile-critical-path">
+  <link rel="stylesheet" href="/assets/ambient-scroll.css?v=20260831fieldnotes-static">
+  <script defer src="/assets/tracker-base.js?v=20260831mobile-critical-path"></script>
+  <script defer src="/assets/ambient-scroll.js?v=20260830h"></script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HW9LNT12ZX');
+  </script>
+  <link rel="stylesheet" href="/assets/footer-social.css" data-footer-repair="social-v1">
+  <link rel="stylesheet" href="/assets/spyroll-footer-logo.css">
 </head>
 <body>
-  <a class="skip-link" href="#tracking-map">Skip to live tracking map</a>
-  <header class="site-header">
-    <div class="wordmark" aria-label="Goodwin Generated Mission America">
-      <span>GOODWIN GENERATED</span>
-      <strong>MISSION AMERICA</strong>
+  <script>
+    (() => {
+      try {
+        if (window.localStorage.getItem("goodwinSplashSeen") !== "true") {
+          document.body.classList.add("has-splash-modal-open");
+        }
+      } catch {
+        document.body.classList.add("has-splash-modal-open");
+      }
+    })();
+  </script>
+  <main class="tracker-page">
+    <nav class="tracker-nav" aria-label="Live tracker navigation">
+      <a class="tracker-mark" href="#live" aria-label="GOODWIN ENDURANCE">
+        <img src="/assets/goodwin-logo.png" alt="GOODWIN" width="2000" height="304">
+        <img class="tracker-mark-mobile-logo" src="/assets/mission-america-logo-mobile.png" alt="GOODWIN Generated Mission America" width="520" height="214">
+        <span>Endurance</span>
+      </a>
+      <button class="tracker-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="tracker-navlinks"><span></span></button>
+      <div class="tracker-navlinks" id="tracker-navlinks">
+        <a href="#the-run">The Run</a>
+        <a href="#map">50 States</a>
+        <a href="#updates">News</a>
+        <a href="/will/">Will</a>
+        <a href="#rsvp" class="tracker-cta">Join the Run</a>
+      </div>
+    </nav>
+
+    <div class="splash-modal" role="dialog" aria-modal="true" aria-labelledby="splash-modal-title" data-splash-modal>
+      <button class="splash-modal-backdrop" type="button" aria-label="Close splash" data-splash-modal-close></button>
+      <div class="splash-modal-panel">
+        <img class="splash-modal-photo" src="/assets/hero-runner-Ci5y42DW.jpg" alt="" aria-hidden="true" fetchpriority="high" width="1200" height="630">
+        <div class="splash-modal-shade" aria-hidden="true"></div>
+        <button class="splash-modal-close" type="button" aria-label="Close splash" data-splash-modal-close>×</button>
+        <div class="splash-modal-content">
+          <h2 class="sr-only" id="splash-modal-title">Goodwin Generated Mission America</h2>
+          <div class="splash-modal-actions" aria-label="Splash links">
+            <a class="splash-modal-button splash-modal-button-team" href="#live" data-splash-modal-close>Follow Along</a>
+            <a class="splash-modal-button splash-modal-button-donate" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noopener noreferrer">Donate</a>
+          </div>
+        </div>
+      </div>
     </div>
-    <span class="preview-badge">Client tracking preview</span>
-  </header>
-  <main>
-    <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow">50 marathons · 50 states · 24 days</p>
-      <h1 id="page-title">Follow the <span class="mission-word">mission</span><br><em>as it moves.</em></h1>
-      <p class="lede">The map opens on the complete countrywide route, then Live Follow focuses on fresh RV or Will coordinates as they arrive. Stale positions remain clearly labeled as last known.</p>
+
+    <section class="tracker-hero" id="live" aria-labelledby="page-title">
+      <video class="tracker-hero-bg" autoplay muted loop playsinline preload="none" poster="../assets/hero-video-first-frame.jpg" aria-hidden="true" data-hero-video>
+        <source data-src="/assets/hero-signal-optimized.mp4" type="video/mp4">
+      </video>
+      <div class="tracker-hero-inner">
+        <div class="tracker-headline">
+          <div class="mission-logo-stack" aria-hidden="true">
+            <span class="mission-logo-crop mission-logo-brand"></span>
+            <span class="mission-logo-crop mission-logo-title"></span>
+          </div>
+          <h1 id="page-title">GOODWIN Generated Mission America</h1>
+          <p class="hero-copy"><span class="mission-line">50 marathons.<br class="hero-mobile-break"> 50 states. 24 days.</span><span>William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.</span> <span class="hero-copy-secondary">Chasing a world record. Pushing the limits of human endurance. Carrying the memory of his mother, Amanda, through every mile.</span></p>
+          <a class="tracker-button hero-mobile-action" href="#map">Enter Mission Control ↓</a>
+        </div>
+      </div>
     </section>
 
-    <section class="tracker-shell" aria-labelledby="tracker-title">
-      <div class="tracker-heading">
-        <div>
-          <p class="eyebrow">Live position</p>
-          <h2 id="tracker-title">Mission tracking</h2>
+    <div class="tracker-content">
+      <section class="tracker-section" id="the-run" aria-label="Goodwin Generated Mission America feature pages">
+        <div class="feature-row">
+          <a class="feature-card feature-card-overview has-image" href="/the-run/">
+            <div class="tracker-eyebrow">OVERVIEW</div>
+            <h2>The Run</h2>
+            <p>50 marathons. 24 days. No margin for error.</p>
+            <span class="feature-link">Read the Mission</span>
+          </a>
+          <a class="feature-card feature-card-athlete has-image" href="/will/">
+            <div class="tracker-eyebrow">ATHLETE</div>
+            <h2>Will</h2>
+            <p>Meet the athlete behind the attempt.</p>
+            <span class="feature-link">Meet Will</span>
+          </a>
+          <a class="feature-card feature-card-record has-image" href="/fifty-runs/">
+            <div class="tracker-eyebrow">WORLD RECORD ATTEMPT</div>
+            <h2>50 Runs,<br>50 States</h2>
+            <p>One world record on the line.</p>
+            <span class="feature-link">View the Attempt</span>
+          </a>
         </div>
-        <p class="tracker-note">Live Follow is automatic. Use the controls to pause, follow one subject, or return to the full route.</p>
-      </div>
+      </section>
 
-      <div class="feed-grid" aria-label="Public tracking feed status">
-        <article class="feed-card" data-feed="rv" data-state="loading" role="status" aria-live="polite">
-          <div class="feed-title"><span class="state-dot" aria-hidden="true"></span><strong>RV</strong><span data-feed-state>Connecting</span></div>
-          <p data-feed-detail>Connecting to the public RV feed…</p>
-        </article>
-        <article class="feed-card" data-feed="will" data-state="loading" role="status" aria-live="polite">
-          <div class="feed-title"><span class="state-dot" aria-hidden="true"></span><strong>Will</strong><span data-feed-state>Connecting</span></div>
-          <p data-feed-detail>Connecting to the public race feed…</p>
-        </article>
-      </div>
+      <section class="tracker-section" id="map">
+        <div class="section-head">
+          <div>
+            <div class="tracker-eyebrow">LIVE MAP</div>
+            <h2>Follow in Real Time</h2>
+          </div>
+        </div>
+        <div class="follow-panel signup-only">
+          <div>
+            <form class="follow-form" data-follow-form>
+              <label class="sr-only" for="follow-email">Email address</label>
+              <input id="follow-email" name="email" type="email" autocomplete="email" placeholder="Email address" required>
+              <button class="tracker-button" type="submit">Follow Along</button>
+            </form>
+            <p class="legal-note">By submitting, you agree to receive updates from Team Goodwin. See our <a href="/privacy/">Privacy Policy</a>.</p>
+            <div class="follow-note" data-follow-message aria-live="polite"></div>
+          </div>
+        </div>
+        <section class="ticker-panel" aria-label="Goodwin Generated Mission America live ticker">
+          <div class="ticker-head">
+            <div class="tracker-eyebrow">Latest Updates</div>
+            <a href="/updates/">View All Updates</a>
+          </div>
+          <div class="ticker-track" data-ticker-items>
+            <div class="ticker-item"><time>Loading</time><span>Fetching Goodwin Generated Mission America updates.</span></div>
+          </div>
+        </section>
+        <div class="tracker-map-stage" aria-label="Goodwin Generated Mission America live map">
+          <div class="tracker-map" id="mission-map" role="img" aria-label="Interactive Goodwin Generated Mission America route map"></div>
+          <div class="tracking-map-key" aria-label="Goodwin Generated Mission America tracking layers">
+            <span><img src="/assets/map-runner-bobblehead-small.png" alt="" width="106" height="160">Runner</span>
+            <span><svg viewBox="-17 -23 34 46" aria-hidden="true" focusable="false"><path class="legend-plane" d="M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z"></path></svg>Flight</span>
+            <span><img src="/assets/map-rv-green-small.png" alt="" width="160" height="106">RV</span>
+          </div>
+        </div>
+        <p class="legal-note">Tracking note: Location and status information may be delayed, approximate or temporarily unavailable. Travel schedules and route information are subject to change.</p>
+        <div class="tracker-grid mission-clock-grid">
+          <div class="tracker-panel">
+            <div class="tracker-eyebrow">MISSION CLOCK</div>
+            <h3 class="tracker-panel-heading">Countdown to race day</h3>
+            <p class="tracker-panel-copy">October 9, 2026 · Honolulu</p>
+            <!-- After launch, replace this countdown block with live Mission Control progress statistics. -->
+            <div class="metric-row is-loading" data-countdown-clock aria-busy="true">
+              <div class="mission-clock-loading" data-countdown-loading aria-live="polite"><span data-countdown-loading-text>CALCULATING...</span><noscript><span>MISSION CLOCK UNAVAILABLE</span><style>[data-countdown-loading-text]{display:none}</style></noscript></div>
+              <div class="metric"><strong id="countdown-days"></strong><span data-short="DAYS">Days</span></div>
+              <div class="metric"><strong id="countdown-hours"></strong><span data-short="HRS">Hours</span></div>
+              <div class="metric"><strong id="countdown-minutes"></strong><span data-short="MIN">Minutes</span></div>
+              <div class="metric"><strong id="countdown-seconds"></strong><span data-short="SEC">Seconds</span></div>
+            </div>
+            <p class="tracker-panel-copy">24 days later: Marathon #50. New York City.</p>
+          </div>
+        </div>
+      </section>
 
-      <div class="map-frame">
-        <div class="map-controls" data-map-controls role="group" aria-label="Map view controls">
-          <button type="button" data-follow="live" aria-pressed="true">Pause Live Follow</button>
-          <button type="button" data-follow="will" aria-pressed="false" disabled>Follow Will</button>
-          <button type="button" data-follow="rv" aria-pressed="false" disabled>Follow RV</button>
-          <button type="button" data-follow="route" aria-pressed="false">Full Route</button>
+      <section class="tracker-section" id="updates">
+        <div class="section-head">
+          <div>
+            <div class="tracker-eyebrow">FIELD NOTES</div>
+            <h2>The stuff Strava doesn't tell you.</h2>
+          </div>
         </div>
-        <div id="tracking-map" class="tracking-map" role="region" aria-label="Interactive street map of the Goodwin Generated Mission America route" tabindex="0">
-          <span class="map-loading">Loading countrywide route…</span>
+        <div class="week-grid">
+          <a class="week-card has-image week-card-launch" href="/week-1/">
+            <div class="tracker-eyebrow">WEEK 1</div>
+            <h3>The Launch</h3>
+            <p>Oct 9–15</p>
+            <p>Hawaii to the West.</p>
+            <span class="week-link">View Week 1 →</span>
+          </a>
+          <a class="week-card has-image week-card-grind" href="/week-2/">
+            <div class="tracker-eyebrow">WEEK 2</div>
+            <h3>The Grind</h3>
+            <p>Oct 16–24</p>
+            <p>The miles pile up.</p>
+            <span class="week-link">View Week 2 →</span>
+          </a>
+          <a class="week-card has-image week-card-finish" href="/week-3/">
+            <div class="tracker-eyebrow">WEEK 3</div>
+            <h3>The Finish</h3>
+            <p>Oct 25–Nov 1</p>
+            <p>The final push to New York.</p>
+            <span class="week-link">View Week 3 →</span>
+          </a>
         </div>
-      </div>
-      <p class="privacy-note">This preview reads only the intended public tracking endpoints. No credentials or private tracking payloads are sent to the browser.</p>
-    </section>
+      </section>
+
+      <section class="tracker-section" id="articles">
+        <div class="mobile-photo-break mobile-photo-break-road">
+          <img src="/assets/road-aerial-DbGvJBXy.jpg" alt="" width="1200" height="675">
+        </div>
+        <div class="section-head">
+          <div>
+            <div class="tracker-eyebrow">INSIDE GGMA</div>
+            <h2>How do you run 50 marathons in 24 days?</h2>
+          </div>
+        </div>
+        <div class="inside-mobile-accordion" data-inside-accordion>
+          <div class="inside-accordion-item">
+            <h3 class="inside-accordion-heading">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-will" id="inside-question-will">
+              <span>Who is Will Goodge?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            </h3>
+            <div class="inside-accordion-panel" id="inside-answer-will" role="region" aria-labelledby="inside-question-will">
+              <div class="inside-accordion-content">
+                <p>Goodge, known by some as the fastest man to run across Australia, crossed the country on foot in just over 35 days (2,361 miles). He has also run from Los Angeles to New York in 55 days (3,011 miles), and spent the last decade engineering a body and mind capable of what most consider biologically impossible.</p>
+                <p>He runs in memory of his mother, Amanda, who died of non-Hodgkin's lymphoma in 2018. Every project he takes on is a fundraiser. Every mile is a tribute.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <h3 class="inside-accordion-heading">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-goodwin" id="inside-question-goodwin">
+              <span>Why is Goodwin involved?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            </h3>
+            <div class="inside-accordion-panel" id="inside-answer-goodwin" role="region" aria-labelledby="inside-question-goodwin">
+              <div class="inside-accordion-content">
+                <p>Goodwin Generated Mission America is the first chapter of the Goodwin Endurance Series — an ultra-endurance platform built around athletes attempting things history hasn't seen yet.</p>
+                <p>The Goodwin Company backs people willing to push beyond what most consider possible. William Goodge was chosen to kick off the series because he doesn't talk about limits. He runs through them.</p>
+                <p>Mission America brings those two ideas together: an athlete built for extreme endurance and a company built to solve the operational challenges required to make an attempt of this scale possible.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <h3 class="inside-accordion-heading">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-origin" id="inside-question-origin">
+              <span>How did this all come together?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            </h3>
+            <div class="inside-accordion-panel" id="inside-answer-origin" role="region" aria-labelledby="inside-question-origin">
+              <div class="inside-accordion-content">
+                <p>The Founder of Goodwin and Will Goodge went on a run and talked about what challenge Will was looking to take on next. Will's dream was to set a world record by running 50 marathons in 50 states in the quickest time ever. Goodwin's Founder joked that he had access to "time machines" — airplanes — and a dream started to turn into a plan.</p>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <h3 class="inside-accordion-heading">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-join" id="inside-question-join">
+              <span>Can anyone join?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            </h3>
+            <div class="inside-accordion-panel" id="inside-answer-join" role="region" aria-labelledby="inside-question-join">
+              <div class="inside-accordion-content">
+                <p>Every run will have an option for outside participants to join in this historic achievement by running the first 5K of the marathon with Will. Since he is running in every state, there is a good chance he will be running close to you, and this is the perfect time to be part of a world record and run with William Goodge.</p>
+                <p>Whether you want to sign up as an entire run club or as an individual, use the Run With Will signup to register your interest.</p>
+                <div class="button-row"><a class="tracker-button secondary" href="#rsvp">Run With Will →</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <h3 class="inside-accordion-heading">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-eat-sleep" id="inside-question-eat-sleep">
+              <span>Where does Will eat and sleep?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            </h3>
+            <div class="inside-accordion-panel" id="inside-answer-eat-sleep" role="region" aria-labelledby="inside-question-eat-sleep">
+              <div class="inside-accordion-content">
+                <p>Goodge will be eating and sleeping on the go — in the RV and wherever the schedule allows. Team members are providing nutrition and hydration protocols for every run, along with a regimented rest and sleep schedule.</p>
+                <div class="button-row"><a class="tracker-button secondary" href="/fifty-runs/">View the Itinerary →</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="inside-accordion-item">
+            <h3 class="inside-accordion-heading">
+            <button class="inside-accordion-trigger" type="button" aria-expanded="false" aria-controls="inside-answer-logistics" id="inside-question-logistics">
+              <span>How is travel between states handled?</span>
+              <span class="inside-accordion-icon" aria-hidden="true">+</span>
+            </button>
+            </h3>
+            <div class="inside-accordion-panel" id="inside-answer-logistics" role="region" aria-labelledby="inside-question-logistics">
+              <div class="inside-accordion-content">
+                <p>Goodwin Generated Mission America runs on precision. The Goodwin Company provides the aerial transport, support fleet, and operational intelligence that make 50 marathons in 24 days physically possible.</p>
+                <p>The same exacting standards Goodwin applies to flight are applied to human performance. The Goodwin Company coordinates the entire route, including private-aviation rotations, commercial airlines, and RV transfers.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="button-row inside-section-cta"><a class="tracker-button secondary is-accent" href="/faq/">View FAQ</a></div>
+      </section>
+
+      <section class="tracker-section" id="why">
+        <div class="why-impact-layout">
+          <div class="why-impact-heading">
+            <div class="tracker-eyebrow">IMPACT</div>
+            <h2>Every Mile<br>Has a Reason</h2>
+          </div>
+          <figure class="why-impact-photo">
+            <img src="/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg" alt="Will Goodge running on a mountain road" width="768" height="675">
+          </figure>
+          <div class="why-impact-story">
+            <p>Will began running after losing his mother, Amanda, to cancer in 2018. What started as a way to honor her memory has grown into something much bigger.</p>
+            <div class="button-row"><a class="tracker-button secondary" href="https://live-mission-america-50.pantheonsite.io/" target="_blank" rel="noopener noreferrer">Support the Mission →</a></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tracker-section" id="rsvp">
+        <div class="section-head">
+          <div>
+            <div class="tracker-eyebrow">RUN WITH WILL</div>
+            <h2>Want to be part of a world record attempt?</h2>
+          </div>
+          <p>Run a few miles. Bring your run club. Show up and make some noise.</p>
+        </div>
+        <div class="rsvp-mobile-controls" data-rsvp-mobile-controls>
+          <select id="rsvp-state-select" aria-label="Select your state" data-rsvp-state-select>
+            <option value="">Select your state</option>
+          </select>
+        </div>
+        <div class="run-grid route-itinerary" data-route-itinerary></div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="site-footer-main">
+          <div>
+            <div class="site-footer-brand"><img src="/assets/goodwin-logo.png" alt="Goodwin" width="2000" height="304"></div>
+          </div>
+          <nav class="site-footer-nav" aria-label="Footer navigation">
+            <ul class="site-footer-link-group">
+              <li><a href="/the-run/">The Run</a></li>
+              <li><a href="/#map">Live Map</a></li>
+              <li><a href="/updates/">Running Live Archive</a></li>
+              <li><a href="/fifty-runs/">50 Runs, 50 States</a></li>
+            </ul>
+            <section class="site-footer-link-group footer-social-group" aria-labelledby="will-goodge-footer-heading">
+          <h2 class="footer-column-heading" id="will-goodge-footer-heading">WILL GOODGE</h2>
+          <ul class="footer-social-links" aria-label="Will Goodge social media">
+            <li><a class="footer-social-link" href="https://www.instagram.com/williamgoodge/" target="_blank" rel="noopener noreferrer" aria-label="Will Goodge on Instagram"><svg class="footer-social-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132z"/></svg></a></li>
+            <li><a class="footer-social-link" href="https://www.tiktok.com/@williamgoodge?_r=1&amp;_t=ZP-99HtuOCkdiA" target="_blank" rel="noopener noreferrer" aria-label="Will Goodge on TikTok"><svg class="footer-social-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M448 209.9a210.1 210.1 0 0 1-122.8-39.2v178.7A162.6 162.6 0 1 1 185 188.3v89.9a74.6 74.6 0 1 0 52.2 71.2V0h88a121.2 121.2 0 0 0 1.9 22.2A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"/></svg></a></li>
+            <li><a class="footer-social-link" href="https://www.youtube.com/@goodge" target="_blank" rel="noopener noreferrer" aria-label="Will Goodge on YouTube"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
+          </ul>
+          <ul class="footer-text-links">
+            <li><a href="https://live-mission-america-50.pantheonsite.io/#faq" target="_blank" rel="noopener noreferrer">WilliamGoodge.com</a></li>
+            <li><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer">Rizkia</a></li>
+          </ul>
+        </section>
+            <section class="site-footer-link-group footer-social-group" aria-labelledby="goodwin-footer-heading">
+          <h2 class="footer-column-heading" id="goodwin-footer-heading">GOODWIN</h2>
+          <ul class="footer-social-links" aria-label="Goodwin social media">
+            <li><a class="footer-social-link" href="https://www.linkedin.com/company/teamgoodwin/" target="_blank" rel="noopener noreferrer" aria-label="Goodwin on LinkedIn"><svg class="footer-social-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 84 0 54.3A53.8 53.8 0 0 1 107.6 54.3c0 29.7-24.1 53.8-53.8 53.8zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z"/></svg></a></li>
+            <li><a class="footer-social-link" href="https://x.com/goteamgoodwin" target="_blank" rel="noopener noreferrer" aria-label="Goodwin on X"><svg class="footer-social-icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.8 318.6 106.5 464H35.8l164.9-188.5L26.8 48h145.6l100.5 132.9L389.2 48zM364.4 421.8h39.1L151.1 88h-42l255.4 333.8z"/></svg></a></li>
+            <li><a class="footer-social-link" href="https://www.youtube.com/@goodwinsoftwarecompany" target="_blank" rel="noopener noreferrer" aria-label="Goodwin on YouTube"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
+          </ul>
+          <ul class="footer-text-links">
+            <li><a href="https://teamgoodwin.com/" target="_blank" rel="noopener noreferrer">TeamGoodwin.com</a></li>
+            <li><a href="mailto:run@teamgoodwin.com">Contact</a></li>
+          </ul>
+        </section>
+          </nav>
+        </div>
+        <div class="site-footer-partners" aria-label="Partners">
+          <div class="tracker-eyebrow">MADE POSSIBLE BY</div>
+          <div class="partner-logo-wall">
+            <div class="partner-logo-item"><a href="https://www.arsenalaviation.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Arsenal Aviation"><img src="/assets/partners/arsenal-aviation-footer.svg" alt="Arsenal Aviation logo" width="849" height="624"></a></div>
+            <div class="partner-logo-item"><a href="https://www.trilogyaviationgroup.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Trilogy Aviation Group"><img src="/assets/partners/trilogy-aviation-footer.svg" alt="Trilogy Aviation Group logo" width="367" height="76"></a></div>
+            <div class="partner-logo-item"><a href="https://titanflights.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Titan Aviation Group"><img src="/assets/partners/titan-aviation-footer.png" alt="Titan Aviation Group logo" width="375" height="111"></a></div>
+            <div class="partner-logo-item"><a href="https://fly1200.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit FLY1200"><img src="/assets/partners/fly1200-footer.svg" alt="FLY1200 logo" width="2769" height="1112"></a></div>
+            <div class="partner-logo-item"><a href="https://www.flyexclusive.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit flyExclusive"><img src="/assets/partners/flyexclusive-footer.svg" alt="flyExclusive logo" width="582" height="108"></a></div>
+            <div class="partner-logo-item"><a href="https://jetlinx.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Jet Linx"><img src="/assets/partners/jet-linx-footer.svg" alt="Jet Linx logo" width="250" height="158"></a></div>
+            <div class="partner-logo-item"><a href="https://skywardaviation.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Skyward Aviation"><img src="/assets/partners/skyward-aviation-footer.svg" alt="Skyward Aviation logo" width="1443" height="1012"></a></div>
+            <div class="partner-logo-item"><a href="https://flytrueskies.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit TrueSkies Aviation Group"><img src="/assets/partners/trueskies-footer.svg" alt="TrueSkies Aviation Group logo" width="1697" height="543"></a></div>
+            <div class="partner-logo-item"><a href="https://magellanjets.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Magellan Jets"><img src="/assets/partners/magellan-jets-footer.svg" alt="Magellan Jets logo" width="265" height="25"></a></div>
+            <div class="partner-logo-item"><a href="https://www.charterflightsupport.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Charter Flight Support"><img src="/assets/partners/charter-flight-support-footer.svg" alt="Charter Flight Support logo" width="250" height="100"></a></div>
+            <div class="partner-logo-item"><a href="https://www.spyrollstudios.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Spyroll Studios"><img src="/assets/partners/spyroll-studios-logo.avif" alt="Spyroll Studios logo" width="692" height="104"></a></div>
+            <div class="partner-logo-item"><a href="https://davidprotein.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit David"><img src="/assets/partners/david-footer.png" alt="David logo" width="905" height="386"></a></div>
+            <div class="partner-logo-item"><a href="https://humantra.co.uk/" target="_blank" rel="noopener noreferrer" aria-label="Visit Humantra"><img src="/assets/partners/humantra-footer.png" alt="Humantra logo" width="1501" height="273"></a></div>
+            <div class="partner-logo-item"><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Rizkia"><img src="/assets/partners/rizkia-footer.png" alt="Rizkia logo" width="1493" height="369"></a></div>
+            <div class="partner-logo-item"><a href="https://www.whoop.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit WHOOP"><img src="/assets/partners/whoop-footer.png" alt="WHOOP logo" width="1501" height="255"></a></div>
+          </div>
+          <p class="site-footer-partner-disclaimer">All trademarks and logos are the property of their respective owners and are used with permission where applicable.</p>
+        </div>
+        <nav class="site-footer-legal" aria-label="Legal links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="/participation-terms/">Participation Terms</a>
+          <a href="/accessibility/">Accessibility</a>
+        </nav>
+        <p class="site-footer-disclaimer">Goodwin Generated Mission America is an endurance event and world record attempt. Routes, schedules, locations, tracking data and event details are subject to change. World record status is subject to independent verification. Participation in any associated run or event is voluntary and subject to the Participation Terms.</p>
+        <div class="site-footer-bottom">
+          <span>© 2026 Goodwin Company</span>
+          <span>Goodwin Generated</span>
+        </div>
+      </footer>
+    </div>
   </main>
-  <footer>Goodwin Generated Mission America · Isolated preview</footer>
-  <script type="module" src="__APP_URL__"></script>
+  <template id="fundraising-disclosure-template">
+    <p class="legal-note">Donations are processed by [PLATFORM] for the benefit of [BENEFICIARY]. See the fundraising page for applicable terms and tax-deductibility information.</p>
+  </template>
 </body>
 </html>

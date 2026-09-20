@@ -6,7 +6,8 @@ import { createFtpsClient } from "../scripts/deploy/ftps-client.mjs";
 const expectedRef = "refs/heads/codex/tracking-preview-leaflet";
 const outputRoot = resolve(import.meta.dirname, "dist", "tracking-preview");
 const destinationRoot = "public_html/tracking-preview/";
-const allowedAsset = /^assets\/(?:app|feeds|tracking-map|route-data|leaflet|styles|will-marker|rv-marker)-[a-f0-9]{16}\.(?:mjs|css|png)$/;
+const allowedAsset = /^assets\/(?:app|feeds|tracking-map|route-data|leaflet|tracking-preview|will-marker|rv-marker)-[a-f0-9]{16}\.(?:mjs|css|png)$/;
+const allowedProductionAsset = /^site\/(?:assets|fonts)\/[a-zA-Z0-9._/-]+\.(?:js|css|png|jpe?g|svg|avif|mp4|woff2)$/;
 
 function visit(directory, prefix = "") {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -16,7 +17,9 @@ function visit(directory, prefix = "") {
 }
 
 function safeFile(file) {
-  return file === ".htaccess" || file === "index.html" || file === "asset-manifest.json" || allowedAsset.test(file);
+  if (file.includes("..") || file.includes("//") || file.startsWith("/")) return false;
+  return file === ".htaccess" || file === "index.html" || file === "asset-manifest.json"
+    || allowedAsset.test(file) || allowedProductionAsset.test(file);
 }
 
 if (process.env.GITHUB_REF !== expectedRef) {

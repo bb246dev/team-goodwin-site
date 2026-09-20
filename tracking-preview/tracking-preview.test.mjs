@@ -109,10 +109,17 @@ test("build output is exact, deterministic, content-versioned, and isolated", ()
   const expected = ["asset-manifest.json", ...manifest.generatedFiles.map((entry) => entry.path)].sort();
   assert.deepEqual(files, expected);
   assert.equal(manifest.prefix, "/tracking-preview");
+  assert.equal(manifest.productionSource.url, "https://goodwingoodge.com/");
+  assert.equal(manifest.productionSource.sha256, sha256(readFileSync(join(import.meta.dirname, "source", "index.html"))));
+  assert.equal(manifest.productionSource.files.length, 48);
+  for (const entry of manifest.productionSource.files) {
+    assert.equal(sha256(readFileSync(join(import.meta.dirname, "source", "production", entry.path))), entry.sha256);
+  }
   for (const entry of manifest.generatedFiles) {
     const bytes = readFileSync(join(outputRoot, entry.path));
     assert.equal(sha256(bytes), entry.sha256);
     if (entry.path.startsWith("assets/")) assert.ok(entry.path.includes(entry.sha256.slice(0, 16)));
+    if (entry.path.startsWith("site/")) assert.ok(entry.url.endsWith(`?v=${entry.sha256.slice(0, 16)}`));
     assert.ok(entry.url.startsWith("/tracking-preview/"));
   }
   const first = manifest.generatedFiles.map((entry) => [entry.path, entry.sha256]);
@@ -143,20 +150,50 @@ test("public package has no local diagnostics, localhost URLs, secrets, or route
   const html = readOutput("index.html");
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
   assert.doesNotMatch(html, /canonical|googletagmanager|localhost|127\.0\.0\.1/i);
+  assert.doesNotMatch(html, /(?:href|src|poster|data-src)=["'](?:\.\.\/|\/)(?:assets|fonts)\//);
+  const productionRuntime = readOutput("site/assets/tracker-base.js");
+  assert.doesNotMatch(productionRuntime, /gtag\(|googletagmanager|id="mission-map"|import\("\/assets\//i);
+  assert.match(productionRuntime, /trackingPreview:goodwinSplashSeen/);
+  assert.match(productionRuntime, /trackingPreview:mission-follow-emails/);
   assert.match(readOutput(".htaccess"), /X-Robots-Tag "noindex, nofollow"/);
   assert.match(readOutput(".htaccess"), /DirectoryIndex index\.html/);
 });
 
+test("preview duplicates the complete current production homepage and replaces only its map stage", () => {
+  const html = readOutput("index.html");
+  const orderedMarkers = ['id="live"', 'id="the-run"', 'id="map"', 'id="updates"', 'id="articles"', 'id="why"', 'id="rsvp"', 'class="site-footer"'];
+  let previous = -1;
+  for (const marker of orderedMarkers) {
+    const next = html.indexOf(marker);
+    assert.ok(next > previous, `${marker} must remain in production order`);
+    previous = next;
+  }
+  assert.match(html, /class="tracker-nav"/);
+  assert.match(html, /class="tracker-hero-bg"[^>]*autoplay[^>]*poster="\/tracking-preview\/site\/assets\/hero-video-first-frame\.jpg\?v=/);
+  assert.match(html, /data-src="\/tracking-preview\/site\/assets\/hero-signal-optimized\.mp4\?v=/);
+  assert.match(html, /class="follow-form"/);
+  assert.equal((html.match(/class="inside-accordion-trigger"/g) || []).length, 6);
+  assert.match(html, /class="site-footer-partners"/);
+  assert.match(html, /id="tracking-map"/);
+  assert.doesNotMatch(html, /id="mission-map"/);
+  assert.match(html, /data-feed="rv"/);
+  assert.match(html, /data-feed="will"/);
+  assert.match(html, /Pause Live Follow/);
+  assert.match(html, /Full Route/);
+  assert.equal(manifest.generatedFiles.filter(({ path }) => path.startsWith("site/")).length, 48);
+});
+
 test("OpenStreetMap policy and dark treatment remain compliant", () => {
   const mapSource = readOutput(asset("tracking-map").path);
-  const css = readOutput(asset("styles").path);
+  const css = readOutput(asset("tracking-preview").path);
   assert.equal(PREVIEW_TILE_PROVIDER.url, "https://tile.openstreetmap.org/{z}/{x}/{y}.png");
   assert.match(mapSource, /detectRetina: false/);
   assert.match(mapSource, /OpenStreetMap contributors/);
   assert.doesNotMatch(mapSource, /prefetch|serviceWorker|caches\.|cache:\s*["']reload|no-referrer/i);
-  assert.match(css, /\.tracking-map \.leaflet-tile-pane\{filter:grayscale\(1\) invert\(1\)/);
+  assert.match(css, /\.tracking-preview-map \.leaflet-tile-pane\s*\{\s*filter: grayscale\(1\) invert\(1\)/);
   assert.match(readOutput(".htaccess"), /https:\/\/tile\.openstreetmap\.org/);
-  assert.doesNotMatch(readOutput(".htaccess"), /Referrer-Policy|no-referrer/i);
+  assert.match(readOutput(".htaccess"), /Referrer-Policy "strict-origin-when-cross-origin"/);
+  assert.doesNotMatch(readOutput(".htaccess"), /no-referrer/i);
 });
 
 test("planned full-country route loads before feeds and survives feed failures", () => {
@@ -369,12 +406,12 @@ test("polling uses exponential backoff and recovers to the normal interval", asy
 
 test("mobile, keyboard, and reduced-motion support are present", () => {
   const html = readOutput("index.html");
-  const css = readOutput(asset("styles").path);
+  const css = readOutput(asset("tracking-preview").path);
   const mapSource = readOutput(asset("tracking-map").path);
   assert.match(html, /tabindex="0"/);
   assert.match(html, /role="group" aria-label="Map view controls"/);
-  assert.match(css, /@media\(max-width:380px\)/);
-  assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
+  assert.match(css, /@media \(max-width: 380px\)/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(mapSource, /keyboard: true/);
   assert.match(mapSource, /animate: Boolean\(animate && !reducedMotion\)/);
 });
