@@ -310,3 +310,21 @@ export function createAdaptivePoller({
     getConsecutiveFailures: () => failures,
   };
 }
+
+// Local airport times are encoded with explicit October UTC offsets.
+export const STATIC_PLACEMENTS = Object.freeze([
+  { subject: "will", label: "Honolulu airport", start: "2026-10-09T21:11:00-10:00", end: "2026-10-09T23:00:00-10:00", position: { lat: 21.3187, lng: -157.9225 } },
+  { subject: "will", label: "Anchorage airport", start: "2026-10-10T14:00:00-08:00", end: "2026-10-10T15:51:00-08:00", position: { lat: 61.1743, lng: -149.9985 } },
+  { subject: "rv", label: "Portland airport", start: "2026-10-11T04:00:00-07:00", end: "2026-10-11T08:00:00-07:00", position: { lat: 45.5898, lng: -122.5951 } },
+  { subject: "will", label: "Portland airport", start: "2026-10-11T13:00:00-07:00", end: "2026-10-11T17:00:00-07:00", position: { lat: 45.5898, lng: -122.5951 } },
+]);
+
+export function resolveScheduledLocation(subject, feed, nowMs = Date.now()) {
+  const placement = STATIC_PLACEMENTS.find((entry) => entry.subject === subject
+    && nowMs >= Date.parse(entry.start) && nowMs < Date.parse(entry.end));
+  return placement ? {
+    available: true, stale: false, scheduled: true, label: placement.label,
+    observedAt: new Date(Date.parse(placement.start)).toISOString(),
+    position: { ...placement.position },
+  } : feed || { available: false };
+}

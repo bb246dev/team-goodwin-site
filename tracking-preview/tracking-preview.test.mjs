@@ -14,6 +14,8 @@ import {
   validCoordinate,
 } from "./source/tracking-map.mjs";
 import {
+  STATIC_PLACEMENTS,
+  resolveScheduledLocation,
   MAX_BACKOFF_MS,
   PUBLIC_RACES_ENDPOINT,
   PUBLIC_RACE_STATUS_ENDPOINT,
@@ -434,4 +436,32 @@ test("mobile, keyboard, and reduced-motion support are present", () => {
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(mapSource, /keyboard: true/);
   assert.match(mapSource, /animate: Boolean\(animate && !reducedMotion\)/);
+});
+
+
+test("airport placement windows honor local offsets and exact start/end boundaries", () => {
+  const feed = { available: false };
+  for (const entry of STATIC_PLACEMENTS) {
+    const start = Date.parse(entry.start);
+    const end = Date.parse(entry.end);
+    assert.equal(resolveScheduledLocation(entry.subject, feed, start - 1), feed);
+    assert.deepEqual(resolveScheduledLocation(entry.subject, feed, start).position, entry.position);
+    assert.equal(resolveScheduledLocation(entry.subject, feed, end - 1).scheduled, true);
+    assert.equal(resolveScheduledLocation(entry.subject, feed, end), feed);
+    const other = entry.subject === "will" ? "rv" : "will";
+    assert.equal(resolveScheduledLocation(other, feed, start), feed);
+  }
+  assert.equal(Date.parse(STATIC_PLACEMENTS[0].start), Date.parse("2026-10-10T07:11:00Z"));
+  assert.equal(Date.parse("2026-10-09T23:11:00-10:00") - Date.parse(STATIC_PLACEMENTS[0].start), 2 * 60 * 60 * 1000);
+});
+
+test("scheduled placement survives unavailable feeds and releases to the latest feed", () => {
+  const entry = STATIC_PLACEMENTS[1];
+  const live = { available: true, stale: false, observedAt: entry.end, position: { lat: 61, lng: -150 } };
+  assert.equal(resolveScheduledLocation("will", live, Date.parse(entry.start)).scheduled, true);
+  assert.equal(resolveScheduledLocation("will", live, Date.parse(entry.end)), live);
+  const h = harness();
+  h.tracker.setWillLocation(resolveScheduledLocation("will", null, Date.parse(entry.start)));
+  assert.equal(h.tracker.getWillState().kind, TRACKING_STATE.SCHEDULED);
+  assert.match(h.tracker.getMarker("will").popup, /scheduled airport placement/);
 });

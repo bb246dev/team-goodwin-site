@@ -5,7 +5,7 @@ export const PREVIEW_TILE_PROVIDER = Object.freeze({
 });
 export const MAX_NATIVE_ZOOM = PREVIEW_TILE_PROVIDER.maxNativeZoom;
 export const FOLLOW_ZOOM = 10;
-export const TRACKING_STATE = Object.freeze({ LIVE: "live", STALE: "stale", UNAVAILABLE: "unavailable" });
+export const TRACKING_STATE = Object.freeze({ LIVE: "live", STALE: "stale", UNAVAILABLE: "unavailable", SCHEDULED: "scheduled" });
 
 export function validCoordinate(value) {
   const lat = value?.lat;
@@ -31,7 +31,8 @@ export function classifyTrackedLocation(result) {
     return unavailableLocation();
   }
   return {
-    kind: result.stale ? TRACKING_STATE.STALE : TRACKING_STATE.LIVE,
+    kind: result.scheduled ? TRACKING_STATE.SCHEDULED : result.stale ? TRACKING_STATE.STALE : TRACKING_STATE.LIVE,
+    label: result.scheduled ? result.label : null,
     position: { lat: result.position.lat, lng: result.position.lng },
     observedAt: new Date(observedMs).toISOString(),
   };
@@ -51,7 +52,8 @@ function sameCoordinate(a, b) {
 }
 
 function freshAdvance(previous, next) {
-  if (next.kind !== TRACKING_STATE.LIVE) return false;
+  if (![TRACKING_STATE.LIVE, TRACKING_STATE.SCHEDULED].includes(next.kind)) return false;
+  if (next.kind === TRACKING_STATE.SCHEDULED) return previous.kind !== next.kind || !sameCoordinate(previous.position, next.position);
   if (previous.kind !== TRACKING_STATE.LIVE) return true;
   return Date.parse(next.observedAt) > Date.parse(previous.observedAt)
     || !sameCoordinate(previous.position, next.position);
@@ -102,7 +104,7 @@ export function createTrackingMap({
   let viewMode = "live";
   let programmaticMove = false;
 
-  const freshSubjects = () => ["will", "rv"].filter((subject) => states[subject].kind === TRACKING_STATE.LIVE && positions[subject]);
+  const freshSubjects = () => ["will", "rv"].filter((subject) => [TRACKING_STATE.LIVE, TRACKING_STATE.SCHEDULED].includes(states[subject].kind) && positions[subject]);
   const updateButtons = () => {
     buttons.live.textContent = liveFollow ? "Pause Live Follow" : "Resume Live Follow";
     buttons.live.setAttribute("aria-pressed", String(liveFollow));
@@ -261,7 +263,9 @@ export function createTrackingMap({
         markers[subject] = L.marker(point, { icon, zIndexOffset: subject === "rv" ? 2000 : 2100 }).addTo(map);
       }
       const label = subject === "rv" ? "RV" : "Will";
-      const popup = stale
+      const popup = next.kind === TRACKING_STATE.SCHEDULED
+        ? `<strong>${label} scheduled airport placement</strong><br>Approximate location`
+        : stale
         ? `<strong>${label} last known location</strong><br>Last updated ${formattedUpdate(next.observedAt)}<br>Location is currently stale`
         : `<strong>${label} current location</strong><br>Last updated ${formattedUpdate(next.observedAt)}`;
       if (markers[subject].getPopup?.()) markers[subject].setPopupContent(popup);

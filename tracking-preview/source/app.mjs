@@ -1,8 +1,10 @@
 import { ROUTE_STOPS } from "__ROUTE_DATA_URL__";
 import { createTrackingMap } from "__TRACKING_MAP_URL__";
 import {
+  resolveScheduledLocation,
   RV_REFRESH_MS,
   WILL_REFRESH_MS,
+  WILL_FRESH_MS,
   createAdaptivePoller,
   deriveWillLocation,
   loadPublicRaceSnapshot,
@@ -29,7 +31,8 @@ function updateFeed(name, state, detail) {
   panel.dataset.state = state;
   panel.querySelector("[data-feed-state]").textContent = state === "live" ? "Live"
     : state === "stale" ? "Last known"
-      : state === "loading" ? "Connecting" : "Unavailable";
+      : state === "scheduled" ? "Scheduled placement"
+        : state === "loading" ? "Connecting" : "Unavailable";
   panel.querySelector("[data-feed-detail]").textContent = detail;
 }
 
@@ -53,6 +56,29 @@ async function startTrackingPreview() {
   mapElement.dataset.ready = "true";
   tracker.map.invalidateSize();
 
+  const feedLocations = { rv: { available: false }, will: { available: false } };
+  const renderLocation = (subject, feed, detail) => {
+    if (feed) feedLocations[subject] = feed;
+    const cached = feedLocations[subject];
+    const live = subject === "will" && cached.available
+      ? { ...cached, stale: cached.stale || Date.now() - Date.parse(cached.observedAt) > WILL_FRESH_MS }
+      : cached;
+    const result = resolveScheduledLocation(subject, live);
+    if (subject === "rv") tracker.setRvLocation(result);
+    else tracker.setWillLocation(result);
+    if (result.scheduled) updateFeed(subject, "scheduled", `${result.label} · scheduled approximate location.`);
+    else if (!result.available) updateFeed(subject, "unavailable", detail || "Waiting for a usable feed position.");
+    else if (result.stale) updateFeed(subject, "stale", staleCopy(subject, result));
+    else updateFeed(subject, "live", `Fresh ${subject === "rv" ? "RV" : "Will"} position · updated ${formatUpdate(result.observedAt)}.`);
+  };
+  // Evaluate independently of network responses, including during feed outages.
+  const refreshPlacements = () => {
+    renderLocation("rv");
+    renderLocation("will");
+  };
+  refreshPlacements();
+  window.setInterval(refreshPlacements, 1000);
+  document.addEventListener("visibilitychange", refreshPlacements);
   let lastRv = null;
   let lastWill = null;
   const rvPoller = createAdaptivePoller({
@@ -60,19 +86,14 @@ async function startTrackingPreview() {
     load: () => loadPublicRvLocation(),
     onData(result) {
       if (result.available) lastRv = result;
-      tracker.setRvLocation(result);
-      if (!result.available) updateFeed("rv", "unavailable", "RV feed connected; no usable position is available.");
-      else if (result.stale) updateFeed("rv", "stale", staleCopy("rv", result));
-      else updateFeed("rv", "live", `Fresh RV position · updated ${formatUpdate(result.observedAt)}.`);
+      renderLocation("rv", result, "RV feed connected; no usable position is available.");
     },
     onFailure() {
       if (lastRv) {
         const stale = { ...lastRv, stale: true };
-        tracker.setRvLocation(stale);
-        updateFeed("rv", "stale", staleCopy("rv", stale, true));
+        renderLocation("rv", stale);
       } else {
-        tracker.setRvLocation({ available: false });
-        updateFeed("rv", "unavailable", "RV feed unavailable. Retrying automatically.");
+        renderLocation("rv", { available: false }, "RV feed unavailable. Retrying automatically.");
       }
     },
   });
@@ -83,19 +104,14 @@ async function startTrackingPreview() {
       tracker.setRoute(snapshot.races);
       const result = deriveWillLocation(snapshot);
       if (result.available) lastWill = result;
-      tracker.setWillLocation(result);
-      if (!result.available) updateFeed("will", "unavailable", "Will feed connected; waiting for a usable activity position.");
-      else if (result.stale) updateFeed("will", "stale", staleCopy("will", result));
-      else updateFeed("will", "live", `Fresh Will position · updated ${formatUpdate(result.observedAt)}.`);
+      renderLocation("will", result, "Will feed connected; waiting for a usable activity position.");
     },
     onFailure() {
       if (lastWill) {
         const stale = { ...lastWill, stale: true };
-        tracker.setWillLocation(stale);
-        updateFeed("will", "stale", staleCopy("will", stale, true));
+        renderLocation("will", stale);
       } else {
-        tracker.setWillLocation({ available: false });
-        updateFeed("will", "unavailable", "Will feed unavailable. Showing the planned route and retrying automatically.");
+        renderLocation("will", { available: false }, "Will feed unavailable. Showing the planned route and retrying automatically.");
       }
     },
   });
