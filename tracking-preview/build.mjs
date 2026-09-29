@@ -146,6 +146,12 @@ html = html.replaceAll('href="/#map"', 'href="#map"');
 html = replaceToken(html, "</head>", `  <link rel="stylesheet" href="${styles.url}">\n</head>`);
 html = replaceToken(html, "</body>", `  <script type="module" src="${app.url}"></script>\n</body>`);
 const htmlEntry = writeOutput("index.html", html);
+
+let embedHtml = readFileSync(join(sourceRoot, "embed.html"), "utf8");
+embedHtml = replaceToken(embedHtml, "__STYLES_URL__", styles.url);
+embedHtml = replaceToken(embedHtml, "__APP_URL__", app.url);
+const embedEntry = writeOutput("embed/index.html", embedHtml);
+
 const inlineScripts = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g)];
 if (inlineScripts.length !== 1) throw new Error("Tracking preview has an unexpected executable inline script inventory");
 const inlineScriptHash = createHash("sha256").update(inlineScripts[0][1]).digest("base64");
@@ -155,7 +161,7 @@ DirectoryIndex index.html
 <IfModule mod_headers.c>
 Header always set X-Robots-Tag "noindex, nofollow"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
-Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-${inlineScriptHash}' https://docs.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org https:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self' https:; frame-ancestors 'none'"
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-${inlineScriptHash}' https://docs.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org https:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self' https:; frame-ancestors https:"
 <FilesMatch "^(index\\.html|asset-manifest\\.json)$">
 Header always set Cache-Control "no-cache, must-revalidate"
 </FilesMatch>
@@ -170,6 +176,7 @@ const customAssets = [app, feeds, trackingMap, routeData, leaflet, styles, runne
 const inventory = [
   { ...htaccessEntry, url: `${publicPrefix}/.htaccess` },
   { ...htmlEntry, url: `${publicPrefix}/` },
+  { ...embedEntry, url: `${publicPrefix}/embed/` },
   ...customAssets,
 ];
 const manifest = {

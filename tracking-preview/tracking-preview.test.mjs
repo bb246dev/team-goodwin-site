@@ -184,7 +184,23 @@ test("preview duplicates the complete current production homepage and replaces o
   assert.match(html, /data-feed="will"/);
   assert.match(html, /Pause Live Follow/);
   assert.match(html, /Full Route/);
-  assert.equal(manifest.generatedFiles.length, 10);
+  assert.equal(manifest.generatedFiles.length, 11);
+});
+
+test("embed page exposes only the iframe-safe map shell", () => {
+  const html = readOutput("embed/index.html");
+  assert.match(html, /<body class="tracking-preview-embed-page">/);
+  assert.match(html, /id="tracking-map"/);
+  assert.match(html, /data-feed="rv"/);
+  assert.match(html, /data-feed="will"/);
+  assert.match(html, /data-map-controls/);
+  assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
+  assert.doesNotMatch(html, /tracker-nav|tracker-hero|site-footer|follow-form|googletagmanager|canonical/i);
+  assert.doesNotMatch(html, /__[_A-Z]+__/);
+  assert.match(html, /href="\/tracking-preview\/assets\/tracking-preview-[a-f0-9]{16}\.css"/);
+  assert.match(html, /src="\/tracking-preview\/assets\/app-[a-f0-9]{16}\.mjs"/);
+  assert.match(readOutput(".htaccess"), /frame-ancestors https:/);
+  assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors 'none'/);
 });
 
 test("OpenStreetMap policy and dark treatment remain compliant", () => {

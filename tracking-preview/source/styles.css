@@ -235,6 +235,31 @@
   background: #0a1111;
 }
 
+.tracking-preview-embed-page {
+  margin: 0;
+  min-width: 300px;
+  color: #f8f7ef;
+  background: #080c0c;
+}
+
+.tracking-preview-embed-shell {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.tracking-preview-embed-stage {
+  width: 100%;
+  min-height: 100vh;
+  border: 0;
+  box-shadow: none;
+}
+
+.tracker-map.tracking-preview-embed-map {
+  height: clamp(420px, calc(100vh - 149px), 900px);
+  min-height: 420px;
+}
+
 @media (max-width: 720px) {
   .tracking-preview-feed-grid {
     grid-template-columns: 1fr;
@@ -255,6 +280,11 @@
 
   .tracker-map.tracking-preview-map {
     height: clamp(350px, 108vw, 470px);
+  }
+
+  .tracker-map.tracking-preview-embed-map {
+    height: clamp(360px, calc(100vh - 242px), 620px);
+    min-height: 360px;
   }
 }
 

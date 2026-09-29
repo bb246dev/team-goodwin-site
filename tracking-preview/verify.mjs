@@ -68,6 +68,21 @@ if (!indexEntry || sha256(page.bytes) !== indexEntry.sha256) throw new Error("Tr
 await verifyReturningRequest(manifestUrl, manifestResponse);
 await verifyCacheBusted(manifestUrl, manifestResponse);
 
+const embedUrl = new URL(`${rootPath}embed/`, origin);
+const embed = await bytesFor(embedUrl);
+const embedHtml = embed.bytes.toString("utf8");
+const embedEntry = manifest.generatedFiles.find(({ path }) => path === "embed/index.html");
+if (!embedEntry || sha256(embed.bytes) !== embedEntry.sha256) throw new Error("Tracking preview embed HTML does not match the deployed manifest");
+if (!embed.response.headers.get("x-robots-tag")?.includes("noindex")) throw new Error("Tracking preview embed lacks X-Robots-Tag");
+if (!embedHtml.includes('class="tracking-preview-embed-page"') || !embedHtml.includes('id="tracking-map"')) {
+  throw new Error("Tracking preview embed lacks the map shell");
+}
+if (/tracker-nav|tracker-hero|site-footer|follow-form|googletagmanager|rel=["']canonical|localhost|127\.0\.0\.1/i.test(embedHtml)) {
+  throw new Error("Tracking preview embed contains a forbidden full-page value");
+}
+await verifyReturningRequest(embedUrl, embed);
+await verifyCacheBusted(embedUrl, embed);
+
 const publicAssets = manifest.generatedFiles.filter(({ path }) => path.startsWith("assets/"));
 if (publicAssets.length !== 8) throw new Error("Tracking preview manifest has an unexpected asset inventory");
 for (const entry of publicAssets) {

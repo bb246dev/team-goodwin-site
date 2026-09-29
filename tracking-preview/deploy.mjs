@@ -17,7 +17,7 @@ function visit(directory, prefix = "") {
 
 function safeFile(file) {
   if (file.includes("..") || file.includes("//") || file.startsWith("/")) return false;
-  return file === ".htaccess" || file === "index.html" || file === "asset-manifest.json"
+  return file === ".htaccess" || file === "index.html" || file === "embed/index.html" || file === "asset-manifest.json"
     || allowedAsset.test(file);
 }
 
