@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Apply four scheduled airport display overrides to the current production main-site map while preserving Strava, HAPN, flight tracking, and the isolated tracking preview.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js",
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "assets/main-site-map-airport-overrides-2026-09-29/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "462cd0a9be32239ec695cf1a04b34f0587b78a662788d4b59e62160c32858d70",
+      "expectedRemoteSha256": "a5cefc6b5da47c0a186c175779e571cca0dafde6b0356ce9e0a934158cf5065e"
+    },
+    {
+      "source": "assets/main-site-map-airport-overrides-2026-09-29/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "b1baca5f440a4c5bfa2a68fd50aa256acec302fda2a02aaf53e8dd82b9f0b81c",
+      "expectedRemoteSha256": "bf93f69c291f96cd6a80602250d119584d2b4c01137fb1b23011e3c25a800c1c"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/main-site-airport-overrides.test.mjs",
+      "tests/mission-window-alignment.test.mjs",
+      "tests/hapn-production-base-frontend.test.mjs",
+      "tests/live-map-entity-rendering.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}
