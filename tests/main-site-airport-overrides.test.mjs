@@ -11,24 +11,30 @@ import {
   scheduledAirportPlacementsAt,
 } from "../assets/main-site-map-airport-overrides-2026-09-29/strava-race-map.mjs";
 
-const baseRoot = new URL(
-  "../production-merge/mission-window-alignment-2026-09-09/public_html/assets/",
-  import.meta.url,
-);
 const candidateRoot = new URL(
   "../assets/main-site-map-airport-overrides-2026-09-29/",
   import.meta.url,
 );
-const baseTracker = readFileSync(new URL("tracker-base.js", baseRoot), "utf8");
-const baseModule = readFileSync(new URL("strava-race-map.mjs", baseRoot), "utf8");
 const candidateTracker = readFileSync(new URL("tracker-base.js", candidateRoot), "utf8");
 const candidateModule = readFileSync(new URL("strava-race-map.mjs", candidateRoot), "utf8");
+const manifest = JSON.parse(readFileSync(new URL(
+  "../deploy/manifests/releases/main-site-airport-overrides-2026-09-29.json",
+  import.meta.url,
+), "utf8"));
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
 function namedFunction(source, name) {
   const start = source.indexOf(`function ${name}(`);
   assert.ok(start >= 0, `missing function ${name}`);
-  const open = source.indexOf("{", start);
+  let parameterDepth = 0;
+  let sawParameters = false;
+  let open = -1;
+  for (let index = start; index < source.length; index += 1) {
+    if (source[index] === "(") { parameterDepth += 1; sawParameters = true; }
+    else if (source[index] === ")") parameterDepth -= 1;
+    else if (source[index] === "{" && sawParameters && parameterDepth === 0) { open = index; break; }
+  }
+  assert.ok(open >= 0, `missing body for ${name}`);
   let depth = 0;
   for (let index = open; index < source.length; index += 1) {
     if (source[index] === "{") depth += 1;
@@ -45,9 +51,17 @@ function block(source, start, end) {
   return source.slice(from, to);
 }
 
-test("candidate starts from the exact live main-site map assets", () => {
-  assert.equal(hash(baseTracker), "a5cefc6b5da47c0a186c175779e571cca0dafde6b0356ce9e0a934158cf5065e");
-  assert.equal(hash(baseModule), "bf93f69c291f96cd6a80602250d119584d2b4c01137fb1b23011e3c25a800c1c");
+test("release is pinned to the exact live main-site map assets", () => {
+  assert.deepEqual(manifest.files.map(({ destination, expectedRemoteSha256 }) => ({ destination, expectedRemoteSha256 })), [
+    {
+      destination: "public_html/assets/tracker-base.js",
+      expectedRemoteSha256: "a5cefc6b5da47c0a186c175779e571cca0dafde6b0356ce9e0a934158cf5065e",
+    },
+    {
+      destination: "public_html/assets/strava-race-map.mjs",
+      expectedRemoteSha256: "bf93f69c291f96cd6a80602250d119584d2b4c01137fb1b23011e3c25a800c1c",
+    },
+  ]);
 });
 
 test("the main-site module declares exactly the four approved half-open airport windows", () => {
@@ -113,23 +127,20 @@ test("the transition scheduler rerenders at starts and ends without gating provi
 });
 
 test("Strava, HAPN and flight tracking remain intact and independent of display overrides", () => {
-  for (const name of [
-    "loadPublicRaceSnapshot",
-    "createPublicRacePoller",
-    "loadPublicRvLocation",
-    "hapnLivePositioningEnabled",
-    "createPublicRvPoller",
-  ]) assert.equal(namedFunction(candidateModule, name), namedFunction(baseModule, name), name);
+  const providerHashes = new Map([
+    ["loadPublicRaceSnapshot", "6db5f700fdbbb02c5287847862f33291b4e3ef0ff8a83f481397cefb247e477b"],
+    ["createPublicRacePoller", "f3bce8e2cd22188fdb2c29dba149f536b8921c670d16f22f4a797f22d4c47742"],
+    ["loadPublicRvLocation", "b4f5998dd3d57cfb1f8f1de7d31146d10e1d004daeafb3aa2f8b16353c1f127b"],
+    ["hapnLivePositioningEnabled", "bfa71f1298854c4fb285018aaa3776c530f3433540ebc57ac67f427b2a995433"],
+    ["createPublicRvPoller", "26f94c0df1f876f47ea0bf700b81868da60cfe8351cc14734ba86310355fae8f"],
+  ]);
+  for (const [name, expectedHash] of providerHashes) {
+    assert.equal(hash(namedFunction(candidateModule, name)), expectedHash, name);
+  }
 
-  assert.equal(namedFunction(candidateTracker, "loadMissionTrackingStatus"), namedFunction(baseTracker, "loadMissionTrackingStatus"));
-  assert.equal(
-    block(candidateTracker, "    const flightAirports =", "    const RUN_WITH_WILL_FORM_URL"),
-    block(baseTracker, "    const flightAirports =", "    const RUN_WITH_WILL_FORM_URL"),
-  );
-  assert.equal(
-    block(candidateTracker, "        if (snapshot?.source === \"api\" && snapshot.status.active", "      })();"),
-    block(baseTracker, "        if (snapshot?.source === \"api\" && snapshot.status.active", "      })();"),
-  );
+  assert.equal(hash(namedFunction(candidateTracker, "loadMissionTrackingStatus")), "33eed0277de97989566c92bf22574939694a48174d5ac1a009a0954e23654c5d");
+  assert.equal(hash(block(candidateTracker, "    const flightAirports =", "    const RUN_WITH_WILL_FORM_URL")), "ceeeb9398f1f901aa897c77722c751a58c72adddfd6fef402f0e5b836b397798");
+  assert.equal(hash(block(candidateTracker, "        if (snapshot?.source === \"api\" && snapshot.status.active", "      })();")), "21fea3996cd6648f87efd041ef96d2322d38fda03f00b47a73986cd2b225bc61");
   assert.match(candidateTracker, /flight: \{ \.\.\.mapTrackingDefaults\.flight, \.\.\.\(window\.missionMapTracking\?\.flight \|\| window\.missionFlightTracking \|\| \{\}\) \}/);
   assert.match(candidateTracker, /const airportPoint = flightAirportPoint\(entity\.airportCode, centroids\)/);
   assert.match(candidateTracker, /runnerMarker\.dataset\.scheduledAirport = staticPlacements\.will\.airportCode/);
