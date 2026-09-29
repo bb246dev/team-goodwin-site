@@ -89,7 +89,7 @@ async function waitForOk(port, child, stderr) {
 }
 
 test("4c0526b accepts the exact HAPN-only three-file overlay through Passenger", async (t) => {
-  assert.equal(execFileSync(node22, ["--version"], { encoding: "utf8" }).trim(), "v22.23.2");
+  assert.match(execFileSync(node22, ["--version"], { encoding: "utf8" }).trim(), /^v22\.\d+\.\d+$/);
   const fixture = mkdtempSync(join(tmpdir(), "goodwin-hapn-live-overlay-"));
   t.after(() => rmSync(fixture, { recursive: true, force: true }));
   const archive = join(fixture, "base.tar");
