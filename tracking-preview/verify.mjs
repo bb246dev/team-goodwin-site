@@ -75,6 +75,11 @@ const embedEntry = manifest.generatedFiles.find(({ path }) => path === "embed/in
 if (!embedEntry || sha256(embed.bytes) !== embedEntry.sha256) throw new Error("Tracking preview embed HTML does not match the deployed manifest");
 if (!embed.response.headers.get("x-robots-tag")?.includes("noindex")) throw new Error("Tracking preview embed lacks X-Robots-Tag");
 if (embed.response.headers.has("x-frame-options")) throw new Error("Tracking preview embed must not send X-Frame-Options");
+const embedCsp = embed.response.headers.get("content-security-policy") ?? "";
+if (!embedCsp.includes("frame-ancestors https://50in24.com https://www.50in24.com")) {
+  throw new Error("Tracking preview embed must lock frame-ancestors to the Command Center origins");
+}
+if (embedCsp.includes("frame-ancestors https:")) throw new Error("Tracking preview embed must not allow every HTTPS frame ancestor");
 if (!embedHtml.includes('class="tracking-preview-embed-page"') || !embedHtml.includes('id="tracking-map"')) {
   throw new Error("Tracking preview embed lacks the map shell");
 }

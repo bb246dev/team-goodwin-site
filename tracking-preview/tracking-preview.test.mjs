@@ -201,9 +201,10 @@ test("embed page exposes only the iframe-safe map shell", () => {
   assert.doesNotMatch(html, /__[_A-Z]+__/);
   assert.match(html, /href="\/tracking-preview\/assets\/tracking-preview-[a-f0-9]{16}\.css"/);
   assert.match(html, /src="\/tracking-preview\/assets\/app-[a-f0-9]{16}\.mjs"/);
-  assert.match(readOutput(".htaccess"), /frame-ancestors https:/);
+  assert.match(readOutput(".htaccess"), /frame-ancestors https:\/\/50in24\.com https:\/\/www\.50in24\.com/);
   assert.match(readOutput(".htaccess"), /Header unset X-Frame-Options/);
   assert.match(readOutput(".htaccess"), /Header always unset X-Frame-Options/);
+  assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors https:"/);
   assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors 'none'/);
   assert.doesNotMatch(readOutput(".htaccess"), /Header always set X-Frame-Options/);
 });
