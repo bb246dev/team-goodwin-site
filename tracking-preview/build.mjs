@@ -161,6 +161,8 @@ DirectoryIndex index.html
 <IfModule mod_headers.c>
 Header always set X-Robots-Tag "noindex, nofollow"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header unset X-Frame-Options
+Header always unset X-Frame-Options
 Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-${inlineScriptHash}' https://docs.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org https:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self' https:; frame-ancestors https:"
 <FilesMatch "^(index\\.html|asset-manifest\\.json)$">
 Header always set Cache-Control "no-cache, must-revalidate"
