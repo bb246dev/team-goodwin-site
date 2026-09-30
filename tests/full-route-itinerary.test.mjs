@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
@@ -165,4 +166,16 @@ test("route-only release sources do not add display times", () => {
     assert.equal((current.match(/\b\d{1,2}:\d{2}\s*(?:AM|PM)\b/gi) || []).length,
       (baseline.match(/\b\d{1,2}:\d{2}\s*(?:AM|PM)\b/gi) || []).length, path);
   }
+});
+
+test("the production homepage cache key exposes the corrected route asset without other HTML changes", () => {
+  const homepage = read("homepage-full-route-2026-09-30.html");
+  assert.match(homepage, /\/assets\/tracker-base\.js\?v=20260930route-itinerary/);
+  assert.doesNotMatch(homepage, /\/assets\/tracker-base\.js\?v=20260831mobile-critical-path/);
+
+  const priorHomepage = homepage.replace("20260930route-itinerary", "20260831mobile-critical-path");
+  assert.equal(
+    createHash("sha256").update(priorHomepage).digest("hex"),
+    "4e96d5a878a95e93af6b5cbcd926c2dd56d0d7015f8f2a3bd035fafcc893239f",
+  );
 });
