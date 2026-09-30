@@ -16,6 +16,89 @@ const ROUTE_DATE_OVERRIDES = Object.freeze({
   "ggma-2026-43": "2026-10-28",
 });
 
+// Main-site display overrides only. Local airport times use explicit October
+// offsets so their absolute instants do not depend on the viewer's timezone.
+export const STATIC_AIRPORT_PLACEMENTS = Object.freeze([
+  Object.freeze({ subject: "will", airportCode: "HNL", label: "Honolulu airport", start: "2026-10-09T21:11:00-10:00", end: "2026-10-09T23:00:00-10:00", position: Object.freeze({ lat: 21.3187, lng: -157.9225 }) }),
+  Object.freeze({ subject: "will", airportCode: "ANC", label: "Anchorage airport", start: "2026-10-10T14:00:00-08:00", end: "2026-10-10T15:51:00-08:00", position: Object.freeze({ lat: 61.1743, lng: -149.9985 }) }),
+  Object.freeze({ subject: "rv", airportCode: "PDX", label: "Portland airport", start: "2026-10-11T04:00:00-07:00", end: "2026-10-11T08:00:00-07:00", position: Object.freeze({ lat: 45.5898, lng: -122.5951 }) }),
+  Object.freeze({ subject: "will", airportCode: "PDX", label: "Portland airport", start: "2026-10-11T13:00:00-07:00", end: "2026-10-11T17:00:00-07:00", position: Object.freeze({ lat: 45.5898, lng: -122.5951 }) }),
+]);
+
+const STATIC_AIRPORT_BOUNDARIES = Object.freeze([...new Set(
+  STATIC_AIRPORT_PLACEMENTS.flatMap((placement) => [Date.parse(placement.start), Date.parse(placement.end)]),
+)].sort((left, right) => left - right));
+
+export function scheduledAirportPlacementAt(subject, nowMs = Date.now()) {
+  const placement = STATIC_AIRPORT_PLACEMENTS.find((entry) => entry.subject === subject
+    && nowMs >= Date.parse(entry.start) && nowMs < Date.parse(entry.end));
+  return placement ? {
+    subject: placement.subject,
+    airportCode: placement.airportCode,
+    label: placement.label,
+    start: placement.start,
+    end: placement.end,
+    position: { ...placement.position },
+  } : null;
+}
+
+export function scheduledAirportPlacementsAt(nowMs = Date.now()) {
+  return {
+    will: scheduledAirportPlacementAt("will", nowMs),
+    rv: scheduledAirportPlacementAt("rv", nowMs),
+  };
+}
+
+export function createStaticAirportPlacementScheduler({
+  onTransition = () => {},
+  now = Date.now,
+  setTimeoutImpl = globalThis.setTimeout,
+  clearTimeoutImpl = globalThis.clearTimeout,
+  documentObject = globalThis.document,
+} = {}) {
+  let timer = null;
+  let stopped = true;
+  const clearTimer = () => {
+    if (timer !== null) clearTimeoutImpl(timer);
+    timer = null;
+  };
+  const schedule = () => {
+    clearTimer();
+    if (stopped) return;
+    const current = Number(now());
+    const nextBoundary = STATIC_AIRPORT_BOUNDARIES.find((boundary) => boundary > current);
+    if (!Number.isFinite(nextBoundary)) return;
+    timer = setTimeoutImpl(() => {
+      timer = null;
+      if (stopped) return;
+      onTransition(Number(now()));
+      schedule();
+    }, Math.max(0, nextBoundary - current));
+  };
+  const visibilityChange = () => {
+    if (stopped || documentObject?.hidden) return;
+    onTransition(Number(now()));
+    schedule();
+  };
+  documentObject?.addEventListener?.("visibilitychange", visibilityChange);
+  return {
+    start() {
+      if (!stopped) return;
+      stopped = false;
+      schedule();
+    },
+    stop() {
+      stopped = true;
+      clearTimer();
+    },
+    destroy() {
+      stopped = true;
+      clearTimer();
+      documentObject?.removeEventListener?.("visibilitychange", visibilityChange);
+    },
+  };
+}
+
 function expectedRaceId(raceNumber) {
   return `${WINDOW_ID}-${String(raceNumber).padStart(2, "0")}`;
 }
@@ -235,6 +318,7 @@ export function decodeSummaryPolyline(encoded) {
 export function createPublicRacePoller({
   load,
   onSnapshot,
+  onFailure = () => {},
   documentObject = globalThis.document,
   setTimeoutImpl = globalThis.setTimeout,
   clearTimeoutImpl = globalThis.clearTimeout,
@@ -261,6 +345,8 @@ export function createPublicRacePoller({
       if (snapshot?.source === "api") {
         lastGoodSnapshot = snapshot;
         onSnapshot(snapshot);
+      } else {
+        onFailure();
       }
       return snapshot;
     }).finally(() => {
@@ -299,10 +385,8 @@ function exactKeys(value, keys) {
     && keys.every((key) => Object.hasOwn(value, key));
 }
 
-export function normalizePublicRvLocation(value) {
-  if (exactKeys(value, ["available"]) && value.available === false) {
-    return { owner: "hapn", domain: "rvLocation", available: false };
-  }
+export function normalizePublicRvLocation(value, { nowMs = Date.now() } = {}) {
+  if (exactKeys(value, ["available"]) && value.available === false) return { available: false };
   if (!exactKeys(value, ["available", "stale", "observedAt", "position"])
     || value.available !== true
     || typeof value.stale !== "boolean"
@@ -313,73 +397,17 @@ export function normalizePublicRvLocation(value) {
   }
   const lat = Number(value.position.lat);
   const lng = Number(value.position.lng);
-  if (!Number.isFinite(lat) || lat < -90 || lat > 90
-    || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+  const observedMs = Date.parse(value.observedAt);
+  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || lat === 0
+    || !Number.isFinite(lng) || lng < -180 || lng > 180 || lng === 0
+    || observedMs > nowMs + 5 * 60 * 1_000) {
     throw new Error("invalid_rv_location");
   }
   return {
-    owner: "hapn",
-    domain: "rvLocation",
     available: true,
     stale: value.stale,
-    observedAt: new Date(value.observedAt).toISOString(),
+    observedAt: new Date(observedMs).toISOString(),
     position: { lat, lng },
-  };
-}
-
-export function createMapSnapshot({ staticStops, runner, rv, flight } = {}) {
-  const races = staticRaceSnapshot(staticStops || []);
-  return {
-    schedule: races,
-    locations: {
-      runner: { ...(runner || {}) },
-      rv: { ...(rv || {}) },
-      flight: { ...(flight || {}) },
-    },
-    fallbacks: { rv: { ...(rv || {}) } },
-    observations: { rv: null },
-  };
-}
-
-export function applyRaceSnapshot(snapshot, raceSnapshot) {
-  if (!snapshot || raceSnapshot?.source !== "api") return snapshot;
-  return { ...snapshot, schedule: raceSnapshot };
-}
-
-function sameShallowObject(left, right) {
-  if (!left || !right || typeof left !== "object" || typeof right !== "object") return false;
-  const leftKeys = Object.keys(left);
-  const rightKeys = Object.keys(right);
-  return leftKeys.length === rightKeys.length
-    && leftKeys.every((key) => Object.hasOwn(right, key) && left[key] === right[key]);
-}
-
-export function applyMapDomainPatch(snapshot, patch, {
-  nowMs = Date.now(),
-  raceStatus = null,
-} = {}) {
-  if (!snapshot || patch?.owner !== "hapn" || patch?.domain !== "rvLocation") return snapshot;
-  const restoreFallback = () => {
-    if (snapshot.observations.rv === null && sameShallowObject(snapshot.locations.rv, snapshot.fallbacks.rv)) return snapshot;
-    return {
-      ...snapshot,
-      locations: { ...snapshot.locations, rv: { ...snapshot.fallbacks.rv } },
-      observations: { ...snapshot.observations, rv: null },
-    };
-  };
-  if (!hapnLivePositioningEnabled(raceStatus, nowMs) || !patch.available || patch.stale) return restoreFallback();
-  const observedMs = Date.parse(patch.observedAt);
-  if (!Number.isFinite(observedMs) || observedMs > nowMs + 5 * 60 * 1_000) return restoreFallback();
-  return {
-    ...snapshot,
-    locations: {
-      ...snapshot.locations,
-      rv: { ...snapshot.fallbacks.rv, lat: patch.position.lat, lng: patch.position.lng },
-    },
-    observations: {
-      ...snapshot.observations,
-      rv: { observedAt: patch.observedAt, position: { ...patch.position } },
-    },
   };
 }
 
@@ -414,122 +442,79 @@ export async function loadPublicRvLocation({
   }
 }
 
-export function inMissionRaceWindow(nowMs = Date.now()) {
-  return nowMs >= Date.parse(WINDOW_START) && nowMs <= Date.parse(WINDOW_END);
-}
-
 export function hapnLivePositioningEnabled(raceStatus, nowMs = Date.now()) {
   return Boolean(raceStatus?.source === "api"
     && raceStatus.active === true
     && raceStatus.raceWindowId === WINDOW_ID
     && raceStatus.raceWindowStart === WINDOW_START
     && raceStatus.raceWindowEnd === WINDOW_END
-    && inMissionRaceWindow(nowMs));
+    && nowMs >= Date.parse(WINDOW_START)
+    && nowMs <= Date.parse(WINDOW_END));
 }
 
-export function createMultiProviderCoordinator({
-  providers = [],
+export function createPublicRvPoller({
+  load,
+  onPosition,
+  onStale,
+  onFallback,
+  isEnabled,
   documentObject = globalThis.document,
   setTimeoutImpl = globalThis.setTimeout,
   clearTimeoutImpl = globalThis.clearTimeout,
-  random = Math.random,
-  now = Date.now,
-  maximumBackoffMs = 10 * 60 * 1_000,
-  cooldownFailures = 3,
-  cooldownMs = 5 * 60 * 1_000,
-  jitterRatio = 0.1,
+  intervalMs = HAPN_REFRESH_MS,
 } = {}) {
-  const states = new Map(providers.map((provider) => [provider.name, {
-    provider, dueAt: null, inFlight: null, failures: 0, stopped: false,
-  }]));
-  let stopped = false;
-  let wakeTimer = null;
-
-  const clearWakeTimer = () => {
-    if (wakeTimer !== null) clearTimeoutImpl(wakeTimer);
-    wakeTimer = null;
+  let timer = null;
+  let inFlight = null;
+  let stopped = true;
+  const enabled = () => !stopped && !documentObject?.hidden && isEnabled?.() === true;
+  const clearTimer = () => {
+    if (timer !== null) clearTimeoutImpl(timer);
+    timer = null;
   };
-  const enabled = (state) => !stopped && !state.stopped && !documentObject?.hidden
-    && (typeof state.provider.enabled !== "function" || state.provider.enabled(Number(now())));
-  const delayFor = (state) => {
-    const base = Math.max(1_000, Number(state.provider.intervalMs) || 60_000);
-    const backoff = Math.min(maximumBackoffMs, base * (2 ** Math.max(0, state.failures - 1)));
-    const cooldown = state.failures >= cooldownFailures ? cooldownMs : 0;
-    const delay = state.failures ? Math.max(backoff, cooldown) : base;
-    const jitter = delay * jitterRatio * ((Number(random()) * 2) - 1);
-    return Math.max(1_000, Math.round(delay + jitter));
+  const schedule = () => {
+    clearTimer();
+    if (enabled()) timer = setTimeoutImpl(() => { void refresh(); }, intervalMs);
   };
-  const scheduleWake = () => {
-    clearWakeTimer();
-    if (stopped || documentObject?.hidden) return;
-    const current = Number(now());
-    const dueTimes = [...states.values()]
-      .filter((state) => enabled(state) && !state.inFlight && Number.isFinite(state.dueAt))
-      .map((state) => state.dueAt);
-    if (!dueTimes.length) return;
-    wakeTimer = setTimeoutImpl(wake, Math.max(0, Math.min(...dueTimes) - current));
-  };
-  const refresh = (name) => {
-    const state = states.get(name);
-    if (!state || !enabled(state)) return Promise.resolve(null);
-    if (state.inFlight) return state.inFlight;
-    state.dueAt = null;
-    state.inFlight = Promise.resolve().then(state.provider.load).then((result) => {
-      state.provider.apply?.(result);
-      const successful = typeof state.provider.successful === "function" ? state.provider.successful(result) : true;
-      state.failures = successful ? 0 : state.failures + 1;
-      if (successful && state.provider.continueWhile && !state.provider.continueWhile(result)) state.stopped = true;
+  const refresh = () => {
+    if (!enabled()) {
+      if (!stopped && !documentObject?.hidden && isEnabled?.() !== true) onFallback();
+      return Promise.resolve(null);
+    }
+    if (inFlight) return inFlight;
+    inFlight = Promise.resolve().then(load).then((result) => {
+      if (enabled() && result?.available === true && result.stale === false) onPosition(result.position, result);
+      else if (enabled() && result?.available === true && result.stale === true && onStale) onStale(result);
+      else onFallback();
       return result;
-    }).catch((error) => {
-      state.failures += 1;
-      state.provider.failure?.(error);
+    }).catch(() => {
+      onFallback();
       return null;
     }).finally(() => {
-      state.inFlight = null;
-      state.dueAt = state.stopped ? null : Number(now()) + delayFor(state);
-      scheduleWake();
+      inFlight = null;
+      schedule();
     });
-    return state.inFlight;
+    return inFlight;
   };
-  function wake() {
-    wakeTimer = null;
-    const current = Number(now());
-    for (const state of states.values()) {
-      if (enabled(state) && !state.inFlight && Number.isFinite(state.dueAt) && state.dueAt <= current) {
-        void refresh(state.provider.name);
-      }
-    }
-    scheduleWake();
-  }
   const visibilityChange = () => {
-    clearWakeTimer();
-    if (!documentObject?.hidden) {
-      const current = Number(now());
-      for (const state of states.values()) {
-        if (!state.stopped && !state.inFlight) state.dueAt = current + delayFor(state);
-      }
-      scheduleWake();
-    }
+    clearTimer();
+    if (enabled()) void refresh();
+    else if (!stopped && isEnabled?.() !== true) onFallback();
   };
   documentObject?.addEventListener?.("visibilitychange", visibilityChange);
-
   return {
     start() {
-      const current = Number(now());
-      for (const state of states.values()) {
-        if (enabled(state)) state.dueAt = current;
-      }
-      wake();
+      if (!stopped) return inFlight || Promise.resolve(null);
+      stopped = false;
+      return refresh();
     },
     refresh,
-    state(name) {
-      const state = states.get(name);
-      return state ? { failures: state.failures, inFlight: Boolean(state.inFlight), scheduled: Number.isFinite(state.dueAt) } : null;
-    },
     stop() {
       stopped = true;
-      clearWakeTimer();
-      for (const state of states.values()) state.dueAt = null;
+      clearTimer();
+    },
+    destroy() {
+      stopped = true;
+      clearTimer();
       documentObject?.removeEventListener?.("visibilitychange", visibilityChange);
     },
   };

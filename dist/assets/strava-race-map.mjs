@@ -11,6 +11,10 @@ const WINDOW_ID = "ggma-2026";
 const WINDOW_START = "2026-10-09T09:00:00-04:00";
 const WINDOW_END = "2026-11-01T23:59:59-05:00";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const ROUTE_DATE_OVERRIDES = Object.freeze({
+  "ggma-2026-26": "2026-10-20",
+  "ggma-2026-43": "2026-10-28",
+});
 
 function expectedRaceId(raceNumber) {
   return `${WINDOW_ID}-${String(raceNumber).padStart(2, "0")}`;
@@ -122,14 +126,15 @@ export function joinPublicRaces(staticStops, publicRaces) {
     const raceId = stop.raceId || expectedRaceId(stop.n);
     const race = byId.get(raceId) || byNumber.get(stop.n);
     if (!race) throw new Error("invalid_public_race_join");
+    const routeDate = ROUTE_DATE_OVERRIDES[race.raceId] || race.date;
     return {
       ...stop,
       n: race.raceNumber,
       raceId: race.raceId,
       state: race.state,
       city: race.city,
-      date: displayDate(race.date, stop.date),
-      isoDate: race.date,
+      date: displayDate(routeDate, stop.date),
+      isoDate: routeDate,
       status: race.status,
       activity: race.activity,
     };
