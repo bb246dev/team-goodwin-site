@@ -11,9 +11,16 @@ const WINDOW_ID = "ggma-2026";
 const WINDOW_START = "2026-10-09T09:00:00-04:00";
 const WINDOW_END = "2026-11-01T23:59:59-05:00";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const ROUTE_DATE_OVERRIDES = Object.freeze({
-  "ggma-2026-26": "2026-10-20",
-  "ggma-2026-43": "2026-10-28",
+const ROUTE_ITINERARY_OVERRIDES = Object.freeze({
+  "ggma-2026-18": { date: "2026-10-18", state: "Iowa", city: "Decorah" },
+  "ggma-2026-19": { date: "2026-10-18", state: "Minnesota", city: "Eitzen" },
+  "ggma-2026-23": { date: "2026-10-20", state: "Michigan", city: "Sturgis" },
+  "ggma-2026-25": { date: "2026-10-20", state: "California", city: "Los Angeles" },
+  "ggma-2026-26": { date: "2026-10-21", state: "Nevada", city: "Las Vegas" },
+  "ggma-2026-27": { date: "2026-10-21", state: "Arizona", city: "Willow Beach / Hoover Dam" },
+  "ggma-2026-41": { date: "2026-10-27", state: "Delaware", city: "Glasgow" },
+  "ggma-2026-43": { date: "2026-10-28", state: "New Jersey", city: "Teterboro" },
+  "ggma-2026-45": { date: "2026-10-29", state: "Rhode Island", city: "Providence" },
 });
 
 function expectedRaceId(raceNumber) {
@@ -126,13 +133,14 @@ export function joinPublicRaces(staticStops, publicRaces) {
     const raceId = stop.raceId || expectedRaceId(stop.n);
     const race = byId.get(raceId) || byNumber.get(stop.n);
     if (!race) throw new Error("invalid_public_race_join");
-    const routeDate = ROUTE_DATE_OVERRIDES[race.raceId] || race.date;
+    const routeOverride = ROUTE_ITINERARY_OVERRIDES[race.raceId];
+    const routeDate = routeOverride?.date || race.date;
     return {
       ...stop,
       n: race.raceNumber,
       raceId: race.raceId,
-      state: race.state,
-      city: race.city,
+      state: routeOverride?.state || race.state,
+      city: routeOverride?.city || race.city,
       date: displayDate(routeDate, stop.date),
       isoDate: routeDate,
       status: race.status,

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { joinPublicRaces as joinMaintainedRaces } from "../assets/strava-race-map.mjs";
-import { joinPublicRaces as joinReleaseRaces } from "../assets/releases/route-dates-2026-09-30/strava-race-map.mjs";
+import { joinPublicRaces as joinReleaseRaces } from "../assets/releases/full-route-itinerary-2026-09-30/strava-race-map.mjs";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), "utf8");
@@ -33,13 +33,26 @@ function scheduleFixture() {
   return { staticStops, publicRaces };
 }
 
-test("maintained and production map joins correct only the two revised route dates", () => {
+test("maintained and production map joins apply the corrected itinerary records", () => {
   const { staticStops, publicRaces } = scheduleFixture();
   for (const join of [joinMaintainedRaces, joinReleaseRaces]) {
     const races = join(staticStops, publicRaces);
     assert.deepEqual(
-      [races[25].date, races[25].isoDate, races[26].date, races[42].date, races[42].isoDate, races[43].date],
-      ["Oct 20", "2026-10-20", "Oct 21", "Oct 28", "2026-10-28", "Oct 29"],
+      [18, 19, 23, 25, 26, 27, 41, 43, 45].map((raceNumber) => {
+        const { n, date, isoDate, state, city } = races[raceNumber - 1];
+        return { n, date, isoDate, state, city };
+      }),
+      [
+        { n: 18, date: "Oct 18", isoDate: "2026-10-18", state: "Iowa", city: "Decorah" },
+        { n: 19, date: "Oct 18", isoDate: "2026-10-18", state: "Minnesota", city: "Eitzen" },
+        { n: 23, date: "Oct 20", isoDate: "2026-10-20", state: "Michigan", city: "Sturgis" },
+        { n: 25, date: "Oct 20", isoDate: "2026-10-20", state: "California", city: "Los Angeles" },
+        { n: 26, date: "Oct 21", isoDate: "2026-10-21", state: "Nevada", city: "Las Vegas" },
+        { n: 27, date: "Oct 21", isoDate: "2026-10-21", state: "Arizona", city: "Willow Beach / Hoover Dam" },
+        { n: 41, date: "Oct 27", isoDate: "2026-10-27", state: "Delaware", city: "Glasgow" },
+        { n: 43, date: "Oct 28", isoDate: "2026-10-28", state: "New Jersey", city: "Teterboro" },
+        { n: 45, date: "Oct 29", isoDate: "2026-10-29", state: "Rhode Island", city: "Providence" },
+      ],
     );
   }
 });
@@ -50,33 +63,39 @@ test("all maintained itinerary sources contain the revised dates and preserve co
     "source-html/week-2.raw.html",
     "source-html/week-3.raw.html",
     "source-html/live-tracking.html",
-    "assets/releases/route-dates-2026-09-30/tracker-base.js",
-    "fifty-runs-route-dates-2026-09-30.html",
-    "week-2-route-dates-2026-09-30.html",
-    "week-3-route-dates-2026-09-30.html",
+    "source-html/week-1.raw.html",
+    "assets/releases/full-route-itinerary-2026-09-30/tracker-base.js",
+    "fifty-runs-full-route-2026-09-30.html",
+    "week-2-full-route-2026-09-30.html",
+    "week-3-full-route-2026-09-30.html",
   ].map(read).join("\n");
 
-  assert.match(sources, /city: "Los Angeles", date: "Oct 20"/);
+  assert.match(sources, /n: 18, state: "Iowa", abbr: "IA", city: "Decorah", date: "Oct 18"/);
+  assert.match(sources, /n: 19, state: "Minnesota", abbr: "MN", city: "Eitzen", date: "Oct 18"/);
+  assert.match(sources, /n: 23, state: "Michigan", abbr: "MI", city: "Sturgis", date: "Oct 20"/);
+  assert.match(sources, /n: 25, state: "California", abbr: "CA", city: "Los Angeles", date: "Oct 20"/);
+  assert.match(sources, /n: 26, state: "Nevada", abbr: "NV", city: "Las Vegas", date: "Oct 21"/);
+  assert.match(sources, /n: 27, state: "Arizona", abbr: "AZ", city: "Willow Beach \/ Hoover Dam", date: "Oct 21"/);
+  assert.match(sources, /n: 41, state: "Delaware", abbr: "DE", city: "Glasgow", date: "Oct 27"/);
   assert.match(sources, /city: "Teterboro", date: "Oct 28"/);
-  assert.match(sources, /city: "Las Vegas", date: "Oct 21"/);
+  assert.match(sources, /n: 45, state: "Rhode Island", abbr: "RI", city: "Providence", date: "Oct 29"/);
   assert.match(sources, /city: "Stamford", date: "Oct 29"/);
   assert.match(sources, /city: "Greenville", date: "Oct 25"/);
   assert.match(sources, /city: "Asheville", date: "Oct 25"/);
-  assert.doesNotMatch(sources, /city: "Los Angeles", date: "Oct 21"/);
-  assert.doesNotMatch(sources, /city: "Teterboro", date: "Oct 29"/);
-  assert.doesNotMatch(sources, /Oct 21<\/span><strong class="stop-state">California<\/strong><span class="stop-city">Los Angeles/);
-  assert.doesNotMatch(sources, /Oct 29<\/span><strong class="stop-state">New Jersey<\/strong><span class="stop-city">Teterboro/);
-  assert.doesNotMatch(sources, /<div class="date">Oct 21<\/div><div class="city">Los Angeles/);
-  assert.doesNotMatch(sources, /<div class="date">Oct 29<\/div><div class="city">Teterboro/);
-  assert.doesNotMatch(sources, /Los Angeles \| Oct 21/);
-  assert.doesNotMatch(sources, /Teterboro \| Oct 29/);
+  assert.doesNotMatch(sources, /Minneapolis|Lansing/);
 });
 
-test("the backend seed records the revised dates while preserving nearby controls", () => {
+test("the backend seed records the corrected itinerary while preserving controls", () => {
   const seed = read("strava-app/seeds/001_ggma_2026_race_schedule_mysql.sql");
-  assert.match(seed, /26, '2026-10-20', 'California',[^\n]*'Los Angeles'/);
-  assert.match(seed, /27, '2026-10-21', 'Nevada',[^\n]*'Las Vegas'/);
+  assert.match(seed, /18, '2026-10-18', 'Iowa',[^\n]*'Decorah'/);
+  assert.match(seed, /19, '2026-10-18', 'Minnesota',[^\n]*'Eitzen'/);
+  assert.match(seed, /23, '2026-10-20', 'Michigan',[^\n]*'Sturgis'/);
+  assert.match(seed, /25, '2026-10-20', 'California',[^\n]*'Los Angeles'/);
+  assert.match(seed, /26, '2026-10-21', 'Nevada',[^\n]*'Las Vegas'/);
+  assert.match(seed, /27, '2026-10-21', 'Arizona',[^\n]*'Willow Beach \/ Hoover Dam'/);
+  assert.match(seed, /41, '2026-10-27', 'Delaware',[^\n]*'Glasgow'/);
   assert.match(seed, /43, '2026-10-28', 'New Jersey',[^\n]*'Teterboro'/);
+  assert.match(seed, /45, '2026-10-29', 'Rhode Island',[^\n]*'Providence'/);
   assert.match(seed, /44, '2026-10-29', 'Connecticut',[^\n]*'Stamford'/);
   assert.match(seed, /34, '2026-10-25', 'South Carolina',[^\n]*'Greenville'/);
   assert.match(seed, /35, '2026-10-25', 'North Carolina',[^\n]*'Asheville'/);

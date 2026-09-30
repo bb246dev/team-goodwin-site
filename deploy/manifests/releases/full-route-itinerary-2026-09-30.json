@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Align the main-site homepage itinerary and published route pages with the approved 50-run state, city, and date sequence without changing presentation, tracking behavior, RSVP configuration, or security headers.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js",
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/full-route-itinerary-2026-09-30/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "c1926c43c01dee1c16054f972e2e9843ecf111644321a9592c2a2fdd810b6e30",
+      "expectedRemoteSha256": "8a45fa4a574c1123884c838ae2a5f07b09bed6ff00161326ea2e85f4c018beb9"
+    },
+    {
+      "source": "assets/releases/full-route-itinerary-2026-09-30/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "3f476d314f48615ee0f9ae8dca165f2d940ef8d0b5a84651bb303711573125ca",
+      "expectedRemoteSha256": "07aa5883a943997d23ac894af4af3947a1590e3066e8fe6aeba2ab2667aac139"
+    },
+    {
+      "source": "fifty-runs-full-route-2026-09-30.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedRemoteSha256": "44afb7fd83c2ab628cc3d02cbe233096322a1f521b87692c0486a3cfab532087"
+    },
+    {
+      "source": "week-2-full-route-2026-09-30.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedRemoteSha256": "9ca6c7a02a23e47cb95aaff758d1c6b7ddd5bd7368ed172d6bbcd72405299ab9"
+    },
+    {
+      "source": "week-3-full-route-2026-09-30.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedRemoteSha256": "9aa58c2a19db9c2155d52e731dc356f06eb91e0ed598ce38f5f063909a61e8bb"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/full-route-itinerary.test.mjs",
+      "tests/route-date-update.test.mjs",
+      "tests/main-site-airport-overrides.test.mjs",
+      "tests/strava-map-integration.test.mjs",
+      "tests/strava-race-schedule.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking/",
+      "/fifty-runs/",
+      "/week-1/",
+      "/week-2/",
+      "/week-3/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}

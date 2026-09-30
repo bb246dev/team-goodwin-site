@@ -69,20 +69,20 @@ test("published Kansas City and Arizona location wording is preserved", () => {
       { race_number: 17, state: "Missouri", city: "Kansas City" },
     ],
   );
-  assert.equal(races[24].city, "Willow Beach / Hoover Dam");
+  assert.equal(races[26].city, "Willow Beach / Hoover Dam");
 });
 
 test("same-day races remain ambiguous without geographic evidence", () => {
   assert.equal(races.filter((race) => race.race_date === "2026-10-10").length, 2);
-  assert.equal(races.filter((race) => race.race_date === "2026-10-17").length, 3);
+  assert.equal(races.filter((race) => race.race_date === "2026-10-17").length, 2);
   assert.equal(races.filter((race) => race.race_date === "2026-10-25").length, 3);
   const result = matchRaceActivityCandidate(activity(), races);
   assert.equal(result.classificationStatus, "pending");
   assert.equal(result.reason, "geographic_confirmation_required");
-  assert.deepEqual(result.candidateRaceIds, ["ggma-2026-16", "ggma-2026-17", "ggma-2026-18"]);
+  assert.deepEqual(result.candidateRaceIds, ["ggma-2026-16", "ggma-2026-17"]);
 });
 
-test("state and city evidence confidently select one race on a three-race day", () => {
+test("state and city evidence confidently select one race on a multi-race day", () => {
   const result = matchRaceActivityCandidate(activity({
     location_state: "Kansas",
     location_city: "Kansas City",
