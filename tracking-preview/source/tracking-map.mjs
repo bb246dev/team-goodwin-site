@@ -1,10 +1,10 @@
 export const PREVIEW_TILE_PROVIDER = Object.freeze({
   url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-  maxNativeZoom: 10,
+  maxNativeZoom: 17,
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
 });
 export const MAX_NATIVE_ZOOM = PREVIEW_TILE_PROVIDER.maxNativeZoom;
-export const FOLLOW_ZOOM = 10;
+export const FOLLOW_ZOOM = 17;
 export const TRACKING_STATE = Object.freeze({ LIVE: "live", STALE: "stale", UNAVAILABLE: "unavailable", SCHEDULED: "scheduled" });
 
 export function validCoordinate(value) {

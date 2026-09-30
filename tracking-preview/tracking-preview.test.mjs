@@ -233,7 +233,7 @@ test("planned full-country route loads before feeds and survives feed failures",
   assert.doesNotMatch(appSource, /await (?:rvPoller|willPoller)\.start/);
 });
 
-test("first fresh RV focuses at zoom 10 and later movement pans", () => {
+test("first fresh RV focuses at zoom 17 and later movement pans", () => {
   const h = harness({ reducedMotion: false });
   h.tracker.setRvLocation(freshRv());
   assert.equal(h.tracker.getRvState().kind, TRACKING_STATE.LIVE);
@@ -241,20 +241,20 @@ test("first fresh RV focuses at zoom 10 and later movement pans", () => {
   assert.equal(h.tracker.isLiveFollowEnabled(), true);
   assert.equal(h.buttons.live.textContent, "Pause Live Follow");
   assert.deepEqual(h.calls.fitBounds.at(-1).bounds, [[39.966123456, -82.934654321]]);
-  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 10);
-  assert.equal(h.calls.fitBounds.at(-1).zoom, 10);
+  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 17);
+  assert.equal(h.calls.fitBounds.at(-1).zoom, 17);
   h.tracker.setRvLocation(freshRv(39.967, -82.935, "2026-09-20T12:01:00.000Z"));
   assert.deepEqual(h.calls.panTo.at(-1).point, [39.967, -82.935]);
-  assert.equal(h.calls.panTo.at(-1).zoom, 10);
+  assert.equal(h.calls.panTo.at(-1).zoom, 17);
 });
 
-test("first fresh Will focuses at zoom 10", () => {
+test("first fresh Will focuses at zoom 17", () => {
   const h = harness({ reducedMotion: false });
   h.tracker.setWillLocation(freshWill());
   assert.equal(h.tracker.getFollowing(), "will");
   assert.deepEqual(h.calls.fitBounds.at(-1).bounds, [[40.123456789, -82.123456789]]);
-  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 10);
-  assert.equal(h.calls.fitBounds.at(-1).zoom, 10);
+  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 17);
+  assert.equal(h.calls.fitBounds.at(-1).zoom, 17);
 });
 
 test("both fresh subjects are framed together", () => {
@@ -266,7 +266,7 @@ test("both fresh subjects are framed together", () => {
     [40.123456789, -82.123456789],
     [39.966123456, -82.934654321],
   ]);
-  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 10);
+  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 17);
 });
 
 test("stale RV remains as a labeled last-known marker without auto-follow", () => {
@@ -318,19 +318,19 @@ test("Pause, Resume, and Full Route control automatic camera movement", () => {
   assert.equal(h.calls.fitBounds.at(-1).bounds.length, h.routeStops.length + 1);
 });
 
-test("maximum zoom is 10 across map, tiles, direct views, and fits", () => {
+test("maximum zoom is 17 across map, tiles, direct views, and fits", () => {
   const h = harness();
-  assert.equal(MAX_NATIVE_ZOOM, 10);
-  assert.equal(FOLLOW_ZOOM, 10);
-  assert.equal(h.calls.mapOptions.maxZoom, 10);
+  assert.equal(MAX_NATIVE_ZOOM, 17);
+  assert.equal(FOLLOW_ZOOM, 17);
+  assert.equal(h.calls.mapOptions.maxZoom, 17);
   assert.equal(h.calls.mapOptions.bounceAtZoomLimits, false);
-  assert.equal(h.calls.tileOptions.maxZoom, 10);
-  assert.equal(h.calls.tileOptions.maxNativeZoom, 10);
+  assert.equal(h.calls.tileOptions.maxZoom, 17);
+  assert.equal(h.calls.tileOptions.maxNativeZoom, 17);
   assert.equal(h.calls.tileOptions.detectRetina, false);
   h.tracker.map.setView([0, 1], 99, {});
   h.tracker.map.flyTo([1, 2], 99, {});
-  assert.equal(h.calls.setView.at(-1).zoom, 10);
-  assert.equal(h.calls.flyTo.at(-1).zoom, 10);
+  assert.equal(h.calls.setView.at(-1).zoom, 17);
+  assert.equal(h.calls.flyTo.at(-1).zoom, 17);
 });
 
 test("public RV normalization and intended endpoint remain strict", async () => {
