@@ -1,0 +1,140 @@
+name: Provision new static production assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Confirm absence only or provision the reviewed new assets
+        required: true
+        type: choice
+        default: dry-run
+        options:
+          - dry-run
+          - deploy
+      manifest:
+        description: Repository-relative approved absent-state manifest
+        required: true
+        type: string
+        default: deploy/manifests/releases/sponsor-assets-provision-2026-10-04.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate exact new-asset release
+    runs-on: ubuntu-latest
+    env:
+      MANIFEST_PATH: ${{ inputs.manifest }}
+      DEPLOY_MODE: ${{ inputs.mode }}
+      RELEASE_COMMIT_SHA: ${{ github.sha }}
+    steps:
+      - name: Check out selected commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: |
+          npm ci
+          npm --prefix strava-app ci
+
+      - name: Validate manifest, paths, sources, and hashes
+        run: node scripts/deploy/validate-manifest.mjs --manifest "$MANIFEST_PATH" --type static --release micro --mode "$DEPLOY_MODE"
+
+      - name: Check selected commit diff and workspace
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            git diff --check HEAD^ HEAD
+          else
+            git diff --check
+          fi
+          test -z "$(git status --porcelain)"
+
+      - name: Run micro release validation
+        run: GOODWIN_NODE_22="$(command -v node)" node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type static --release micro --workspace "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
+
+      - name: Scan every validated candidate source without skips
+        run: node scripts/deploy/scan-secrets.mjs --manifest "$MANIFEST_PATH" --type static --release micro --root "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID"
+
+      - name: Build immutable release candidate
+        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type static --release micro --root "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json" --release-commit "$RELEASE_COMMIT_SHA" --output deployment-release
+
+      - name: Save release candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: static-provision-release-${{ github.run_id }}
+          path: deployment-release/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Clean isolated validation workspace
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
+
+  production:
+    name: ${{ inputs.mode == 'deploy' && 'Provision new static production assets' || 'Confirm new asset paths are absent' }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DEPLOYMENT_ENVIRONMENT: production
+    steps:
+      - name: Guard production readiness
+        env:
+          PRODUCTION_DEPLOYMENTS_ENABLED: ${{ vars.PRODUCTION_DEPLOYMENTS_ENABLED }}
+        run: test "$PRODUCTION_DEPLOYMENTS_ENABLED" = "true"
+
+      - name: Check out selected commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Restore validated release candidate
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: static-provision-release-${{ github.run_id }}
+          path: deployment-release
+
+      - name: Confirm absence and optionally provision exact assets
+        env:
+          CONFIRM_PRODUCTION_PROVISION: ${{ inputs.mode == 'deploy' && 'YES' || 'NO' }}
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-provision-temporary-${{ github.run_id }}
+        run: node scripts/deploy/provision-static-assets.mjs --release deployment-release/release.json --mode "${{ inputs.mode }}" --output deployment-results/provisioning.json
+
+      - name: Save non-sensitive provisioning result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: static-provision-result-${{ github.run_id }}
+          path: deployment-results/provisioning.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Delete temporary credential files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-provision-temporary-$GITHUB_RUN_ID"
