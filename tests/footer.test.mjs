@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const generatedPages = readdirSync(new URL("../dist/", import.meta.url))
@@ -80,4 +80,53 @@ test("footer icons are locally embedded, white, and touch sized", () => {
   assert.match(html, /@media\(max-width:640px\)\{\.site-footer \.footer-social-group/);
   assert.doesNotMatch(html, /@media\(max-width:640px\)\{\.site-footer-nav,\.global-site-footer-nav/);
   assert.doesNotMatch(html, /<svg[^>]+(?:src|href)="https?:\/\//);
+});
+
+test("the additional sponsor row is local, linked, ordered, and responsive", () => {
+  const expectedSponsors = [
+    ["Hertz", "https://www.hertz.com/", "hertz-footer.png"],
+    ["Bingo Jets", "https://www.bingojets.com/", "bingo-jets-footer.png"],
+    ["Real SLX", "https://realslx.com/?utm_source=ig&amp;utm_medium=social&amp;utm_content=link_in_bio", "real-slx-footer.svg"],
+    ["Moxy Hotels", "https://www.marriott.com/brands/moxy-hotels.mi", "moxy-hotels-footer.svg"],
+    ["Fontainebleau Miami Beach", "https://www.fontainebleau.com/miamibeach/", "fontainebleau-miami-beach-footer.svg"],
+    ["Fontainebleau Las Vegas", "https://www.fontainebleaulasvegas.com/", "fontainebleau-las-vegas-footer.svg"],
+  ];
+
+  const html = readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8");
+  const rowStart = html.indexOf('<div class="partner-logo-row-new" aria-label="Additional partners">');
+  const rowEnd = html.indexOf('<p class="site-footer-partner-disclaimer">', rowStart);
+  const row = html.slice(rowStart, rowEnd);
+  const wallStart = html.indexOf('<div class="partner-logo-wall">');
+  const wall = html.slice(wallStart, rowStart);
+
+  assert.ok(rowStart > wallStart, "new row follows the original sponsor wall");
+  assert.ok(rowEnd > rowStart, "new row is inside the sponsor footer");
+  assert.equal((row.match(/class="partner-logo-item(?: partner-logo-item-bingo)?"/g) ?? []).length, 6);
+  assert.match(wall, /href="https:\/\/www\.jetexcellence\.com\/"[^>]+aria-label="Visit Jet Excellence"/);
+  assert.match(wall, /src="assets\/partners\/jet-excellence-footer\.png"[^>]+alt="Jet Excellence logo"/);
+  assert.equal((html.match(/aria-label="Visit Jet Excellence"/g) ?? []).length, 1, "Jet Excellence replaces FlyExclusive once");
+  assert.ok(existsSync(new URL("../dist/assets/partners/jet-excellence-footer.png", import.meta.url)));
+
+  for (const [index, [name, href, asset]] of expectedSponsors.entries()) {
+    const sponsorPosition = row.indexOf(`aria-label="Visit ${name}"`);
+    assert.ok(sponsorPosition >= 0, `${name}: linked logo exists`);
+    if (index > 0) {
+      assert.ok(
+        sponsorPosition > row.indexOf(`aria-label="Visit ${expectedSponsors[index - 1][0]}"`),
+        `${name}: sponsor order`,
+      );
+    }
+    assert.match(row, new RegExp(`href="${href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`), `${name}: official link`);
+    assert.match(row, new RegExp(`src="assets/partners/${asset.replace(".", "\\.")}"`), `${name}: local asset`);
+    assert.ok(existsSync(new URL(`../dist/assets/partners/${asset}`, import.meta.url)), `${name}: copied asset`);
+  }
+
+  assert.ok(row.indexOf("Visit Bingo Jets") < row.indexOf("Visit Real SLX"), "Real SLX follows Bingo Jets");
+  assert.ok(row.indexOf("Visit Real SLX") < row.indexOf("Visit Moxy Hotels"), "Real SLX is the centered third logo");
+  assert.doesNotMatch(html, /flyexclusive/i);
+  assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive-footer.svg", import.meta.url)), false);
+  assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive.png", import.meta.url)), false);
+  assert.match(html, /\.partner-logo-row-new[^}]+grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+  assert.match(html, /@media\(max-width:640px\)[^{]*\{\.site-footer \.partner-logo-row-new[^}]+grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(html, /\.partner-logo-row-new \.partner-logo-item a:focus-visible[^}]+outline:2px solid #fff/);
 });

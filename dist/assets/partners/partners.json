@@ -40,14 +40,14 @@
     "website": "https://fly1200.com/"
   },
   {
-    "displayName": "flyExclusive",
-    "slug": "flyexclusive",
-    "officialSource": "https://www.flyexclusive.com/",
-    "originalAsset": "/assets/partners/flyexclusive.png",
-    "footerAsset": "/assets/partners/flyexclusive-footer.svg",
+    "displayName": "Jet Excellence",
+    "slug": "jet-excellence",
+    "officialSource": "https://www.jetexcellence.com/",
+    "originalAsset": "https://static.wixstatic.com/media/109510_1a5c3f9275e34c43a47132f6a2b350a2~mv2.png",
+    "footerAsset": "/assets/partners/jet-excellence-footer.png",
     "assetType": "png",
-    "notes": "Official transparent PNG from flyExclusive's website. Footer version wraps the original PNG with a monochrome white SVG filter.",
-    "website": "https://www.flyexclusive.com/"
+    "notes": "Optimized local PNG derived from the official transparent header logo on Jet Excellence's website.",
+    "website": "https://www.jetexcellence.com/"
   },
   {
     "displayName": "Jet Linx",
@@ -148,5 +148,65 @@
     "assetType": "png",
     "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork.",
     "website": "https://www.whoop.com/"
+  },
+  {
+    "displayName": "Hertz",
+    "slug": "hertz",
+    "officialSource": "https://images.hertz.com/misc/overlay/hertz-logo-black.png",
+    "originalAsset": "https://images.hertz.com/misc/overlay/hertz-logo-black.png",
+    "footerAsset": "/assets/partners/hertz-footer.png",
+    "assetType": "png",
+    "notes": "Optimized transparent monochrome PNG derived from the official Hertz consumer-site header logo.",
+    "website": "https://www.hertz.com/"
+  },
+  {
+    "displayName": "Bingo Jets",
+    "slug": "bingo-jets",
+    "officialSource": "https://www.bingojets.com/",
+    "originalAsset": "https://cdn.prod.website-files.com/689349ac1a855364e045d745/6898f4ab5735f3e142dadb2f_Bingo%20jets%20Logo.avif",
+    "footerAsset": "/assets/partners/bingo-jets-footer.png",
+    "assetType": "png",
+    "notes": "Optimized transparent PNG derived from the official Bingo Jets footer logo.",
+    "website": "https://www.bingojets.com/"
+  },
+  {
+    "displayName": "Real SLX",
+    "slug": "real-slx",
+    "officialSource": "https://realslx.com/wp-content/themes/realslx/assets/logo-wordmark.svg",
+    "originalAsset": "/assets/partners/real-slx-footer.svg",
+    "footerAsset": "/assets/partners/real-slx-footer.svg",
+    "assetType": "svg",
+    "notes": "Official text-only wordmark SVG from Real SLX; the separate seal asset is intentionally not used.",
+    "website": "https://realslx.com/?utm_source=ig&utm_medium=social&utm_content=link_in_bio"
+  },
+  {
+    "displayName": "Moxy Hotels",
+    "slug": "moxy-hotels",
+    "officialSource": "https://www.marriott.com/brands/moxy-hotels.mi",
+    "originalAsset": "/assets/partners/moxy-hotels-footer.svg",
+    "footerAsset": "/assets/partners/moxy-hotels-footer.svg",
+    "assetType": "svg",
+    "notes": "Official Moxy Hotels vector artwork extracted from Marriott's brand directory; confirms the brand spelling is Moxy.",
+    "website": "https://www.marriott.com/brands/moxy-hotels.mi"
+  },
+  {
+    "displayName": "Fontainebleau Miami Beach",
+    "slug": "fontainebleau-miami-beach",
+    "officialSource": "https://www.fontainebleau.com/uploads/2025/08/fontainebleau-miami-beach-logo-sw.svg",
+    "originalAsset": "/assets/partners/fontainebleau-miami-beach-footer.svg",
+    "footerAsset": "/assets/partners/fontainebleau-miami-beach-footer.svg",
+    "assetType": "svg",
+    "notes": "Official property wordmark SVG from the Fontainebleau Miami Beach website.",
+    "website": "https://www.fontainebleau.com/miamibeach/"
+  },
+  {
+    "displayName": "Fontainebleau Las Vegas",
+    "slug": "fontainebleau-las-vegas",
+    "officialSource": "https://www.fontainebleaulasvegas.com/uploads/2025/02/Logo_Fontainebleau_LasVegas.svg",
+    "originalAsset": "/assets/partners/fontainebleau-las-vegas-footer.svg",
+    "footerAsset": "/assets/partners/fontainebleau-las-vegas-footer.svg",
+    "assetType": "svg",
+    "notes": "Official property wordmark SVG from the Fontainebleau Las Vegas website.",
+    "website": "https://www.fontainebleaulasvegas.com/"
   }
 ]
