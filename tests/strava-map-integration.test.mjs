@@ -265,3 +265,15 @@ test("both client map datasets carry the revised hidden schedule times", () => {
     }
   }
 });
+
+test("the live map gates the RV and airplane markers to their active windows", () => {
+  const html = readFileSync(new URL("../source-html/live-tracking.html", import.meta.url), "utf8");
+  assert.match(html, /const rvMapVisibleFrom = Date\.parse\("2026-10-11T06:00:00-07:00"\)/);
+  assert.match(html, /if \(showRv\) appendImageMarker\(svg, svgNS, rvPoint/);
+  assert.match(html, /enabled: \(nowMs\) => rvMapVisible\(nowMs\)[\s\S]+hapnLivePositioningEnabled\(missionRaceStatus, nowMs\)/);
+  assert.match(html, /flight\?\.status !== "en_route"/);
+  assert.match(html, /data-map-flight-key hidden/);
+  assert.match(html, /updateTrackingMapKey\(\{ showFlight: hasActiveFlight, showRv \}\)/);
+  assert.match(html, /missionRaceStatus = \{ \.\.\.snapshot\.status, source: snapshot\.source \}/);
+  assert.doesNotMatch(html, /<span><svg[^>]+>[\s\S]*?<\/svg>Flight<\/span>/);
+});

@@ -679,6 +679,10 @@
       border-right: 0;
     }
 
+    .tracking-map-key [hidden] {
+      display: none !important;
+    }
+
     .tracking-map-key img,
     .tracking-map-key svg {
       flex: 0 0 28px;
@@ -3525,8 +3529,8 @@
           <p class="sr-only" data-race-map-status aria-live="polite">0 of 50 races completed.</p>
           <div class="tracking-map-key" aria-label="Goodwin Generated Mission America tracking layers">
             <span><img src="assets/map-runner-bobblehead-small.png" alt="">Runner</span>
-            <span><svg viewBox="-17 -23 34 46" aria-hidden="true" focusable="false"><path class="legend-plane" d="M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z"></path></svg>Flight</span>
-            <span><img src="assets/map-rv-green-small.png" alt="">RV</span>
+            <span data-map-flight-key hidden><svg viewBox="-17 -23 34 46" aria-hidden="true" focusable="false"><path class="legend-plane" d="M0 -21 Q3 -21 3 -18 L3 -4 L16 4 L16 8 L3 5 L3 18 L8 21 L8 23 L0 20 L-8 23 L-8 21 L-3 18 L-3 5 L-16 8 L-16 4 L-3 -4 L-3 -18 Q-3 -21 0 -21 Z"></path></svg>Flight</span>
+            <span data-map-rv-key hidden><img src="assets/map-rv-green-small.png" alt="">RV</span>
           </div>
         </div>
         <p class="legal-note">Tracking note: Location and status information may be delayed, approximate or temporarily unavailable. Travel schedules and route information are subject to change.</p>
@@ -4774,7 +4778,55 @@
     let missionMapTopology = null;
     let missionProviderCoordinator = null;
     let missionMapLoadPromise = null;
+    let missionRvRevealTimer = null;
     const startDate = new Date("2026-10-09T06:00:00-04:00");
+    const rvMapVisibleFrom = Date.parse("2026-10-11T06:00:00-07:00");
+
+    function rvMapVisible(nowMs = Date.now()) {
+      return Number(nowMs) >= rvMapVisibleFrom;
+    }
+
+    function activeFlightTracking(status) {
+      const flight = status?.trackingSource === "flightaware" ? status.flight : null;
+      const position = flight?.position;
+      if (flight?.status !== "en_route" || flight.trackingAvailable !== true || flight.stale !== false
+        || !position || !Number.isFinite(Number(position.lat)) || !Number.isFinite(Number(position.lng))) {
+        return { active: false };
+      }
+      return {
+        active: true,
+        origin: flight.origin,
+        destination: flight.destination,
+        lat: Number(position.lat),
+        lng: Number(position.lng),
+        track: Number.isFinite(Number(position.track)) ? Number(position.track) : null
+      };
+    }
+
+    function updateTrackingMapKey({ showFlight = false, showRv = false } = {}) {
+      const flightKey = document.querySelector("[data-map-flight-key]");
+      const rvKey = document.querySelector("[data-map-rv-key]");
+      if (flightKey) flightKey.hidden = !showFlight;
+      if (rvKey) rvKey.hidden = !showRv;
+    }
+
+    function scheduleRvMapReveal() {
+      if (missionRvRevealTimer !== null) window.clearTimeout(missionRvRevealTimer);
+      const remaining = rvMapVisibleFrom - Date.now();
+      if (remaining <= 0) return;
+      missionRvRevealTimer = window.setTimeout(() => {
+        missionRvRevealTimer = null;
+        if (rvMapVisible()) {
+          updateTrackingMapKey({
+            showFlight: missionMapSnapshot.locations.flight.active === true,
+            showRv: true
+          });
+          if (missionMapTopology) renderMissionMap(missionMapTopology, true);
+        } else {
+          scheduleRvMapReveal();
+        }
+      }, Math.min(remaining, 2_147_483_647));
+    }
 
     function missionMapProgress() {
       const suppliedProgress = Number(window.missionTrackingProgress);
@@ -5243,11 +5295,17 @@
       const travelLayer = document.createElementNS(svgNS, "g");
       const forcedFlightPoint = displayPoint(projectLower48(39.8, -98.5), "KS");
       const hasActiveFlight = MAP_FLIGHT_PREVIEW || trackingData.flight.active === true || trackingData.flight.active === "true";
-      const flightStart = !MAP_FLIGHT_PREVIEW && hasActiveFlight ? pointByStopNumber(trackingData.flight.fromStop, centroids) : null;
-      const flightEnd = !MAP_FLIGHT_PREVIEW && hasActiveFlight ? pointByStopNumber(trackingData.flight.toStop, centroids) : null;
-      const flightPoint = flightStart && flightEnd
-        ? interpolatePoints(flightStart, flightEnd, trackingData.flight.progress)
-        : MAP_FLIGHT_PREVIEW ? forcedFlightPoint : null;
+      const showRv = rvMapVisible();
+      updateTrackingMapKey({ showFlight: hasActiveFlight, showRv });
+      const flightStart = !MAP_FLIGHT_PREVIEW && hasActiveFlight
+        ? flightAirportPoint(trackingData.flight.origin, centroids) : null;
+      const flightEnd = !MAP_FLIGHT_PREVIEW && hasActiveFlight
+        ? flightAirportPoint(trackingData.flight.destination, centroids) : null;
+      const flightFallback = flightStart && flightEnd
+        ? interpolatePoints(flightStart, flightEnd, trackingData.flight.progress) : null;
+      const flightPoint = MAP_FLIGHT_PREVIEW
+        ? forcedFlightPoint
+        : hasActiveFlight ? pointFromTracking(trackingData.flight, centroids, flightFallback) : null;
       if (!MAP_FLIGHT_PREVIEW && hasActiveFlight && flightStart && flightEnd) {
         const flightPath = document.createElementNS(svgNS, "path");
         flightPath.setAttribute("class", "map-route flight");
@@ -5255,8 +5313,8 @@
         travelLayer.appendChild(flightPath);
       }
 
-      const rvStopPath = pathPointsFromStops(trackingData.rv.pathStops, centroids);
-      if (rvStopPath.length > 1) {
+      const rvStopPath = showRv ? pathPointsFromStops(trackingData.rv.pathStops, centroids) : [];
+      if (showRv && rvStopPath.length > 1) {
         const rvPath = document.createElementNS(svgNS, "path");
         rvPath.setAttribute("class", "map-route rv");
         rvPath.setAttribute("d", routePath(rvStopPath));
@@ -5382,7 +5440,7 @@
         rvStopPath[rvStopPath.length - 1] || routePoints[Math.min(routePoints.length - 1, currentIndex + 2)]
       );
       if (hasActiveFlight) appendFlightMarker(svg, svgNS, flightPoint);
-      appendImageMarker(svg, svgNS, rvPoint, mapEntityAssets.rv, "RV", "rv");
+      if (showRv) appendImageMarker(svg, svgNS, rvPoint, mapEntityAssets.rv, "RV", "rv");
       appendImageMarker(svg, svgNS, runnerPoint, mapEntityAssets.runner, "Runner", "runner");
 
       mapEl.replaceChildren(svg);
@@ -5402,6 +5460,7 @@
     function raceMapSignature(stops, status) {
       return JSON.stringify({
         completedRaces: status.completedRaces,
+        flight: activeFlightTracking(status),
         races: stops.map((stop) => [
           stop.raceId || `ggma-2026-${String(stop.n).padStart(2, "0")}`,
           stop.n, stop.state, stop.city, stop.date, stop.status || "scheduled",
@@ -5424,8 +5483,17 @@
       if (snapshot?.source !== "api") return;
       const previousSignature = raceMapSignature(routeStops, missionRaceStatus);
       routeStops = snapshot.races;
-      missionRaceStatus = snapshot.status;
-      if (missionRaceMapModule) missionMapSnapshot = missionRaceMapModule.applyRaceSnapshot(missionMapSnapshot, snapshot);
+      missionRaceStatus = { ...snapshot.status, source: snapshot.source };
+      if (missionRaceMapModule) {
+        missionMapSnapshot = missionRaceMapModule.applyRaceSnapshot(missionMapSnapshot, snapshot);
+        missionMapSnapshot = {
+          ...missionMapSnapshot,
+          locations: {
+            ...missionMapSnapshot.locations,
+            flight: activeFlightTracking(missionRaceStatus)
+          }
+        };
+      }
       const changed = raceMapSignature(routeStops, missionRaceStatus) !== previousSignature;
       if (changed) renderRunItinerary();
       updateRaceMapAccessibility();
@@ -5454,6 +5522,7 @@
         missionMapTopology = await loadMissionMapTopology();
         if (missionMapTopology) {
           renderMissionMap(missionMapTopology);
+          scheduleRvMapReveal();
         } else {
           document.getElementById("mission-map").textContent = "Map data could not load. Serve this page from the preview server to view the interactive U.S. route map.";
           return;
@@ -5485,11 +5554,14 @@
               {
                 name: "hapn",
                 intervalMs: hapnPollMs,
-                enabled: missionRaceMapModule.inMissionRaceWindow,
+                enabled: (nowMs) => rvMapVisible(nowMs)
+                  && missionRaceMapModule.hapnLivePositioningEnabled(missionRaceStatus, nowMs),
                 load: missionRaceMapModule.loadPublicRvLocation,
                 apply: (patch) => {
                   const previous = missionMapSnapshot;
-                  missionMapSnapshot = missionRaceMapModule.applyMapDomainPatch(missionMapSnapshot, patch);
+                  missionMapSnapshot = missionRaceMapModule.applyMapDomainPatch(missionMapSnapshot, patch, {
+                    raceStatus: missionRaceStatus
+                  });
                   if (missionMapSnapshot !== previous && missionMapTopology) renderMissionMap(missionMapTopology, true);
                 },
                 successful: (patch) => patch?.available === true && patch.stale === false
