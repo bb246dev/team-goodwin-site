@@ -127,6 +127,7 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
   assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive-footer.svg", import.meta.url)), false);
   assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive.png", import.meta.url)), false);
   assert.match(html, /\.partner-logo-row-new[^}]+grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+  assert.match(html, /\.partner-logo-row-new[^}]+margin-top:34px;padding-top:0/);
   assert.match(html, /\.partner-logo-row-new[^}]+border-top:0/);
   assert.match(html, /@media\(max-width:640px\)[^{]*\{\.site-footer \.partner-logo-row-new[^}]+grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(html, /\.partner-logo-row-new \.partner-logo-item a:focus-visible[^}]+outline:2px solid #fff/);
