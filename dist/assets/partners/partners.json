@@ -103,10 +103,10 @@
     "displayName": "Spyroll Studios",
     "slug": "spyroll-studios",
     "officialSource": "https://www.spyrollstudios.com/",
-    "originalAsset": "/assets/partners/spyroll-studios.png",
-    "footerAsset": "/assets/partners/spyroll-studios-footer.svg",
-    "assetType": "png",
-    "notes": "Official horizontal reverse PNG from Spyroll Studios' website. Footer version wraps the original PNG with a monochrome white SVG filter.",
+    "originalAsset": "/assets/partners/spyroll-studios-logo.avif",
+    "footerAsset": "/assets/partners/spyroll-studios-logo.avif",
+    "assetType": "avif",
+    "notes": "Operator-approved Spyroll Studios footer logo with the original prism symbol and wordmark on a corrected, centered AVIF canvas.",
     "website": "https://www.spyrollstudios.com/"
   },
   {

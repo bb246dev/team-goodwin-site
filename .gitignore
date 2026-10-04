@@ -9,3 +9,5 @@ tracking-preview/dist/
 !.env.example
 .goodwin-strava-config.json
 goodwin-strava-config.json
+.DS_Store
+*.bundle

@@ -3400,6 +3400,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="assets/spyroll-footer-logo.css">
 <style data-social-footer-styles>.site-footer,.global-site-footer{box-sizing:border-box;background:#0a0a0a!important;color:#fff;padding-inline:clamp(22px,4vw,48px)}
     .site-footer-brand img,.global-site-footer-brand img{filter:brightness(0) invert(1)}
     .site-footer .site-footer-nav > .site-footer-link-group:first-child a,.global-site-footer .global-site-footer-nav > .global-site-footer-link-group:first-child a{color:rgba(255,255,255,.72)}
@@ -3953,7 +3954,7 @@
             <div class="partner-logo-item"><a href="https://flytrueskies.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit TrueSkies Aviation Group"><img src="assets/partners/trueskies-footer.svg" alt="TrueSkies Aviation Group logo"></a></div>
             <div class="partner-logo-item"><a href="https://magellanjets.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Magellan Jets"><img src="assets/partners/magellan-jets-footer.svg" alt="Magellan Jets logo"></a></div>
             <div class="partner-logo-item"><a href="https://www.charterflightsupport.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Charter Flight Support"><img src="assets/partners/charter-flight-support-footer.svg" alt="Charter Flight Support logo"></a></div>
-            <div class="partner-logo-item"><a href="https://www.spyrollstudios.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Spyroll Studios"><img src="assets/partners/spyroll-studios-footer.svg" alt="Spyroll Studios logo"></a></div>
+            <div class="partner-logo-item"><a href="https://www.spyrollstudios.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Spyroll Studios"><img src="assets/partners/spyroll-studios-logo.avif" alt="Spyroll Studios logo"></a></div>
             <div class="partner-logo-item"><a href="https://davidprotein.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit David"><img src="assets/partners/david-footer.png" alt="David logo"></a></div>
             <div class="partner-logo-item"><a href="https://humantra.co.uk/" target="_blank" rel="noopener noreferrer" aria-label="Visit Humantra"><img src="assets/partners/humantra-footer.png" alt="Humantra logo"></a></div>
             <div class="partner-logo-item"><a href="https://rizkia.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Rizkia"><img src="assets/partners/rizkia-footer.png" alt="Rizkia logo"></a></div>
@@ -4744,7 +4745,7 @@
       { n: 22, state: "Indiana", abbr: "IN", city: "South Bend", date: "Oct 19", lat: 41.6764, lng: -86.252 },
       { n: 23, state: "Michigan", abbr: "MI", city: "Sturgis", date: "Oct 20", lat: 41.7992, lng: -85.4194 },
       { n: 24, state: "Ohio", abbr: "OH", city: "Columbus", date: "Oct 20", lat: 39.9612, lng: -82.9988 },
-      { n: 25, state: "California", abbr: "CA", city: "Los Angeles", date: "Oct 20", lat: 35.8755, lng: -114.6608 },
+      { n: 25, state: "California", abbr: "CA", city: "Los Angeles", date: "Oct 20", scheduledStart: "2026-10-20T22:45:00-07:00", timezone: "America/Los_Angeles", lat: 35.8755, lng: -114.6608 },
       { n: 26, state: "Nevada", abbr: "NV", city: "Las Vegas", date: "Oct 21", lat: 34.0522, lng: -118.2437 },
       { n: 27, state: "Arizona", abbr: "AZ", city: "Willow Beach / Hoover Dam", date: "Oct 21", lat: 36.1699, lng: -115.1398 },
       { n: 28, state: "Arkansas", abbr: "AR", city: "Little Rock", date: "Oct 22", lat: 34.7465, lng: -92.2896 },
@@ -4779,7 +4780,10 @@
     let missionProviderCoordinator = null;
     let missionMapLoadPromise = null;
     let missionRvRevealTimer = null;
-    const startDate = new Date("2026-10-09T06:00:00-04:00");
+    const MISSION_WINDOW_START = "2026-10-09T09:00:00-04:00";
+    const MISSION_WINDOW_END = "2026-11-01T23:59:59-05:00";
+    const startDate = new Date(MISSION_WINDOW_START);
+    const endDate = new Date(MISSION_WINDOW_END);
     const rvMapVisibleFrom = Date.parse("2026-10-11T06:00:00-07:00");
 
     function rvMapVisible(nowMs = Date.now()) {

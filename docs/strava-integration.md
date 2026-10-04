@@ -88,6 +88,10 @@ a shared webhook burst counter, and hashed administrator-authentication failure
 buckets. It is MariaDB-compatible and contains no generated columns or
 destructive changes to existing application data.
 
+Migration `007_flight_tracking_cache_mariadb.sql` adds the shared normalized
+flight-state cache used by the disabled FlightAware foundation. See
+`docs/flightaware-integration.md`; no provider polling is active in this pass.
+
 ## Activity-processing window
 
 The only configured operational window is `ggma-2026`, from

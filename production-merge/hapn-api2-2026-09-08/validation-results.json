@@ -1,0 +1,2791 @@
+{
+  "generatedAt": "2026-09-08T23:14:43.979Z",
+  "results": [
+    {
+      "scenario": {
+        "name": "production-baseline",
+        "candidate": false,
+        "hapn": "down",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56254/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56254/fonts/inter.css",
+          "http://127.0.0.1:56254/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56254/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56254/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56254/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56254/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56254/assets/goodwin-logo.png",
+          "http://127.0.0.1:56254/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56254/assets/hero-runner-Ci5y42DW.jpg",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56254/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56254/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56254/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56254/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56254/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56254/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56254/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56254/assets/partners/david-footer.png",
+          "http://127.0.0.1:56254/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56254/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56254/assets/mission-america-logo.png",
+          "http://127.0.0.1:56254/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56254/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56254/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56254/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56254/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56254/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56254/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56254/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56254/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56254/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000clvx387rgg&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909230294&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1447436026.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1611",
+          "http://127.0.0.1:56254/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 0,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(251.83605500622366 158.99267468702695)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56254/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56254/fonts/inter.css",
+          "http://127.0.0.1:56254/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56254/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56254/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56254/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56254/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56254/assets/goodwin-logo.png",
+          "http://127.0.0.1:56254/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56254/assets/hero-runner-Ci5y42DW.jpg",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56254/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56254/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56254/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56254/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56254/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56254/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56254/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56254/assets/partners/david-footer.png",
+          "http://127.0.0.1:56254/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56254/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56254/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56254/assets/mission-america-logo.png",
+          "http://127.0.0.1:56254/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56254/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56254/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56254/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56254/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56254/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56254/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56254/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56254/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56254/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000clvx387rgg&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909230294&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1447436026.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1611",
+          "http://127.0.0.1:56254/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56254/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56254/assets/us-states-albers-10m.json"
+        ]
+      },
+      "staticMapRenderMs": 1002.9,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56254/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000clvx387rgg&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909230294&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1447436026.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1611",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56254/assets/us-states-albers-10m.json",
+          "status": 200
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909230294&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1447436026.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1611",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "healthy-healthy",
+        "candidate": true,
+        "hapn": "healthy",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56297/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56297/fonts/inter.css",
+          "http://127.0.0.1:56297/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56297/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56297/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56297/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56297/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56297/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56297/assets/goodwin-logo.png",
+          "http://127.0.0.1:56297/assets/mission-america-logo-mobile.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56297/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56297/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56297/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56297/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56297/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56297/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56297/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56297/assets/partners/david-footer.png",
+          "http://127.0.0.1:56297/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56297/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56297/assets/mission-america-logo.png",
+          "http://127.0.0.1:56297/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56297/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56297/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56297/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56297/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56297/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56297/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56297/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56297/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56297/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000kkntife12g8&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909236576&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=579017518.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1429",
+          "http://127.0.0.1:56297/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 1,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(847.3296885173156 219.72478058482153)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map. 1 of 50 races completed.",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56297/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56297/fonts/inter.css",
+          "http://127.0.0.1:56297/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56297/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56297/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56297/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56297/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56297/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56297/assets/goodwin-logo.png",
+          "http://127.0.0.1:56297/assets/mission-america-logo-mobile.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56297/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56297/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56297/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56297/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56297/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56297/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56297/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56297/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56297/assets/partners/david-footer.png",
+          "http://127.0.0.1:56297/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56297/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56297/assets/mission-america-logo.png",
+          "http://127.0.0.1:56297/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56297/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56297/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56297/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56297/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56297/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56297/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56297/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56297/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56297/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000kkntife12g8&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909236576&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=579017518.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1429",
+          "http://127.0.0.1:56297/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56297/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56297/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56297/assets/strava-race-map.mjs",
+          "http://127.0.0.1:56297/strava/public/races",
+          "http://127.0.0.1:56297/strava/public/race-status",
+          "http://127.0.0.1:56297/strava/public/tracking-status"
+        ]
+      },
+      "staticMapRenderMs": 950,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56297/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000kkntife12g8&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909236576&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=579017518.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1429",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/strava/public/races",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/strava/public/race-status",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56297/strava/public/tracking-status",
+          "status": 200
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909236576&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=579017518.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1429",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "changed-coordinate",
+        "candidate": true,
+        "hapn": "healthy-second",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56331/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56331/fonts/inter.css",
+          "http://127.0.0.1:56331/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56331/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56331/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56331/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56331/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56331/assets/goodwin-logo.png",
+          "http://127.0.0.1:56331/assets/ambient-scroll.js?v=20260830h",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56331/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56331/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56331/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56331/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56331/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56331/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56331/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56331/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56331/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/david-footer.png",
+          "http://127.0.0.1:56331/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56331/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56331/assets/mission-america-logo.png",
+          "http://127.0.0.1:56331/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56331/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56331/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56331/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56331/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56331/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56331/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56331/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56331/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56331/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates17916339000009xf4jrkd5zq&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909243159&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1091767325.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1670",
+          "http://127.0.0.1:56331/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 1,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(850.1872459334105 211.53422682423826)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map. 1 of 50 races completed.",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56331/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56331/fonts/inter.css",
+          "http://127.0.0.1:56331/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56331/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56331/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56331/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56331/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56331/assets/goodwin-logo.png",
+          "http://127.0.0.1:56331/assets/ambient-scroll.js?v=20260830h",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56331/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56331/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56331/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56331/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56331/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56331/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56331/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56331/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56331/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56331/assets/partners/david-footer.png",
+          "http://127.0.0.1:56331/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56331/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56331/assets/mission-america-logo.png",
+          "http://127.0.0.1:56331/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56331/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56331/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56331/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56331/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56331/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56331/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56331/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56331/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56331/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates17916339000009xf4jrkd5zq&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909243159&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1091767325.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1670",
+          "http://127.0.0.1:56331/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56331/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56331/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56331/assets/strava-race-map.mjs",
+          "http://127.0.0.1:56331/strava/public/races",
+          "http://127.0.0.1:56331/strava/public/race-status",
+          "http://127.0.0.1:56331/strava/public/tracking-status"
+        ]
+      },
+      "staticMapRenderMs": 898.1,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56331/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates17916339000009xf4jrkd5zq&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909243159&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1091767325.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1670",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/strava/public/races",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/strava/public/race-status",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56331/strava/public/tracking-status",
+          "status": 200
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909243159&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1091767325.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1670",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "hapn-down",
+        "candidate": true,
+        "hapn": "down",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56371/fonts/inter.css",
+          "http://127.0.0.1:56371/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56371/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56371/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56371/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56371/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56371/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56371/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56371/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56371/assets/goodwin-logo.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56371/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56371/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56371/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56371/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56371/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56371/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56371/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56371/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/david-footer.png",
+          "http://127.0.0.1:56371/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56371/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56371/assets/mission-america-logo.png",
+          "http://127.0.0.1:56371/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56371/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56371/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56371/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56371/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56371/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56371/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56371/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56371/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56371/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000a6gbub97cxe&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909249454&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=514442452.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1464",
+          "http://127.0.0.1:56371/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 1,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(775.1373744724216 478.5622121285754)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map. 1 of 50 races completed.",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56371/fonts/inter.css",
+          "http://127.0.0.1:56371/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56371/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56371/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56371/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56371/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56371/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56371/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56371/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56371/assets/goodwin-logo.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56371/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56371/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56371/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56371/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56371/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56371/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56371/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56371/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56371/assets/partners/david-footer.png",
+          "http://127.0.0.1:56371/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56371/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56371/assets/mission-america-logo.png",
+          "http://127.0.0.1:56371/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56371/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56371/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56371/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56371/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56371/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56371/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56371/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56371/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56371/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000a6gbub97cxe&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909249454&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=514442452.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1464",
+          "http://127.0.0.1:56371/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56371/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56371/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56371/assets/strava-race-map.mjs",
+          "http://127.0.0.1:56371/strava/public/races",
+          "http://127.0.0.1:56371/strava/public/race-status"
+        ]
+      },
+      "staticMapRenderMs": 891.9,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56371/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000a6gbub97cxe&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909249454&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=514442452.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1464",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/strava/public/races",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/strava/public/race-status",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56371/strava/public/tracking-status",
+          "status": 503
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909249454&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=514442452.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1464",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "hapn-malformed",
+        "candidate": true,
+        "hapn": "malformed",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56412/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56412/fonts/inter.css",
+          "http://127.0.0.1:56412/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56412/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56412/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56412/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56412/assets/ambient-scroll.js?v=20260830h",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56412/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56412/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56412/assets/goodwin-logo.png",
+          "http://127.0.0.1:56412/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56412/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56412/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56412/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56412/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56412/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56412/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/david-footer.png",
+          "http://127.0.0.1:56412/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56412/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56412/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56412/assets/mission-america-logo.png",
+          "http://127.0.0.1:56412/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56412/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56412/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56412/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56412/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56412/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56412/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56412/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56412/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56412/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000stirxxazb7q&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930h1v9262929338za200zd9262929338&_p=1788909255478&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=718625333.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1512",
+          "http://127.0.0.1:56412/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 1,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(775.1373744724216 478.5622121285754)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map. 1 of 50 races completed.",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56412/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56412/fonts/inter.css",
+          "http://127.0.0.1:56412/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56412/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56412/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56412/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56412/assets/ambient-scroll.js?v=20260830h",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56412/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56412/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56412/assets/goodwin-logo.png",
+          "http://127.0.0.1:56412/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56412/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56412/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56412/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56412/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56412/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56412/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/david-footer.png",
+          "http://127.0.0.1:56412/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56412/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56412/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56412/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56412/assets/mission-america-logo.png",
+          "http://127.0.0.1:56412/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56412/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56412/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56412/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56412/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56412/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56412/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56412/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56412/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56412/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000stirxxazb7q&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930h1v9262929338za200zd9262929338&_p=1788909255478&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=718625333.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1512",
+          "http://127.0.0.1:56412/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56412/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56412/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56412/assets/strava-race-map.mjs",
+          "http://127.0.0.1:56412/strava/public/races",
+          "http://127.0.0.1:56412/strava/public/race-status",
+          "http://127.0.0.1:56412/strava/public/tracking-status"
+        ]
+      },
+      "staticMapRenderMs": 891.7,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56412/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000stirxxazb7q&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930h1v9262929338za200zd9262929338&_p=1788909255478&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=718625333.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1512",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/strava/public/races",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/strava/public/race-status",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56412/strava/public/tracking-status",
+          "status": 200
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930h1v9262929338za200zd9262929338&_p=1788909255478&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=718625333.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1512",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "hapn-stale",
+        "candidate": true,
+        "hapn": "stale",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56453/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56453/fonts/inter.css",
+          "http://127.0.0.1:56453/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56453/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56453/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56453/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56453/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56453/assets/goodwin-logo.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56453/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56453/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56453/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56453/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56453/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56453/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56453/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56453/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56453/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/david-footer.png",
+          "http://127.0.0.1:56453/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56453/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56453/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56453/assets/mission-america-logo.png",
+          "http://127.0.0.1:56453/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56453/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56453/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56453/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56453/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56453/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56453/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56453/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56453/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56453/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000ym3h3ukr33&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909261554&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1845802930.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1498",
+          "http://127.0.0.1:56453/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 1,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(775.1373744724216 478.5622121285754)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map. 1 of 50 races completed.",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56453/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56453/fonts/inter.css",
+          "http://127.0.0.1:56453/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56453/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56453/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56453/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56453/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56453/assets/goodwin-logo.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56453/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56453/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56453/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56453/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56453/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56453/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56453/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56453/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56453/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/david-footer.png",
+          "http://127.0.0.1:56453/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56453/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56453/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56453/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56453/assets/mission-america-logo.png",
+          "http://127.0.0.1:56453/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56453/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56453/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56453/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56453/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56453/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56453/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56453/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56453/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56453/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000ym3h3ukr33&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909261554&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1845802930.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1498",
+          "http://127.0.0.1:56453/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56453/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56453/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56453/assets/strava-race-map.mjs",
+          "http://127.0.0.1:56453/strava/public/races",
+          "http://127.0.0.1:56453/strava/public/race-status",
+          "http://127.0.0.1:56453/strava/public/tracking-status"
+        ]
+      },
+      "staticMapRenderMs": 892.8,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56453/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000ym3h3ukr33&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909261554&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1845802930.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1498",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/strava/public/races",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/strava/public/race-status",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56453/strava/public/tracking-status",
+          "status": 200
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909261554&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1845802930.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1498",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "hapn-timeout",
+        "candidate": true,
+        "hapn": "timeout",
+        "strava": "healthy"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56494/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56494/fonts/inter.css",
+          "http://127.0.0.1:56494/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56494/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56494/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56494/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56494/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56494/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56494/assets/goodwin-logo.png",
+          "http://127.0.0.1:56494/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56494/assets/map-runner-bobblehead-small.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56494/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56494/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56494/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56494/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56494/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56494/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56494/assets/partners/david-footer.png",
+          "http://127.0.0.1:56494/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56494/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56494/assets/mission-america-logo.png",
+          "http://127.0.0.1:56494/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56494/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56494/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56494/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56494/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56494/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56494/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56494/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56494/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56494/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates179163390000027wq7l0iyeu&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909267547&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1177447341.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119793973~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1502",
+          "http://127.0.0.1:56494/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 1,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(775.1373744724216 478.5622121285754)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map. 1 of 50 races completed.",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56494/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56494/fonts/inter.css",
+          "http://127.0.0.1:56494/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56494/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56494/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56494/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56494/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56494/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56494/assets/goodwin-logo.png",
+          "http://127.0.0.1:56494/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56494/assets/map-runner-bobblehead-small.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56494/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56494/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56494/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56494/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56494/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56494/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56494/assets/partners/david-footer.png",
+          "http://127.0.0.1:56494/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56494/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56494/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56494/assets/mission-america-logo.png",
+          "http://127.0.0.1:56494/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56494/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56494/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56494/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56494/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56494/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56494/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56494/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56494/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56494/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates179163390000027wq7l0iyeu&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909267547&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1177447341.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119793973~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1502",
+          "http://127.0.0.1:56494/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56494/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56494/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56494/assets/strava-race-map.mjs",
+          "http://127.0.0.1:56494/strava/public/races",
+          "http://127.0.0.1:56494/strava/public/race-status",
+          "http://127.0.0.1:56494/strava/public/tracking-status"
+        ]
+      },
+      "staticMapRenderMs": 891.1,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56494/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates179163390000027wq7l0iyeu&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909267547&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1177447341.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119793973~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1502",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/strava/public/races",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56494/strava/public/race-status",
+          "status": 200
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909267547&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1177447341.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119793973~120213116~120385422~120469145~120469153&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1502",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        },
+        {
+          "url": "http://127.0.0.1:56494/strava/public/tracking-status",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": null,
+          "countedFailure": true
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "scenario": {
+        "name": "all-down",
+        "candidate": true,
+        "hapn": "down",
+        "strava": "down"
+      },
+      "initial": {
+        "mapSvg": 0,
+        "cls": 0.00034909562149853173,
+        "resources": [
+          "http://127.0.0.1:56535/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56535/fonts/inter.css",
+          "http://127.0.0.1:56535/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56535/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56535/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56535/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56535/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56535/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56535/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56535/assets/goodwin-logo.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56535/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56535/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56535/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56535/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56535/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56535/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56535/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/david-footer.png",
+          "http://127.0.0.1:56535/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56535/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56535/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56535/assets/mission-america-logo.png",
+          "http://127.0.0.1:56535/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56535/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56535/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56535/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56535/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56535/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56535/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56535/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56535/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56535/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000c4e5e9u02og&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909278868&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1327986428.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120474862~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1525",
+          "http://127.0.0.1:56535/assets/goodwin-favicon.png"
+        ]
+      },
+      "afterMap": {
+        "states": 51,
+        "markers": 50,
+        "coreRoutes": 3,
+        "flightRoutes": 5,
+        "activityRoutes": 0,
+        "runnerMarkers": 1,
+        "rvMarkers": 1,
+        "rvTransform": "translate(775.1373744724216 478.5622121285754)",
+        "mapReady": true,
+        "ariaLabel": "Interactive Goodwin Generated Mission America route map",
+        "cls": 0.00034909562149853173,
+        "brokenImages": [],
+        "resources": [
+          "http://127.0.0.1:56535/assets/hero-video-first-frame.jpg",
+          "http://127.0.0.1:56535/fonts/inter.css",
+          "http://127.0.0.1:56535/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "http://127.0.0.1:56535/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56535/assets/styles-ulvf0Dcj.css",
+          "http://127.0.0.1:56535/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "http://127.0.0.1:56535/assets/ambient-scroll.js?v=20260830h",
+          "http://127.0.0.1:56535/assets/hero-runner-Ci5y42DW.jpg",
+          "http://127.0.0.1:56535/assets/mission-america-logo-mobile.png",
+          "http://127.0.0.1:56535/assets/goodwin-logo.png",
+          "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "http://127.0.0.1:56535/assets/map-runner-bobblehead-small.png",
+          "http://127.0.0.1:56535/assets/map-rv-green-small.png",
+          "http://127.0.0.1:56535/assets/partners/trilogy-aviation-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/arsenal-aviation-footer.svg",
+          "http://127.0.0.1:56535/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "http://127.0.0.1:56535/assets/road-aerial-DbGvJBXy.jpg",
+          "http://127.0.0.1:56535/assets/partners/titan-aviation-footer.png",
+          "http://127.0.0.1:56535/assets/partners/flyexclusive-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/fly1200-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/jet-linx-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/trueskies-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/skyward-aviation-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/magellan-jets-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/charter-flight-support-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/spyroll-studios-footer.svg",
+          "http://127.0.0.1:56535/assets/partners/david-footer.png",
+          "http://127.0.0.1:56535/assets/partners/rizkia-footer.png",
+          "http://127.0.0.1:56535/assets/partners/whoop-footer.png",
+          "http://127.0.0.1:56535/assets/partners/humantra-footer.png",
+          "http://127.0.0.1:56535/assets/mission-america-logo.png",
+          "http://127.0.0.1:56535/assets/overview-the-run.jpeg",
+          "http://127.0.0.1:56535/fonts/inter-400-subset.woff2",
+          "http://127.0.0.1:56535/assets/athlete-will.jpeg",
+          "http://127.0.0.1:56535/assets/world-record-50-states.jpeg",
+          "http://127.0.0.1:56535/assets/field-notes-week-2-grind.jpg",
+          "http://127.0.0.1:56535/assets/field-notes-week-1-launch.jpg",
+          "http://127.0.0.1:56535/assets/field-notes-week-3-finish.jpg",
+          "http://127.0.0.1:56535/fonts/inter-600-subset.woff2",
+          "http://127.0.0.1:56535/fonts/inter-700-subset.woff2",
+          "http://127.0.0.1:56535/fonts/inter-500-subset.woff2",
+          "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000c4e5e9u02og&cacheBust=1791633900000",
+          "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909278868&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1327986428.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120474862~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1525",
+          "http://127.0.0.1:56535/assets/goodwin-favicon.png",
+          "http://127.0.0.1:56535/assets/index-CIGW-MKW.css",
+          "http://127.0.0.1:56535/assets/us-states-albers-10m.json",
+          "http://127.0.0.1:56535/assets/strava-race-map.mjs"
+        ]
+      },
+      "staticMapRenderMs": 847.7,
+      "nearViewportRequests": [
+        "/assets/index-CIGW-MKW.css",
+        "/assets/us-states-albers-10m.json",
+        "/assets/strava-race-map.mjs",
+        "/strava/public/races",
+        "/strava/public/race-status",
+        "/strava/public/tracking-status"
+      ],
+      "responseStatuses": [
+        {
+          "url": "http://127.0.0.1:56535/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/fonts/inter.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/ambient-scroll.css?v=20260831fieldnotes-static",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/tracker-base.css?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/styles-ulvf0Dcj.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/tracker-base.js?v=20260831mobile-critical-path",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/hero-runner-Ci5y42DW.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/mission-america-logo-mobile.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/hero-video-first-frame.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/ambient-scroll.js?v=20260830h",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/map-runner-bobblehead-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/goodwin-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/fonts/inter-600-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/fonts/inter-400-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1o6AH6YNdbc0_WkhAvBG96Vv0KglEpoPPzFtce92zlqc/gviz/tq?gid=0&tqx=out%3Ajson%3BresponseHandler%3A__goodwinMissionUpdates1791633900000c4e5e9u02og&cacheBust=1791633900000",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/fonts/inter-500-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/fonts/inter-700-subset.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-HW9LNT12ZX",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/map-rv-green-small.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/trilogy-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/mission-america-logo.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/arsenal-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909278868&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1327986428.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120474862~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1525",
+          "status": 204
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/road-aerial-DbGvJBXy.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/titan-aviation-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/jet-linx-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/flyexclusive-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/trueskies-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/skyward-aviation-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/magellan-jets-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/fly1200-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/charter-flight-support-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/spyroll-studios-footer.svg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/david-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/rizkia-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/whoop-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/partners/humantra-footer.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/overview-the-run.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/athlete-will.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/field-notes-week-2-grind.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/field-notes-week-1-launch.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/field-notes-week-3-finish.jpg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/world-record-50-states.jpeg",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/goodwin-favicon.png",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/index-CIGW-MKW.css",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/us-states-albers-10m.json",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/assets/strava-race-map.mjs",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:56535/strava/public/races",
+          "status": 503
+        },
+        {
+          "url": "http://127.0.0.1:56535/strava/public/race-status",
+          "status": 503
+        },
+        {
+          "url": "http://127.0.0.1:56535/strava/public/tracking-status",
+          "status": 503
+        }
+      ],
+      "failedRequests": [
+        {
+          "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HW9LNT12ZX&gtm=45je6930v9262929338za200zd9262929338&_p=1788909278868&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1327986428.1791633900&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=800x600&uaa=arm&uab=64&uafvl=Chromium%3B152.0.7977.77%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.77&uam=&uamb=0&uap=macOS&uapv=26.6.2&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120474862~120914214&sid=1791633900&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=Goodwin%20Generated%20Mission%20America%20Live%20Tracker%20%7C%20Goodwin&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1525",
+          "error": "net::ERR_ABORTED",
+          "canceled": true,
+          "type": "Fetch",
+          "responseStatus": 204,
+          "countedFailure": false
+        }
+      ],
+      "consoleErrors": [],
+      "consoleWarnings": [
+        "Public race data unavailable; using the static schedule."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "privateRegistrationTbd": {
+    "id": "test-private-leg",
+    "type": "private",
+    "scheduledDate": "2026-10-10",
+    "scheduledDeparture": "2026-10-10T16:00:00Z",
+    "origin": "KCCC",
+    "destination": "KDDD",
+    "ident": null,
+    "registration": null,
+    "faFlightId": null,
+    "trackingEnabled": true,
+    "notes": "Test fixture only"
+  }
+}

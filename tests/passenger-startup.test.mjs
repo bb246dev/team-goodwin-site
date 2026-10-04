@@ -208,6 +208,7 @@ test("private config fills only missing environment values from its allowlist", 
     HAPN_CLIENT_ID: "file-hapn-client-id",
     HAPN_CLIENT_SECRET: "file-hapn-client-secret",
     HAPN_DEVICE_IMEI: "868239050345326",
+    FLIGHTAWARE_API_KEY: "test-only-flightaware-key-000000",
     UNRELATED_VALUE: "must-not-load",
   };
   writeFileSync(configPath, JSON.stringify(config), { mode: 0o600 });
@@ -220,6 +221,7 @@ test("private config fills only missing environment values from its allowlist", 
   assert.equal(loaded.env.HAPN_CLIENT_ID, "file-hapn-client-id");
   assert.equal(loaded.env.HAPN_CLIENT_SECRET, "file-hapn-client-secret");
   assert.equal(loaded.env.HAPN_DEVICE_IMEI, "868239050345326");
+  assert.equal(loaded.env.FLIGHTAWARE_API_KEY, "test-only-flightaware-key-000000");
   assert.equal(loaded.env.UNRELATED_VALUE, undefined);
   assert.deepEqual(original, { MYSQL_HOST: "environment-host", MYSQL_PORT: "" });
 });
@@ -311,6 +313,7 @@ test("startup diagnostics report a missing mysql2 module without exposing config
   t.after(() => rmSync(fixture, { recursive: true, force: true }));
   cpSync(join(sourceRoot, "app.js"), join(fixture, "app.js"));
   cpSync(join(sourceRoot, "package.json"), join(fixture, "package.json"));
+  cpSync(join(sourceRoot, "config"), join(fixture, "config"), { recursive: true });
   cpSync(join(sourceRoot, "lib"), join(fixture, "lib"), { recursive: true });
   const fixtureStore = join(fixture, "lib/mysql-store.mjs");
   writeFileSync(

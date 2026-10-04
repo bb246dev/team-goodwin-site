@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const assetRoot = new URL(
-  "../production-merge/strava-live-map-2026-09-06/public_html/assets/",
+  "../production-merge/hapn-api2-frontend-window-fix-2026-09-09/public_html/assets/",
   import.meta.url,
 );
 const tracker = readFileSync(new URL("tracker-base.js", assetRoot), "utf8");
@@ -37,17 +37,25 @@ test("controlled merge preserves production route, state, marker, zoom and entit
   assert.match(tracker, /appendImageMarker\(svg, svgNS, runnerPoint/);
 });
 
-test("controlled merge adds only stored public race reads with fail-safe rendering", () => {
+test("controlled merge coordinates Strava and HAPN through normalized fail-safe rendering", () => {
   assert.match(moduleSource, /PUBLIC_RACES_ENDPOINT = "\/strava\/public\/races"/);
   assert.match(moduleSource, /PUBLIC_RACE_STATUS_ENDPOINT = "\/strava\/public\/race-status"/);
   assert.match(moduleSource, /payload\.races\.length !== EXPECTED_RACE_COUNT/);
   assert.match(moduleSource, /credentials: "omit"/);
   assert.match(moduleSource, /createPublicRacePoller/);
+  assert.match(moduleSource, /createMultiProviderCoordinator/);
+  assert.match(moduleSource, /PUBLIC_RV_LOCATION_ENDPOINT = "\/strava\/public\/tracking-status"/);
+  assert.match(moduleSource, /applyMapDomainPatch/);
+  assert.match(moduleSource, /hapnLivePositioningEnabled/);
   assert.match(moduleSource, /documentObject\?\.hidden/);
   assert.match(tracker, /activityRoutePoints/);
   assert.match(tracker, /map-activity-route/);
   assert.match(tracker, /snapshot\?\.source !== "api"/);
+  assert.match(tracker, /enabled: \(\) => missionRaceMapModule\.hapnLivePositioningEnabled\(missionHapnRaceStatus\)/);
+  assert.match(tracker, /failure: restoreStaticRv/);
   assert.doesNotMatch(moduleSource, /\/strava\/(?:connect|status|webhook|candidates)/);
+  assert.doesNotMatch(tracker, /window\.missionMapTracking/);
+  assert.doesNotMatch(tracker, /\/api\/tracking-status/);
 });
 
 test("controlled deployment contains only the two required public runtime assets", async () => {
@@ -56,4 +64,10 @@ test("controlled deployment contains only the two required public runtime assets
     "strava-race-map.mjs",
     "tracker-base.js",
   ]);
+});
+
+test("controlled HAPN frontend candidate contains only the two changed public runtime files", async () => {
+  const { readdir } = await import("node:fs/promises");
+  const candidateRoot = new URL("../production-merge/hapn-api2-frontend-window-fix-2026-09-09/", import.meta.url);
+  assert.deepEqual((await readdir(candidateRoot)).sort(), ["public_html", "validation-results.json"]);
 });
