@@ -16,6 +16,10 @@ const seed = readFileSync(
   new URL("../strava-app/seeds/001_ggma_2026_race_schedule_mysql.sql", import.meta.url),
   "utf8",
 );
+const scheduleTimeMigration = readFileSync(
+  new URL("../strava-app/migrations/008_ggma_2026_schedule_time_updates_mariadb.sql", import.meta.url),
+  "utf8",
+);
 const races = [...seed.matchAll(
   /\('ggma-2026-(\d{2})',\s*'ggma-2026',\s*(\d+),\s*'([^']+)',\s*'([^']+)',\s*'([A-Z]{2})',\s*'([^']+)'/g,
 )].map((match) => ({
@@ -70,6 +74,25 @@ test("published Kansas City and Arizona location wording is preserved", () => {
     ],
   );
   assert.equal(races[24].city, "Willow Beach / Hoover Dam");
+});
+
+test("client-confirmed schedule times are stored with explicit IANA timezones", () => {
+  for (const [raceId, time, timezone] of [
+    ["ggma-2026-26", "22:45:00", "America/Los_Angeles"],
+    ["ggma-2026-48", "05:00:00", "America/New_York"],
+    ["ggma-2026-49", "12:00:00", "America/New_York"],
+  ]) {
+    assert.match(
+      seed,
+      new RegExp(`\\('${raceId}'[^\\n]+?'${time}', '${timezone.replace("/", "\\/")}'`),
+      `${raceId}: confirmed local schedule time`,
+    );
+    assert.match(
+      scheduleTimeMigration,
+      new RegExp(`SET scheduled_start_time = '${time}',[^;]+timezone = '${timezone.replace("/", "\\/")}'[^;]+WHERE id = '${raceId}'`, "s"),
+      `${raceId}: idempotent production update`,
+    );
+  }
 });
 
 test("same-day races remain ambiguous without geographic evidence", () => {

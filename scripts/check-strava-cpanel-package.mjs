@@ -13,6 +13,7 @@ const required = [
   "migrations/004b_ggma_race_schedule_mariadb_repair.sql",
   "migrations/005_strava_candidate_runtime_fields_mariadb.sql",
   "migrations/006_strava_webhook_admin_hardening_mariadb.sql",
+  "migrations/008_ggma_2026_schedule_time_updates_mariadb.sql",
   "seeds/001_ggma_2026_race_schedule_mysql.sql",
 ];
 

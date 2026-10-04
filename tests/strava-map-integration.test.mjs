@@ -251,3 +251,17 @@ test("the map and both Strava requests remain behind the near-viewport lazy-load
     assert.ok(!moduleSource.includes(privateRoute));
   }
 });
+
+test("both client map datasets carry the revised hidden schedule times", () => {
+  const liveMap = readFileSync(new URL("../source-html/live-tracking.html", import.meta.url), "utf8");
+  const journeyMap = readFileSync(new URL("../assets/index-BE9Jl0ji.js", import.meta.url), "utf8");
+  for (const [city, scheduledStart, timezone] of [
+    ["Los Angeles", "2026-10-21T22:45:00-07:00", "America/Los_Angeles"],
+    ["Portsmouth", "2026-10-31T05:00:00-04:00", "America/New_York"],
+    ["Kittery", "2026-10-31T12:00:00-04:00", "America/New_York"],
+  ]) {
+    for (const [name, source] of [["live map", liveMap], ["journey map", journeyMap]]) {
+      assert.match(source, new RegExp(`city:\\s*"${city}"[^}]+scheduledStart:\\s*"${scheduledStart}"[^}]+timezone:\\s*"${timezone.replace("/", "\\/")}"`), `${name}: ${city}`);
+    }
+  }
+});

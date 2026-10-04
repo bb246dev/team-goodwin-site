@@ -1,6 +1,8 @@
 -- Authoritative GGMA 2026 schedule seed.
 -- Source captured from https://goodwingoodge.com/fifty-runs/ on 2026-09-04.
--- The published source provides dates, states and cities but no start times, timezones or coordinates.
+-- Dates, states and cities come from the published source. The three non-null
+-- start times below were supplied by the client on 2026-10-04; all other start
+-- times, timezones and coordinates remain unknown rather than inferred.
 
 INSERT INTO ggma_race_schedule
   (id, operational_window_id, race_number, race_date, state, state_code, city, slug,
@@ -31,7 +33,7 @@ VALUES
   ('ggma-2026-23', 'ggma-2026', 23, '2026-10-19', 'Michigan',       'MI', 'Sturgis',                     '23-michigan-sturgis',                   NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-24', 'ggma-2026', 24, '2026-10-20', 'Ohio',           'OH', 'Columbus',                    '24-ohio-columbus',                      NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-25', 'ggma-2026', 25, '2026-10-20', 'Arizona',        'AZ', 'Willow Beach / Hoover Dam',   '25-arizona-willow-beach-hoover-dam',   NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-  ('ggma-2026-26', 'ggma-2026', 26, '2026-10-21', 'California',     'CA', 'Los Angeles',                 '26-california-los-angeles',             NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+  ('ggma-2026-26', 'ggma-2026', 26, '2026-10-21', 'California',     'CA', 'Los Angeles',                 '26-california-los-angeles',             '22:45:00', 'America/Los_Angeles', NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-27', 'ggma-2026', 27, '2026-10-21', 'Nevada',         'NV', 'Las Vegas',                   '27-nevada-las-vegas',                   NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-28', 'ggma-2026', 28, '2026-10-22', 'Arkansas',       'AR', 'Little Rock',                 '28-arkansas-little-rock',               NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-29', 'ggma-2026', 29, '2026-10-22', 'Louisiana',      'LA', 'Shreveport',                  '29-louisiana-shreveport',               NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
@@ -53,8 +55,8 @@ VALUES
   ('ggma-2026-45', 'ggma-2026', 45, '2026-10-30', 'Rhode Island',   'RI', 'Providence',                  '45-rhode-island-providence',            NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-46', 'ggma-2026', 46, '2026-10-30', 'Massachusetts',  'MA', 'Boston',                      '46-massachusetts-boston',               NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-47', 'ggma-2026', 47, '2026-10-30', 'Vermont',        'VT', 'Brattleboro',                 '47-vermont-brattleboro',                NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-  ('ggma-2026-48', 'ggma-2026', 48, '2026-10-31', 'New Hampshire',  'NH', 'Portsmouth',                  '48-new-hampshire-portsmouth',           NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-  ('ggma-2026-49', 'ggma-2026', 49, '2026-10-31', 'Maine',          'ME', 'Kittery',                     '49-maine-kittery',                      NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+  ('ggma-2026-48', 'ggma-2026', 48, '2026-10-31', 'New Hampshire',  'NH', 'Portsmouth',                  '48-new-hampshire-portsmouth',           '05:00:00', 'America/New_York', NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+  ('ggma-2026-49', 'ggma-2026', 49, '2026-10-31', 'Maine',          'ME', 'Kittery',                     '49-maine-kittery',                      '12:00:00', 'America/New_York', NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
   ('ggma-2026-50', 'ggma-2026', 50, '2026-11-01', 'New York',       'NY', 'New York City',               '50-new-york-new-york-city',             NULL, NULL, NULL, NULL, 'scheduled', 'https://goodwingoodge.com/fifty-runs/', UNIX_TIMESTAMP(), UNIX_TIMESTAMP())
 ON DUPLICATE KEY UPDATE
   operational_window_id = VALUES(operational_window_id),
