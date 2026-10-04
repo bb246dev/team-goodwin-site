@@ -90,6 +90,7 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
     ["Fontainebleau Miami Beach", "https://www.fontainebleau.com/miamibeach/", "fontainebleau-miami-beach-footer.svg"],
     ["Fontainebleau Las Vegas", "https://www.fontainebleaulasvegas.com/", "fontainebleau-las-vegas-footer.svg"],
     ["Real SLX", "https://realslx.com/?utm_source=ig&amp;utm_medium=social&amp;utm_content=link_in_bio", "real-slx-footer.svg"],
+    ["Skyway Aviation", "https://flyskyway.com/", "skyway-aviation-footer.png"],
   ];
 
   const html = readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8");
@@ -101,7 +102,7 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
 
   assert.ok(rowStart > wallStart, "new row follows the original sponsor wall");
   assert.ok(rowEnd > rowStart, "new row is inside the sponsor footer");
-  assert.equal((row.match(/class="partner-logo-item(?: partner-logo-item-bingo)?"/g) ?? []).length, 6);
+  assert.equal((row.match(/class="partner-logo-item(?: partner-logo-item-bingo)?"/g) ?? []).length, 7);
   assert.match(wall, /href="https:\/\/www\.jetexcellence\.com\/"[^>]+aria-label="Visit Jet Excellence"/);
   assert.match(wall, /src="assets\/partners\/jet-excellence-footer\.png"[^>]+alt="Jet Excellence logo"/);
   assert.match(html, /img\[src\$="jet-excellence-footer\.png"\][^}]+filter:grayscale\(1\) brightness\(0\) invert\(1\)/);
@@ -123,7 +124,8 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
   }
 
   assert.ok(row.indexOf("Visit Fontainebleau Miami Beach") < row.indexOf("Visit Fontainebleau Las Vegas"), "Fontainebleau properties are adjacent");
-  assert.ok(row.indexOf("Visit Fontainebleau Las Vegas") < row.indexOf("Visit Real SLX"), "Real SLX is the final bottom-row logo");
+  assert.ok(row.indexOf("Visit Fontainebleau Las Vegas") < row.indexOf("Visit Real SLX"), "Real SLX begins the bottom row");
+  assert.ok(row.indexOf("Visit Real SLX") < row.indexOf("Visit Skyway Aviation"), "Skyway Aviation shares the bottom row with Real SLX");
   assert.doesNotMatch(html, /flyexclusive/i);
   assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive-footer.svg", import.meta.url)), false);
   assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive.png", import.meta.url)), false);

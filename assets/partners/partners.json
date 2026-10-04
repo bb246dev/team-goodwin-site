@@ -208,5 +208,15 @@
     "assetType": "svg",
     "notes": "Official property wordmark SVG from the Fontainebleau Las Vegas website.",
     "website": "https://www.fontainebleaulasvegas.com/"
+  },
+  {
+    "displayName": "Skyway Aviation",
+    "slug": "skyway-aviation",
+    "officialSource": "https://flyskyway.com/assets/skyway-logo-reverse.png",
+    "originalAsset": "https://flyskyway.com/assets/skyway-logo-reverse.png",
+    "footerAsset": "/assets/partners/skyway-aviation-footer.png",
+    "assetType": "png",
+    "notes": "Optimized local PNG derived from Skyway Aviation's official reverse logo; the footer's image filter renders it as a one-color monochrome mark.",
+    "website": "https://flyskyway.com/"
   }
 ]
