@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Restore the reviewed footer-only live-tracking page after the standard release build regenerated unapproved hidden schedule timestamps.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "dist/live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "d5a5e9a3a8d03d03ed0e0b9b48924cb3169191c483b9382dc28318d4b3be1d03",
+      "expectedRemoteSha256": "a20486c8bb4c2b3f6f67c62c4e6712347482f2b8c6f4274427b201cb685f3c61"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/footer.test.mjs",
+      "tests/mission-window-alignment.test.mjs",
+      "tests/production-strava-map-merge.test.mjs"
+    ],
+    "browserRoutes": [
+      "/live-tracking.html"
+    ],
+    "apiChecks": []
+  }
+}
