@@ -15,11 +15,12 @@ All workflows share the `production-deployment` concurrency group with `cancel-i
 
 ## Architecture
 
-There are three manually dispatched workflows:
+There are four manually dispatched workflows:
 
-1. `.github/workflows/deploy-static-production.yml` validates, plans, and optionally uploads only manifest-listed static files. Deploy mode immediately performs static HTTP, browser, API, and production-hash checks.
-2. `.github/workflows/deploy-backend-production.yml` validates, plans, and optionally uploads only manifest-listed backend files. It verifies each upload by downloading and hashing it, then stops at the manual Passenger restart gate.
-3. `.github/workflows/verify-backend-production.yml` runs only after the operator completes the cPanel Stop → Start procedure. It re-creates the release metadata from the exact deployed commit and manifest, verifies production hashes and public APIs, and performs authenticated runtime-generation verification.
+1. `.github/workflows/provision-static-production.yml` is the separate, manual-only path for reviewed new static assets. It requires each public path to return HTTP 404, rechecks immediately before upload, then verifies exact bytes over FTPS and HTTPS. It never overwrites an HTTP-visible file and cannot automatically delete a newly created file.
+2. `.github/workflows/deploy-static-production.yml` validates, plans, and optionally uploads only manifest-listed static files. Deploy mode immediately performs static HTTP, browser, API, and production-hash checks.
+3. `.github/workflows/deploy-backend-production.yml` validates, plans, and optionally uploads only manifest-listed backend files. It verifies each upload by downloading and hashing it, then stops at the manual Passenger restart gate.
+4. `.github/workflows/verify-backend-production.yml` runs only after the operator completes the cPanel Stop → Start procedure. It re-creates the release metadata from the exact deployed commit and manifest, verifies production hashes and public APIs, and performs authenticated runtime-generation verification.
 
 Each deploy workflow has two trust zones:
 
@@ -67,7 +68,7 @@ Every file, ordinary or protected, must declare exactly one mutually exclusive p
 - `expectedRemoteSha256`: the destination must exist and have this exact SHA-256; or
 - `expectedRemoteAbsent: true`: the destination must not exist.
 
-Omitting both, supplying both, or setting `expectedRemoteAbsent` to anything other than `true` fails closed. Every destination is checked during the all-file preflight and again immediately before its upload. FTP errors and directory listings cannot conclusively distinguish a missing hidden file from an unreadable or filtered file, so the production FTPS client never infers absence after a failed download. An `expectedRemoteAbsent` entry therefore fails closed against FTPS; a genuinely new destination must be created through a separate reviewed provisioning action before this tooling can manage it by pinned hash. The local test adapter supports absent-state tests but cannot enable that path in production.
+Omitting both, supplying both, or setting `expectedRemoteAbsent` to anything other than `true` fails closed. Every destination is checked during the all-file preflight and again immediately before its upload. FTP errors and directory listings cannot conclusively distinguish a missing hidden file from an unreadable or filtered file, so the production FTPS client never infers absence after a failed download. An `expectedRemoteAbsent` entry therefore fails closed against the ordinary FTPS deployment flow. A genuinely new public static asset must first use the separate reviewed provisioning workflow, which independently requires HTTP 404 immediately before upload and exact FTPS and HTTPS hashes afterward. The normal deployment manifest can then manage that path by its pinned hash. New backend paths still require a separate manual provisioning action. The local test adapter supports absent-state tests but cannot enable that path in the ordinary production deploy flow.
 
 `contentType` may be `text` or `binary-asset`. Text is the default and is streamed through the fail-closed secret scanner regardless of size; NUL bytes do not cause a text source to be skipped. A binary asset must be explicitly classified, use a strict approved image/font extension and matching file signature, and supply `expectedSha256`. Executables, archives, databases, ambiguous binary data, and invalid UTF-8 text are rejected. Static entries also require an exact `publicPath`; backend entries omit it.
 

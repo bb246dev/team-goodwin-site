@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Provision the eight reviewed sponsor logo assets whose public production paths were independently confirmed to return HTTP 404 on 2026-10-04.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "dist/assets/partners/bingo-jets-footer.png",
+      "destination": "public_html/assets/partners/bingo-jets-footer.png",
+      "publicPath": "/assets/partners/bingo-jets-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "2ae9cbbed4b05f121e8618168d0adecdb91cba152df48eb3914b63cbd48c0887",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/fontainebleau-las-vegas-footer.svg",
+      "destination": "public_html/assets/partners/fontainebleau-las-vegas-footer.svg",
+      "publicPath": "/assets/partners/fontainebleau-las-vegas-footer.svg",
+      "contentType": "text",
+      "expectedSha256": "363b613a71f59bd6451359600e8cbc71156815f3d2c8ec4af0d57e90419e3f7a",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/fontainebleau-miami-beach-footer.svg",
+      "destination": "public_html/assets/partners/fontainebleau-miami-beach-footer.svg",
+      "publicPath": "/assets/partners/fontainebleau-miami-beach-footer.svg",
+      "contentType": "text",
+      "expectedSha256": "b6da1da93e0ae1d471e6a4268011893022762ba45c3c52111dcbd5e43e70fa5e",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/hertz-footer.png",
+      "destination": "public_html/assets/partners/hertz-footer.png",
+      "publicPath": "/assets/partners/hertz-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "90984c446e3bcb19161d6ec951f69ee68983af10b53da0bffe3d5209c2d1f84b",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/jet-excellence-footer.png",
+      "destination": "public_html/assets/partners/jet-excellence-footer.png",
+      "publicPath": "/assets/partners/jet-excellence-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "5a3482a7ce0a203e7a33946a6533acbdfab1c84afa88913e4b666d583fb9d021",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/moxy-hotels-footer.svg",
+      "destination": "public_html/assets/partners/moxy-hotels-footer.svg",
+      "publicPath": "/assets/partners/moxy-hotels-footer.svg",
+      "contentType": "text",
+      "expectedSha256": "daa7f19af3da38624a6dfd89e8886cb825e51776aef4114f6276c475ec1da606",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/real-slx-footer.svg",
+      "destination": "public_html/assets/partners/real-slx-footer.svg",
+      "publicPath": "/assets/partners/real-slx-footer.svg",
+      "contentType": "text",
+      "expectedSha256": "3c601b9ff9b3f40d9ccd59faf4903f4d3a60ecbc611e9ed6fb3427bfd3134ad3",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/partners/skyway-aviation-footer.png",
+      "destination": "public_html/assets/partners/skyway-aviation-footer.png",
+      "publicPath": "/assets/partners/skyway-aviation-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "a70c8079bb9cbbdf9b5ca1e597228c73847a8832373bd8f2b7e58d67f011c1ea",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/footer.test.mjs",
+      "tests/static-provision.test.mjs"
+    ],
+    "browserRoutes": [
+      "/live-tracking/"
+    ],
+    "apiChecks": []
+  }
+}

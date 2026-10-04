@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Deploy the reviewed sponsor footer, revised hidden race schedule, and time-gated RV and flight markers across the public site.",
+  "protectedPathsApproved": [
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "dist/index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedRemoteSha256": "fa4661346da86455dda8a994700e7329b031be7523a0f2ecdc1e993887f162b9"
+    },
+    {
+      "source": "dist/accessibility.html",
+      "destination": "public_html/accessibility.html",
+      "publicPath": "/accessibility/",
+      "expectedRemoteSha256": "d827d79a17a274c75370c61022706d894c57ea7f754e2aadf6c71261d60e94e0"
+    },
+    {
+      "source": "dist/athletes.html",
+      "destination": "public_html/athletes.html",
+      "publicPath": "/athletes/",
+      "expectedRemoteSha256": "6cd8eb75fb167ed8b5eb88226b8d1f152baf3c08a63d4f8efc0d13810bd7b59a"
+    },
+    {
+      "source": "dist/faq.html",
+      "destination": "public_html/faq.html",
+      "publicPath": "/faq/",
+      "expectedRemoteSha256": "fe2607c2cc0ea33aad473c55e120f4fdf86b850f80a82ce16592996e6cbd1906"
+    },
+    {
+      "source": "dist/fifty-runs.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedRemoteSha256": "f3d2357fed0c330f01b90659baebae1dcc27f7ec1270a20de6ffe044c6c92231"
+    },
+    {
+      "source": "dist/live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking/",
+      "expectedRemoteSha256": "4e96d5a878a95e93af6b5cbcd926c2dd56d0d7015f8f2a3bd035fafcc893239f"
+    },
+    {
+      "source": "dist/participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedRemoteSha256": "dd39de11e2ddf012c1d663ba1480fc2a8bcd201eb9d7d5289d0909720d3c3dc2"
+    },
+    {
+      "source": "dist/partners.html",
+      "destination": "public_html/partners.html",
+      "publicPath": "/partners/",
+      "expectedRemoteSha256": "a02b2619cd14fbd623371b668605bcf266a3223e4973687bdddff2e2c9965a06"
+    },
+    {
+      "source": "dist/privacy.html",
+      "destination": "public_html/privacy.html",
+      "publicPath": "/privacy/",
+      "expectedRemoteSha256": "c18f8c501da9c6dc72665ddd7b272d6bd28c150a6bf3cc2dd8f87568d495db2e"
+    },
+    {
+      "source": "dist/terms.html",
+      "destination": "public_html/terms.html",
+      "publicPath": "/terms/",
+      "expectedRemoteSha256": "fde6785f029450d367a814d2b13ef8e0068f07f4372a7bb57ea96757925a5e33"
+    },
+    {
+      "source": "dist/the-run.html",
+      "destination": "public_html/the-run.html",
+      "publicPath": "/the-run/",
+      "expectedRemoteSha256": "f5d3e8a79046235e37d80bac1c57ef6d21ba0cbbe06b69e2f1b1cdad4bec4b7d"
+    },
+    {
+      "source": "dist/updates.html",
+      "destination": "public_html/updates.html",
+      "publicPath": "/updates/",
+      "expectedRemoteSha256": "3d4537d195256f11e44393eaabb8d38c666dd4f4d9375cf8b2a84069878ee220"
+    },
+    {
+      "source": "dist/week-1.html",
+      "destination": "public_html/week-1.html",
+      "publicPath": "/week-1/",
+      "expectedRemoteSha256": "c08ed37269d2b12e6fd976dc865b26ccbe567a113ab11152e483fc0eb86d5362"
+    },
+    {
+      "source": "dist/week-2.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedRemoteSha256": "709b52604f57a03a74babdc58018f3c48ad7f2f3ffc7ad17eb4c572585c34b62"
+    },
+    {
+      "source": "dist/week-3.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedRemoteSha256": "9568475bb6a391fcb4f0526a04a8126dfa11d0a0739f34237cde210b9b73de5b"
+    },
+    {
+      "source": "dist/will.html",
+      "destination": "public_html/will.html",
+      "publicPath": "/will/",
+      "expectedRemoteSha256": "76acb163ea4066cf2c2f3a76b8e8274daf946243bc76c2996f37ff86fc59ff00"
+    },
+    {
+      "source": "dist/assets/index-BE9Jl0ji.js",
+      "destination": "public_html/assets/index-BE9Jl0ji.js",
+      "publicPath": "/assets/index-BE9Jl0ji.js",
+      "expectedRemoteSha256": "df25db21fa2b72d4d9a427564aabdde2b2dcc8f5a534a0f0d9636138e9212391"
+    },
+    {
+      "source": "dist/assets/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "982d48f505bf0f06bee2d72b0c50152d3ce5aedee51b4ebf07c7ee575c89b2f3",
+      "expectedRemoteSha256": "3f476d314f48615ee0f9ae8dca165f2d940ef8d0b5a84651bb303711573125ca"
+    },
+    {
+      "source": "dist/assets/partners/partners.json",
+      "destination": "public_html/assets/partners/partners.json",
+      "publicPath": "/assets/partners/partners.json",
+      "expectedRemoteSha256": "9f3e264434bdf7894c0efd919fb2d3bfb7626637584bf053ecb12b7c1d61c7c9"
+    },
+    {
+      "source": "dist/assets/partners/bingo-jets-footer.png",
+      "destination": "public_html/assets/partners/bingo-jets-footer.png",
+      "publicPath": "/assets/partners/bingo-jets-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "2ae9cbbed4b05f121e8618168d0adecdb91cba152df48eb3914b63cbd48c0887",
+      "expectedRemoteSha256": "2ae9cbbed4b05f121e8618168d0adecdb91cba152df48eb3914b63cbd48c0887"
+    },
+    {
+      "source": "dist/assets/partners/fontainebleau-las-vegas-footer.svg",
+      "destination": "public_html/assets/partners/fontainebleau-las-vegas-footer.svg",
+      "publicPath": "/assets/partners/fontainebleau-las-vegas-footer.svg",
+      "expectedSha256": "363b613a71f59bd6451359600e8cbc71156815f3d2c8ec4af0d57e90419e3f7a",
+      "expectedRemoteSha256": "363b613a71f59bd6451359600e8cbc71156815f3d2c8ec4af0d57e90419e3f7a"
+    },
+    {
+      "source": "dist/assets/partners/fontainebleau-miami-beach-footer.svg",
+      "destination": "public_html/assets/partners/fontainebleau-miami-beach-footer.svg",
+      "publicPath": "/assets/partners/fontainebleau-miami-beach-footer.svg",
+      "expectedSha256": "b6da1da93e0ae1d471e6a4268011893022762ba45c3c52111dcbd5e43e70fa5e",
+      "expectedRemoteSha256": "b6da1da93e0ae1d471e6a4268011893022762ba45c3c52111dcbd5e43e70fa5e"
+    },
+    {
+      "source": "dist/assets/partners/hertz-footer.png",
+      "destination": "public_html/assets/partners/hertz-footer.png",
+      "publicPath": "/assets/partners/hertz-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "90984c446e3bcb19161d6ec951f69ee68983af10b53da0bffe3d5209c2d1f84b",
+      "expectedRemoteSha256": "90984c446e3bcb19161d6ec951f69ee68983af10b53da0bffe3d5209c2d1f84b"
+    },
+    {
+      "source": "dist/assets/partners/jet-excellence-footer.png",
+      "destination": "public_html/assets/partners/jet-excellence-footer.png",
+      "publicPath": "/assets/partners/jet-excellence-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "5a3482a7ce0a203e7a33946a6533acbdfab1c84afa88913e4b666d583fb9d021",
+      "expectedRemoteSha256": "5a3482a7ce0a203e7a33946a6533acbdfab1c84afa88913e4b666d583fb9d021"
+    },
+    {
+      "source": "dist/assets/partners/moxy-hotels-footer.svg",
+      "destination": "public_html/assets/partners/moxy-hotels-footer.svg",
+      "publicPath": "/assets/partners/moxy-hotels-footer.svg",
+      "expectedSha256": "daa7f19af3da38624a6dfd89e8886cb825e51776aef4114f6276c475ec1da606",
+      "expectedRemoteSha256": "daa7f19af3da38624a6dfd89e8886cb825e51776aef4114f6276c475ec1da606"
+    },
+    {
+      "source": "dist/assets/partners/real-slx-footer.svg",
+      "destination": "public_html/assets/partners/real-slx-footer.svg",
+      "publicPath": "/assets/partners/real-slx-footer.svg",
+      "expectedSha256": "3c601b9ff9b3f40d9ccd59faf4903f4d3a60ecbc611e9ed6fb3427bfd3134ad3",
+      "expectedRemoteSha256": "3c601b9ff9b3f40d9ccd59faf4903f4d3a60ecbc611e9ed6fb3427bfd3134ad3"
+    },
+    {
+      "source": "dist/assets/partners/skyway-aviation-footer.png",
+      "destination": "public_html/assets/partners/skyway-aviation-footer.png",
+      "publicPath": "/assets/partners/skyway-aviation-footer.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "a70c8079bb9cbbdf9b5ca1e597228c73847a8832373bd8f2b7e58d67f011c1ea",
+      "expectedRemoteSha256": "a70c8079bb9cbbdf9b5ca1e597228c73847a8832373bd8f2b7e58d67f011c1ea"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/footer.test.mjs",
+      "tests/strava-map-integration.test.mjs",
+      "tests/strava-race-schedule.test.mjs",
+      "tests/participation-waiver.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking/",
+      "/partners/",
+      "/participation-terms/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}

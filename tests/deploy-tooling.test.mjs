@@ -478,6 +478,7 @@ test("Micro, Standard, and Major select progressively stronger validation", () =
 test("production workflows remain manual-only, serialized, least-privilege, and SHA-pinned", async () => {
   const workflowUrls = [
     new URL("../.github/workflows/deploy-static-production.yml", import.meta.url),
+    new URL("../.github/workflows/provision-static-production.yml", import.meta.url),
     new URL("../.github/workflows/deploy-backend-production.yml", import.meta.url),
     new URL("../.github/workflows/verify-backend-production.yml", import.meta.url),
   ];
@@ -491,7 +492,7 @@ test("production workflows remain manual-only, serialized, least-privilege, and 
       assert.match(match[1], /^actions\/[a-z-]+@[a-f0-9]{40}$/, `unpinned or non-official action: ${match[1]}`);
     }
   }
-  for (const url of workflowUrls.slice(0, 2)) {
+  for (const url of workflowUrls.slice(0, 3)) {
     const workflow = await readFile(url, "utf8");
     assert.match(workflow, /default: dry-run/);
     assert.match(workflow, /environment: production/);
