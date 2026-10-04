@@ -119,13 +119,14 @@ async function chromeExecutable() {
 }
 
 export function imageUrlsFromDom(dom, pageUrl) {
-  const baseHref = dom.match(/<base\b[^>]*\bhref=["']([^"']+)["'][^>]*>/i)?.[1];
+  const renderedMarkup = dom.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "");
+  const baseHref = renderedMarkup.match(/<base\b[^>]*\bhref=["']([^"']+)["'][^>]*>/i)?.[1];
   const documentBase = baseHref ? new URL(baseHref, pageUrl) : pageUrl;
   if (documentBase.origin !== pageUrl.origin) {
     throw new Error(`Browser DOM base escaped production origin: ${documentBase.origin}`);
   }
   const values = new Set();
-  for (const match of dom.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi)) {
+  for (const match of renderedMarkup.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi)) {
     if (/^(?:data:|blob:)/i.test(match[1])) continue;
     const url = new URL(match[1], documentBase);
     if (url.origin === pageUrl.origin) values.add(url.href);

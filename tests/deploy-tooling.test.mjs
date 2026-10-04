@@ -227,6 +227,15 @@ test("browser image verification resolves relative assets from the deployed live
   );
 });
 
+test("browser image verification ignores image-like template strings inside scripts", () => {
+  const pageUrl = new URL("https://goodwingoodge.com/live-tracking.html");
+  const dom = '<script>const template = `<img src="${logoSource}">`;</script><img src="assets/goodwin-logo.png">';
+  assert.deepEqual(
+    imageUrlsFromDom(dom, pageUrl),
+    ["https://goodwingoodge.com/assets/goodwin-logo.png"],
+  );
+});
+
 test("standard static validation requires the actual deployed live-tracking file route", async (t) => {
   const root = await fixture(t);
   await writeFile(join(root, "live-tracking.html"), '<main id="mission-map"></main>\n');
