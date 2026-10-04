@@ -176,8 +176,8 @@
     "browserRoutes": [
       "/",
       "/live-tracking.html",
-      "/partners/",
-      "/participation-terms/"
+      "/partners.html",
+      "/participation-terms.html"
     ],
     "apiChecks": [
       {
