@@ -104,6 +104,7 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
   assert.equal((row.match(/class="partner-logo-item(?: partner-logo-item-bingo)?"/g) ?? []).length, 6);
   assert.match(wall, /href="https:\/\/www\.jetexcellence\.com\/"[^>]+aria-label="Visit Jet Excellence"/);
   assert.match(wall, /src="assets\/partners\/jet-excellence-footer\.png"[^>]+alt="Jet Excellence logo"/);
+  assert.match(html, /img\[src\$="jet-excellence-footer\.png"\][^}]+filter:grayscale\(1\) brightness\(0\) invert\(1\)/);
   assert.equal((html.match(/aria-label="Visit Jet Excellence"/g) ?? []).length, 1, "Jet Excellence replaces FlyExclusive once");
   assert.ok(existsSync(new URL("../dist/assets/partners/jet-excellence-footer.png", import.meta.url)));
 
