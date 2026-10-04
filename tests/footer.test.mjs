@@ -136,5 +136,6 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
   assert.match(html, /\.partner-logo-row-new[^}]+border-top:0/);
   assert.match(html, /@media\(max-width:640px\)[^{]*\{\.site-footer \.partner-logo-row-new[^}]+grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(html, /@media\(max-width:640px\)[^{]*\{\.site-footer \.partner-logo-row-new[^}]+margin-top:28px;padding-top:0;border-top:0/);
+  assert.match(html, /\.partner-logo-row-new \.partner-logo-item:nth-child\(3\)[^}]+grid-column:1 \/ -1;width:50%;order:1/);
   assert.match(html, /\.partner-logo-row-new \.partner-logo-item a:focus-visible[^}]+outline:2px solid #fff/);
 });
