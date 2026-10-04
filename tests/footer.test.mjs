@@ -86,10 +86,10 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
   const expectedSponsors = [
     ["Hertz", "https://www.hertz.com/", "hertz-footer.png"],
     ["Bingo Jets", "https://www.bingojets.com/", "bingo-jets-footer.png"],
-    ["Real SLX", "https://realslx.com/?utm_source=ig&amp;utm_medium=social&amp;utm_content=link_in_bio", "real-slx-footer.svg"],
     ["Moxy Hotels", "https://www.marriott.com/brands/moxy-hotels.mi", "moxy-hotels-footer.svg"],
     ["Fontainebleau Miami Beach", "https://www.fontainebleau.com/miamibeach/", "fontainebleau-miami-beach-footer.svg"],
     ["Fontainebleau Las Vegas", "https://www.fontainebleaulasvegas.com/", "fontainebleau-las-vegas-footer.svg"],
+    ["Real SLX", "https://realslx.com/?utm_source=ig&amp;utm_medium=social&amp;utm_content=link_in_bio", "real-slx-footer.svg"],
   ];
 
   const html = readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8");
@@ -121,12 +121,13 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
     assert.ok(existsSync(new URL(`../dist/assets/partners/${asset}`, import.meta.url)), `${name}: copied asset`);
   }
 
-  assert.ok(row.indexOf("Visit Bingo Jets") < row.indexOf("Visit Real SLX"), "Real SLX follows Bingo Jets");
-  assert.ok(row.indexOf("Visit Real SLX") < row.indexOf("Visit Moxy Hotels"), "Real SLX is the centered third logo");
+  assert.ok(row.indexOf("Visit Fontainebleau Miami Beach") < row.indexOf("Visit Fontainebleau Las Vegas"), "Fontainebleau properties are adjacent");
+  assert.ok(row.indexOf("Visit Fontainebleau Las Vegas") < row.indexOf("Visit Real SLX"), "Real SLX is the final bottom-row logo");
   assert.doesNotMatch(html, /flyexclusive/i);
   assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive-footer.svg", import.meta.url)), false);
   assert.equal(existsSync(new URL("../dist/assets/partners/flyexclusive.png", import.meta.url)), false);
   assert.match(html, /\.partner-logo-row-new[^}]+grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+  assert.match(html, /\.partner-logo-row-new[^}]+border-top:0/);
   assert.match(html, /@media\(max-width:640px\)[^{]*\{\.site-footer \.partner-logo-row-new[^}]+grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(html, /\.partner-logo-row-new \.partner-logo-item a:focus-visible[^}]+outline:2px solid #fff/);
 });
