@@ -119,6 +119,7 @@ function isAllowedBackendSource(source) {
 function expectedPublicPath(destination) {
   if (destination === "public_html/.htaccess") return "/";
   if (destination === "public_html/index.html") return "/";
+  if (destination === "public_html/live-tracking.html") return "/live-tracking.html";
   if (/^public_html\/[A-Za-z0-9][A-Za-z0-9._-]*\.html$/.test(destination)) {
     return `/${basename(destination, ".html")}/`;
   }
@@ -290,7 +291,7 @@ export async function validateManifestObject(manifest, options = {}) {
     throw new Error("Standard and major static manifests require at least two representative browser routes");
   }
   if (manifest.deploymentType === "static" && manifest.releaseType !== "micro") {
-    for (const requiredRoute of ["/", "/live-tracking/"]) {
+    for (const requiredRoute of ["/", "/live-tracking.html"]) {
       if (!browserRoutes.includes(requiredRoute)) throw new Error(`Standard and major static manifests require browser route ${requiredRoute}`);
     }
     for (const requiredApiPath of ["/strava/health", "/strava/public/race-status", "/strava/public/tracking-status"]) {

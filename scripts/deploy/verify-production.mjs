@@ -17,7 +17,7 @@ const RUNTIME_FIELDS = Object.freeze([
   "raceWindowModuleVersion",
 ]);
 const MAJOR_ACCEPTANCE_ROUTES = Object.freeze([
-  "/", "/the-run/", "/live-tracking/", "/fifty-runs/", "/athletes/", "/partners/", "/updates/", "/will/",
+  "/", "/the-run/", "/live-tracking.html", "/fifty-runs/", "/athletes/", "/partners/", "/updates/", "/will/",
   "/faq/", "/privacy/", "/terms/", "/participation-terms/", "/accessibility/", "/week-1/", "/week-2/", "/week-3/",
 ]);
 
@@ -159,7 +159,7 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   if (releaseType !== "micro" && path === "/" && !homeMediaPresent(result.stdout)) {
     throw new Error("Home media rail was not present after browser rendering");
   }
-  if (releaseType !== "micro" && path === "/live-tracking/" && !/id=["']mission-map["']/.test(result.stdout)) {
+  if (releaseType !== "micro" && path === "/live-tracking.html" && !/id=["']mission-map["']/.test(result.stdout)) {
     throw new Error("Mission America map mount was not present after browser rendering");
   }
   const images = imageUrlsFromDom(result.stdout, url);

@@ -213,6 +213,45 @@ test("browser image verification honors only a same-origin document base", () =>
   );
 });
 
+test("browser image verification resolves relative assets from the deployed live-tracking file route", () => {
+  const deployedPageUrl = new URL("https://goodwingoodge.com/live-tracking.html");
+  assert.deepEqual(
+    imageUrlsFromDom('<img src="assets/goodwin-logo.png">', deployedPageUrl),
+    ["https://goodwingoodge.com/assets/goodwin-logo.png"],
+  );
+
+  const incompatibleDirectoryUrl = new URL("https://goodwingoodge.com/live-tracking/");
+  assert.deepEqual(
+    imageUrlsFromDom('<img src="assets/goodwin-logo.png">', incompatibleDirectoryUrl),
+    ["https://goodwingoodge.com/live-tracking/assets/goodwin-logo.png"],
+  );
+});
+
+test("standard static validation requires the actual deployed live-tracking file route", async (t) => {
+  const root = await fixture(t);
+  await writeFile(join(root, "live-tracking.html"), '<main id="mission-map"></main>\n');
+  const files = [{
+    source: "live-tracking.html",
+    destination: "public_html/live-tracking.html",
+    publicPath: "/live-tracking.html",
+    expectedRemoteAbsent: true,
+  }];
+  const apiChecks = ["/strava/health", "/strava/public/race-status", "/strava/public/tracking-status"]
+    .map((path, index) => ({ name: `API check ${index + 1}`, path, expectedStatus: 200, requiredJsonFields: [] }));
+  const validation = (browserRoutes) => ({ targetedTests: ["tests/site.test.mjs"], browserRoutes, apiChecks });
+
+  await assert.rejects(
+    validateManifestObject(validManifest({ releaseType: "standard", files, validation: validation(["/", "/live-tracking/"]) }), { root }),
+    /browser route \/live-tracking\.html/,
+  );
+  const accepted = await validateManifestObject(
+    validManifest({ releaseType: "standard", files, validation: validation(["/", "/live-tracking.html"]) }),
+    { root },
+  );
+  assert.deepEqual(accepted.validation.browserRoutes, ["/", "/live-tracking.html"]);
+  assert.equal(accepted.files[0].publicPath, "/live-tracking.html");
+});
+
 test("home media verification recognizes the current hero video and rejects missing media", () => {
   assert.equal(homeMediaPresent('<video class="tracker-hero-bg" data-hero-video><source data-src="/assets/hero-signal-optimized.mp4" type="video/mp4"></video>'), true);
   assert.equal(homeMediaPresent('<div class="homepage">No hero media</div>'), false);
@@ -622,7 +661,7 @@ test("isolated build accepts sixteen tracked-output changes plus new output and 
     releaseType: "standard",
     files: [{ source: "dist/tracked-0.html", destination: "public_html/tracked-0.html", publicPath: "/tracked-0/", expectedRemoteAbsent: true }],
     validation: {
-      targetedTests: ["tests/site.test.mjs"], browserRoutes: ["/", "/live-tracking/"],
+      targetedTests: ["tests/site.test.mjs"], browserRoutes: ["/", "/live-tracking.html"],
       apiChecks: ["/strava/health", "/strava/public/race-status", "/strava/public/tracking-status"].map((path, index) => ({ name: `API check ${index + 1}`, path, expectedStatus: 200, requiredJsonFields: [] })),
     },
   });
