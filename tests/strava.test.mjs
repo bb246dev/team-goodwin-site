@@ -271,12 +271,12 @@ async function statusAt(timestamp) {
 }
 
 test("protected status reports the race window inactive before it starts", async () => {
-  const status = await statusAt("2026-10-09T03:59:59Z");
+  const status = await statusAt("2026-10-09T12:59:59Z");
   assert.deepEqual(status, {
     connected: false,
     raceWindowActive: false,
     raceWindowId: "ggma-2026",
-    raceWindowStart: "2026-10-09T00:00:00-04:00",
+    raceWindowStart: "2026-10-09T09:00:00-04:00",
     raceWindowEnd: "2026-11-01T23:59:59-05:00",
   });
 });

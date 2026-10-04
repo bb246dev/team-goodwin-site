@@ -8,7 +8,7 @@ export const HAPN_REFRESH_MS = 120_000;
 export const HAPN_PUBLIC_REQUEST_TIMEOUT_MS = 5_000;
 
 const WINDOW_ID = "ggma-2026";
-const WINDOW_START = "2026-10-09T00:00:00-04:00";
+const WINDOW_START = "2026-10-09T09:00:00-04:00";
 const WINDOW_END = "2026-11-01T23:59:59-05:00";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

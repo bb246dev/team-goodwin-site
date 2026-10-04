@@ -182,7 +182,7 @@ The server has one immutable activity-processing window:
 [
   {
     "id": "ggma-2026",
-    "start": "2026-10-09T00:00:00-04:00",
+    "start": "2026-10-09T09:00:00-04:00",
     "end": "2026-11-01T23:59:59-05:00"
   }
 ]

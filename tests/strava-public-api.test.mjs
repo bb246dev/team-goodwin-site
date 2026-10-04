@@ -22,8 +22,8 @@ const schedule = [...seed.matchAll(
   status: "scheduled",
 }));
 
-const beforeWindow = Math.floor(Date.parse("2026-10-09T03:59:59Z") / 1000);
-const duringWindow = Math.floor(Date.parse("2026-10-09T12:00:00Z") / 1000);
+const beforeWindow = Math.floor(Date.parse("2026-10-09T12:59:59Z") / 1000);
+const duringWindow = Math.floor(Date.parse("2026-10-09T14:00:00Z") / 1000);
 const afterWindow = Math.floor(Date.parse("2026-11-02T05:00:00Z") / 1000);
 
 function populatedStore() {
@@ -119,7 +119,7 @@ test("public schedule returns exactly 50 ordered races and only an included matc
     status: "completed",
     activity: {
       stravaActivityId: "111111111",
-      startTime: "2026-10-09T12:00:00.000Z",
+      startTime: "2026-10-09T14:00:00.000Z",
       distanceMeters: 42_195.2,
       movingTimeSeconds: 10_800,
       elapsedTimeSeconds: 11_040,
@@ -154,7 +154,7 @@ test("public status hides pre-race activities and preserves completed historical
   assert.deepEqual(await preStatus.json(), {
     active: false,
     raceWindowId: "ggma-2026",
-    raceWindowStart: "2026-10-09T00:00:00-04:00",
+    raceWindowStart: "2026-10-09T09:00:00-04:00",
     raceWindowEnd: "2026-11-01T23:59:59-05:00",
     completedRaces: 0,
     totalRaces: 50,
@@ -164,7 +164,7 @@ test("public status hides pre-race activities and preserves completed historical
   assert.deepEqual(await activeStatus.json(), {
     active: true,
     raceWindowId: "ggma-2026",
-    raceWindowStart: "2026-10-09T00:00:00-04:00",
+    raceWindowStart: "2026-10-09T09:00:00-04:00",
     raceWindowEnd: "2026-11-01T23:59:59-05:00",
     completedRaces: 1,
     totalRaces: 50,
@@ -174,7 +174,7 @@ test("public status hides pre-race activities and preserves completed historical
   assert.deepEqual(await historicalStatus.json(), {
     active: false,
     raceWindowId: "ggma-2026",
-    raceWindowStart: "2026-10-09T00:00:00-04:00",
+    raceWindowStart: "2026-10-09T09:00:00-04:00",
     raceWindowEnd: "2026-11-01T23:59:59-05:00",
     completedRaces: 1,
     totalRaces: 50,

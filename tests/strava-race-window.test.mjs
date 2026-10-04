@@ -7,16 +7,16 @@ import {
   operationalWindowForActivityStart,
 } from "../strava-app/lib/race-window.mjs";
 
-const start = Date.parse("2026-10-09T00:00:00-04:00") / 1000;
+const start = Date.parse("2026-10-09T09:00:00-04:00") / 1000;
 const end = Date.parse("2026-11-01T23:59:59-05:00") / 1000;
 
 test("GGMA uses the single configured offset-aware operational window", () => {
   assert.deepEqual(STRAVA_OPERATIONAL_WINDOWS, [{
     id: "ggma-2026",
-    start: "2026-10-09T00:00:00-04:00",
+    start: "2026-10-09T09:00:00-04:00",
     end: "2026-11-01T23:59:59-05:00",
   }]);
-  assert.equal(start, Date.parse("2026-10-09T04:00:00Z") / 1000);
+  assert.equal(start, Date.parse("2026-10-09T13:00:00Z") / 1000);
   assert.equal(end, Date.parse("2026-11-02T04:59:59Z") / 1000);
   assert.ok(Object.isFrozen(STRAVA_OPERATIONAL_WINDOWS));
   assert.ok(Object.isFrozen(STRAVA_OPERATIONAL_WINDOWS[0]));
@@ -33,8 +33,8 @@ test("Strava fetch gating is inclusive at both boundaries with no grace period",
 });
 
 test("activity eligibility uses its actual offset-aware start timestamp", () => {
-  assert.equal(operationalWindowForActivityStart("2026-10-09T03:59:59Z"), null);
-  assert.equal(operationalWindowForActivityStart("2026-10-09T00:00:00-04:00")?.id, "ggma-2026");
+  assert.equal(operationalWindowForActivityStart("2026-10-09T12:59:59Z"), null);
+  assert.equal(operationalWindowForActivityStart("2026-10-09T09:00:00-04:00")?.id, "ggma-2026");
   assert.equal(operationalWindowForActivityStart("2026-11-01T23:59:59-05:00")?.id, "ggma-2026");
   assert.equal(operationalWindowForActivityStart("2026-11-02T05:00:00Z"), null);
   assert.equal(operationalWindowForActivityStart("2026-10-15T12:00:00"), null);

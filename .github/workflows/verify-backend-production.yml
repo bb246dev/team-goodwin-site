@@ -1,0 +1,106 @@
+name: Verify backend production
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployed_commit:
+        description: Full 40-character commit SHA used for the backend upload
+        required: true
+        type: string
+      release_level:
+        description: Release level used for the backend upload
+        required: true
+        type: choice
+        default: major
+        options:
+          - major
+      manifest:
+        description: Exact backend manifest used for the upload
+        required: true
+        type: string
+      expected_release_generation:
+        description: Exact 64-character generation observed after the manual Stop/Start
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify after manual Passenger restart
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DEPLOYED_COMMIT: ${{ inputs.deployed_commit }}
+      RELEASE_COMMIT_SHA: ${{ inputs.deployed_commit }}
+      MANIFEST_PATH: ${{ inputs.manifest }}
+      RELEASE_LEVEL: ${{ inputs.release_level }}
+      EXPECTED_RELEASE_GENERATION: ${{ inputs.expected_release_generation }}
+      DEPLOYMENT_ENVIRONMENT: production
+    steps:
+      - name: Guard production readiness
+        env:
+          PRODUCTION_DEPLOYMENTS_ENABLED: ${{ vars.PRODUCTION_DEPLOYMENTS_ENABLED }}
+        run: test "$PRODUCTION_DEPLOYMENTS_ENABLED" = "true"
+
+      - name: Validate immutable commit input
+        run: |
+          node -e 'if (!/^[a-f0-9]{40}$/.test(process.env.DEPLOYED_COMMIT)) { console.error("deployed_commit must be a full lowercase SHA"); process.exit(1); }'
+          node -e 'if (!/^[a-f0-9]{64}$/.test(process.env.EXPECTED_RELEASE_GENERATION)) { console.error("expected_release_generation must be a lowercase SHA-256"); process.exit(1); }'
+
+      - name: Check out deployed commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.deployed_commit }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install locked dependencies
+        run: |
+          npm ci
+          npm --prefix strava-app ci
+
+      - name: Validate exact backend manifest
+        run: node scripts/deploy/validate-manifest.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL"
+
+      - name: Recreate the isolated validated output
+        run: node scripts/deploy/run-validation.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --workspace "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json"
+
+      - name: Rebuild immutable release metadata
+        run: node scripts/deploy/build-release.mjs --manifest "$MANIFEST_PATH" --type backend --release "$RELEASE_LEVEL" --root "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" --inventory "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json" --release-commit "$RELEASE_COMMIT_SHA" --expected-release-generation "$EXPECTED_RELEASE_GENERATION" --output deployment-release
+
+      - name: Verify public APIs, FTPS hashes, and authenticated runtime generation
+        env:
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          STRAVA_ADMIN_TOKEN: ${{ secrets.STRAVA_ADMIN_TOKEN }}
+          STRAVA_ADMIN_USER: ${{ vars.STRAVA_ADMIN_USER || 'strava' }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-ftps-temporary-${{ github.run_id }}
+        run: node scripts/deploy/verify-production.mjs --release deployment-release/release.json --expected-release-generation "$EXPECTED_RELEASE_GENERATION" --output backend-verification.json
+
+      - name: Save verification result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: backend-production-verification-${{ github.run_id }}
+          path: backend-verification.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Delete validation and credential temporary files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-validated-workspace-$GITHUB_RUN_ID" "$RUNNER_TEMP/goodwin-validated-inventory-$GITHUB_RUN_ID.json" "$RUNNER_TEMP/goodwin-ftps-temporary-$GITHUB_RUN_ID"

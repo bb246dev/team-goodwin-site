@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "backend",
+  "releaseType": "major",
+  "previousReleaseGeneration": "0000000000000000000000000000000000000000000000000000000000000000",
+  "exampleOnly": true,
+  "description": "Example race-window module release. Backend destinations are always enumerated exactly.",
+  "protectedPathsApproved": [
+    "goodwin-node-test/lib/race-window.mjs"
+  ],
+  "files": [
+    {
+      "source": "strava-app/lib/race-window.mjs",
+      "destination": "goodwin-node-test/lib/race-window.mjs",
+      "expectedSha256": "43144d0e7d0bdca9e62b1b92ee89ad89695dad13244f44e7741634d7657978d0",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/strava-race-window.test.mjs",
+      "tests/strava-public-api.test.mjs"
+    ],
+    "browserRoutes": [],
+    "apiChecks": [
+      {
+        "name": "Strava health",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "status"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowId",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}

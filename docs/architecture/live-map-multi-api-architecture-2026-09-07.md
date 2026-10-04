@@ -15,7 +15,7 @@ This architecture makes the current Strava integration and HAPN API #2 inputs to
 API #2 is HAPN and owns only the RV's observed live vehicle location. API #3 remains unassigned and unimplemented. HAPN cannot overwrite the static schedule or geometry, Strava activity/completion, planned flight data, or runner location.
 
 The normalized ownership key is `rvLocation`. Production polling is bounded to
-the inclusive operational window `2026-10-09T00:00:00-04:00` through
+the inclusive operational window `2026-10-09T09:00:00-04:00` through
 `2026-11-01T23:59:59-05:00`. Outside that window, and whenever HAPN is stale,
 unavailable, invalid, or unauthorized by valid race status, the known-good
 static RV remains authoritative.
@@ -56,7 +56,7 @@ The default race-window/status object is:
 {
   "active": false,
   "raceWindowId": "ggma-2026",
-  "raceWindowStart": "2026-10-09T00:00:00-04:00",
+  "raceWindowStart": "2026-10-09T09:00:00-04:00",
   "raceWindowEnd": "2026-11-01T23:59:59-05:00",
   "completedRaces": 0,
   "totalRaces": 50
