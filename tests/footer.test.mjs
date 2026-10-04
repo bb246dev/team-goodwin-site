@@ -139,8 +139,7 @@ test("the additional sponsor row is local, linked, ordered, and responsive", () 
   assert.match(html, /\.partner-logo-wall \.partner-logo-item:nth-child\(n\+13\) img[^}]+max-width:min\(138px,100%\);max-height:36px/);
   assert.match(html, /\.partner-logo-row-new[^}]+grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
   assert.match(html, /\.partner-logo-row-new[^}]+margin-top:28px;padding-top:0;border-top:0/);
-  assert.match(html, /\.partner-logo-row-new \.partner-logo-item:nth-child\(3\)[^}]+grid-column:4 \/ span 2;order:2/);
-  assert.match(html, /\.partner-logo-row-new \.partner-logo-item:nth-child\(4\)[^}]+grid-column:2 \/ span 2;order:1/);
-  assert.match(html, /\.partner-logo-row-new \.partner-logo-item:nth-child\(6\)[^}]+grid-column:2 \/ span 2;order:2/);
+  assert.match(html, /\.partner-logo-row-new \.partner-logo-item:nth-child\(3\)[^}]+grid-column:3 \/ span 2;order:2/);
+  assert.match(html, /\.partner-logo-row-new \.partner-logo-item:nth-child\(4\)[^}]+\.partner-logo-row-new \.partner-logo-item:nth-child\(6\)[^}]+grid-column:span 2;order:1/);
   assert.match(html, /\.partner-logo-row-new \.partner-logo-item a:focus-visible[^}]+outline:2px solid #fff/);
 });
