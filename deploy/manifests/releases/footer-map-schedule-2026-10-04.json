@@ -2,10 +2,8 @@
   "schemaVersion": 1,
   "deploymentType": "static",
   "releaseType": "standard",
-  "description": "Deploy the reviewed sponsor footer, revised hidden race schedule, and time-gated RV and flight markers across the public site.",
-  "protectedPathsApproved": [
-    "public_html/assets/strava-race-map.mjs"
-  ],
+  "description": "Deploy the reviewed sponsor footer and local sponsor assets across the public site.",
+  "protectedPathsApproved": [],
   "files": [
     {
       "source": "dist/index.html",
@@ -104,19 +102,6 @@
       "expectedRemoteSha256": "76acb163ea4066cf2c2f3a76b8e8274daf946243bc76c2996f37ff86fc59ff00"
     },
     {
-      "source": "dist/assets/index-BE9Jl0ji.js",
-      "destination": "public_html/assets/index-BE9Jl0ji.js",
-      "publicPath": "/assets/index-BE9Jl0ji.js",
-      "expectedRemoteSha256": "df25db21fa2b72d4d9a427564aabdde2b2dcc8f5a534a0f0d9636138e9212391"
-    },
-    {
-      "source": "dist/assets/strava-race-map.mjs",
-      "destination": "public_html/assets/strava-race-map.mjs",
-      "publicPath": "/assets/strava-race-map.mjs",
-      "expectedSha256": "982d48f505bf0f06bee2d72b0c50152d3ce5aedee51b4ebf07c7ee575c89b2f3",
-      "expectedRemoteSha256": "3f476d314f48615ee0f9ae8dca165f2d940ef8d0b5a84651bb303711573125ca"
-    },
-    {
       "source": "dist/assets/partners/partners.json",
       "destination": "public_html/assets/partners/partners.json",
       "publicPath": "/assets/partners/partners.json",
@@ -186,8 +171,6 @@
   "validation": {
     "targetedTests": [
       "tests/footer.test.mjs",
-      "tests/strava-map-integration.test.mjs",
-      "tests/strava-race-schedule.test.mjs",
       "tests/participation-waiver.test.mjs"
     ],
     "browserRoutes": [
@@ -198,11 +181,11 @@
     ],
     "apiChecks": [
       {
-        "name": "Strava health documented production baseline",
+        "name": "Strava health",
         "path": "/strava/health",
-        "expectedStatus": 404,
+        "expectedStatus": 200,
         "requiredJsonFields": [
-          "error"
+          "status"
         ]
       },
       {

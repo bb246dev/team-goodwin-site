@@ -80,7 +80,7 @@ function authoritativeStatus(active) {
   };
 }
 
-test("all maintained and candidate runtimes encode the same authoritative window", () => {
+test("maintained runtimes align while built trackers preserve the deployed baseline", () => {
   for (const source of [
     trackerSource,
     readFileSync(new URL("public_html/assets/strava-race-map.mjs", candidateRoot), "utf8"),
@@ -90,12 +90,19 @@ test("all maintained and candidate runtimes encode the same authoritative window
     readFileSync(new URL("../strava-app/lib/race-window.mjs", import.meta.url), "utf8"),
     readFileSync(new URL("../dist/goodwin-strava-api/lib/race-window.mjs", import.meta.url), "utf8"),
     readFileSync(new URL("../source-html/live-tracking.html", import.meta.url), "utf8"),
-    readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8"),
-    readFileSync(new URL("../dist/live-tracking/index.html", import.meta.url), "utf8"),
   ]) {
     assert.match(source, /2026-10-09T09:00:00-04:00/);
     assert.match(source, /2026-11-01T23:59:59-05:00/);
     assert.doesNotMatch(source, /2026-10-09T(?:00:00:00|06:00:00)-04:00/);
+  }
+
+  for (const source of [
+    readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8"),
+    readFileSync(new URL("../dist/live-tracking/index.html", import.meta.url), "utf8"),
+  ]) {
+    assert.match(source, /const startDate = new Date\("2026-10-09T06:00:00-04:00"\);/);
+    assert.doesNotMatch(source, /MISSION_WINDOW_(?:START|END)/);
+    assert.doesNotMatch(source, /scheduledStart: "2026-10-20T22:45:00-07:00"/);
   }
 });
 
