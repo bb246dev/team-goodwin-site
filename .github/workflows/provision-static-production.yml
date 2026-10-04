@@ -123,7 +123,7 @@ jobs:
           NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
           NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
           PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
-          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-provision-temporary-${{ github.run_id }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}
         run: node scripts/deploy/provision-static-assets.mjs --release deployment-release/release.json --mode "${{ inputs.mode }}" --output deployment-results/provisioning.json
 
       - name: Save non-sensitive provisioning result
