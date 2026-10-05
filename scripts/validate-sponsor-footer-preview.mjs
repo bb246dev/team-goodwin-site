@@ -150,6 +150,8 @@ for (const viewport of viewports) {
           rowColumns: columns(row),
           rowRect: (() => { const rect = row.getBoundingClientRect(); return {left:rect.left,width:rect.width}; })(),
           partnerRect: (() => { const rect = root.querySelector('.site-footer-partners,.global-site-footer-partners').getBoundingClientRect(); return {x:rect.left,y:rect.top + window.scrollY,width:rect.width,height:rect.height}; })(),
+          eyebrowTextAlign: getComputedStyle(root.querySelector('.tracker-eyebrow')).textAlign,
+          eyebrowRect: (() => { const rect = root.querySelector('.tracker-eyebrow').getBoundingClientRect(); return {left:rect.left,width:rect.width}; })(),
           rects,
           allRects: [...root.querySelectorAll('.partner-logo-wall>.partner-logo-item,.partner-logo-row-new>.partner-logo-item')].map((node) => {
             const rect = node.getBoundingClientRect();
@@ -186,6 +188,10 @@ for (const viewport of viewports) {
         assert.equal(rows.length, 11, `${pagePath}: mobile row count`);
         assert.ok(rows.every((row) => row.length === 2), `${pagePath}: exactly two logos per mobile row`);
         assert.deepEqual(footer.allRects.map((rect) => rect.label), footer.labels, `${pagePath}: mobile sponsor order`);
+        assert.equal(footer.eyebrowTextAlign, "center", `${pagePath}: mobile sponsor heading text alignment`);
+        const eyebrowCenter = footer.eyebrowRect.left + footer.eyebrowRect.width / 2;
+        const partnerCenter = footer.partnerRect.x + footer.partnerRect.width / 2;
+        assert.ok(Math.abs(eyebrowCenter - partnerCenter) <= 1, `${pagePath}: mobile sponsor heading centered`);
       }
       const screenshotRect = await evaluate(cdp, `(() => {
         const root = document.querySelector('footer');

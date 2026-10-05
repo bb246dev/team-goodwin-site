@@ -64,6 +64,7 @@ test("every release page contains the approved local sponsor set and responsive 
     assert.equal((html.match(/aria-label="Visit Jet Excellence"/g) ?? []).length, 1, page);
     assert.match(html, /grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/, `${page}: desktop five-across`);
     assert.match(html, /site-footer-partners\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/, `${page}: mobile two-across grid`);
+    assert.match(html, /global-site-footer-partners>\.tracker-eyebrow\{text-align:center\}/, `${page}: mobile sponsor heading centered`);
     assert.match(html, /partner-logo-wall[^}]+partner-logo-row-new[^}]+\{display:contents\}/, `${page}: mobile sponsor groups share one continuous grid`);
     assert.match(html, /partner-logo-item:nth-child\(n\)\{grid-column:auto;grid-row:auto;order:initial;transform:none/, `${page}: mobile order remains the source order`);
     for (const [name, href, asset] of expectedSponsors) {
