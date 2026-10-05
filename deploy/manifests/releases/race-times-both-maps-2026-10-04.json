@@ -12,7 +12,7 @@
       "destination": "public_html/assets/tracker-base.js",
       "publicPath": "/assets/tracker-base.js",
       "expectedSha256": "48845fa6e0837133219be387145f7934754ece44b34c2fa122aa05044e141fdb",
-      "expectedRemoteSha256": "c1926c43c01dee1c16054f972e2e9843ecf111644321a9592c2a2fdd810b6e30"
+      "expectedRemoteSha256": "f5ea26d7f39759310058c897c9f538cf10423f3106bd634579c5a4ab5cb62c54"
     },
     {
       "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/index.html",
