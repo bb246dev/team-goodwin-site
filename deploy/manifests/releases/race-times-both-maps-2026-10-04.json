@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Publish the three approved race times to the main production map and the shared tracking-preview/embed map runtime without changing styles, layout, tracking feeds, footer, sponsors, backend, or security headers.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "48845fa6e0837133219be387145f7934754ece44b34c2fa122aa05044e141fdb",
+      "expectedRemoteSha256": "c1926c43c01dee1c16054f972e2e9843ecf111644321a9592c2a2fdd810b6e30"
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/index.html",
+      "destination": "public_html/tracking-preview/index.html",
+      "publicPath": "/tracking-preview/",
+      "expectedSha256": "334b9ee092eb0fb84fcddb0c8eec0a49a8e8256481f3809b968506971ec9d98f",
+      "expectedRemoteSha256": "5c66021e512abfa4e93ec272375a8830781d29b7d2f6270911a1fcd964de40ad"
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/embed/index.html",
+      "destination": "public_html/tracking-preview/embed/index.html",
+      "publicPath": "/tracking-preview/embed/",
+      "expectedSha256": "f2a5e809e98cac0844c056225da6e84006a12563a7535d104de996197a082d45",
+      "expectedRemoteSha256": "b39aa3be06c1382804caca07dc38fa38ff55e09fb134e0ee0bf7c3ac2c2baf63"
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/asset-manifest.json",
+      "destination": "public_html/tracking-preview/asset-manifest.json",
+      "publicPath": "/tracking-preview/asset-manifest.json",
+      "expectedSha256": "d8597ee3cc342a9a74f8163ba961f5d1e4b3a3b1577642b4e92faef20c9a48d6",
+      "expectedRemoteSha256": "84f862e42c07174b4c158e2d0a1bbea5efc26e594d799c8cbf1c0d1a333a60f7"
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "destination": "public_html/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "publicPath": "/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "expectedSha256": "4411ec9de981b3765796fcf4b0946ef58aa8085de8b63b86e2bcb2af29042f3e",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "destination": "public_html/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "publicPath": "/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "expectedSha256": "a383bdc843e41141665da47cc84bfb97c405e9ef7237f0107cc4077fbfe69780",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "destination": "public_html/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "publicPath": "/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "expectedSha256": "64cfb1be0b0d345bbd97dba4cd6d4ba0276852d2daf15eb699cac477eddc1ee0",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/full-route-itinerary.test.mjs",
+      "tests/race-times-both-maps.test.mjs",
+      "tests/strava-map-integration.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/tracking-preview/",
+      "/tracking-preview/embed/"
+    ],
+    "apiChecks": []
+  }
+}

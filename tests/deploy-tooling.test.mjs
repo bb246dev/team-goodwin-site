@@ -94,6 +94,47 @@ test("invalid destination outside the allowlist fails closed", async (t) => {
   await assert.rejects(validateManifestObject(manifest, { root }), /outside the allowlist/);
 });
 
+test("tracking preview map releases permit only the exact nested runtime inventory", async (t) => {
+  const root = await fixture(t);
+  const releaseRoot = join(root, "assets", "releases", "race-times", "tracking-preview");
+  await mkdir(join(releaseRoot, "embed"), { recursive: true });
+  await mkdir(join(releaseRoot, "assets"), { recursive: true });
+  const inventory = [
+    ["index.html", "public_html/tracking-preview/index.html", "/tracking-preview/"],
+    ["embed/index.html", "public_html/tracking-preview/embed/index.html", "/tracking-preview/embed/"],
+    ["asset-manifest.json", "public_html/tracking-preview/asset-manifest.json", "/tracking-preview/asset-manifest.json"],
+    ["assets/app-0123456789abcdef.mjs", "public_html/tracking-preview/assets/app-0123456789abcdef.mjs", "/tracking-preview/assets/app-0123456789abcdef.mjs"],
+    ["assets/tracking-map-0123456789abcdef.mjs", "public_html/tracking-preview/assets/tracking-map-0123456789abcdef.mjs", "/tracking-preview/assets/tracking-map-0123456789abcdef.mjs"],
+    ["assets/route-data-0123456789abcdef.mjs", "public_html/tracking-preview/assets/route-data-0123456789abcdef.mjs", "/tracking-preview/assets/route-data-0123456789abcdef.mjs"],
+  ];
+  for (const [relative] of inventory) await writeFile(join(releaseRoot, relative), `${relative}\n`);
+  const files = inventory.map(([relative, destination, publicPath]) => ({
+    source: `assets/releases/race-times/tracking-preview/${relative}`,
+    destination,
+    publicPath,
+    expectedRemoteAbsent: true,
+  }));
+  const accepted = await validateManifestObject(validManifest({ files }), { root });
+  assert.deepEqual(accepted.files.map(({ publicPath }) => publicPath), inventory.map(([, , publicPath]) => publicPath));
+
+  await assert.rejects(validateManifestObject(validManifest({
+    files: [{
+      source: "assets/releases/race-times/tracking-preview/assets/feeds-0123456789abcdef.mjs",
+      destination: "public_html/tracking-preview/assets/feeds-0123456789abcdef.mjs",
+      publicPath: "/tracking-preview/assets/feeds-0123456789abcdef.mjs",
+      expectedRemoteAbsent: true,
+    }],
+  }), { root }), /outside the allowlist/);
+  await assert.rejects(validateManifestObject(validManifest({
+    files: [{
+      source: "assets/releases/race-times/tracking-preview/index.html",
+      destination: "public_html/tracking-preview/embed/index.html",
+      publicPath: "/tracking-preview/embed/",
+      expectedRemoteAbsent: true,
+    }],
+  }), { root }), /Static source is unexpected/);
+});
+
 test("source and destination traversal attempts are rejected", async (t) => {
   const root = await fixture(t);
   await assert.rejects(validateManifestObject(validManifest({

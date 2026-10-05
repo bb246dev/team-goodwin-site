@@ -16,6 +16,7 @@ const CREDENTIAL_PATH_PATTERN = /(^|\/)(?:\.env(?:\..*)?|credentials?(?:\..*)?|s
 const SAFE_PATH_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+@()/ -]*$/;
 const FORBIDDEN_PATH_PATTERN = /[\\*?\[\]{};$`|&<>!\r\n\0]/;
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
+const TRACKING_PREVIEW_FILE_PATTERN = /^(?:index\.html|embed\/index\.html|asset-manifest\.json|assets\/(?:app|tracking-map|route-data)-[a-f0-9]{16}\.mjs)$/;
 
 const TOP_LEVEL_KEYS = new Set([
   "schemaVersion",
@@ -88,13 +89,26 @@ function normalizePublicPath(value, context) {
   return value;
 }
 
+function trackingPreviewRelativePath(destination) {
+  const prefix = "public_html/tracking-preview/";
+  if (!destination.startsWith(prefix)) return null;
+  const relativePath = destination.slice(prefix.length);
+  return TRACKING_PREVIEW_FILE_PATTERN.test(relativePath) ? relativePath : null;
+}
+
 function isAllowedStaticDestination(destination) {
   if (destination === "public_html/.htaccess") return true;
   if (/^public_html\/[A-Za-z0-9][A-Za-z0-9._-]*\.html$/.test(destination)) return true;
+  if (trackingPreviewRelativePath(destination)) return true;
   return /^public_html\/(?:assets|data)\/[A-Za-z0-9][A-Za-z0-9._+@()/ -]*$/.test(destination);
 }
 
 function isAllowedStaticSource(source, destination) {
+  const previewRelativePath = trackingPreviewRelativePath(destination);
+  if (previewRelativePath) {
+    const sourceMatch = source.match(/^assets\/releases\/[A-Za-z0-9][A-Za-z0-9._-]*\/tracking-preview\/(.+)$/);
+    return sourceMatch?.[1] === previewRelativePath;
+  }
   if (destination === "public_html/.htaccess") {
     return source === ".htaccess" || source === "dist/.htaccess" || source.startsWith("deploy/static/");
   }
@@ -120,6 +134,10 @@ function expectedPublicPath(destination) {
   if (destination === "public_html/.htaccess") return "/";
   if (destination === "public_html/index.html") return "/";
   if (destination === "public_html/live-tracking.html") return "/live-tracking.html";
+  const previewRelativePath = trackingPreviewRelativePath(destination);
+  if (previewRelativePath === "index.html") return "/tracking-preview/";
+  if (previewRelativePath === "embed/index.html") return "/tracking-preview/embed/";
+  if (previewRelativePath) return `/tracking-preview/${previewRelativePath}`;
   if (/^public_html\/[A-Za-z0-9][A-Za-z0-9._-]*\.html$/.test(destination)) {
     return `/${basename(destination, ".html")}/`;
   }

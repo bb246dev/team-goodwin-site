@@ -1,0 +1,75 @@
+{
+  "prefix": "/tracking-preview",
+  "productionSource": {
+    "url": "https://goodwingoodge.com/",
+    "sha256": "4e96d5a878a95e93af6b5cbcd926c2dd56d0d7015f8f2a3bd035fafcc893239f"
+  },
+  "generatedFiles": [
+    {
+      "path": ".htaccess",
+      "sha256": "b3e800959226e2798f1d59dd7753a85cfc083e95caab742df906aafbaeabd98f",
+      "bytes": 965,
+      "url": "/tracking-preview/.htaccess"
+    },
+    {
+      "path": "index.html",
+      "sha256": "334b9ee092eb0fb84fcddb0c8eec0a49a8e8256481f3809b968506971ec9d98f",
+      "bytes": 33249,
+      "url": "/tracking-preview/"
+    },
+    {
+      "path": "embed/index.html",
+      "sha256": "f2a5e809e98cac0844c056225da6e84006a12563a7535d104de996197a082d45",
+      "bytes": 2539,
+      "url": "/tracking-preview/embed/"
+    },
+    {
+      "path": "assets/app-4411ec9de981b376.mjs",
+      "url": "/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "sha256": "4411ec9de981b3765796fcf4b0946ef58aa8085de8b63b86e2bcb2af29042f3e",
+      "bytes": 5091
+    },
+    {
+      "path": "assets/feeds-14a9da15157f0119.mjs",
+      "url": "/tracking-preview/assets/feeds-14a9da15157f0119.mjs",
+      "sha256": "14a9da15157f01199e25b702438e8a0b04ce01a7b8ff5239dc263de45e7253dd",
+      "bytes": 13579
+    },
+    {
+      "path": "assets/tracking-map-a383bdc843e41141.mjs",
+      "url": "/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "sha256": "a383bdc843e41141665da47cc84bfb97c405e9ef7237f0107cc4077fbfe69780",
+      "bytes": 13795
+    },
+    {
+      "path": "assets/route-data-64cfb1be0b0d345b.mjs",
+      "url": "/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "sha256": "64cfb1be0b0d345bbd97dba4cd6d4ba0276852d2daf15eb699cac477eddc1ee0",
+      "bytes": 5691
+    },
+    {
+      "path": "assets/leaflet-5e4d4e4e1f8aedf8.mjs",
+      "url": "/tracking-preview/assets/leaflet-5e4d4e4e1f8aedf8.mjs",
+      "sha256": "5e4d4e4e1f8aedf812f73a82e582f03a3a196c6ba9d363b1b2516aaa2c8425fa",
+      "bytes": 149993
+    },
+    {
+      "path": "assets/tracking-preview-2385915f4a5ac69f.css",
+      "url": "/tracking-preview/assets/tracking-preview-2385915f4a5ac69f.css",
+      "sha256": "2385915f4a5ac69fa5bcc901e61d48dbbb2f883259a7c2e3976caa48ce6bb7fa",
+      "bytes": 22334
+    },
+    {
+      "path": "assets/will-marker-56ab69d63f325765.png",
+      "url": "/tracking-preview/assets/will-marker-56ab69d63f325765.png",
+      "sha256": "56ab69d63f325765a53ad79600bcc293fed2419a68f27a10494eb4c8da71241f",
+      "bytes": 17379
+    },
+    {
+      "path": "assets/rv-marker-2f7beea761de0104.png",
+      "url": "/tracking-preview/assets/rv-marker-2f7beea761de0104.png",
+      "sha256": "2f7beea761de010486686570b2295dd5f44bff2263a40142ae73049a78d618fe",
+      "bytes": 28910
+    }
+  ]
+}

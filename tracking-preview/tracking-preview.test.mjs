@@ -11,6 +11,7 @@ import {
   TRACKING_STATE,
   classifyRvLocation,
   createTrackingMap,
+  raceStopTooltip,
   validCoordinate,
 } from "./source/tracking-map.mjs";
 import {
@@ -27,6 +28,7 @@ import {
   loadPublicRvLocation,
   normalizePublicRvLocation,
 } from "./source/feeds.mjs";
+import { ROUTE_STOPS } from "./source/route-data.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const outputRoot = join(import.meta.dirname, "dist", "tracking-preview");
@@ -207,6 +209,19 @@ test("embed page exposes only the iframe-safe map shell", () => {
   assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors https:"/);
   assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors 'none'/);
   assert.doesNotMatch(readOutput(".htaccess"), /Header always set X-Frame-Options/);
+});
+
+test("preview and embed route tooltips show the three approved local race times", () => {
+  for (const [city, expected] of [
+    ["Los Angeles", "26. Los Angeles, California · Oct 21 · 10:45PM"],
+    ["Portsmouth", "48. Portsmouth, New Hampshire · Oct 31 · 5:00AM"],
+    ["Kittery", "49. Kittery, Maine · Oct 31 · 12:00PM"],
+  ]) {
+    const stop = ROUTE_STOPS.find((entry) => entry.city === city);
+    assert.ok(stop, city);
+    assert.equal(raceStopTooltip(stop), expected, city);
+  }
+  assert.equal(raceStopTooltip(ROUTE_STOPS[0]), "1. Honolulu, Hawaii");
 });
 
 test("OpenStreetMap policy and dark treatment remain compliant", () => {
