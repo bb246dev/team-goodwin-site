@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Publish only the reviewed main live-map RV visibility gate and active scheduled-flight plane marker behavior while preserving race-time labels, route geometry, map key, styling, tracking status behavior, and all non-map assets.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-rv-plane-markers-2026-10-05/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "6281c0d6c81a91b9d888503514bc2ab9a1bd33807b3690306fd5c6d3a7bc7394",
+      "expectedRemoteSha256": "48845fa6e0837133219be387145f7934754ece44b34c2fa122aa05044e141fdb"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/full-route-itinerary.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/race-times-both-maps.test.mjs",
+      "tests/strava-map-integration.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": []
+  }
+}
