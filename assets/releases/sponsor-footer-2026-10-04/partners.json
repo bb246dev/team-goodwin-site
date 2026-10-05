@@ -1,0 +1,222 @@
+[
+  {
+    "displayName": "Arsenal Aviation",
+    "slug": "arsenal-aviation",
+    "officialSource": "https://arsenalaviation.com/",
+    "originalAsset": "/assets/partners/arsenal-aviation.png",
+    "footerAsset": "/assets/partners/arsenal-aviation-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Arsenal Aviation's website. Footer version wraps the original PNG with a monochrome white SVG filter.",
+    "website": "https://www.arsenalaviation.com/"
+  },
+  {
+    "displayName": "Trilogy Aviation Group",
+    "slug": "trilogy-aviation",
+    "officialSource": "https://www.trilogyaviationgroup.com/",
+    "originalAsset": "/assets/partners/trilogy-aviation.png",
+    "footerAsset": "/assets/partners/trilogy-aviation-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Trilogy Aviation Group's website. Footer version wraps the original PNG with a monochrome white SVG filter.",
+    "website": "https://www.trilogyaviationgroup.com/"
+  },
+  {
+    "displayName": "Titan Aviation Group",
+    "slug": "titan-aviation",
+    "officialSource": "https://titanflights.com/",
+    "originalAsset": "/assets/partners/titan-aviation.png",
+    "footerAsset": "/assets/partners/titan-aviation-footer.png",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Titan Aviation Group's website. Footer version is a transparent white PNG created from the official artwork.",
+    "website": "https://titanflights.com/"
+  },
+  {
+    "displayName": "FLY1200",
+    "slug": "fly1200",
+    "officialSource": "https://fly1200.com/",
+    "originalAsset": "/assets/partners/fly1200.svg",
+    "footerAsset": "/assets/partners/fly1200-footer.svg",
+    "assetType": "svg",
+    "notes": "Official SVG from FLY1200's website. Footer version preserves the official white SVG.",
+    "website": "https://fly1200.com/"
+  },
+  {
+    "displayName": "Jet Excellence",
+    "slug": "jet-excellence",
+    "officialSource": "https://www.jetexcellence.com/",
+    "originalAsset": "https://static.wixstatic.com/media/109510_1a5c3f9275e34c43a47132f6a2b350a2~mv2.png",
+    "footerAsset": "/assets/partners/jet-excellence-footer.png",
+    "assetType": "png",
+    "notes": "Optimized local PNG derived from the official transparent header logo on Jet Excellence's website.",
+    "website": "https://www.jetexcellence.com/"
+  },
+  {
+    "displayName": "Jet Linx",
+    "slug": "jet-linx",
+    "officialSource": "https://jetlinx.com/",
+    "originalAsset": "/assets/partners/jet-linx.png",
+    "footerAsset": "/assets/partners/jet-linx-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Jet Linx's website. Footer version wraps the original PNG with a monochrome white SVG filter.",
+    "website": "https://jetlinx.com/"
+  },
+  {
+    "displayName": "Skyward Aviation",
+    "slug": "skyward-aviation",
+    "officialSource": "https://skywardaviation.com/",
+    "originalAsset": "/assets/partners/skyward-aviation.png",
+    "footerAsset": "/assets/partners/skyward-aviation-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Skyward Aviation's website. Footer version wraps the original PNG with a monochrome white SVG filter.",
+    "website": "https://skywardaviation.com/"
+  },
+  {
+    "displayName": "TrueSkies Aviation Group",
+    "slug": "trueskies",
+    "officialSource": "https://flytrueskies.com/",
+    "originalAsset": "/assets/partners/trueskies.png",
+    "footerAsset": "/assets/partners/trueskies-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from TrueSkies Aviation Group's website. Footer version wraps the original PNG with a monochrome white SVG filter.",
+    "website": "https://flytrueskies.com/"
+  },
+  {
+    "displayName": "Magellan Jets",
+    "slug": "magellan-jets",
+    "officialSource": "https://www.magellanjets.com/",
+    "originalAsset": "/assets/partners/magellan-jets.svg",
+    "footerAsset": "/assets/partners/magellan-jets-footer.svg",
+    "assetType": "svg",
+    "notes": "Official SVG from Magellan Jets' website. Footer version preserves the official SVG.",
+    "website": "https://magellanjets.com/"
+  },
+  {
+    "displayName": "Charter Flight Support",
+    "slug": "charter-flight-support",
+    "officialSource": "https://www.charterflightsupport.com/",
+    "originalAsset": "/assets/partners/charter-flight-support.svg",
+    "footerAsset": "/assets/partners/charter-flight-support-footer.svg",
+    "assetType": "svg",
+    "notes": "Official SVG from Charter Flight Support's website. Footer version uses the official one-color SVG asset from the same site.",
+    "website": "https://www.charterflightsupport.com/"
+  },
+  {
+    "displayName": "Spyroll Studios",
+    "slug": "spyroll-studios",
+    "officialSource": "https://www.spyrollstudios.com/",
+    "originalAsset": "/assets/partners/spyroll-studios-logo.avif",
+    "footerAsset": "/assets/partners/spyroll-studios-logo.avif",
+    "assetType": "avif",
+    "notes": "Operator-approved Spyroll Studios footer logo with the original prism symbol and wordmark on a corrected, centered AVIF canvas.",
+    "website": "https://www.spyrollstudios.com/"
+  },
+  {
+    "displayName": "David",
+    "slug": "david",
+    "officialSource": "https://davidprotein.com/",
+    "originalAsset": "/assets/partners/david.png",
+    "footerAsset": "/assets/partners/david-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork.",
+    "website": "https://davidprotein.com/"
+  },
+  {
+    "displayName": "Humantra",
+    "slug": "humantra",
+    "officialSource": "https://humantra.co.uk/",
+    "originalAsset": "/assets/partners/humantra.png",
+    "footerAsset": "/assets/partners/humantra-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork.",
+    "website": "https://humantra.co.uk/"
+  },
+  {
+    "displayName": "Rizkia",
+    "slug": "rizkia",
+    "officialSource": "https://rizkia.com/",
+    "originalAsset": "/assets/partners/rizkia.png",
+    "footerAsset": "/assets/partners/rizkia-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork.",
+    "website": "https://rizkia.com/"
+  },
+  {
+    "displayName": "WHOOP",
+    "slug": "whoop",
+    "officialSource": "https://www.whoop.com/",
+    "originalAsset": "/assets/partners/whoop.png",
+    "footerAsset": "/assets/partners/whoop-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork.",
+    "website": "https://www.whoop.com/"
+  },
+  {
+    "displayName": "Hertz",
+    "slug": "hertz",
+    "officialSource": "https://images.hertz.com/misc/overlay/hertz-logo-black.png",
+    "originalAsset": "https://images.hertz.com/misc/overlay/hertz-logo-black.png",
+    "footerAsset": "/assets/partners/hertz-footer.png",
+    "assetType": "png",
+    "notes": "Optimized transparent monochrome PNG derived from the official Hertz consumer-site header logo.",
+    "website": "https://www.hertz.com/"
+  },
+  {
+    "displayName": "Bingo Jets",
+    "slug": "bingo-jets",
+    "officialSource": "https://www.bingojets.com/",
+    "originalAsset": "https://cdn.prod.website-files.com/689349ac1a855364e045d745/6898f4ab5735f3e142dadb2f_Bingo%20jets%20Logo.avif",
+    "footerAsset": "/assets/partners/bingo-jets-footer.png",
+    "assetType": "png",
+    "notes": "Optimized transparent PNG derived from the official Bingo Jets footer logo.",
+    "website": "https://www.bingojets.com/"
+  },
+  {
+    "displayName": "Real SLX",
+    "slug": "real-slx",
+    "officialSource": "https://realslx.com/wp-content/themes/realslx/assets/logo-wordmark.svg",
+    "originalAsset": "/assets/partners/real-slx-footer.svg",
+    "footerAsset": "/assets/partners/real-slx-footer.svg",
+    "assetType": "svg",
+    "notes": "Official text-only wordmark SVG from Real SLX; the separate seal asset is intentionally not used.",
+    "website": "https://realslx.com/?utm_source=ig&utm_medium=social&utm_content=link_in_bio"
+  },
+  {
+    "displayName": "Moxy Hotels",
+    "slug": "moxy-hotels",
+    "officialSource": "https://www.marriott.com/brands/moxy-hotels.mi",
+    "originalAsset": "/assets/partners/moxy-hotels-footer.svg",
+    "footerAsset": "/assets/partners/moxy-hotels-footer.svg",
+    "assetType": "svg",
+    "notes": "Official Moxy Hotels vector artwork extracted from Marriott's brand directory; confirms the brand spelling is Moxy.",
+    "website": "https://www.marriott.com/brands/moxy-hotels.mi"
+  },
+  {
+    "displayName": "Fontainebleau Miami Beach",
+    "slug": "fontainebleau-miami-beach",
+    "officialSource": "https://www.fontainebleau.com/uploads/2025/08/fontainebleau-miami-beach-logo-sw.svg",
+    "originalAsset": "/assets/partners/fontainebleau-miami-beach-footer.svg",
+    "footerAsset": "/assets/partners/fontainebleau-miami-beach-footer.svg",
+    "assetType": "svg",
+    "notes": "Official property wordmark SVG from the Fontainebleau Miami Beach website.",
+    "website": "https://www.fontainebleau.com/miamibeach/"
+  },
+  {
+    "displayName": "Fontainebleau Las Vegas",
+    "slug": "fontainebleau-las-vegas",
+    "officialSource": "https://www.fontainebleaulasvegas.com/uploads/2025/02/Logo_Fontainebleau_LasVegas.svg",
+    "originalAsset": "/assets/partners/fontainebleau-las-vegas-footer.svg",
+    "footerAsset": "/assets/partners/fontainebleau-las-vegas-footer.svg",
+    "assetType": "svg",
+    "notes": "Official property wordmark SVG from the Fontainebleau Las Vegas website.",
+    "website": "https://www.fontainebleaulasvegas.com/"
+  },
+  {
+    "displayName": "Skyway Aviation",
+    "slug": "skyway-aviation",
+    "officialSource": "https://flyskyway.com/assets/skyway-logo-reverse.png",
+    "originalAsset": "https://flyskyway.com/assets/skyway-logo-reverse.png",
+    "footerAsset": "/assets/partners/skyway-aviation-footer.png",
+    "assetType": "png",
+    "notes": "Optimized local PNG derived from Skyway Aviation's official reverse logo; the footer's image filter renders it as a one-color monochrome mark.",
+    "website": "https://flyskyway.com/"
+  }
+]

@@ -1,5 +1,6 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { applyApprovedSponsorFooter, approvedGlobalSponsorFooterHtml, approvedSponsorFooterCss } from "./scripts/sponsor-footer.mjs";
 
 const root = process.cwd();
 const dist = join(root, "dist");
@@ -17,26 +18,26 @@ if (existsSync(join(root, "api"))) {
 }
 
 const pages = [
-  ["source-html/index.raw.html", "index.html"],
-  ["source-html/athletes.raw.html", "athletes.html"],
-  ["source-html/partners.raw.html", "partners.html"],
-  ["source-html/live-tracking.html", "live-tracking.html"],
+  ["restore-2026-09-30-index.html", "index.html"],
+  ["restore-2026-09-30-athletes.html", "athletes.html"],
+  ["restore-2026-09-30-partners.html", "partners.html"],
+  ["restore-2026-09-30-live-tracking.html", "live-tracking.html"],
   ["source-html/live-tracking-gradient.html", "live-tracking-gradient.html"],
   ["source-html/live-tracking-gradient-compression.html", "live-tracking-gradient-compression.html"],
   ["source-html/live-tracking-gradient-benchmark-2026-08-30.html", "live-tracking-gradient-benchmark-2026-08-30.html"],
   ["source-html/live-tracking-gradient-benchmark-sage-2026-08-30.html", "live-tracking-gradient-benchmark-sage-2026-08-30.html"],
-  ["source-html/the-run.raw.html", "the-run.html"],
-  ["source-html/will.raw.html", "will.html"],
-  ["source-html/fifty-runs.raw.html", "fifty-runs.html"],
-  ["source-html/updates.raw.html", "updates.html"],
-  ["source-html/faq.raw.html", "faq.html"],
-  ["source-html/week-1.raw.html", "week-1.html"],
-  ["source-html/week-2.raw.html", "week-2.html"],
-  ["source-html/week-3.raw.html", "week-3.html"],
-  ["source-html/privacy.raw.html", "privacy.html"],
-  ["source-html/terms.raw.html", "terms.html"],
-  ["source-html/participation-terms.raw.html", "participation-terms.html"],
-  ["source-html/accessibility.raw.html", "accessibility.html"],
+  ["restore-2026-09-30-the-run.html", "the-run.html"],
+  ["restore-2026-09-30-will.html", "will.html"],
+  ["restore-2026-09-30-fifty-runs.html", "fifty-runs.html"],
+  ["restore-2026-09-30-updates.html", "updates.html"],
+  ["restore-2026-09-30-faq.html", "faq.html"],
+  ["restore-2026-09-30-week-1.html", "week-1.html"],
+  ["restore-2026-09-30-week-2.html", "week-2.html"],
+  ["restore-2026-09-30-week-3.html", "week-3.html"],
+  ["restore-2026-09-30-privacy.html", "privacy.html"],
+  ["restore-2026-09-30-terms.html", "terms.html"],
+  ["restore-2026-09-30-participation-terms.html", "participation-terms.html"],
+  ["restore-2026-09-30-accessibility.html", "accessibility.html"],
 ];
 
 const videoIds = [
@@ -117,20 +118,9 @@ const socialFooterCss = `.site-footer,.global-site-footer{box-sizing:border-box;
     .site-footer .site-footer-link-disabled,.site-footer .site-footer-legal,.site-footer .site-footer-disclaimer,.site-footer .site-footer-bottom,.global-site-footer .global-site-footer-link-disabled,.global-site-footer .global-site-footer-legal,.global-site-footer .global-site-footer-disclaimer,.global-site-footer .global-site-footer-bottom{color:rgba(255,255,255,.64)}
     .site-footer .site-footer-legal a,.global-site-footer .global-site-footer-legal a{color:inherit}
     .site-footer .site-footer-bottom,.global-site-footer .global-site-footer-bottom{border-top-color:rgba(255,255,255,.18)}
-    .site-footer .partner-logo-item img[src$="jet-excellence-footer.png"],.global-site-footer .partner-logo-item img[src$="jet-excellence-footer.png"]{filter:grayscale(1) brightness(0) invert(1)}
-    .site-footer .partner-logo-row-new,.global-site-footer .partner-logo-row-new{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;justify-items:center;column-gap:clamp(18px,2.6vw,38px);row-gap:28px;margin-top:34px;padding-top:0;border-top:0}
-    .site-footer .partner-logo-row-new .partner-logo-item,.global-site-footer .partner-logo-row-new .partner-logo-item{display:flex;grid-column:auto;order:initial;align-items:center;justify-content:center;width:100%;min-width:0;min-height:54px}
-    .site-footer .partner-logo-row-new .partner-logo-item a,.global-site-footer .partner-logo-row-new .partner-logo-item a{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;min-height:48px;border-radius:2px}
-    .site-footer .partner-logo-row-new .partner-logo-item a:focus-visible,.global-site-footer .partner-logo-row-new .partner-logo-item a:focus-visible{outline:2px solid #fff;outline-offset:5px}
-    .site-footer .partner-logo-row-new .partner-logo-item img,.global-site-footer .partner-logo-row-new .partner-logo-item img{display:block;width:auto;max-width:min(150px,100%);max-height:44px;object-fit:contain;filter:brightness(0) invert(1);opacity:.76;transition:opacity 160ms ease,transform 160ms ease}
-    .site-footer .partner-logo-row-new .partner-logo-item-bingo img,.global-site-footer .partner-logo-row-new .partner-logo-item-bingo img{max-height:52px}
-    .site-footer .partner-logo-row-new .partner-logo-item:nth-child(6):nth-last-child(2),.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(6):nth-last-child(2){grid-column:2;transform:translateX(50%)}
-    .site-footer .partner-logo-row-new .partner-logo-item:nth-child(7):last-child,.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(7):last-child{grid-column:4;transform:translateX(-50%)}
-    .site-footer .partner-logo-row-new .partner-logo-item a:hover img,.site-footer .partner-logo-row-new .partner-logo-item a:focus-visible img,.global-site-footer .partner-logo-row-new .partner-logo-item a:hover img,.global-site-footer .partner-logo-row-new .partner-logo-item a:focus-visible img{opacity:1;transform:translateY(-1px)}
-    @media(max-width:940px){.site-footer .partner-logo-row-new,.global-site-footer .partner-logo-row-new{grid-template-columns:repeat(3,minmax(0,1fr))}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(6):nth-last-child(2),.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(6):nth-last-child(2){grid-column:auto;transform:none}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(7):last-child,.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(7):last-child{grid-column:2;transform:none}}
+    ${approvedSponsorFooterCss}
     @media(max-width:640px){.site-footer .footer-social-group,.global-site-footer .footer-social-group{padding-top:18px;border-top:1px solid rgba(255,255,255,.16)}.site-footer .site-footer-link-group:nth-child(n + 2)::before,.global-site-footer .global-site-footer-link-group:nth-child(n + 2)::before{display:none!important}.site-footer .footer-social-links,.global-site-footer .footer-social-links{width:max-content;max-width:100%}}
-    @media(max-width:640px){.site-footer .partner-logo-wall,.global-site-footer .partner-logo-wall{grid-template-columns:repeat(3,minmax(0,1fr));width:100%;max-width:100%;margin-inline:0;padding-inline:0;column-gap:12px}.site-footer .partner-logo-wall .partner-logo-item,.global-site-footer .partner-logo-wall .partner-logo-item{grid-column:auto;width:100%;min-height:40px}.site-footer .partner-logo-wall .partner-logo-item img,.global-site-footer .partner-logo-wall .partner-logo-item img{max-width:min(128px,100%);max-height:34px}.site-footer .partner-logo-wall .partner-logo-item:nth-child(n+13) img,.global-site-footer .partner-logo-wall .partner-logo-item:nth-child(n+13) img{max-width:min(138px,100%);max-height:36px}.site-footer .partner-logo-row-new,.global-site-footer .partner-logo-row-new{grid-template-columns:repeat(6,minmax(0,1fr));column-gap:8px;row-gap:24px;margin-top:28px;padding-top:0;border-top:0}.site-footer .partner-logo-row-new .partner-logo-item,.global-site-footer .partner-logo-row-new .partner-logo-item{grid-column:span 2;order:0}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(3),.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(3){grid-column:3 / span 2;grid-row:3;order:2}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(4),.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(4){grid-column:1 / span 2;grid-row:2;order:1}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(5),.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(5){grid-column:5 / span 2;grid-row:2;order:1}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(6):nth-last-child(2),.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(6):nth-last-child(2){grid-column:3 / span 2;grid-row:2;order:1}.site-footer .partner-logo-row-new .partner-logo-item:nth-child(7):last-child,.global-site-footer .partner-logo-row-new .partner-logo-item:nth-child(7):last-child{grid-column:span 2;order:0}.site-footer .partner-logo-row-new .partner-logo-item img,.global-site-footer .partner-logo-row-new .partner-logo-item img{max-width:min(106px,100%);max-height:38px}.site-footer .partner-logo-row-new .partner-logo-item-bingo img,.global-site-footer .partner-logo-row-new .partner-logo-item-bingo img{max-height:46px}}
-    @media(prefers-reduced-motion:reduce){.site-footer .footer-social-link,.global-site-footer .footer-social-link,.site-footer .partner-logo-row-new .partner-logo-item img,.global-site-footer .partner-logo-row-new .partner-logo-item img{transition:none}}`;
+    @media(prefers-reduced-motion:reduce){.site-footer .footer-social-link,.global-site-footer .footer-social-link{transition:none}}`;
 
 const sharedFooterCss = `
     .global-site-footer{width:min(1180px,calc(100% - clamp(44px,10vw,144px)));margin:78px auto 0;border-top:1px solid rgba(20,63,60,.18);color:#143f3c}
@@ -167,6 +157,7 @@ const sharedFooterHtml = `
         ${globalGoodwinFooterColumn}
       </nav>
     </div>
+    ${approvedGlobalSponsorFooterHtml}
     <nav class="global-site-footer-legal" aria-label="Legal links">
       <a href="/privacy/">Privacy</a>
       <a href="/terms/">Terms</a>
@@ -277,7 +268,7 @@ document.querySelector("[data-offline-partner-form]")?.addEventListener("submit"
     out = out.replace(/(href|src)="assets\/partners\//g, '$1="/assets/partners/');
   }
 
-  return addSocialFooterStyles(addSharedFooter(updateExistingFooter(out)));
+  return applyApprovedSponsorFooter(addSocialFooterStyles(addSharedFooter(updateExistingFooter(out))));
 }
 
 function patchClientBundle() {
@@ -311,7 +302,10 @@ for (const [source, target] of pages) {
   const html = readFileSync(join(root, source), "utf8");
   const destination = join(dist, target);
   mkdirSync(dirname(destination), { recursive: true });
-  writeFileSync(destination, localize(html, target));
+  const output = source.startsWith("restore-2026-09-30-")
+    ? applyApprovedSponsorFooter(html)
+    : localize(html, target);
+  writeFileSync(destination, output);
 }
 
 patchClientBundle();
