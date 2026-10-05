@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Publish only the reviewed main live-map stage spacing and tracking-note alignment correction while preserving map data, marker gates, legend content, previews, footer, sponsors, integrations, and all non-map assets.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-layout-2026-10-05/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "a34af9a8f8311a1a6dc060206a04534fb59a7f14ca76b22f42ea9df5ee3f664f",
+      "expectedRemoteSha256": "6281c0d6c81a91b9d888503514bc2ab9a1bd33807b3690306fd5c6d3a7bc7394"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/live-map-layout.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": []
+  }
+}
