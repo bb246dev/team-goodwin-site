@@ -1,0 +1,137 @@
+[
+  {
+    "displayName": "Arsenal Aviation",
+    "slug": "arsenal-aviation",
+    "officialSource": "https://arsenalaviation.com/",
+    "originalAsset": "/assets/partners/arsenal-aviation.png",
+    "footerAsset": "/assets/partners/arsenal-aviation-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Arsenal Aviation's website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "Trilogy Aviation Group",
+    "slug": "trilogy-aviation",
+    "officialSource": "https://www.trilogyaviationgroup.com/",
+    "originalAsset": "/assets/partners/trilogy-aviation.png",
+    "footerAsset": "/assets/partners/trilogy-aviation-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Trilogy Aviation Group's website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "Titan Aviation Group",
+    "slug": "titan-aviation",
+    "officialSource": "https://titanflights.com/",
+    "originalAsset": "/assets/partners/titan-aviation.png",
+    "footerAsset": "/assets/partners/titan-aviation-footer.png",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Titan Aviation Group's website. Footer version is a transparent white PNG created from the official artwork."
+  },
+  {
+    "displayName": "FLY1200",
+    "slug": "fly1200",
+    "officialSource": "https://fly1200.com/",
+    "originalAsset": "/assets/partners/fly1200.svg",
+    "footerAsset": "/assets/partners/fly1200-footer.svg",
+    "assetType": "svg",
+    "notes": "Official SVG from FLY1200's website. Footer version preserves the official white SVG."
+  },
+  {
+    "displayName": "flyExclusive",
+    "slug": "flyexclusive",
+    "officialSource": "https://www.flyexclusive.com/",
+    "originalAsset": "/assets/partners/flyexclusive.png",
+    "footerAsset": "/assets/partners/flyexclusive-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from flyExclusive's website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "Jet Linx",
+    "slug": "jet-linx",
+    "officialSource": "https://jetlinx.com/",
+    "originalAsset": "/assets/partners/jet-linx.png",
+    "footerAsset": "/assets/partners/jet-linx-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Jet Linx's website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "Skyward Aviation",
+    "slug": "skyward-aviation",
+    "officialSource": "https://skywardaviation.com/",
+    "originalAsset": "/assets/partners/skyward-aviation.png",
+    "footerAsset": "/assets/partners/skyward-aviation-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from Skyward Aviation's website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "TrueSkies Aviation Group",
+    "slug": "trueskies",
+    "officialSource": "https://flytrueskies.com/",
+    "originalAsset": "/assets/partners/trueskies.png",
+    "footerAsset": "/assets/partners/trueskies-footer.svg",
+    "assetType": "png",
+    "notes": "Official transparent PNG from TrueSkies Aviation Group's website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "Magellan Jets",
+    "slug": "magellan-jets",
+    "officialSource": "https://www.magellanjets.com/",
+    "originalAsset": "/assets/partners/magellan-jets.svg",
+    "footerAsset": "/assets/partners/magellan-jets-footer.svg",
+    "assetType": "svg",
+    "notes": "Official SVG from Magellan Jets' website. Footer version preserves the official SVG."
+  },
+  {
+    "displayName": "Charter Flight Support",
+    "slug": "charter-flight-support",
+    "officialSource": "https://www.charterflightsupport.com/",
+    "originalAsset": "/assets/partners/charter-flight-support.svg",
+    "footerAsset": "/assets/partners/charter-flight-support-footer.svg",
+    "assetType": "svg",
+    "notes": "Official SVG from Charter Flight Support's website. Footer version uses the official one-color SVG asset from the same site."
+  },
+  {
+    "displayName": "Spyroll Studios",
+    "slug": "spyroll-studios",
+    "officialSource": "https://www.spyrollstudios.com/",
+    "originalAsset": "/assets/partners/spyroll-studios.png",
+    "footerAsset": "/assets/partners/spyroll-studios-footer.svg",
+    "assetType": "png",
+    "notes": "Official horizontal reverse PNG from Spyroll Studios' website. Footer version wraps the original PNG with a monochrome white SVG filter."
+  },
+  {
+    "displayName": "David",
+    "slug": "david",
+    "officialSource": "client-supplied approved asset",
+    "originalAsset": "/assets/partners/david.png",
+    "footerAsset": "/assets/partners/david-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork."
+  },
+  {
+    "displayName": "Humantra",
+    "slug": "humantra",
+    "officialSource": "client-supplied approved asset",
+    "originalAsset": "/assets/partners/humantra.png",
+    "footerAsset": "/assets/partners/humantra-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork."
+  },
+  {
+    "displayName": "Rizkia",
+    "slug": "rizkia",
+    "officialSource": "client-supplied approved asset",
+    "originalAsset": "/assets/partners/rizkia.png",
+    "footerAsset": "/assets/partners/rizkia-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork."
+  },
+  {
+    "displayName": "WHOOP",
+    "slug": "whoop",
+    "officialSource": "client-supplied approved asset",
+    "originalAsset": "/assets/partners/whoop.png",
+    "footerAsset": "/assets/partners/whoop-footer.png",
+    "assetType": "png",
+    "notes": "Client-supplied approved PNG preserved unchanged. Footer version is a transparent white PNG created from the supplied artwork."
+  }
+]

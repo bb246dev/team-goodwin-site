@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Restore the exact September 30 known-good production HTML and sponsor manifest without changing protected map, tracking, schedule, backend, or provisioned sponsor assets.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "restore-2026-09-30-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "fa4661346da86455dda8a994700e7329b031be7523a0f2ecdc1e993887f162b9",
+      "expectedRemoteSha256": "6ae20d0f472dce918e53818e6fe2c78e2431c110f8c21e0d8ec6eec0f520fc08"
+    },
+    {
+      "source": "restore-2026-09-30-accessibility.html",
+      "destination": "public_html/accessibility.html",
+      "publicPath": "/accessibility/",
+      "expectedSha256": "d827d79a17a274c75370c61022706d894c57ea7f754e2aadf6c71261d60e94e0",
+      "expectedRemoteSha256": "ac8a30d520bd90e340ba9e3c7a12815021b11e023d412de0c5cefc3e97b32aa9"
+    },
+    {
+      "source": "restore-2026-09-30-athletes.html",
+      "destination": "public_html/athletes.html",
+      "publicPath": "/athletes/",
+      "expectedSha256": "6cd8eb75fb167ed8b5eb88226b8d1f152baf3c08a63d4f8efc0d13810bd7b59a",
+      "expectedRemoteSha256": "7b570884b66f2784e0034af2fcfbc145a2d863580d9203ba429e88429bde4b77"
+    },
+    {
+      "source": "restore-2026-09-30-faq.html",
+      "destination": "public_html/faq.html",
+      "publicPath": "/faq/",
+      "expectedSha256": "fe2607c2cc0ea33aad473c55e120f4fdf86b850f80a82ce16592996e6cbd1906",
+      "expectedRemoteSha256": "511d677b05dbe8a3444e467e31925cd335359c1d31e18deb97e4699be6912da4"
+    },
+    {
+      "source": "restore-2026-09-30-fifty-runs.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedSha256": "f3d2357fed0c330f01b90659baebae1dcc27f7ec1270a20de6ffe044c6c92231",
+      "expectedRemoteSha256": "1ec23ad9d73a49d3388ac63bbb8df4bc1eb242221cde1f04c3006e3b5f937499"
+    },
+    {
+      "source": "restore-2026-09-30-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "4e96d5a878a95e93af6b5cbcd926c2dd56d0d7015f8f2a3bd035fafcc893239f",
+      "expectedRemoteSha256": "d5a5e9a3a8d03d03ed0e0b9b48924cb3169191c483b9382dc28318d4b3be1d03"
+    },
+    {
+      "source": "restore-2026-09-30-participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedSha256": "dd39de11e2ddf012c1d663ba1480fc2a8bcd201eb9d7d5289d0909720d3c3dc2",
+      "expectedRemoteSha256": "7a687b46771e59d42341fa2f514d8317c2c4b34f72b52816f88470dfa0ac7345"
+    },
+    {
+      "source": "restore-2026-09-30-partners.html",
+      "destination": "public_html/partners.html",
+      "publicPath": "/partners/",
+      "expectedSha256": "a02b2619cd14fbd623371b668605bcf266a3223e4973687bdddff2e2c9965a06",
+      "expectedRemoteSha256": "3f4759112d46b7c5376e05184adefc7b9b94e7567c3a6b26a3ed9b2480155334"
+    },
+    {
+      "source": "restore-2026-09-30-privacy.html",
+      "destination": "public_html/privacy.html",
+      "publicPath": "/privacy/",
+      "expectedSha256": "c18f8c501da9c6dc72665ddd7b272d6bd28c150a6bf3cc2dd8f87568d495db2e",
+      "expectedRemoteSha256": "ed8b0dc6efafca25c33e36d8ac040bdd399acfcb3452ae62722f85deb62d5a10"
+    },
+    {
+      "source": "restore-2026-09-30-terms.html",
+      "destination": "public_html/terms.html",
+      "publicPath": "/terms/",
+      "expectedSha256": "fde6785f029450d367a814d2b13ef8e0068f07f4372a7bb57ea96757925a5e33",
+      "expectedRemoteSha256": "edadf3ceaa884746a71aabf53363f2b48ded93dcec994da3eb270c714b77f2f5"
+    },
+    {
+      "source": "restore-2026-09-30-the-run.html",
+      "destination": "public_html/the-run.html",
+      "publicPath": "/the-run/",
+      "expectedSha256": "f5d3e8a79046235e37d80bac1c57ef6d21ba0cbbe06b69e2f1b1cdad4bec4b7d",
+      "expectedRemoteSha256": "d1fb6303f4f4ed6ba1fda584f2ccaf3ef7bee92ddeed6d729755929e8052e730"
+    },
+    {
+      "source": "restore-2026-09-30-updates.html",
+      "destination": "public_html/updates.html",
+      "publicPath": "/updates/",
+      "expectedSha256": "3d4537d195256f11e44393eaabb8d38c666dd4f4d9375cf8b2a84069878ee220",
+      "expectedRemoteSha256": "d60b205dc95b5e06ba728a8dbb90ab5107d2237d80ff4f46d1a66a87a78a10f4"
+    },
+    {
+      "source": "restore-2026-09-30-week-1.html",
+      "destination": "public_html/week-1.html",
+      "publicPath": "/week-1/",
+      "expectedSha256": "c08ed37269d2b12e6fd976dc865b26ccbe567a113ab11152e483fc0eb86d5362",
+      "expectedRemoteSha256": "482f1f16c8832fbd9c1eb87c8633d8da060e310dcdc5483d6d41d19fd79b00eb"
+    },
+    {
+      "source": "restore-2026-09-30-week-2.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedSha256": "709b52604f57a03a74babdc58018f3c48ad7f2f3ffc7ad17eb4c572585c34b62",
+      "expectedRemoteSha256": "dc339c5a90a70da5978f07e1c78d385be2330108e2f357147b405071d96626d0"
+    },
+    {
+      "source": "restore-2026-09-30-week-3.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedSha256": "9568475bb6a391fcb4f0526a04a8126dfa11d0a0739f34237cde210b9b73de5b",
+      "expectedRemoteSha256": "050c851ad7bb09d3e4f6fcbef1588aafe1dbd39f8eac1523205df0d921d2ebac"
+    },
+    {
+      "source": "restore-2026-09-30-will.html",
+      "destination": "public_html/will.html",
+      "publicPath": "/will/",
+      "expectedSha256": "76acb163ea4066cf2c2f3a76b8e8274daf946243bc76c2996f37ff86fc59ff00",
+      "expectedRemoteSha256": "03ca8f90d8d61270a458674a3249d008233fab085c73432eb7d909e1b8f8748d"
+    },
+    {
+      "source": "assets/releases/full-site-restore-2026-09-30/partners.json",
+      "destination": "public_html/assets/partners/partners.json",
+      "publicPath": "/assets/partners/partners.json",
+      "expectedSha256": "9f3e264434bdf7894c0efd919fb2d3bfb7626637584bf053ecb12b7c1d61c7c9",
+      "expectedRemoteSha256": "f220fac92aeee84adf4ebb2e8eeb7ffd518a307502c655df6d97732bf6c8d6a6"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/mission-window-alignment.test.mjs",
+      "tests/production-strava-map-merge.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/athletes/",
+      "/faq/",
+      "/fifty-runs/",
+      "/participation-terms/",
+      "/partners/",
+      "/privacy/",
+      "/terms/",
+      "/the-run/",
+      "/updates/",
+      "/week-1/",
+      "/week-2/",
+      "/week-3/",
+      "/will/",
+      "/accessibility/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}
