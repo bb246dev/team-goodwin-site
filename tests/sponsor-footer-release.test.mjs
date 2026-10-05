@@ -63,9 +63,9 @@ test("every release page contains the approved local sponsor set and responsive 
     assert.equal((html.match(/class="partner-logo-item(?: partner-logo-item-bingo)?"/g) ?? []).length, 22, page);
     assert.equal((html.match(/aria-label="Visit Jet Excellence"/g) ?? []).length, 1, page);
     assert.match(html, /grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/, `${page}: desktop five-across`);
-    assert.match(html, /grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/, `${page}: mobile three-across grid`);
-    assert.match(html, /nth-child\(6\):nth-last-child\(2\)[^}]+grid-column:3 \/ span 2;grid-row:2/, `${page}: Real SLX centered between Fontainebleau properties`);
-    assert.match(html, /nth-child\(3\)[^}]+grid-column:3 \/ span 2;grid-row:3/, `${page}: Moxy centered on the final mobile row`);
+    assert.match(html, /site-footer-partners\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/, `${page}: mobile two-across grid`);
+    assert.match(html, /partner-logo-wall[^}]+partner-logo-row-new[^}]+\{display:contents\}/, `${page}: mobile sponsor groups share one continuous grid`);
+    assert.match(html, /partner-logo-item:nth-child\(n\)\{grid-column:auto;grid-row:auto;order:initial;transform:none/, `${page}: mobile order remains the source order`);
     for (const [name, href, asset] of expectedSponsors) {
       assert.match(html, new RegExp(`href="${href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]+aria-label="Visit ${name}"`), `${page}: ${name} link`);
       assert.match(html, new RegExp(`src="/assets/partners/${asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`), `${page}: ${name} local asset`);

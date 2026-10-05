@@ -151,6 +151,10 @@ for (const viewport of viewports) {
           rowRect: (() => { const rect = row.getBoundingClientRect(); return {left:rect.left,width:rect.width}; })(),
           partnerRect: (() => { const rect = root.querySelector('.site-footer-partners,.global-site-footer-partners').getBoundingClientRect(); return {x:rect.left,y:rect.top + window.scrollY,width:rect.width,height:rect.height}; })(),
           rects,
+          allRects: [...root.querySelectorAll('.partner-logo-wall>.partner-logo-item,.partner-logo-row-new>.partner-logo-item')].map((node) => {
+            const rect = node.getBoundingClientRect();
+            return {label:node.querySelector('a')?.getAttribute('aria-label'),left:rect.left,top:rect.top,width:rect.width,height:rect.height};
+          }),
           jetFilter: getComputedStyle(root.querySelector('img[src$="jet-excellence-footer.png"]')).filter,
         };
       })()`);
@@ -173,16 +177,15 @@ for (const viewport of viewports) {
         const rowCenter = footer.rowRect.left + footer.rowRect.width / 2;
         assert.ok(Math.abs(finalCenter - rowCenter) <= 2, `${pagePath}: final desktop row centered`);
       } else {
-        assert.equal(footer.wallColumns, 3, `${pagePath}: mobile primary columns`);
-        assert.equal(footer.rowColumns, 6, `${pagePath}: mobile additional grid`);
-        const miami = byLabel["Visit Fontainebleau Miami Beach"];
-        const real = byLabel["Visit Real SLX"];
-        const vegas = byLabel["Visit Fontainebleau Las Vegas"];
-        assert.ok(Math.abs(miami.top - real.top) <= 1 && Math.abs(real.top - vegas.top) <= 1, `${pagePath}: Fontainebleau and Real SLX row`);
-        assert.ok(miami.left < real.left && real.left < vegas.left, `${pagePath}: Real SLX centered between Fontainebleau properties`);
-        const moxy = byLabel["Visit Moxy Hotels"];
-        assert.ok(moxy.top > real.top, `${pagePath}: Moxy final mobile row`);
-        assert.ok(Math.abs((moxy.left + moxy.width / 2) - (footer.rowRect.left + footer.rowRect.width / 2)) <= 2, `${pagePath}: Moxy centered`);
+        const rows = [];
+        for (const rect of footer.allRects) {
+          let row = rows.find((candidate) => Math.abs(candidate[0].top - rect.top) <= 1);
+          if (!row) rows.push(row = []);
+          row.push(rect);
+        }
+        assert.equal(rows.length, 11, `${pagePath}: mobile row count`);
+        assert.ok(rows.every((row) => row.length === 2), `${pagePath}: exactly two logos per mobile row`);
+        assert.deepEqual(footer.allRects.map((rect) => rect.label), footer.labels, `${pagePath}: mobile sponsor order`);
       }
       const screenshotRect = await evaluate(cdp, `(() => {
         const root = document.querySelector('footer');

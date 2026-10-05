@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Apply only the verified mobile sponsor-grid correction (exactly two logos per row below 640px) while retaining the deployed five-column desktop layout; no sponsor content, assets, map, tracking, schedule, backend, or generated dist assets.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "sponsor-release-2026-10-04-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "9a610e9389f7940c42be92352e4e1ce952b7b951f370c650f65d6244403973b0",
+      "expectedRemoteSha256": "df35176b291b00f80de811b229041f02000aaede99334afa1445c8f14b5b71f2"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-accessibility.html",
+      "destination": "public_html/accessibility.html",
+      "publicPath": "/accessibility/",
+      "expectedSha256": "6cb4352b85b9a5763b099ceddf358e7d1fa4c9f86c0c4544a4acfbffcefcab58",
+      "expectedRemoteSha256": "6630c64df86b351aac683ef8d7596932d7bdd4e8a82f4e1c71fb6f5453719618"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-athletes.html",
+      "destination": "public_html/athletes.html",
+      "publicPath": "/athletes/",
+      "expectedSha256": "60b4edd1c7056ec215d435dd8706ad3f420e210fdb69cb495d65695b0e8b02f6",
+      "expectedRemoteSha256": "8aab96679ab8251ed95be68b8422c8cd7617af6093c24b583206fe007555b732"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-faq.html",
+      "destination": "public_html/faq.html",
+      "publicPath": "/faq/",
+      "expectedSha256": "1dedac4a82341d1a9c22e2f36494039954f20c14875a79b9cfe922e81092fdb8",
+      "expectedRemoteSha256": "a503ea8782809c88fbac23585719662621f8a1f5228db8206d051230292f0fe1"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-fifty-runs.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedSha256": "fa3b8e836e4f839466713b3d56e2d282890526ab417da3eb06ec7e8093044249",
+      "expectedRemoteSha256": "4fb71bc2214c0cc59150734225da9d4b423c4cf3ebbe632d1deaae72d1126587"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "f0af9419f04be6350a41cd5457ad66478f3392328a122fd5762d9872e75d72a0",
+      "expectedRemoteSha256": "584d85db79741c7dbc5953753bc57eb3ba03a843d43fd7e21e4ca7216f1731f7"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedSha256": "1c08c374108365af9295676cbe7d3632fa5b7fd3630b26805231587ea1996af5",
+      "expectedRemoteSha256": "b3396c72a2c4b92927b77cbacea564739679916ea6de256e55824597b1abc7e3"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-partners.html",
+      "destination": "public_html/partners.html",
+      "publicPath": "/partners/",
+      "expectedSha256": "83a0e29b39472374508b7008d43c250b7ea7e73f616c9b194d1cf963df3a6fc0",
+      "expectedRemoteSha256": "ccb94a0ca0f4f8f97e6c17f7652a9807cb72ad00386f82ecc0b0d013cf2d9077"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-privacy.html",
+      "destination": "public_html/privacy.html",
+      "publicPath": "/privacy/",
+      "expectedSha256": "feed35e48ef6092790f166f2ada768e4ef49388bb5132101f3e3bdafb40caf63",
+      "expectedRemoteSha256": "b3fc1b12e3cb95820f218e93a4611f47d68752b4c8248906105cca2961cd6d78"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-terms.html",
+      "destination": "public_html/terms.html",
+      "publicPath": "/terms/",
+      "expectedSha256": "5fca7f25cad382a1aa8cd678867c058ba5fd3d1551347864a66250c790ea890e",
+      "expectedRemoteSha256": "66f51d3c18e428a8344ae71a8e0a92c570df9947d2475693ee8156bafcd8eb65"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-the-run.html",
+      "destination": "public_html/the-run.html",
+      "publicPath": "/the-run/",
+      "expectedSha256": "48bd2ce5112db7a4b6b935163da447c4c4b5ed553e47824d326051b0e578cf3e",
+      "expectedRemoteSha256": "8c2d5fe4f37141b752b582752644d2bdfca8b61a3025849e7218bc45f14f8575"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-updates.html",
+      "destination": "public_html/updates.html",
+      "publicPath": "/updates/",
+      "expectedSha256": "66fe2e30bc39e67577e11128521873c0378267bc75c15e20dac98507d1672e18",
+      "expectedRemoteSha256": "d4a4c6a255e62b91e480d86e9871c1d9622931a0c1519c41dbf70e61b3943d2c"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-week-1.html",
+      "destination": "public_html/week-1.html",
+      "publicPath": "/week-1/",
+      "expectedSha256": "7e513da0eef69731337df1fa9a0058958105f0513b494e94d01ed2e56cc73de1",
+      "expectedRemoteSha256": "0bb392415de63293f74780ccdddfdc10aacc2c0fefbc7700caba53a98d0e1c5a"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-week-2.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedSha256": "96a76735508bf32d65dd51fbaa1bea0964fc8ba2232b9ea6d53d74a289aaaade",
+      "expectedRemoteSha256": "f23021aeb0d0607f3347f5c235ac13cb18cf881b6669c16d854ba399094a3237"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-week-3.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedSha256": "bac9bf548930b5ba98b438602a96f82471d55bf0021cf68a5005c57275da5215",
+      "expectedRemoteSha256": "1923684f0ec558c1a32e90444bba85579f1d79797853baebba6e46fcb30ba44f"
+    },
+    {
+      "source": "sponsor-release-2026-10-04-will.html",
+      "destination": "public_html/will.html",
+      "publicPath": "/will/",
+      "expectedSha256": "1489a70bbdad3d41f31580f69b58eaaea00555909aa9c3990860eca3b4d46cff",
+      "expectedRemoteSha256": "e9c7bd98295e28ab72d247c914182e2490047a28f4bacdf4ab41adec237ac1d6"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/footer.test.mjs",
+      "tests/sponsor-footer-release.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/partners.html",
+      "/faq.html",
+      "/updates.html",
+      "/participation-terms.html"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Strava race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "raceWindowStart", "raceWindowEnd"]
+      },
+      {
+        "name": "HAPN public tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      }
+    ]
+  }
+}
