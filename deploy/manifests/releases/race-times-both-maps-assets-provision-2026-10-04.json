@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Provision only the three new content-hashed tracking-preview map runtime modules required by the approved race-time update; no HTML, CSS, images, feeds, footer, sponsors, backend, or security headers.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "destination": "public_html/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "publicPath": "/tracking-preview/assets/app-4411ec9de981b376.mjs",
+      "expectedSha256": "4411ec9de981b3765796fcf4b0946ef58aa8085de8b63b86e2bcb2af29042f3e",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "destination": "public_html/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "publicPath": "/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
+      "expectedSha256": "a383bdc843e41141665da47cc84bfb97c405e9ef7237f0107cc4077fbfe69780",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "destination": "public_html/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "publicPath": "/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
+      "expectedSha256": "64cfb1be0b0d345bbd97dba4cd6d4ba0276852d2daf15eb699cac477eddc1ee0",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/race-times-both-maps.test.mjs",
+      "tests/static-provision.test.mjs"
+    ],
+    "browserRoutes": [
+      "/tracking-preview/",
+      "/tracking-preview/embed/"
+    ],
+    "apiChecks": []
+  }
+}

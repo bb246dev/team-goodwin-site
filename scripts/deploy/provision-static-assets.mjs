@@ -5,6 +5,8 @@ import { tmpdir } from "node:os";
 import { createFtpsClient } from "./ftps-client.mjs";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 
+const TRACKING_PREVIEW_RUNTIME_PATTERN = /^public_html\/tracking-preview\/assets\/(?:app|tracking-map|route-data)-[a-f0-9]{16}\.mjs$/;
+
 function productionUrl(baseUrl, publicPath, expectedSha256) {
   const origin = new URL(baseUrl);
   if (origin.protocol !== "https:" || origin.username || origin.password || origin.search || origin.hash) {
@@ -29,14 +31,16 @@ export async function probePublicAsset(baseUrl, publicPath, expectedSha256) {
   return { status: response.status, sha256: response.status === 200 ? sha256(body) : null };
 }
 
-function assertProvisioningRelease(release) {
+export function assertProvisioningRelease(release) {
   if (release.deploymentType !== "static") throw new Error("Static asset provisioning requires a static release");
   if (!release.files.length) throw new Error("Static asset provisioning requires at least one file");
   for (const file of release.files) {
     if (file.expectedRemoteAbsent !== true || file.expectedRemoteSha256 !== undefined) {
       throw new Error(`Provisioning requires expectedRemoteAbsent for ${file.destination}`);
     }
-    if (!file.destination.startsWith("public_html/assets/") || !file.publicPath.startsWith("/assets/")) {
+    const isGeneralAsset = file.destination.startsWith("public_html/assets/");
+    const isTrackingPreviewRuntime = TRACKING_PREVIEW_RUNTIME_PATTERN.test(file.destination);
+    if ((!isGeneralAsset && !isTrackingPreviewRuntime) || file.publicPath !== file.destination.slice("public_html".length)) {
       throw new Error(`Provisioning is limited to public static assets: ${file.destination}`);
     }
     if (!file.expectedSha256 || file.expectedSha256 !== file.newSha256) {

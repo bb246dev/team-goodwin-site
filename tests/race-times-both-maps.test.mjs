@@ -13,6 +13,7 @@ const mainCandidate = read("assets/releases/race-times-both-maps-2026-10-04/trac
 const previewRoot = "assets/releases/race-times-both-maps-2026-10-04/tracking-preview/";
 const previewManifest = JSON.parse(read(`${previewRoot}asset-manifest.json`));
 const deployManifest = JSON.parse(read("deploy/manifests/releases/race-times-both-maps-2026-10-04.json"));
+const provisionManifest = JSON.parse(read("deploy/manifests/releases/race-times-both-maps-assets-provision-2026-10-04.json"));
 
 function namedFunction(source, name) {
   const start = source.indexOf(`function ${name}(`);
@@ -79,13 +80,15 @@ test("the preview and iframe embed share the same app and exact tooltip labels",
   assert.doesNotMatch(embed, /site-footer|tracker-nav|googletagmanager/);
 });
 
-test("the corrected manifest is map-only and pins every live precondition", () => {
-  assert.equal(deployManifest.files.length, 7);
+test("the corrected two-phase manifests are map-only and pin every live precondition", () => {
+  assert.equal(deployManifest.files.length, 4);
+  assert.equal(provisionManifest.files.length, 3);
   assert.deepEqual(deployManifest.protectedPathsApproved, ["public_html/assets/tracker-base.js"]);
+  assert.deepEqual(provisionManifest.protectedPathsApproved, []);
   assert.deepEqual(deployManifest.validation.browserRoutes, [
     "/", "/live-tracking.html", "/tracking-preview/", "/tracking-preview/embed/",
   ]);
-  for (const file of deployManifest.files) {
+  for (const file of [...deployManifest.files, ...provisionManifest.files]) {
     assert.equal(sha256(read(file.source)), file.expectedSha256, file.source);
     assert.doesNotMatch(file.destination, /footer|sponsor|partners|\.css$|\.png$|\.svg$|\.htaccess$|strava|hapn|flightaware/i);
   }
@@ -94,6 +97,8 @@ test("the corrected manifest is map-only and pins every live precondition", () =
     "public_html/tracking-preview/index.html",
     "public_html/tracking-preview/embed/index.html",
     "public_html/tracking-preview/asset-manifest.json",
+  ]);
+  assert.deepEqual(provisionManifest.files.map(({ destination }) => destination), [
     "public_html/tracking-preview/assets/app-4411ec9de981b376.mjs",
     "public_html/tracking-preview/assets/tracking-map-a383bdc843e41141.mjs",
     "public_html/tracking-preview/assets/route-data-64cfb1be0b0d345b.mjs",
