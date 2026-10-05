@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Publish only the three reviewed client-facing race schedule times in the authoritative production map runtime without changing layout, tracking integrations, map behavior, footer, sponsors, or security policy.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/race-times-2026-10-04/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "f5ea26d7f39759310058c897c9f538cf10423f3106bd634579c5a4ab5cb62c54",
+      "expectedRemoteSha256": "c1926c43c01dee1c16054f972e2e9843ecf111644321a9592c2a2fdd810b6e30"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/full-route-itinerary.test.mjs",
+      "tests/mission-window-alignment.test.mjs",
+      "tests/route-date-update.test.mjs",
+      "tests/strava-map-integration.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking/"
+    ],
+    "apiChecks": []
+  }
+}
