@@ -29,6 +29,7 @@ jobs:
           node tracking-preview/build.mjs
           node --check tracking-preview/dist/tracking-preview/assets/app-*.mjs
           node --check tracking-preview/dist/tracking-preview/assets/feeds-*.mjs
+          node --check tracking-preview/dist/tracking-preview/assets/garmin-kml-*.mjs
           node --check tracking-preview/dist/tracking-preview/assets/tracking-map-*.mjs
           node --test tracking-preview/tracking-preview.test.mjs
           node tracking-preview/scan-output.mjs

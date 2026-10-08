@@ -5,7 +5,7 @@ import { secretFindings } from "../scripts/deploy/scan-secrets.mjs";
 const outputRoot = resolve(import.meta.dirname, "dist", "tracking-preview");
 const manifest = JSON.parse(readFileSync(join(outputRoot, "asset-manifest.json"), "utf8"));
 const entries = [{ path: "asset-manifest.json" }, ...manifest.generatedFiles];
-const textExtensions = new Set(["", ".css", ".html", ".js", ".json", ".mjs", ".svg"]);
+const textExtensions = new Set(["", ".css", ".html", ".js", ".json", ".mjs", ".php", ".svg"]);
 const binaryExtensions = new Set([".avif", ".jpeg", ".jpg", ".mp4", ".png", ".woff2"]);
 
 function validateBinary(path, bytes) {

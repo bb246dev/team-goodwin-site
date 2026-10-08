@@ -54,6 +54,9 @@ for (const marker of ['id="live"', 'id="the-run"', 'id="map"', 'id="updates"', '
 }
 if ((html.match(/class="inside-accordion-trigger"/g) || []).length !== 6) throw new Error("Tracking preview must contain all six Inside GGMA accordions");
 if (!html.includes('id="tracking-map"') || html.includes('id="mission-map"')) throw new Error("Tracking preview did not replace the production map stage");
+if (!html.includes('data-runner-source="garmin"') || !html.includes("about every 2 minutes")) {
+  throw new Error("Full tracking preview is not configured for the bounded Garmin runner feed");
+}
 await verifyReturningRequest(pageUrl, page);
 await verifyCacheBusted(pageUrl, page);
 
@@ -83,6 +86,9 @@ if (embedCsp.includes("frame-ancestors https:")) throw new Error("Tracking previ
 if (!embedHtml.includes('class="tracking-preview-embed-page"') || !embedHtml.includes('id="tracking-map"')) {
   throw new Error("Tracking preview embed lacks the map shell");
 }
+if (!embedHtml.includes('data-runner-source="garmin"') || !embedHtml.includes("about every 2 minutes")) {
+  throw new Error("Tracking preview embed is not configured for the bounded Garmin runner feed");
+}
 if (/tracker-nav|tracker-hero|site-footer|follow-form|googletagmanager|rel=["']canonical|localhost|127\.0\.0\.1/i.test(embedHtml)) {
   throw new Error("Tracking preview embed contains a forbidden full-page value");
 }
@@ -90,7 +96,7 @@ await verifyReturningRequest(embedUrl, embed);
 await verifyCacheBusted(embedUrl, embed);
 
 const publicAssets = manifest.generatedFiles.filter(({ path }) => path.startsWith("assets/"));
-if (publicAssets.length !== 8) throw new Error("Tracking preview manifest has an unexpected asset inventory");
+if (publicAssets.length !== 9) throw new Error("Tracking preview manifest has an unexpected asset inventory");
 for (const entry of publicAssets) {
   if (!entry.url.startsWith(`${rootPath}assets/`)) throw new Error(`Asset escapes tracking preview: ${entry.url}`);
   const filenameHash = entry.path.match(/-([a-f0-9]{16})\.(?:mjs|css|png)$/)?.[1];
@@ -126,14 +132,22 @@ if (htmlAssetUrls.length !== 2 || htmlAssetUrls.some((url) => !publicAssets.some
   throw new Error("Tracking preview HTML does not reference the manifest's versioned app and styles assets");
 }
 
-const [rvResponse, racesResponse, statusResponse] = await Promise.all([
-  fetch(new URL("/strava/public/tracking-status", origin), { cache: "no-store" }),
-  fetch(new URL("/strava/public/races", origin), { cache: "no-store" }),
-  fetch(new URL("/strava/public/race-status", origin), { cache: "no-store" }),
-]);
-if (!rvResponse.ok || !racesResponse.ok || !statusResponse.ok) throw new Error("One or more public preview feeds failed verification");
-const [rv, races, status] = await Promise.all([rvResponse.json(), racesResponse.json(), statusResponse.json()]);
+const rvResponse = await fetch(new URL("/strava/public/tracking-status", origin), { cache: "no-store" });
+if (!rvResponse.ok) throw new Error("Public RV preview feed failed verification");
+const rv = await rvResponse.json();
 const rvState = rv.available !== true ? "unavailable" : rv.stale === true ? "stale" : "live";
-const willState = !Array.isArray(races.races) ? "unavailable" : status.completedRaces > 0 ? "activity" : "waiting";
 console.log(`Verified ${rootPath} normal, returning-browser, and cache-busted requests.`);
-console.log(`Public feed states: RV=${rvState}; Will=${willState}; completed=${status.completedRaces}/${status.totalRaces}.`);
+console.log(`Public feed state: RV=${rvState}; runner source=Garmin KML.`);
+
+const garminLoaderUrl = "https://share.garmin.com/Feed/ShareLoader/missionamerica";
+const garminProxyUrl = new URL(`${rootPath}garmin-feed.php`, origin);
+garminProxyUrl.searchParams.set("url", garminLoaderUrl);
+const garminLoaderResponse = await fetch(garminProxyUrl, { cache: "no-store" });
+if (!garminLoaderResponse.ok || !garminLoaderResponse.headers.get("content-type")?.includes("kml+xml")) {
+  throw new Error("Tracking preview Garmin proxy failed verification");
+}
+const garminLoader = await garminLoaderResponse.text();
+if (!/<NetworkLink\b/.test(garminLoader) || !/missionamerica/i.test(garminLoader)) {
+  throw new Error("Tracking preview Garmin proxy returned an invalid loader");
+}
+console.log("Verified the isolated Garmin KML proxy and NetworkLink loader.");

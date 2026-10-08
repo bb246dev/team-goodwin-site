@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Folder>
+    <name>KML Feed</name>
+    <NetworkLink>
+      <name>KML Feed</name>
+      <Link>
+        <href>https://eur-share.explore.garmin.com/Feed/Share/missionamerica</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInterval>60</refreshInterval>
+      </Link>
+    </NetworkLink>
+  </Folder>
+</kml>

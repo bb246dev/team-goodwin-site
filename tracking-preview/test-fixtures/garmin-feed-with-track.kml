@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>KML Export 10/8/2026 12:24:27 AM</name>
+    <Folder>
+      <name>Mission America</name>
+      <Placemark>
+        <name>Will Goodge</name>
+        <TimeStamp><when>2026-10-08T00:20:00Z</when></TimeStamp>
+        <ExtendedData><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
+        <Point><coordinates>-157.860000,21.310000,5</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Will Goodge</name>
+        <TimeStamp><when>2026-10-08T00:22:00Z</when></TimeStamp>
+        <ExtendedData><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
+        <Point><coordinates>-157.855000,21.315000,6</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Will Goodge</name>
+        <TimeStamp><when>2026-10-08T00:24:00Z</when></TimeStamp>
+        <ExtendedData><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
+        <Point><coordinates>-157.850000,21.320000,7</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Mission America track log</name>
+        <LineString>
+          <coordinates>
+            -157.860000,21.310000,5 -157.855000,21.315000,6 -157.850000,21.320000,7
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

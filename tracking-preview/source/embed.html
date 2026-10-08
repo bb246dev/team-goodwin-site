@@ -8,9 +8,9 @@
   <title>Goodwin Generated Mission America Map</title>
   <link rel="stylesheet" href="__STYLES_URL__">
 </head>
-<body class="tracking-preview-embed-page">
-  <main class="tracking-preview-embed-shell" aria-label="Goodwin Generated Mission America live map">
-    <section class="tracker-map-stage tracking-preview-map-stage tracking-preview-embed-stage" aria-label="Goodwin Generated Mission America live map">
+<body class="tracking-preview-embed-page" data-runner-source="garmin">
+  <main class="tracking-preview-embed-shell" aria-label="Goodwin Generated Mission America tracking map">
+    <section class="tracker-map-stage tracking-preview-map-stage tracking-preview-embed-stage" aria-label="Goodwin Generated Mission America tracking map">
       <div class="tracking-preview-feed-grid" aria-label="Public tracking feed status">
         <article class="tracking-preview-feed-card" data-feed="rv" data-state="loading" role="status" aria-live="polite">
           <div class="tracking-preview-feed-title"><span class="tracking-preview-state-dot" aria-hidden="true"></span><strong>RV</strong><span data-feed-state>Connecting</span></div>
@@ -18,11 +18,11 @@
         </article>
         <article class="tracking-preview-feed-card" data-feed="will" data-state="loading" role="status" aria-live="polite">
           <div class="tracking-preview-feed-title"><span class="tracking-preview-state-dot" aria-hidden="true"></span><strong>Will</strong><span data-feed-state>Connecting</span></div>
-          <p data-feed-detail>Connecting to the public race feed...</p>
+          <p data-feed-detail>Connecting to Garmin. Location updates are approximate and arrive about every 2 minutes.</p>
         </article>
       </div>
       <div class="tracking-preview-map-controls" data-map-controls role="group" aria-label="Map view controls">
-        <button type="button" data-follow="live" aria-pressed="true">Pause Live Follow</button>
+        <button type="button" data-follow="live" aria-pressed="true">Pause Auto Follow</button>
         <button type="button" data-follow="will" aria-pressed="false" disabled>Follow Will</button>
         <button type="button" data-follow="rv" aria-pressed="false" disabled>Follow RV</button>
         <button type="button" data-follow="route" aria-pressed="false">Full Route</button>
@@ -30,6 +30,7 @@
       <div class="tracker-map tracking-preview-map tracking-preview-embed-map" id="tracking-map" role="region" aria-label="Interactive street map of the Goodwin Generated Mission America route" tabindex="0">
         <span class="tracking-preview-map-loading">Loading countrywide route...</span>
       </div>
+      <p class="legal-note tracking-preview-feed-note">Runner locations come from Garmin KML. Updates are approximate and arrive about every 2 minutes. Positions may be delayed, stale, or temporarily unavailable.</p>
     </section>
   </main>
   <script type="module" src="__APP_URL__"></script>

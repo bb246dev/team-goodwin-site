@@ -18,22 +18,29 @@ import {
   STATIC_PLACEMENTS,
   resolveScheduledLocation,
   MAX_BACKOFF_MS,
-  PUBLIC_RACES_ENDPOINT,
-  PUBLIC_RACE_STATUS_ENDPOINT,
   PUBLIC_RV_LOCATION_ENDPOINT,
   RV_REFRESH_MS,
-  WILL_REFRESH_MS,
   createAdaptivePoller,
-  deriveWillLocation,
   loadPublicRvLocation,
   normalizePublicRvLocation,
 } from "./source/feeds.mjs";
+import {
+  GARMIN_LOADER_URL,
+  GARMIN_MIN_REFRESH_MS,
+  GARMIN_PROXY_ENDPOINT,
+  allowedGarminFeedUrl,
+  loadGarminRunnerLocation,
+  parseGarminFeed,
+  parseGarminNetworkLink,
+  resolveGarminDisplayLocation,
+} from "./source/garmin-kml.mjs";
 import { ROUTE_STOPS } from "./source/route-data.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const outputRoot = join(import.meta.dirname, "dist", "tracking-preview");
 const manifest = JSON.parse(readFileSync(join(outputRoot, "asset-manifest.json"), "utf8"));
 const readOutput = (path) => readFileSync(join(outputRoot, path), "utf8");
+const readFixture = (path) => readFileSync(join(import.meta.dirname, "test-fixtures", path), "utf8");
 const sha256 = (content) => createHash("sha256").update(content).digest("hex");
 
 function outputFiles(directory, prefix = "") {
@@ -47,9 +54,9 @@ function asset(name) {
   return manifest.generatedFiles.find((entry) => entry.path.startsWith(`assets/${name}-`));
 }
 
-function harness({ reducedMotion = true, width = 320 } = {}) {
+function harness({ reducedMotion = true, width = 320, inputRouteStops = null, followLabels, autoFollowSubject = null } = {}) {
   const events = new Map();
-  const calls = { map: 0, mapOptions: null, tile: 0, setView: [], flyTo: [], panTo: [], fitBounds: [], markers: [] };
+  const calls = { map: 0, mapOptions: null, tile: 0, setView: [], flyTo: [], panTo: [], fitBounds: [], markers: [], polylines: [] };
   const buttons = Object.fromEntries(["live", "will", "rv", "route"].map((name) => [name, {
     disabled: false, attrs: {}, listeners: {}, title: "", textContent: "",
     setAttribute(key, value) { this.attrs[key] = value; },
@@ -73,7 +80,11 @@ function harness({ reducedMotion = true, width = 320 } = {}) {
     tileLayer(url, options) { calls.tile += 1; calls.tileUrl = url; calls.tileOptions = options; return { addTo() { return this; } }; },
     latLngBounds(points) { return points; },
     icon(options) { return options; },
-    polyline() { return { addTo() { return this; } }; },
+    polyline(points, options) {
+      const polyline = { points, options, addTo(target) { this.addedTo = target; return this; } };
+      calls.polylines.push(polyline);
+      return polyline;
+    },
     circleMarker() { return { bindTooltip() { return this; }, addTo() { return this; } }; },
     marker(point, options) {
       const marker = {
@@ -89,13 +100,15 @@ function harness({ reducedMotion = true, width = 320 } = {}) {
       return marker;
     },
   };
-  const routeStops = [
+  const routeStops = inputRouteStops || [
     { n: 1, lat: 21.3099, lng: -157.8581, city: "Honolulu", state: "Hawaii" },
     { n: 50, lat: 40.7128, lng: -74.006, city: "New York City", state: "New York" },
   ];
   const tracker = createTrackingMap({
     L, element, controls, routeStops, reducedMotion,
     markerAssets: { will: "/tracking-preview/assets/will.png", rv: "/tracking-preview/assets/rv.png" },
+    followLabels,
+    autoFollowSubject,
   });
   return { tracker, buttons, element, events, calls, routeStops };
 }
@@ -150,7 +163,7 @@ test("preview build and upload inventory prohibit copied production site trees",
 });
 
 test("public package has no local diagnostics, localhost URLs, secrets, or route escapes", () => {
-  const customAssets = [asset("app"), asset("feeds"), asset("tracking-map"), asset("route-data")];
+  const customAssets = [asset("app"), asset("feeds"), asset("garmin-kml"), asset("tracking-map"), asset("route-data")];
   for (const entry of customAssets) {
     const source = readOutput(entry.path);
     assert.doesNotMatch(source, /localhost|127\.0\.0\.1|console\.(?:log|info|warn|debug)|__[_A-Z]+__/i);
@@ -186,14 +199,16 @@ test("preview duplicates the complete current production homepage and replaces o
   assert.doesNotMatch(html, /id="mission-map"/);
   assert.match(html, /data-feed="rv"/);
   assert.match(html, /data-feed="will"/);
-  assert.match(html, /Pause Live Follow/);
+  assert.match(html, /<body data-runner-source="garmin">/);
+  assert.match(html, /Pause Auto Follow/);
+  assert.match(html, /approximate and arrive about every 2 minutes/i);
   assert.match(html, /Full Route/);
-  assert.equal(manifest.generatedFiles.length, 11);
+  assert.equal(manifest.generatedFiles.length, 13);
 });
 
 test("embed page exposes only the iframe-safe map shell", () => {
   const html = readOutput("embed/index.html");
-  assert.match(html, /<body class="tracking-preview-embed-page">/);
+  assert.match(html, /<body class="tracking-preview-embed-page" data-runner-source="garmin">/);
   assert.match(html, /id="tracking-map"/);
   assert.match(html, /data-feed="rv"/);
   assert.match(html, /data-feed="will"/);
@@ -203,12 +218,120 @@ test("embed page exposes only the iframe-safe map shell", () => {
   assert.doesNotMatch(html, /__[_A-Z]+__/);
   assert.match(html, /href="\/tracking-preview\/assets\/tracking-preview-[a-f0-9]{16}\.css"/);
   assert.match(html, /src="\/tracking-preview\/assets\/app-[a-f0-9]{16}\.mjs"/);
+  assert.match(html, /about every 2 minutes/i);
+  assert.doesNotMatch(html, /Pause Live Follow|Connecting to the public race feed/i);
+  assert.equal(readOutput("garmin-feed.php"), readFileSync(join(import.meta.dirname, "source", "garmin-feed.php"), "utf8"));
   assert.match(readOutput(".htaccess"), /frame-ancestors https:\/\/50in24\.com https:\/\/www\.50in24\.com/);
   assert.match(readOutput(".htaccess"), /Header unset X-Frame-Options/);
   assert.match(readOutput(".htaccess"), /Header always unset X-Frame-Options/);
   assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors https:"/);
   assert.doesNotMatch(readOutput(".htaccess"), /frame-ancestors 'none'/);
   assert.doesNotMatch(readOutput(".htaccess"), /Header always set X-Frame-Options/);
+});
+
+test("full preview and embed use Garmin without a Strava runner branch", () => {
+  const embed = readOutput("embed/index.html");
+  const homepage = readOutput("index.html");
+  const appSource = readOutput(asset("app").path);
+  assert.match(embed, /data-runner-source="garmin"/);
+  assert.match(homepage, /data-runner-source="garmin"/);
+  assert.match(appSource, /load: \(\) => loadGarminRunnerLocation\(\)/);
+  assert.match(appSource, /autoFollowSubject: "will"/);
+  assert.doesNotMatch(appSource, /loadPublicRaceSnapshot|deriveWillLocation|const runnerSource|PUBLIC_RACES_ENDPOINT|PUBLIC_RACE_STATUS_ENDPOINT|["']strava["']/i);
+  assert.match(appSource, /subject === "will" \? live : resolveScheduledLocation\(subject, live\)/);
+});
+
+test("Garmin loader NetworkLink is parsed and its 60-second hint is clamped to 120 seconds", () => {
+  const loader = parseGarminNetworkLink(readFixture("garmin-loader.kml"));
+  assert.equal(GARMIN_LOADER_URL, "https://share.garmin.com/Feed/ShareLoader/missionamerica");
+  assert.equal(GARMIN_PROXY_ENDPOINT, "/tracking-preview/garmin-feed.php");
+  assert.equal(loader.href, "https://eur-share.explore.garmin.com/Feed/Share/missionamerica");
+  assert.equal(loader.advertisedRefreshMs, 60_000);
+  assert.equal(loader.refreshMs, GARMIN_MIN_REFRESH_MS);
+  assert.equal(GARMIN_MIN_REFRESH_MS, 120_000);
+  assert.equal(allowedGarminFeedUrl(loader.href), true);
+  assert.equal(allowedGarminFeedUrl("http://eur-share.explore.garmin.com/Feed/Share/missionamerica"), false);
+  assert.equal(allowedGarminFeedUrl("https://example.com/Feed/Share/missionamerica"), false);
+  assert.throws(() => parseGarminNetworkLink(readFixture("garmin-loader.kml").replace("eur-share.explore.garmin.com", "example.com")), /invalid_garmin_network_link/);
+});
+
+test("Garmin KML point and trail coordinates use KML longitude-latitude order", () => {
+  const result = parseGarminFeed(readFixture("garmin-feed-with-track.kml"), {
+    nowMs: Date.parse("2026-10-08T00:25:00Z"),
+  });
+  assert.deepEqual(result, {
+    available: true,
+    stale: false,
+    observedAt: "2026-10-08T00:24:00.000Z",
+    position: { lat: 21.32, lng: -157.85 },
+    trail: [
+      { lat: 21.31, lng: -157.86 },
+      { lat: 21.315, lng: -157.855 },
+      { lat: 21.32, lng: -157.85 },
+    ],
+  });
+  assert.equal(parseGarminFeed(readFixture("garmin-feed-with-track.kml"), {
+    nowMs: Date.parse("2026-10-08T00:40:01Z"),
+  }).stale, true);
+});
+
+test("Garmin adapter follows the loader through the same-origin proxy", async () => {
+  const loader = readFixture("garmin-loader.kml");
+  const feed = readFixture("garmin-feed-with-track.kml");
+  const targets = [];
+  const result = await loadGarminRunnerLocation({
+    nowMs: Date.parse("2026-10-08T00:25:00Z"),
+    fetchImpl: async (url, options) => {
+      const request = new URL(url, "https://goodwingoodge.com");
+      targets.push({ target: request.searchParams.get("url"), options });
+      return new Response(targets.length === 1 ? loader : feed, {
+        status: 200,
+        headers: { "content-type": "application/vnd.google-earth.kml+xml" },
+      });
+    },
+    setTimeoutImpl: () => 1,
+    clearTimeoutImpl() {},
+  });
+  assert.deepEqual(targets.map(({ target }) => target), [
+    GARMIN_LOADER_URL,
+    "https://eur-share.explore.garmin.com/Feed/Share/missionamerica",
+  ]);
+  assert.ok(targets.every(({ options }) => options.cache === "no-store" && options.credentials === "omit"));
+  assert.deepEqual(result.position, { lat: 21.32, lng: -157.85 });
+});
+
+test("empty, malformed, future, and unavailable Garmin feeds fail safely", async () => {
+  assert.deepEqual(parseGarminFeed('<?xml version="1.0"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document/></kml>'), {
+    available: false, trail: [],
+  });
+  assert.throws(() => parseGarminFeed("<kml><Document></kml>"), /invalid_kml_xml/);
+  const future = readFixture("garmin-feed-with-track.kml").replaceAll("2026-10-08T00:2", "2026-10-09T00:2");
+  assert.deepEqual(parseGarminFeed(future, { nowMs: Date.parse("2026-10-08T00:25:00Z") }), { available: false, trail: [] });
+  await assert.rejects(loadGarminRunnerLocation({
+    fetchImpl: async () => new Response("unavailable", { status: 503, headers: { "content-type": "text/plain" } }),
+    setTimeoutImpl: () => 1,
+    clearTimeoutImpl() {},
+  }), /garmin_feed_request_failed/);
+  const lastKnown = parseGarminFeed(readFixture("garmin-feed-with-track.kml"), {
+    nowMs: Date.parse("2026-10-08T00:25:00Z"),
+  });
+  assert.deepEqual(resolveGarminDisplayLocation({ available: false, trail: [] }, lastKnown), {
+    ...lastKnown, stale: true,
+  });
+  assert.deepEqual(resolveGarminDisplayLocation(null, null), { available: false, trail: [] });
+});
+
+test("Garmin proxy is fixed-target, server-cached, and confined to the preview directory", () => {
+  const proxy = readOutput("garmin-feed.php");
+  const deploy = readFileSync(join(import.meta.dirname, "deploy.mjs"), "utf8");
+  assert.match(proxy, /GARMIN_CACHE_SECONDS = 120/);
+  assert.match(proxy, /GARMIN_STALE_SECONDS = 600/);
+  assert.match(proxy, /share\.garmin\.com/);
+  assert.match(proxy, /explore\\\.garmin\\\.com/);
+  assert.match(proxy, /CURLOPT_FOLLOWLOCATION => false/);
+  assert.match(proxy, /CURLOPT_PROTOCOLS => CURLPROTO_HTTPS/);
+  assert.match(deploy, /garmin-feed\.php/);
+  assert.doesNotMatch(proxy, /Access-Control-Allow-Origin:\s*\*/i);
 });
 
 test("preview and embed route tooltips show the three approved local race times", () => {
@@ -245,8 +368,8 @@ test("planned full-country route loads before feeds and survives feed failures",
   const appSource = readOutput(asset("app").path);
   assert.ok(appSource.indexOf("createTrackingMap({") < appSource.indexOf("createAdaptivePoller({"));
   assert.match(appSource, /void rvPoller\.start\(\)/);
-  assert.match(appSource, /void willPoller\.start\(\)/);
-  assert.doesNotMatch(appSource, /await (?:rvPoller|willPoller)\.start/);
+  assert.match(appSource, /void runnerPoller\.start\(\)/);
+  assert.doesNotMatch(appSource, /await (?:rvPoller|runnerPoller)\.start/);
 });
 
 test("first fresh RV focuses at zoom 17 and later movement pans", () => {
@@ -271,6 +394,81 @@ test("first fresh Will focuses at zoom 17", () => {
   assert.deepEqual(h.calls.fitBounds.at(-1).bounds, [[40.123456789, -82.123456789]]);
   assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 17);
   assert.equal(h.calls.fitBounds.at(-1).zoom, 17);
+});
+
+test("Garmin runner fix places the marker and paints its trail", () => {
+  const h = harness({
+    reducedMotion: false,
+    followLabels: { active: "Pause Auto Follow", paused: "Resume Auto Follow" },
+    autoFollowSubject: "will",
+  });
+  const result = parseGarminFeed(readFixture("garmin-feed-with-track.kml"), {
+    nowMs: Date.parse("2026-10-08T00:25:00Z"),
+  });
+  h.tracker.setWillLocation(result);
+  assert.deepEqual(h.tracker.getMarker("will").point, [21.32, -157.85]);
+  assert.deepEqual(h.tracker.getWillTrail().points, [
+    [21.31, -157.86],
+    [21.315, -157.855],
+    [21.32, -157.85],
+  ]);
+  assert.equal(h.tracker.getWillTrail().options.color, "#5eead4");
+  assert.equal(h.tracker.getWillState().kind, TRACKING_STATE.LIVE);
+  assert.equal(h.buttons.live.textContent, "Pause Auto Follow");
+});
+
+test("Garmin Auto Follow supports zoom level 10 and preserves manual zoom while recentering", async () => {
+  const h = harness({
+    reducedMotion: false,
+    followLabels: { active: "Pause Auto Follow", paused: "Resume Auto Follow" },
+    autoFollowSubject: "will",
+  });
+  const initialFits = h.calls.fitBounds.length;
+  h.tracker.setRvLocation(freshRv());
+  assert.equal(h.calls.fitBounds.length, initialFits);
+
+  h.tracker.setWillLocation(freshWill());
+  assert.equal(h.tracker.getFollowing(), "will");
+  assert.equal(h.calls.fitBounds.at(-1).zoom, FOLLOW_ZOOM);
+  await Promise.resolve();
+
+  h.tracker.map.setView([40.123456789, -82.123456789], 10, {});
+  h.events.get("zoomend")();
+  assert.equal(h.calls.panTo.at(-1).zoom, 10);
+  assert.deepEqual(h.calls.panTo.at(-1).point, [40.123456789, -82.123456789]);
+  await Promise.resolve();
+
+  const fitsAfterManualZoom = h.calls.fitBounds.length;
+  h.tracker.setRvLocation(freshRv(39.97, -82.94, "2026-09-20T12:02:00.000Z"));
+  assert.equal(h.calls.panTo.at(-1).zoom, 10);
+  assert.deepEqual(h.calls.panTo.at(-1).point, [40.123456789, -82.123456789]);
+  await Promise.resolve();
+
+  h.tracker.setWillLocation(freshWill(40.13, -82.13, "2026-09-20T12:03:00.000Z"));
+  assert.equal(h.calls.fitBounds.length, fitsAfterManualZoom);
+  assert.equal(h.calls.panTo.at(-1).zoom, 10);
+  assert.deepEqual(h.calls.panTo.at(-1).point, [40.13, -82.13]);
+  assert.equal(h.tracker.getFollowing(), "will");
+});
+
+test("Garmin runner updates do not mutate flight route or RV layers", () => {
+  const h = harness({
+    inputRouteStops: [
+      { n: 1, lat: 21.3099, lng: -157.8581, city: "Honolulu", state: "Hawaii" },
+      { n: 2, lat: 61.2181, lng: -149.9003, city: "Anchorage", state: "Alaska" },
+    ],
+  });
+  const flightLayer = h.calls.polylines[0];
+  assert.deepEqual(flightLayer.points, [[21.3099, -157.8581], [61.2181, -149.9003]]);
+  assert.equal(flightLayer.options.weight, 2.6);
+  assert.equal(flightLayer.options.dashArray, "12 10");
+  h.tracker.setRvLocation(freshRv());
+  const rvMarker = h.tracker.getMarker("rv");
+  h.tracker.setWillLocation({ ...freshWill(), trail: [{ lat: 40.12, lng: -82.14 }, { lat: 40.123456789, lng: -82.123456789 }] });
+  assert.equal(flightLayer.removed, undefined);
+  assert.equal(h.tracker.getMarker("rv"), rvMarker);
+  assert.deepEqual(rvMarker.point, [39.966123456, -82.934654321]);
+  assert.equal(PUBLIC_RV_LOCATION_ENDPOINT, "/strava/public/tracking-status");
 });
 
 test("both fresh subjects are framed together", () => {
@@ -316,6 +514,21 @@ test("unavailable feeds remove their markers and disable controls", () => {
   }
 });
 
+test("stale Garmin results retain a dimmed last-known marker and trail", () => {
+  const h = harness();
+  const result = parseGarminFeed(readFixture("garmin-feed-with-track.kml"), {
+    nowMs: Date.parse("2026-10-08T00:40:01Z"),
+  });
+  h.tracker.setWillLocation(result);
+  assert.equal(h.tracker.getWillState().kind, TRACKING_STATE.STALE);
+  assert.match(h.tracker.getMarker("will").options.icon.className, /will-stale/);
+  assert.equal(h.tracker.getWillTrail().options.opacity, 0.45);
+  assert.equal(h.tracker.getWillTrail().options.dashArray, "6 10");
+  h.tracker.setWillLocation({ available: false });
+  assert.equal(h.tracker.getMarker("will"), null);
+  assert.equal(h.tracker.getWillTrail(), null);
+});
+
 test("Pause, Resume, and Full Route control automatic camera movement", () => {
   const h = harness();
   h.tracker.setRvLocation(freshRv());
@@ -334,7 +547,7 @@ test("Pause, Resume, and Full Route control automatic camera movement", () => {
   assert.equal(h.calls.fitBounds.at(-1).bounds.length, h.routeStops.length + 1);
 });
 
-test("maximum zoom is 17 across map, tiles, direct views, and fits", () => {
+test("maximum zoom is 17 and includes requested follow zoom level 10", () => {
   const h = harness();
   assert.equal(MAX_NATIVE_ZOOM, 17);
   assert.equal(FOLLOW_ZOOM, 17);
@@ -343,6 +556,7 @@ test("maximum zoom is 17 across map, tiles, direct views, and fits", () => {
   assert.equal(h.calls.tileOptions.maxZoom, 17);
   assert.equal(h.calls.tileOptions.maxNativeZoom, 17);
   assert.equal(h.calls.tileOptions.detectRetina, false);
+  assert.ok(h.calls.mapOptions.maxZoom >= 10);
   h.tracker.map.setView([0, 1], 99, {});
   h.tracker.map.flyTo([1, 2], 99, {});
   assert.equal(h.calls.setView.at(-1).zoom, 17);
@@ -367,24 +581,8 @@ test("public RV normalization and intended endpoint remain strict", async () => 
   assert.equal(request.options.credentials, "omit");
 });
 
-test("Will location is derived only from the validated public race feed", () => {
-  assert.equal(PUBLIC_RACES_ENDPOINT, "/strava/public/races");
-  assert.equal(PUBLIC_RACE_STATUS_ENDPOINT, "/strava/public/race-status");
-  const observedAt = "2026-09-20T12:10:00.000Z";
-  const snapshot = {
-    source: "api",
-    races: [{ activity: { startTime: "2026-09-20T12:00:00.000Z", elapsedTimeSeconds: 600, endLatLng: [40.1, -82.2], summaryPolyline: null } }],
-  };
-  assert.deepEqual(deriveWillLocation(snapshot, { nowMs: Date.parse("2026-09-20T12:15:00Z") }), {
-    available: true, stale: false, observedAt, position: { lat: 40.1, lng: -82.2 },
-  });
-  assert.equal(deriveWillLocation(snapshot, { nowMs: Date.parse("2026-09-20T12:30:01Z") }).stale, true);
-  assert.deepEqual(deriveWillLocation({ source: "api", races: [] }), { available: false });
-});
-
 test("polling is immediate, non-overlapping, reconnect-aware, and bounded", async () => {
   assert.equal(RV_REFRESH_MS, 30_000);
-  assert.equal(WILL_REFRESH_MS, 45_000);
   assert.equal(MAX_BACKOFF_MS, 300_000);
   const documentListeners = new Map();
   const windowListeners = new Map();
@@ -442,6 +640,46 @@ test("polling uses exponential backoff and recovers to the normal interval", asy
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(timers.at(-1).delay, 30_000);
   assert.equal(poller.getConsecutiveFailures(), 0);
+  poller.destroy();
+});
+
+test("Garmin polling cannot run more frequently than every 120 seconds", async () => {
+  const timers = [];
+  const windowListeners = new Map();
+  let nowMs = 0;
+  let calls = 0;
+  const poller = createAdaptivePoller({
+    intervalMs: GARMIN_MIN_REFRESH_MS,
+    minimumIntervalMs: GARMIN_MIN_REFRESH_MS,
+    load: async () => { calls += 1; return { available: false, trail: [] }; },
+    onData() {},
+    onFailure() {},
+    nowImpl: () => nowMs,
+    documentObject: { hidden: false, addEventListener() {}, removeEventListener() {} },
+    windowObject: {
+      addEventListener(name, callback) { windowListeners.set(name, callback); },
+      removeEventListener(name) { windowListeners.delete(name); },
+    },
+    setTimeoutImpl(callback, delay) {
+      const timer = { callback, delay, cleared: false };
+      timers.push(timer);
+      return timer;
+    },
+    clearTimeoutImpl(timer) { timer.cleared = true; },
+  });
+  await poller.start();
+  assert.equal(calls, 1);
+  assert.equal(timers.at(-1).delay, 120_000);
+  nowMs = 60_000;
+  windowListeners.get("online")();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(calls, 1);
+  const firstActiveTimer = timers.find((timer) => !timer.cleared);
+  nowMs = 120_000;
+  firstActiveTimer.callback();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(calls, 2);
+  assert.equal(timers.filter((timer) => !timer.cleared).at(-1).delay, 120_000);
   poller.destroy();
 });
 

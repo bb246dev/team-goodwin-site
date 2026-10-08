@@ -84,11 +84,11 @@ function replaceProductionMap(html) {
             </article>
             <article class="tracking-preview-feed-card" data-feed="will" data-state="loading" role="status" aria-live="polite">
               <div class="tracking-preview-feed-title"><span class="tracking-preview-state-dot" aria-hidden="true"></span><strong>Will</strong><span data-feed-state>Connecting</span></div>
-              <p data-feed-detail>Connecting to the public race feed…</p>
+              <p data-feed-detail>Connecting to Garmin. Location updates are approximate and arrive about every 2 minutes.</p>
             </article>
           </div>
           <div class="tracking-preview-map-controls" data-map-controls role="group" aria-label="Map view controls">
-            <button type="button" data-follow="live" aria-pressed="true">Pause Live Follow</button>
+            <button type="button" data-follow="live" aria-pressed="true">Pause Auto Follow</button>
             <button type="button" data-follow="will" aria-pressed="false" disabled>Follow Will</button>
             <button type="button" data-follow="rv" aria-pressed="false" disabled>Follow RV</button>
             <button type="button" data-follow="route" aria-pressed="false">Full Route</button>
@@ -96,7 +96,7 @@ function replaceProductionMap(html) {
           <div class="tracker-map tracking-preview-map" id="tracking-map" role="region" aria-label="Interactive street map of the Goodwin Generated Mission America route" tabindex="0">
             <span class="tracking-preview-map-loading">Loading countrywide route…</span>
           </div>
-          <p class="legal-note tracking-preview-feed-note">The RV and Will interfaces use only the intended public tracking endpoints. Live, last-known, and unavailable states remain explicitly labeled.</p>
+          <p class="legal-note tracking-preview-feed-note">Runner locations come from Garmin KML. Updates are approximate and arrive about every 2 minutes. Last-known and unavailable states remain explicitly labeled.</p>
         </div>
         <p class="legal-note">Tracking note: Location and status information may be delayed, approximate or temporarily unavailable. Travel schedules and route information are subject to change.</p>`;
   return html.slice(0, start) + replacement + html.slice(end + endMarker.length);
@@ -116,6 +116,7 @@ const runnerIcon = writeAsset("will-marker", ".png", readFileSync(join(repositor
 const rvIcon = writeAsset("rv-marker", ".png", readFileSync(join(repositoryRoot, "assets", "map-rv-green-small.png")));
 const routeData = writeAsset("route-data", ".mjs", readFileSync(join(sourceRoot, "route-data.mjs")));
 const feeds = writeAsset("feeds", ".mjs", readFileSync(join(sourceRoot, "feeds.mjs")));
+const garminKml = writeAsset("garmin-kml", ".mjs", readFileSync(join(sourceRoot, "garmin-kml.mjs")));
 const trackingMap = writeAsset("tracking-map", ".mjs", readFileSync(join(sourceRoot, "tracking-map.mjs")));
 const styles = writeAsset("tracking-preview", ".css", `${leafletCss()}\n${readFileSync(join(sourceRoot, "styles.css"), "utf8")}`);
 
@@ -124,6 +125,7 @@ for (const [token, value] of [
   ["__ROUTE_DATA_URL__", routeData.url],
   ["__TRACKING_MAP_URL__", trackingMap.url],
   ["__FEEDS_URL__", feeds.url],
+  ["__GARMIN_KML_URL__", garminKml.url],
   ["__LEAFLET_URL__", leaflet.url],
   ["__WILL_ICON_URL__", runnerIcon.url],
   ["__RV_ICON_URL__", rvIcon.url],
@@ -137,6 +139,7 @@ html = removeProductionMapLoader(html);
 html = removeProductionAnalytics(html);
 html = replaceProductionMap(html);
 html = html.replaceAll('"goodwinSplashSeen"', '"trackingPreview:goodwinSplashSeen"');
+html = replaceToken(html, "<body>", '<body data-runner-source="garmin">');
 html = replaceToken(
   html,
   '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -151,6 +154,7 @@ let embedHtml = readFileSync(join(sourceRoot, "embed.html"), "utf8");
 embedHtml = replaceToken(embedHtml, "__STYLES_URL__", styles.url);
 embedHtml = replaceToken(embedHtml, "__APP_URL__", app.url);
 const embedEntry = writeOutput("embed/index.html", embedHtml);
+const garminProxyEntry = writeOutput("garmin-feed.php", readFileSync(join(sourceRoot, "garmin-feed.php")));
 
 const inlineScripts = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g)];
 if (inlineScripts.length !== 1) throw new Error("Tracking preview has an unexpected executable inline script inventory");
@@ -174,11 +178,12 @@ Header always set Cache-Control "public, max-age=31536000, immutable"
 `;
 const htaccessEntry = writeOutput(".htaccess", htaccess);
 
-const customAssets = [app, feeds, trackingMap, routeData, leaflet, styles, runnerIcon, rvIcon];
+const customAssets = [app, feeds, garminKml, trackingMap, routeData, leaflet, styles, runnerIcon, rvIcon];
 const inventory = [
   { ...htaccessEntry, url: `${publicPrefix}/.htaccess` },
   { ...htmlEntry, url: `${publicPrefix}/` },
   { ...embedEntry, url: `${publicPrefix}/embed/` },
+  { ...garminProxyEntry, url: `${publicPrefix}/garmin-feed.php` },
   ...customAssets,
 ];
 const manifest = {

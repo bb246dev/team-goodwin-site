@@ -249,29 +249,49 @@ export function createAdaptivePoller({
   onData,
   onFailure,
   intervalMs,
+  minimumIntervalMs = 0,
   maxBackoffMs = MAX_BACKOFF_MS,
   documentObject = globalThis.document,
   windowObject = globalThis.window,
+  nowImpl = Date.now,
   setTimeoutImpl = globalThis.setTimeout,
   clearTimeoutImpl = globalThis.clearTimeout,
 } = {}) {
   let timer = null;
+  let timerDueAt = null;
   let inFlight = null;
   let stopped = true;
   let failures = 0;
+  let lastStartedAt = Number.NEGATIVE_INFINITY;
   const clearTimer = () => {
     if (timer !== null) clearTimeoutImpl(timer);
     timer = null;
+    timerDueAt = null;
   };
   const enabled = () => !stopped && !documentObject?.hidden;
   const nextDelay = () => Math.min(maxBackoffMs, intervalMs * (2 ** failures));
-  const schedule = () => {
+  const remainingMinimum = () => Math.max(0, lastStartedAt + minimumIntervalMs - nowImpl());
+  const schedule = (delay = Math.max(nextDelay(), remainingMinimum())) => {
+    if (!enabled()) return;
+    const dueAt = nowImpl() + delay;
+    if (minimumIntervalMs > 0 && timer !== null && timerDueAt !== null && timerDueAt <= dueAt) return;
     clearTimer();
-    if (enabled()) timer = setTimeoutImpl(() => { void refresh(); }, nextDelay());
+    timerDueAt = dueAt;
+    timer = setTimeoutImpl(() => {
+      timer = null;
+      timerDueAt = null;
+      void refresh();
+    }, delay);
   };
   const refresh = () => {
     if (!enabled()) return Promise.resolve(null);
     if (inFlight) return inFlight;
+    const minimumDelay = remainingMinimum();
+    if (minimumDelay > 0) {
+      schedule(minimumDelay);
+      return Promise.resolve(null);
+    }
+    lastStartedAt = nowImpl();
     inFlight = Promise.resolve().then(load).then((result) => {
       failures = 0;
       onData(result);
@@ -287,8 +307,11 @@ export function createAdaptivePoller({
     return inFlight;
   };
   const refreshWhenUsable = () => {
-    clearTimer();
-    if (enabled()) void refresh();
+    if (!enabled()) clearTimer();
+    else {
+      if (minimumIntervalMs === 0) clearTimer();
+      void refresh();
+    }
   };
   documentObject?.addEventListener?.("visibilitychange", refreshWhenUsable);
   windowObject?.addEventListener?.("online", refreshWhenUsable);

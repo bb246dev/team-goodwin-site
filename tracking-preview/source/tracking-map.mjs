@@ -83,6 +83,8 @@ export function createTrackingMap({
   markerAssets,
   reducedMotion = false,
   tileProvider = PREVIEW_TILE_PROVIDER,
+  followLabels = { active: "Pause Live Follow", paused: "Resume Live Follow" },
+  autoFollowSubject = null,
 }) {
   const map = L.map(element, {
     zoomControl: true,
@@ -115,14 +117,20 @@ export function createTrackingMap({
   };
   let stops = routeStops;
   let routeLayers = [];
+  let willTrailLayer = null;
+  let willTrailKey = null;
   let following = null;
   let liveFollow = true;
   let viewMode = "live";
   let programmaticMove = false;
 
   const freshSubjects = () => ["will", "rv"].filter((subject) => [TRACKING_STATE.LIVE, TRACKING_STATE.SCHEDULED].includes(states[subject].kind) && positions[subject]);
+  const autoFollowSubjects = () => {
+    const subjects = freshSubjects();
+    return autoFollowSubject ? subjects.filter((subject) => subject === autoFollowSubject) : subjects;
+  };
   const updateButtons = () => {
-    buttons.live.textContent = liveFollow ? "Pause Live Follow" : "Resume Live Follow";
+    buttons.live.textContent = liveFollow ? followLabels.active : followLabels.paused;
     buttons.live.setAttribute("aria-pressed", String(liveFollow));
     buttons.live.title = liveFollow ? "Pause automatic map following" : "Resume automatic map following";
     buttons.will.textContent = states.will.kind === TRACKING_STATE.STALE ? "Show Will Last Known" : "Follow Will";
@@ -167,7 +175,7 @@ export function createTrackingMap({
   };
   const followFresh = (animate = true, focusSingle = false) => {
     if (!liveFollow) return;
-    const subjects = freshSubjects();
+    const subjects = autoFollowSubjects();
     following = subjects.length === 1 ? subjects[0] : subjects.length === 2 ? "both" : null;
     if (subjects.length) viewMode = "live";
     updateButtons();
@@ -208,7 +216,7 @@ export function createTrackingMap({
   map.on("dragstart", manualMove);
   map.on("zoomend", () => {
     if (programmaticMove || !liveFollow) return;
-    const subjects = freshSubjects();
+    const subjects = autoFollowSubjects();
     if (subjects.length === 1) panTo(subjects[0], false);
     else if (subjects.length === 2) fitFreshSubjects(subjects, false, map.getZoom());
   });
@@ -262,6 +270,24 @@ export function createTrackingMap({
       }).bindTooltip(raceStopTooltip(stop)).addTo(map));
     }
   };
+  const paintWillTrail = (result) => {
+    const points = result?.available && Array.isArray(result.trail)
+      ? result.trail.filter(validCoordinate).map((point) => [point.lat, point.lng])
+      : [];
+    const nextKey = points.length >= 2 ? JSON.stringify([Boolean(result.stale), points]) : "none";
+    if (nextKey === willTrailKey) return;
+    willTrailKey = nextKey;
+    if (willTrailLayer) map.removeLayer(willTrailLayer);
+    willTrailLayer = null;
+    if (points.length < 2) return;
+    willTrailLayer = L.polyline(points, {
+      color: "#5eead4",
+      weight: 4,
+      opacity: result.stale ? 0.45 : 0.9,
+      dashArray: result.stale ? "6 10" : undefined,
+      interactive: false,
+    }).addTo(map);
+  };
   const setLocation = (subject, result) => {
     const previous = states[subject];
     const next = classifyTrackedLocation(result);
@@ -303,12 +329,13 @@ export function createTrackingMap({
   return {
     map, tileLayer,
     setRvLocation: (result) => setLocation("rv", result),
-    setWillLocation: (result) => setLocation("will", result),
+    setWillLocation: (result) => { paintWillTrail(result); return setLocation("will", result); },
     setRoute(nextStops) { stops = nextStops; paintRoute(); },
     fullRoute,
     followFresh,
     getFollowing: () => following,
     getMarker: (subject) => markers[subject],
+    getWillTrail: () => willTrailLayer,
     getRvState: () => states.rv,
     getWillState: () => states.will,
     getViewMode: () => viewMode,
