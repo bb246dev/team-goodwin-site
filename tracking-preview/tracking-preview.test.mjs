@@ -34,6 +34,11 @@ import {
   parseGarminNetworkLink,
   resolveGarminDisplayLocation,
 } from "./source/garmin-kml.mjs";
+import {
+  GARMIN_CACHE_MS as LOCAL_GARMIN_CACHE_MS,
+  PRODUCTION_ASSET_ORIGIN,
+  allowedGarminTarget,
+} from "./dev-server.mjs";
 import { ROUTE_STOPS } from "./source/route-data.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
@@ -237,6 +242,7 @@ test("full preview and embed use Garmin without a Strava runner branch", () => {
   assert.match(homepage, /data-runner-source="garmin"/);
   assert.match(appSource, /load: \(\) => loadGarminRunnerLocation\(\)/);
   assert.match(appSource, /autoFollowSubject: "will"/);
+  assert.match(appSource, /Garmin location updates are approximate and arrive about every 2 minutes/);
   assert.doesNotMatch(appSource, /loadPublicRaceSnapshot|deriveWillLocation|const runnerSource|PUBLIC_RACES_ENDPOINT|PUBLIC_RACE_STATUS_ENDPOINT|["']strava["']/i);
   assert.match(appSource, /subject === "will" \? live : resolveScheduledLocation\(subject, live\)/);
 });
@@ -332,6 +338,11 @@ test("Garmin proxy is fixed-target, server-cached, and confined to the preview d
   assert.match(proxy, /CURLOPT_PROTOCOLS => CURLPROTO_HTTPS/);
   assert.match(deploy, /garmin-feed\.php/);
   assert.doesNotMatch(proxy, /Access-Control-Allow-Origin:\s*\*/i);
+  assert.equal(LOCAL_GARMIN_CACHE_MS, GARMIN_MIN_REFRESH_MS);
+  assert.equal(allowedGarminTarget(GARMIN_LOADER_URL), true);
+  assert.equal(allowedGarminTarget("https://eur-share.explore.garmin.com/Feed/Share/missionamerica"), true);
+  assert.equal(allowedGarminTarget("https://example.com/Feed/Share/missionamerica"), false);
+  assert.equal(PRODUCTION_ASSET_ORIGIN, "https://goodwingoodge.com");
 });
 
 test("preview and embed route tooltips show the three approved local race times", () => {

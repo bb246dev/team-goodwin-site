@@ -40,6 +40,16 @@ node tracking-preview/build.mjs
 node --test tracking-preview/tracking-preview.test.mjs
 ```
 
+Local watchable preview (including the same-origin Garmin proxy):
+
+```sh
+node tracking-preview/dev-server.mjs
+```
+
+The local server binds only to `127.0.0.1`. It serves preview files locally and
+reads any production assets absent from the checkout from `goodwingoodge.com`;
+it never writes to production.
+
 
 ## October airport placements
 

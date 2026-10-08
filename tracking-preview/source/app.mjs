@@ -41,7 +41,8 @@ function updateFeed(name, state, detail) {
 function staleCopy(name, result, interrupted = false) {
   const label = name === "rv" ? "RV" : "Garmin";
   const interruption = interrupted ? " Feed connection interrupted." : "";
-  return `${label} last known location. Last updated ${formatUpdate(result.observedAt)}.${interruption}`;
+  const cadence = name === "will" ? " Updates are approximate and arrive about every 2 minutes." : "";
+  return `${label} last known location. Last updated ${formatUpdate(result.observedAt)}.${interruption}${cadence}`;
 }
 
 async function startTrackingPreview() {
@@ -72,7 +73,9 @@ async function startTrackingPreview() {
     if (subject === "rv") tracker.setRvLocation(result);
     else tracker.setWillLocation(result);
     if (result.scheduled) updateFeed(subject, "scheduled", `${result.label} · scheduled approximate location.`);
-    else if (!result.available) updateFeed(subject, "unavailable", detail || "Waiting for a usable feed position.");
+    else if (!result.available) updateFeed(subject, "unavailable", detail || (subject === "will"
+      ? "Garmin location updates are approximate and arrive about every 2 minutes. No usable fix is available yet."
+      : "Waiting for a usable feed position."));
     else if (result.stale) updateFeed(subject, "stale", staleCopy(subject, result));
     else updateFeed(subject, "live", subject === "will"
       ? `Approximate Garmin location · updated ${formatUpdate(result.observedAt)}. Updates arrive about every 2 minutes.`
