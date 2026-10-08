@@ -23,7 +23,9 @@ function allowed_target(string $target): bool {
     $loader = $host === 'share.garmin.com' && $path === '/feed/shareloader/missionamerica';
     $feed = preg_match('/^[-a-z0-9]+-share\.explore\.garmin\.com$/D', $host) === 1
         && $path === '/feed/share/missionamerica';
-    return $loader || $feed;
+    $inreachIii = $host === 'aus-share.explore.garmin.com'
+        && $path === '/feed/share/missionamerica50';
+    return $loader || $feed || $inreachIii;
 }
 
 function fetch_target(string $target): ?string {

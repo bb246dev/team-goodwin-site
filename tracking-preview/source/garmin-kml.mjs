@@ -1,4 +1,5 @@
 export const GARMIN_LOADER_URL = "https://share.garmin.com/Feed/ShareLoader/missionamerica";
+export const GARMIN_INREACH_III_URL = "https://aus-share.explore.garmin.com/Feed/Share/missionamerica50";
 export const GARMIN_PROXY_ENDPOINT = "/tracking-preview/garmin-feed.php";
 export const GARMIN_MIN_REFRESH_MS = 120_000;
 export const GARMIN_FRESH_MS = 10 * 60_000;
@@ -173,7 +174,8 @@ export function allowedGarminFeedUrl(value) {
     const url = new URL(value);
     return url.protocol === "https:" && !url.username && !url.password && !url.port && !url.search && !url.hash
       && /^[-a-z0-9]+-share\.explore\.garmin\.com$/i.test(url.hostname)
-      && url.pathname.toLowerCase() === "/feed/share/missionamerica";
+      && (url.pathname.toLowerCase() === "/feed/share/missionamerica"
+        || url.href === GARMIN_INREACH_III_URL);
   } catch {
     return false;
   }
@@ -255,6 +257,7 @@ async function fetchKml(target, { fetchImpl, proxyEndpoint, signal }) {
 export async function loadGarminRunnerLocation({
   fetchImpl = globalThis.fetch,
   proxyEndpoint = GARMIN_PROXY_ENDPOINT,
+  feedUrl = null,
   timeoutMs = GARMIN_REQUEST_TIMEOUT_MS,
   nowMs = Date.now(),
   setTimeoutImpl = globalThis.setTimeout,
@@ -263,6 +266,11 @@ export async function loadGarminRunnerLocation({
   const controller = new AbortController();
   const timeout = setTimeoutImpl(() => controller.abort(), timeoutMs);
   try {
+    if (feedUrl !== null) {
+      if (!allowedGarminFeedUrl(feedUrl)) throw new Error("invalid_garmin_feed_url");
+      const feed = await fetchKml(feedUrl, { fetchImpl, proxyEndpoint, signal: controller.signal });
+      return parseGarminFeed(feed, { nowMs });
+    }
     const loader = await fetchKml(GARMIN_LOADER_URL, { fetchImpl, proxyEndpoint, signal: controller.signal });
     const networkLink = parseGarminNetworkLink(loader);
     const feed = await fetchKml(networkLink.href, { fetchImpl, proxyEndpoint, signal: controller.signal });

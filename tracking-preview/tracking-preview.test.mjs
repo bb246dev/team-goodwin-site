@@ -7,6 +7,7 @@ import { join, resolve } from "node:path";
 import {
   FOLLOW_ZOOM,
   MAX_NATIVE_ZOOM,
+  MAX_ZOOM,
   PREVIEW_TILE_PROVIDER,
   TRACKING_STATE,
   classifyRvLocation,
@@ -25,6 +26,7 @@ import {
   normalizePublicRvLocation,
 } from "./source/feeds.mjs";
 import {
+  GARMIN_INREACH_III_URL,
   GARMIN_LOADER_URL,
   GARMIN_MIN_REFRESH_MS,
   GARMIN_PROXY_ENDPOINT,
@@ -59,10 +61,20 @@ function asset(name) {
   return manifest.generatedFiles.find((entry) => entry.path.startsWith(`assets/${name}-`));
 }
 
-function harness({ reducedMotion = true, width = 320, inputRouteStops = null, followLabels, autoFollowSubject = null } = {}) {
+function harness({
+  reducedMotion = true,
+  width = 320,
+  inputRouteStops = null,
+  followLabels,
+  autoFollowSubject = null,
+  followZoom,
+  subjectLabels,
+  rvControl = true,
+} = {}) {
   const events = new Map();
   const calls = { map: 0, mapOptions: null, tile: 0, setView: [], flyTo: [], panTo: [], fitBounds: [], markers: [], polylines: [] };
-  const buttons = Object.fromEntries(["live", "will", "rv", "route"].map((name) => [name, {
+  const buttonNames = rvControl ? ["live", "will", "rv", "route"] : ["live", "will", "route"];
+  const buttons = Object.fromEntries(buttonNames.map((name) => [name, {
     disabled: false, attrs: {}, listeners: {}, title: "", textContent: "",
     setAttribute(key, value) { this.attrs[key] = value; },
     addEventListener(event, callback) { this.listeners[event] = callback; },
@@ -114,6 +126,8 @@ function harness({ reducedMotion = true, width = 320, inputRouteStops = null, fo
     markerAssets: { will: "/tracking-preview/assets/will.png", rv: "/tracking-preview/assets/rv.png" },
     followLabels,
     autoFollowSubject,
+    followZoom,
+    subjectLabels,
   });
   return { tracker, buttons, element, events, calls, routeStops };
 }
@@ -208,7 +222,7 @@ test("preview duplicates the complete current production homepage and replaces o
   assert.match(html, /Pause Auto Follow/);
   assert.match(html, /approximate and arrive about every 2 minutes/i);
   assert.match(html, /Full Route/);
-  assert.equal(manifest.generatedFiles.length, 13);
+  assert.equal(manifest.generatedFiles.length, 14);
 });
 
 test("embed page exposes only the iframe-safe map shell", () => {
@@ -234,15 +248,35 @@ test("embed page exposes only the iframe-safe map shell", () => {
   assert.doesNotMatch(readOutput(".htaccess"), /Header always set X-Frame-Options/);
 });
 
+test("inReach III is a separate Garmin-only iframe surface", () => {
+  const html = readOutput("inreach-iii/index.html");
+  assert.match(html, /<title>inReach III \| Goodwin Generated Mission America Map<\/title>/);
+  assert.match(html, /data-runner-label="inReach III"/);
+  assert.match(html, /data-garmin-only="true"/);
+  assert.match(html, /data-garmin-feed-url="https:\/\/aus-share\.explore\.garmin\.com\/Feed\/Share\/missionamerica50"/);
+  assert.match(html, /data-follow-zoom="10"/);
+  assert.equal((html.match(/data-feed="will"/g) || []).length, 1);
+  assert.doesNotMatch(html, /data-feed="rv"|data-follow="rv"|Follow RV/);
+  assert.match(html, /data-follow="live"/);
+  assert.match(html, /data-follow="will"/);
+  assert.match(html, /data-follow="route"/);
+  assert.match(html, /href="\/tracking-preview\/assets\/tracking-preview-[a-f0-9]{16}\.css"/);
+  assert.match(html, /src="\/tracking-preview\/assets\/app-[a-f0-9]{16}\.mjs"/);
+  assert.doesNotMatch(html, /__[_A-Z]+__/);
+  assert.ok(manifest.generatedFiles.some(({ path, url }) => path === "inreach-iii/index.html"
+    && url === "/tracking-preview/inreach-iii/"));
+});
+
 test("full preview and embed use Garmin without a Strava runner branch", () => {
   const embed = readOutput("embed/index.html");
   const homepage = readOutput("index.html");
   const appSource = readOutput(asset("app").path);
   assert.match(embed, /data-runner-source="garmin"/);
   assert.match(homepage, /data-runner-source="garmin"/);
-  assert.match(appSource, /load: \(\) => loadGarminRunnerLocation\(\)/);
+  assert.match(appSource, /load: \(\) => loadGarminRunnerLocation\(\{ feedUrl: garminFeedUrl \}\)/);
+  assert.match(appSource, /const rvPoller = garminOnly \? null : createAdaptivePoller/);
   assert.match(appSource, /autoFollowSubject: "will"/);
-  assert.match(appSource, /Garmin location updates are approximate and arrive about every 2 minutes/);
+  assert.match(appSource, /garminLabel} location updates are approximate and arrive about every 2 minutes/);
   assert.doesNotMatch(appSource, /loadPublicRaceSnapshot|deriveWillLocation|const runnerSource|PUBLIC_RACES_ENDPOINT|PUBLIC_RACE_STATUS_ENDPOINT|["']strava["']/i);
   assert.match(appSource, /subject === "will" \? live : resolveScheduledLocation\(subject, live\)/);
 });
@@ -258,6 +292,8 @@ test("Garmin loader NetworkLink is parsed and its 60-second hint is clamped to 1
   assert.equal(allowedGarminFeedUrl(loader.href), true);
   assert.equal(allowedGarminFeedUrl("http://eur-share.explore.garmin.com/Feed/Share/missionamerica"), false);
   assert.equal(allowedGarminFeedUrl("https://example.com/Feed/Share/missionamerica"), false);
+  assert.equal(allowedGarminFeedUrl(GARMIN_INREACH_III_URL), true);
+  assert.equal(allowedGarminFeedUrl("https://eur-share.explore.garmin.com/Feed/Share/missionamerica50"), false);
   assert.throws(() => parseGarminNetworkLink(readFixture("garmin-loader.kml").replace("eur-share.explore.garmin.com", "example.com")), /invalid_garmin_network_link/);
 });
 
@@ -306,6 +342,28 @@ test("Garmin adapter follows the loader through the same-origin proxy", async ()
   assert.deepEqual(result.position, { lat: 21.32, lng: -157.85 });
 });
 
+test("inReach III adapter fetches its direct KML feed through the same-origin proxy", async () => {
+  const feed = readFixture("garmin-feed-with-track.kml");
+  let request;
+  const result = await loadGarminRunnerLocation({
+    feedUrl: GARMIN_INREACH_III_URL,
+    nowMs: Date.parse("2026-10-08T00:25:00Z"),
+    fetchImpl: async (url, options) => {
+      request = { url: new URL(url, "https://goodwingoodge.com"), options };
+      return new Response(feed, {
+        status: 200,
+        headers: { "content-type": "application/vnd.google-earth.kml+xml" },
+      });
+    },
+    setTimeoutImpl: () => 1,
+    clearTimeoutImpl() {},
+  });
+  assert.equal(request.url.pathname, GARMIN_PROXY_ENDPOINT);
+  assert.equal(request.url.searchParams.get("url"), GARMIN_INREACH_III_URL);
+  assert.equal(request.options.cache, "no-store");
+  assert.deepEqual(result.position, { lat: 21.32, lng: -157.85 });
+});
+
 test("empty, malformed, future, and unavailable Garmin feeds fail safely", async () => {
   assert.deepEqual(parseGarminFeed('<?xml version="1.0"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document/></kml>'), {
     available: false, trail: [],
@@ -341,6 +399,8 @@ test("Garmin proxy is fixed-target, server-cached, and confined to the preview d
   assert.equal(LOCAL_GARMIN_CACHE_MS, GARMIN_MIN_REFRESH_MS);
   assert.equal(allowedGarminTarget(GARMIN_LOADER_URL), true);
   assert.equal(allowedGarminTarget("https://eur-share.explore.garmin.com/Feed/Share/missionamerica"), true);
+  assert.equal(allowedGarminTarget(GARMIN_INREACH_III_URL), true);
+  assert.equal(allowedGarminTarget("https://eur-share.explore.garmin.com/Feed/Share/missionamerica50"), false);
   assert.equal(allowedGarminTarget("https://example.com/Feed/Share/missionamerica"), false);
   assert.equal(PRODUCTION_ASSET_ORIGIN, "https://goodwingoodge.com");
 });
@@ -378,7 +438,7 @@ test("planned full-country route loads before feeds and survives feed failures",
   assert.deepEqual(h.calls.fitBounds[0].bounds, h.routeStops.map((stop) => [stop.lat, stop.lng]));
   const appSource = readOutput(asset("app").path);
   assert.ok(appSource.indexOf("createTrackingMap({") < appSource.indexOf("createAdaptivePoller({"));
-  assert.match(appSource, /void rvPoller\.start\(\)/);
+  assert.match(appSource, /if \(rvPoller\) void rvPoller\.start\(\)/);
   assert.match(appSource, /void runnerPoller\.start\(\)/);
   assert.doesNotMatch(appSource, /await (?:rvPoller|runnerPoller)\.start/);
 });
@@ -460,6 +520,33 @@ test("Garmin Auto Follow supports zoom level 10 and preserves manual zoom while 
   assert.equal(h.calls.panTo.at(-1).zoom, 10);
   assert.deepEqual(h.calls.panTo.at(-1).point, [40.13, -82.13]);
   assert.equal(h.tracker.getFollowing(), "will");
+});
+
+test("inReach III permits map zoom 17 while capping Auto Follow at 10", async () => {
+  const h = harness({
+    reducedMotion: false,
+    autoFollowSubject: "will",
+    followZoom: 10,
+    subjectLabels: { will: "inReach III", rv: "RV" },
+    rvControl: false,
+  });
+  assert.equal(h.calls.mapOptions.maxZoom, 17);
+  assert.equal(h.calls.tileOptions.maxZoom, 17);
+  h.tracker.setWillLocation(freshWill());
+  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 10);
+  assert.equal(h.calls.fitBounds.at(-1).zoom, 10);
+  assert.equal(h.buttons.will.textContent, "Follow inReach III");
+  await Promise.resolve();
+
+  h.tracker.map.setView([40.123456789, -82.123456789], 17, {});
+  h.events.get("zoomend")();
+  assert.equal(h.calls.fitBounds.at(-1).options.maxZoom, 10);
+  assert.equal(h.calls.fitBounds.at(-1).zoom, 10);
+
+  h.buttons.live.click();
+  h.tracker.map.setView([40.123456789, -82.123456789], 17, {});
+  h.events.get("zoomend")();
+  assert.equal(h.calls.setView.at(-1).zoom, 17);
 });
 
 test("Garmin runner updates do not mutate flight route or RV layers", () => {
@@ -561,6 +648,7 @@ test("Pause, Resume, and Full Route control automatic camera movement", () => {
 test("maximum zoom is 17 and includes requested follow zoom level 10", () => {
   const h = harness();
   assert.equal(MAX_NATIVE_ZOOM, 17);
+  assert.equal(MAX_ZOOM, 17);
   assert.equal(FOLLOW_ZOOM, 17);
   assert.equal(h.calls.mapOptions.maxZoom, 17);
   assert.equal(h.calls.mapOptions.bounceAtZoomLimits, false);

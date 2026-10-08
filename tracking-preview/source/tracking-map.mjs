@@ -4,6 +4,7 @@ export const PREVIEW_TILE_PROVIDER = Object.freeze({
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
 });
 export const MAX_NATIVE_ZOOM = PREVIEW_TILE_PROVIDER.maxNativeZoom;
+export const MAX_ZOOM = 17;
 export const FOLLOW_ZOOM = 17;
 export const TRACKING_STATE = Object.freeze({ LIVE: "live", STALE: "stale", UNAVAILABLE: "unavailable", SCHEDULED: "scheduled" });
 
@@ -85,18 +86,23 @@ export function createTrackingMap({
   tileProvider = PREVIEW_TILE_PROVIDER,
   followLabels = { active: "Pause Live Follow", paused: "Resume Live Follow" },
   autoFollowSubject = null,
+  followZoom = FOLLOW_ZOOM,
+  subjectLabels = { will: "Will", rv: "RV" },
 }) {
+  const boundedFollowZoom = Number.isFinite(followZoom)
+    ? Math.min(MAX_ZOOM, Math.max(0, followZoom))
+    : FOLLOW_ZOOM;
   const map = L.map(element, {
     zoomControl: true,
     scrollWheelZoom: true,
     keyboard: true,
-    maxZoom: FOLLOW_ZOOM,
+    maxZoom: MAX_ZOOM,
     worldCopyJump: true,
     bounceAtZoomLimits: false,
   });
   const tileLayer = L.tileLayer(tileProvider.url, {
-    maxZoom: FOLLOW_ZOOM,
-    maxNativeZoom: Math.min(tileProvider.maxNativeZoom, FOLLOW_ZOOM),
+    maxZoom: MAX_ZOOM,
+    maxNativeZoom: Math.min(tileProvider.maxNativeZoom, MAX_ZOOM),
     detectRetina: false,
     attribution: tileProvider.attribution,
   }).addTo(map);
@@ -110,10 +116,10 @@ export function createTrackingMap({
     route: controls.querySelector('[data-follow="route"]'),
   };
   const markerIcons = {
-    will: L.icon({ iconUrl: markerAssets.will, iconSize: [34, 51], iconAnchor: [17, 51], alt: "Will current location", className: "tracking-map-entity tracking-map-will" }),
-    willStale: L.icon({ iconUrl: markerAssets.will, iconSize: [34, 51], iconAnchor: [17, 51], alt: "Will last known location", className: "tracking-map-entity tracking-map-will tracking-map-will-stale" }),
-    rv: L.icon({ iconUrl: markerAssets.rv, iconSize: [54, 36], iconAnchor: [27, 18], alt: "RV current location", className: "tracking-map-entity tracking-map-rv" }),
-    rvStale: L.icon({ iconUrl: markerAssets.rv, iconSize: [54, 36], iconAnchor: [27, 18], alt: "RV last known location", className: "tracking-map-entity tracking-map-rv tracking-map-rv-stale" }),
+    will: L.icon({ iconUrl: markerAssets.will, iconSize: [34, 51], iconAnchor: [17, 51], alt: `${subjectLabels.will} current location`, className: "tracking-map-entity tracking-map-will" }),
+    willStale: L.icon({ iconUrl: markerAssets.will, iconSize: [34, 51], iconAnchor: [17, 51], alt: `${subjectLabels.will} last known location`, className: "tracking-map-entity tracking-map-will tracking-map-will-stale" }),
+    rv: L.icon({ iconUrl: markerAssets.rv, iconSize: [54, 36], iconAnchor: [27, 18], alt: `${subjectLabels.rv} current location`, className: "tracking-map-entity tracking-map-rv" }),
+    rvStale: L.icon({ iconUrl: markerAssets.rv, iconSize: [54, 36], iconAnchor: [27, 18], alt: `${subjectLabels.rv} last known location`, className: "tracking-map-entity tracking-map-rv tracking-map-rv-stale" }),
   };
   let stops = routeStops;
   let routeLayers = [];
@@ -133,16 +139,20 @@ export function createTrackingMap({
     buttons.live.textContent = liveFollow ? followLabels.active : followLabels.paused;
     buttons.live.setAttribute("aria-pressed", String(liveFollow));
     buttons.live.title = liveFollow ? "Pause automatic map following" : "Resume automatic map following";
-    buttons.will.textContent = states.will.kind === TRACKING_STATE.STALE ? "Show Will Last Known" : "Follow Will";
+    buttons.will.textContent = states.will.kind === TRACKING_STATE.STALE
+      ? `Show ${subjectLabels.will} Last Known` : `Follow ${subjectLabels.will}`;
     buttons.will.disabled = !positions.will;
     buttons.will.setAttribute("aria-pressed", String(!liveFollow && following === "will"));
-    buttons.will.title = !positions.will ? "Will location currently unavailable"
-      : states.will.kind === TRACKING_STATE.STALE ? "Show Will's last known location" : "Follow Will";
-    buttons.rv.textContent = states.rv.kind === TRACKING_STATE.STALE ? "Show RV Last Known" : "Follow RV";
-    buttons.rv.disabled = !positions.rv;
-    buttons.rv.setAttribute("aria-pressed", String(!liveFollow && following === "rv"));
-    buttons.rv.title = !positions.rv ? "RV location currently unavailable"
-      : states.rv.kind === TRACKING_STATE.STALE ? "Show RV last known location" : "Follow RV";
+    buttons.will.title = !positions.will ? `${subjectLabels.will} location currently unavailable`
+      : states.will.kind === TRACKING_STATE.STALE ? `Show ${subjectLabels.will} last known location` : `Follow ${subjectLabels.will}`;
+    if (buttons.rv) {
+      buttons.rv.textContent = states.rv.kind === TRACKING_STATE.STALE
+        ? `Show ${subjectLabels.rv} Last Known` : `Follow ${subjectLabels.rv}`;
+      buttons.rv.disabled = !positions.rv;
+      buttons.rv.setAttribute("aria-pressed", String(!liveFollow && following === "rv"));
+      buttons.rv.title = !positions.rv ? `${subjectLabels.rv} location currently unavailable`
+        : states.rv.kind === TRACKING_STATE.STALE ? `Show ${subjectLabels.rv} last known location` : `Follow ${subjectLabels.rv}`;
+    }
     buttons.route.setAttribute("aria-pressed", String(viewMode === "route"));
   };
   const focusOn = (subject, animate = true) => {
@@ -152,7 +162,7 @@ export function createTrackingMap({
     map.fitBounds(L.latLngBounds([[point.lat, point.lng]]), {
       padding: element.clientWidth < 480 ? [42, 42] : [72, 72],
       animate: Boolean(animate && !reducedMotion),
-      maxZoom: FOLLOW_ZOOM,
+      maxZoom: boundedFollowZoom,
     });
     queueMicrotask(() => { programmaticMove = false; });
   };
@@ -163,13 +173,13 @@ export function createTrackingMap({
     map.panTo([point.lat, point.lng], { animate: Boolean(animate && !reducedMotion) });
     queueMicrotask(() => { programmaticMove = false; });
   };
-  const fitFreshSubjects = (subjects, animate = true, maxZoom = FOLLOW_ZOOM) => {
+  const fitFreshSubjects = (subjects, animate = true, maxZoom = boundedFollowZoom) => {
     const points = subjects.map((subject) => [positions[subject].lat, positions[subject].lng]);
     programmaticMove = true;
     map.fitBounds(L.latLngBounds(points), {
       padding: element.clientWidth < 480 ? [42, 42] : [72, 72],
       animate: Boolean(animate && !reducedMotion),
-      maxZoom: Math.min(maxZoom, FOLLOW_ZOOM),
+      maxZoom: Math.min(maxZoom, boundedFollowZoom),
     });
     queueMicrotask(() => { programmaticMove = false; });
   };
@@ -194,7 +204,7 @@ export function createTrackingMap({
     const points = [...routeCoordinates(stops), ...Object.values(positions).filter(Boolean).map((point) => [point.lat, point.lng])];
     if (!points.length) return;
     const padding = element.clientWidth < 480 ? [18, 18] : [32, 32];
-    map.fitBounds(L.latLngBounds(points), { padding, animate: !reducedMotion, maxZoom: FOLLOW_ZOOM });
+    map.fitBounds(L.latLngBounds(points), { padding, animate: !reducedMotion, maxZoom: MAX_ZOOM });
   };
   const initializeViewport = () => {
     const points = routeCoordinates(stops);
@@ -203,7 +213,7 @@ export function createTrackingMap({
     map.fitBounds(L.latLngBounds(points), {
       padding: element.clientWidth < 480 ? [18, 18] : [32, 32],
       animate: false,
-      maxZoom: FOLLOW_ZOOM,
+      maxZoom: MAX_ZOOM,
     });
     queueMicrotask(() => { programmaticMove = false; });
   };
@@ -217,7 +227,10 @@ export function createTrackingMap({
   map.on("zoomend", () => {
     if (programmaticMove || !liveFollow) return;
     const subjects = autoFollowSubjects();
-    if (subjects.length === 1) panTo(subjects[0], false);
+    if (subjects.length === 1) {
+      if (map.getZoom() > boundedFollowZoom) focusOn(subjects[0], false);
+      else panTo(subjects[0], false);
+    }
     else if (subjects.length === 2) fitFreshSubjects(subjects, false, map.getZoom());
   });
   buttons.live.addEventListener("click", () => {
@@ -235,7 +248,7 @@ export function createTrackingMap({
     updateButtons();
     focusOn("will", false);
   });
-  buttons.rv.addEventListener("click", () => {
+  buttons.rv?.addEventListener("click", () => {
     if (!positions.rv) return;
     liveFollow = false;
     following = states.rv.kind === TRACKING_STATE.LIVE ? "rv" : null;
@@ -304,7 +317,7 @@ export function createTrackingMap({
       } else {
         markers[subject] = L.marker(point, { icon, zIndexOffset: subject === "rv" ? 2000 : 2100 }).addTo(map);
       }
-      const label = subject === "rv" ? "RV" : "Will";
+      const label = subjectLabels[subject];
       const popup = next.kind === TRACKING_STATE.SCHEDULED
         ? `<strong>${label} scheduled airport placement</strong><br>Approximate location`
         : stale

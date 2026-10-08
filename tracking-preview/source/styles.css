@@ -255,6 +255,14 @@
   box-shadow: none;
 }
 
+.tracking-preview-embed-page[data-garmin-only="true"] .tracking-preview-feed-grid {
+  grid-template-columns: 1fr;
+}
+
+.tracking-preview-embed-page[data-garmin-only="true"] .tracking-preview-map-controls {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .tracker-map.tracking-preview-embed-map {
   height: clamp(420px, calc(100vh - 149px), 900px);
   min-height: 420px;
@@ -272,6 +280,10 @@
 
   .tracking-preview-map-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tracking-preview-embed-page[data-garmin-only="true"] .tracking-preview-map-controls {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .tracking-preview-map-controls button {

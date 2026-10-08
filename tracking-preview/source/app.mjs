@@ -15,6 +15,13 @@ import {
 
 const mapElement = document.getElementById("tracking-map");
 const controls = document.querySelector("[data-map-controls]");
+const runnerLabel = document.body.dataset.runnerLabel || "Will";
+const garminLabel = runnerLabel === "Will" ? "Garmin" : runnerLabel;
+const garminFeedUrl = document.body.dataset.garminFeedUrl || null;
+const garminOnly = document.body.dataset.garminOnly === "true";
+const requestedFollowZoom = Number(document.body.dataset.followZoom);
+const followZoom = Number.isFinite(requestedFollowZoom) && requestedFollowZoom > 0
+  ? requestedFollowZoom : undefined;
 const feedPanels = {
   rv: document.querySelector('[data-feed="rv"]'),
   will: document.querySelector('[data-feed="will"]'),
@@ -31,7 +38,7 @@ function updateFeed(name, state, detail) {
   const panel = feedPanels[name];
   if (!panel) return;
   panel.dataset.state = state;
-  panel.querySelector("[data-feed-state]").textContent = state === "live" ? name === "will" ? "Current Garmin fix" : "Live"
+  panel.querySelector("[data-feed-state]").textContent = state === "live" ? name === "will" ? `Current ${garminLabel} fix` : "Live"
     : state === "stale" ? "Last known"
       : state === "scheduled" ? "Scheduled placement"
         : state === "loading" ? "Connecting" : "Unavailable";
@@ -39,7 +46,7 @@ function updateFeed(name, state, detail) {
 }
 
 function staleCopy(name, result, interrupted = false) {
-  const label = name === "rv" ? "RV" : "Garmin";
+  const label = name === "rv" ? "RV" : garminLabel;
   const interruption = interrupted ? " Feed connection interrupted." : "";
   const cadence = name === "will" ? " Updates are approximate and arrive about every 2 minutes." : "";
   return `${label} last known location. Last updated ${formatUpdate(result.observedAt)}.${interruption}${cadence}`;
@@ -57,8 +64,11 @@ async function startTrackingPreview() {
     reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     followLabels: { active: "Pause Auto Follow", paused: "Resume Auto Follow" },
     autoFollowSubject: "will",
+    followZoom,
+    subjectLabels: { will: runnerLabel, rv: "RV" },
   });
   mapElement.dataset.runnerSource = "garmin";
+  mapElement.dataset.runnerLabel = runnerLabel;
   mapElement.dataset.ready = "true";
   tracker.map.invalidateSize();
 
@@ -74,16 +84,16 @@ async function startTrackingPreview() {
     else tracker.setWillLocation(result);
     if (result.scheduled) updateFeed(subject, "scheduled", `${result.label} · scheduled approximate location.`);
     else if (!result.available) updateFeed(subject, "unavailable", detail || (subject === "will"
-      ? "Garmin location updates are approximate and arrive about every 2 minutes. No usable fix is available yet."
+      ? `${garminLabel} location updates are approximate and arrive about every 2 minutes. No usable fix is available yet.`
       : "Waiting for a usable feed position."));
     else if (result.stale) updateFeed(subject, "stale", staleCopy(subject, result));
     else updateFeed(subject, "live", subject === "will"
-      ? `Approximate Garmin location · updated ${formatUpdate(result.observedAt)}. Updates arrive about every 2 minutes.`
+      ? `Approximate ${garminLabel} location · updated ${formatUpdate(result.observedAt)}. Updates arrive about every 2 minutes.`
       : `Fresh ${subject === "rv" ? "RV" : "Will"} position · updated ${formatUpdate(result.observedAt)}.`);
   };
   // Evaluate independently of network responses, including during feed outages.
   const refreshPlacements = () => {
-    renderLocation("rv");
+    if (!garminOnly) renderLocation("rv");
     renderLocation("will");
   };
   refreshPlacements();
@@ -91,7 +101,7 @@ async function startTrackingPreview() {
   document.addEventListener("visibilitychange", refreshPlacements);
   let lastRv = null;
   let lastWill = null;
-  const rvPoller = createAdaptivePoller({
+  const rvPoller = garminOnly ? null : createAdaptivePoller({
     intervalMs: RV_REFRESH_MS,
     load: () => loadPublicRvLocation(),
     onData(result) {
@@ -110,18 +120,18 @@ async function startTrackingPreview() {
   const runnerPoller = createAdaptivePoller({
     intervalMs: GARMIN_MIN_REFRESH_MS,
     minimumIntervalMs: GARMIN_MIN_REFRESH_MS,
-    load: () => loadGarminRunnerLocation(),
+    load: () => loadGarminRunnerLocation({ feedUrl: garminFeedUrl }),
     onData(result) {
       if (result.available) lastWill = result;
       renderLocation("will", resolveGarminDisplayLocation(result, lastWill),
-        "Garmin feed connected; no usable approximate location is available. Checking again in about 2 minutes.");
+        `${garminLabel} feed connected; no usable approximate location is available. Checking again in about 2 minutes.`);
     },
     onFailure() {
       renderLocation("will", resolveGarminDisplayLocation(null, lastWill),
-        lastWill ? "Garmin feed connection interrupted." : "Garmin feed unavailable. Retrying no sooner than every 2 minutes.");
+        lastWill ? `${garminLabel} feed connection interrupted.` : `${garminLabel} feed unavailable. Retrying no sooner than every 2 minutes.`);
     },
   });
-  void rvPoller.start();
+  if (rvPoller) void rvPoller.start();
   void runnerPoller.start();
 }
 

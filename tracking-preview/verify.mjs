@@ -95,6 +95,33 @@ if (/tracker-nav|tracker-hero|site-footer|follow-form|googletagmanager|rel=["']c
 await verifyReturningRequest(embedUrl, embed);
 await verifyCacheBusted(embedUrl, embed);
 
+const inreachIiiUrl = new URL(`${rootPath}inreach-iii/`, origin);
+const inreachIii = await bytesFor(inreachIiiUrl);
+const inreachIiiHtml = inreachIii.bytes.toString("utf8");
+const inreachIiiEntry = manifest.generatedFiles.find(({ path }) => path === "inreach-iii/index.html");
+if (!inreachIiiEntry || sha256(inreachIii.bytes) !== inreachIiiEntry.sha256) {
+  throw new Error("inReach III embed HTML does not match the deployed manifest");
+}
+if (!inreachIii.response.headers.get("x-robots-tag")?.includes("noindex")) {
+  throw new Error("inReach III embed lacks X-Robots-Tag");
+}
+if (inreachIii.response.headers.has("x-frame-options")) throw new Error("inReach III embed must not send X-Frame-Options");
+const inreachIiiCsp = inreachIii.response.headers.get("content-security-policy") ?? "";
+if (!inreachIiiCsp.includes("frame-ancestors https://50in24.com https://www.50in24.com")) {
+  throw new Error("inReach III embed must lock frame-ancestors to the Command Center origins");
+}
+if (!inreachIiiHtml.includes('data-runner-label="inReach III"')
+  || !inreachIiiHtml.includes('data-garmin-only="true"')
+  || !inreachIiiHtml.includes('data-follow-zoom="10"')
+  || !inreachIiiHtml.includes("https://aus-share.explore.garmin.com/Feed/Share/missionamerica50")) {
+  throw new Error("inReach III embed has invalid Garmin-only configuration");
+}
+if (/data-feed="rv"|data-follow="rv"|tracker-nav|tracker-hero|site-footer|googletagmanager/i.test(inreachIiiHtml)) {
+  throw new Error("inReach III embed contains a forbidden non-Garmin-only value");
+}
+await verifyReturningRequest(inreachIiiUrl, inreachIii);
+await verifyCacheBusted(inreachIiiUrl, inreachIii);
+
 const publicAssets = manifest.generatedFiles.filter(({ path }) => path.startsWith("assets/"));
 if (publicAssets.length !== 9) throw new Error("Tracking preview manifest has an unexpected asset inventory");
 for (const entry of publicAssets) {
@@ -151,3 +178,14 @@ if (!/<NetworkLink\b/.test(garminLoader) || !/missionamerica/i.test(garminLoader
   throw new Error("Tracking preview Garmin proxy returned an invalid loader");
 }
 console.log("Verified the isolated Garmin KML proxy and NetworkLink loader.");
+
+const inreachIiiFeedUrl = "https://aus-share.explore.garmin.com/Feed/Share/missionamerica50";
+const inreachIiiProxyUrl = new URL(`${rootPath}garmin-feed.php`, origin);
+inreachIiiProxyUrl.searchParams.set("url", inreachIiiFeedUrl);
+const inreachIiiFeedResponse = await fetch(inreachIiiProxyUrl, { cache: "no-store" });
+if (!inreachIiiFeedResponse.ok || !inreachIiiFeedResponse.headers.get("content-type")?.includes("kml+xml")) {
+  throw new Error("inReach III Garmin proxy failed verification");
+}
+const inreachIiiFeed = await inreachIiiFeedResponse.text();
+if (!/<Placemark\b/.test(inreachIiiFeed)) throw new Error("inReach III Garmin proxy returned invalid KML");
+console.log("Verified the inReach III direct Garmin KML proxy.");

@@ -154,6 +154,11 @@ let embedHtml = readFileSync(join(sourceRoot, "embed.html"), "utf8");
 embedHtml = replaceToken(embedHtml, "__STYLES_URL__", styles.url);
 embedHtml = replaceToken(embedHtml, "__APP_URL__", app.url);
 const embedEntry = writeOutput("embed/index.html", embedHtml);
+
+let inreachIiiHtml = readFileSync(join(sourceRoot, "inreach-iii.html"), "utf8");
+inreachIiiHtml = replaceToken(inreachIiiHtml, "__STYLES_URL__", styles.url);
+inreachIiiHtml = replaceToken(inreachIiiHtml, "__APP_URL__", app.url);
+const inreachIiiEntry = writeOutput("inreach-iii/index.html", inreachIiiHtml);
 const garminProxyEntry = writeOutput("garmin-feed.php", readFileSync(join(sourceRoot, "garmin-feed.php")));
 
 const inlineScripts = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g)];
@@ -183,6 +188,7 @@ const inventory = [
   { ...htaccessEntry, url: `${publicPrefix}/.htaccess` },
   { ...htmlEntry, url: `${publicPrefix}/` },
   { ...embedEntry, url: `${publicPrefix}/embed/` },
+  { ...inreachIiiEntry, url: `${publicPrefix}/inreach-iii/` },
   { ...garminProxyEntry, url: `${publicPrefix}/garmin-feed.php` },
   ...customAssets,
 ];

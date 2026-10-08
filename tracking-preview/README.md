@@ -18,6 +18,13 @@ seconds. Empty, stale, malformed, and unavailable KML degrade to explicit
 last-known or unavailable states. Strava is not requested for the preview runner
 layer; RV and flight route layers are unchanged.
 
+The separate iframe-safe `/inreach-iii/` route is a Garmin-only map labeled
+`inReach III`. It reads the public
+`https://aus-share.explore.garmin.com/Feed/Share/missionamerica50` KML through
+the same allowlisted, 120-second server cache and does not request or render the
+RV feed. The map permits manual zoom through level 17; Auto Follow is capped at
+level 10.
+
 `node tracking-preview/build.mjs` writes only
 `tracking-preview/dist/tracking-preview/`. Only preview-native assets are
 written beneath its `assets/` directory, using content-hashed filenames. Any

@@ -35,7 +35,9 @@ export function allowedGarminTarget(value) {
       && url.pathname.toLowerCase() === "/feed/shareloader/missionamerica";
     const feed = /^[-a-z0-9]+-share\.explore\.garmin\.com$/i.test(url.hostname)
       && url.pathname.toLowerCase() === "/feed/share/missionamerica";
-    return loader || feed;
+    const inreachIii = url.hostname === "aus-share.explore.garmin.com"
+      && url.pathname.toLowerCase() === "/feed/share/missionamerica50";
+    return loader || feed || inreachIii;
   } catch {
     return false;
   }
@@ -99,6 +101,9 @@ async function fetchMissingProductionAsset(pathname) {
 function staticTarget(pathname) {
   if (pathname === "/tracking-preview" || pathname === "/tracking-preview/") return join(previewRoot, "index.html");
   if (pathname === "/tracking-preview/embed" || pathname === "/tracking-preview/embed/") return join(previewRoot, "embed", "index.html");
+  if (pathname === "/tracking-preview/inreach-iii" || pathname === "/tracking-preview/inreach-iii/") {
+    return join(previewRoot, "inreach-iii", "index.html");
+  }
   const roots = [
     ["/tracking-preview/", previewRoot],
     ["/assets/", join(repositoryRoot, "assets")],
