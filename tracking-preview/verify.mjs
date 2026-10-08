@@ -7,6 +7,12 @@ function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
+function cspSources(csp, directive) {
+  const entry = csp.split(";").map((part) => part.trim())
+    .find((part) => part.toLowerCase().startsWith(`${directive.toLowerCase()} `));
+  return entry ? entry.split(/\s+/).slice(1) : [];
+}
+
 async function bytesFor(url, options) {
   const response = await fetch(url, options);
   if (!response.ok) throw new Error(`${url.pathname}${url.search} returned ${response.status}`);
@@ -79,10 +85,11 @@ if (!embedEntry || sha256(embed.bytes) !== embedEntry.sha256) throw new Error("T
 if (!embed.response.headers.get("x-robots-tag")?.includes("noindex")) throw new Error("Tracking preview embed lacks X-Robots-Tag");
 if (embed.response.headers.has("x-frame-options")) throw new Error("Tracking preview embed must not send X-Frame-Options");
 const embedCsp = embed.response.headers.get("content-security-policy") ?? "";
-if (!embedCsp.includes("frame-ancestors https://50in24.com https://www.50in24.com")) {
+const embedFrameAncestors = cspSources(embedCsp, "frame-ancestors");
+if (!embedFrameAncestors.includes("https://50in24.com") || !embedFrameAncestors.includes("https://www.50in24.com")) {
   throw new Error("Tracking preview embed must lock frame-ancestors to the Command Center origins");
 }
-if (embedCsp.includes("frame-ancestors https:")) throw new Error("Tracking preview embed must not allow every HTTPS frame ancestor");
+if (embedFrameAncestors.includes("https:")) throw new Error("Tracking preview embed must not allow every HTTPS frame ancestor");
 if (!embedHtml.includes('class="tracking-preview-embed-page"') || !embedHtml.includes('id="tracking-map"')) {
   throw new Error("Tracking preview embed lacks the map shell");
 }
@@ -107,9 +114,12 @@ if (!inreachIii.response.headers.get("x-robots-tag")?.includes("noindex")) {
 }
 if (inreachIii.response.headers.has("x-frame-options")) throw new Error("inReach III embed must not send X-Frame-Options");
 const inreachIiiCsp = inreachIii.response.headers.get("content-security-policy") ?? "";
-if (!inreachIiiCsp.includes("frame-ancestors https://50in24.com https://www.50in24.com")) {
+const inreachIiiFrameAncestors = cspSources(inreachIiiCsp, "frame-ancestors");
+if (!inreachIiiFrameAncestors.includes("https://50in24.com")
+  || !inreachIiiFrameAncestors.includes("https://www.50in24.com")) {
   throw new Error("inReach III embed must lock frame-ancestors to the Command Center origins");
 }
+if (inreachIiiFrameAncestors.includes("https:")) throw new Error("inReach III embed must not allow every HTTPS frame ancestor");
 if (!inreachIiiHtml.includes('data-runner-label="inReach III"')
   || !inreachIiiHtml.includes('data-garmin-only="true"')
   || !inreachIiiHtml.includes('data-follow-zoom="10"')
