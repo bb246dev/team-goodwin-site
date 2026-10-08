@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Suppress only the public live-map RV stale and unavailable footer/status copy while preserving the general tracking note, Garmin runner marker and trail, independent HAPN RV polling and stale marker behavior, flight layer, layout, legend, routes, mobile behavior, and embed behavior.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-rv-footer-copy-2026-10-08/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "a72e41049ac28e412795413629d4e4808efba243f26210da6e4a2ffddfd485e4",
+      "expectedRemoteSha256": "affa32ebf67da4f1615c995131ebafe0ce4a03ea10f5518e316bd097569c6467"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/live-map-rv-footer-copy.test.mjs",
+      "tests/live-map-garmin-footer-copy.test.mjs",
+      "tests/live-map-layout.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Required race status deployment baseline only",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "Independent HAPN public RV tracking unchanged",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
