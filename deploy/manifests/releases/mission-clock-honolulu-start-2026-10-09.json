@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Correct the Mission Clock and its live RV polling gate to the client-confirmed Honolulu race start of October 9, 2026 at 3:00 PM HST, preserving all other deployed tracker behavior byte-for-byte.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/mission-clock-honolulu-start-2026-10-09/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "5f1017c79e193c44f90713d13b4becec0de9da133511a29e791f4702d9d4cbdb",
+      "expectedRemoteSha256": "a72e41049ac28e412795413629d4e4808efba243f26210da6e4a2ffddfd485e4"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/mission-clock-honolulu-start.test.mjs",
+      "tests/live-map-rv-footer-copy.test.mjs",
+      "tests/live-map-garmin-footer-copy.test.mjs",
+      "tests/live-map-layout.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Required race status deployment baseline remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
