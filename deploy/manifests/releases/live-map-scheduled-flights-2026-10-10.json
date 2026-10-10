@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Add client-side scheduled flight and post-flight display priority to Will's production map while preserving Garmin routing and cadence, RV behavior, route lines, branding, and security headers.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-scheduled-flights-2026-10-10/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "a682592042e2a557632aeba0bbf0ab4cc1ede1af5fc0594accc7df602d315a5e",
+      "expectedRemoteSha256": "5f1017c79e193c44f90713d13b4becec0de9da133511a29e791f4702d9d4cbdb"
+    },
+    {
+      "source": "flight-schedule-release-2026-10-10-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "96ecdbfb88189de6c4998cb9ba8e1422e0cc9efe5457e3f37e984c772860645c",
+      "expectedRemoteSha256": "1a7cbb22a7a26cdbcb316e3cb8c8eae34fada54ea4131b9991c650455136e98a"
+    },
+    {
+      "source": "flight-schedule-release-2026-10-10-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "96ecdbfb88189de6c4998cb9ba8e1422e0cc9efe5457e3f37e984c772860645c",
+      "expectedRemoteSha256": "1a7cbb22a7a26cdbcb316e3cb8c8eae34fada54ea4131b9991c650455136e98a"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/live-map-layout.test.mjs",
+      "tests/mission-clock-honolulu-start.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Required race status deployment baseline remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
