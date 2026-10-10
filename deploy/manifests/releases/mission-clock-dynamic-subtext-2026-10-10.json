@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Make the shared Mission Clock location line follow scheduled flights, post-flight placement, race completion status, and the static route schedule while preserving Garmin and map behavior.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/mission-clock-dynamic-subtext-2026-10-10/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "cd6ef4a43730c56e0cc2efbc5f1e18c52ecde85a7dfacb95714838e625b832c9",
+      "expectedRemoteSha256": "a682592042e2a557632aeba0bbf0ab4cc1ede1af5fc0594accc7df602d315a5e"
+    },
+    {
+      "source": "mission-clock-dynamic-release-2026-10-10-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "b671c92297dc80f05897f574926e13a309611add84d11808327b49cff55af1c5",
+      "expectedRemoteSha256": "96ecdbfb88189de6c4998cb9ba8e1422e0cc9efe5457e3f37e984c772860645c"
+    },
+    {
+      "source": "mission-clock-dynamic-release-2026-10-10-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "b671c92297dc80f05897f574926e13a309611add84d11808327b49cff55af1c5",
+      "expectedRemoteSha256": "96ecdbfb88189de6c4998cb9ba8e1422e0cc9efe5457e3f37e984c772860645c"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/mission-clock-dynamic-subtext.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/live-map-layout.test.mjs",
+      "tests/mission-clock-honolulu-start.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Required race status deployment baseline remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
