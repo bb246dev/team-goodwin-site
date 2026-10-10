@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Refresh only the tracker asset cache key on the production homepage and live-tracking document so existing browsers load the already-deployed 3:00 PM HST Mission Clock correction.",
+  "files": [
+    {
+      "source": "mission-clock-release-2026-10-09-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "1a7cbb22a7a26cdbcb316e3cb8c8eae34fada54ea4131b9991c650455136e98a",
+      "expectedRemoteSha256": "48f1b2be31e010af74d05f6706d7aa52e751071fdf2b964ca53a1c8c62c323f3"
+    },
+    {
+      "source": "mission-clock-release-2026-10-09-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "1a7cbb22a7a26cdbcb316e3cb8c8eae34fada54ea4131b9991c650455136e98a",
+      "expectedRemoteSha256": "7d8546819e81629ddf13fbde48b4f44b4079573c1fd983d64a5fceef2b408f61"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/deploy-tooling.test.mjs",
+      "tests/mission-clock-cache-key.test.mjs",
+      "tests/mission-clock-honolulu-start.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ]
+  }
+}
