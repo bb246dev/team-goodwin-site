@@ -78,7 +78,9 @@ fclose($lock);
 if (!is_string($body) || $body === '') fail_response(503, 'garmin_feed_unavailable');
 
 header('Content-Type: application/vnd.google-earth.kml+xml; charset=utf-8');
-header('Cache-Control: public, max-age=0, s-maxage=120, stale-if-error=600');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 header('X-Content-Type-Options: nosniff');
 header('X-Garmin-Cache: ' . $state);
 echo $body;

@@ -394,6 +394,10 @@ test("Garmin proxy is fixed-target, server-cached, and confined to the preview d
   assert.match(proxy, /explore\\\.garmin\\\.com/);
   assert.match(proxy, /CURLOPT_FOLLOWLOCATION => false/);
   assert.match(proxy, /CURLOPT_PROTOCOLS => CURLPROTO_HTTPS/);
+  assert.match(proxy, /header\('Cache-Control: no-store, no-cache, must-revalidate, max-age=0'\)/);
+  assert.match(proxy, /header\('Pragma: no-cache'\)/);
+  assert.match(proxy, /header\('Expires: 0'\)/);
+  assert.doesNotMatch(proxy, /header\('Cache-Control:[^']*(?:s-maxage|stale-if-error)/);
   assert.match(deploy, /garmin-feed\.php/);
   assert.doesNotMatch(proxy, /Access-Control-Allow-Origin:\s*\*/i);
   assert.equal(LOCAL_GARMIN_CACHE_MS, GARMIN_MIN_REFRESH_MS);
