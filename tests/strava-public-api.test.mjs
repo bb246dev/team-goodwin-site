@@ -25,6 +25,7 @@ const schedule = [...seed.matchAll(
 const beforeWindow = Math.floor(Date.parse("2026-10-09T12:59:59Z") / 1000);
 const duringWindow = Math.floor(Date.parse("2026-10-09T14:00:00Z") / 1000);
 const afterWindow = Math.floor(Date.parse("2026-11-02T05:00:00Z") / 1000);
+const liveNow = Math.floor(Date.parse("2026-10-11T17:00:00Z") / 1000);
 
 function populatedStore() {
   const store = createMemoryStravaStore(() => duringWindow);
@@ -72,6 +73,49 @@ function populatedStore() {
     scheduled_marathon_id: "ggma-2026-03",
     scheduled_state_code: "WA",
   }, { matched: true });
+  return store;
+}
+
+function threeCompletedStore() {
+  const store = createMemoryStravaStore(() => liveNow);
+  store.setRaceSchedule(schedule);
+  for (const candidate of [
+    {
+      activity_id: "20522781394", activity_start_at: Math.floor(Date.parse("2026-10-10T01:00:16Z") / 1000),
+      activity_local_date: "2026-10-09", distance_meters: 42_291.3,
+      start_latitude: 21.271163, start_longitude: -157.823692,
+      scheduled_marathon_id: "ggma-2026-01", scheduled_state_code: "HI",
+    },
+    {
+      activity_id: "20532958293", activity_start_at: Math.floor(Date.parse("2026-10-10T16:08:32Z") / 1000),
+      activity_local_date: "2026-10-10", distance_meters: 42_686,
+      start_latitude: 61.174118, start_longitude: -149.981157,
+      scheduled_marathon_id: "ggma-2026-02", scheduled_state_code: "AK",
+    },
+    {
+      activity_id: "20537857937", activity_start_at: Math.floor(Date.parse("2026-10-11T04:26:40Z") / 1000),
+      activity_local_date: "2026-10-10", distance_meters: 42_881,
+      start_latitude: 45.524361, start_longitude: -122.669506,
+      scheduled_marathon_id: "ggma-2026-03", scheduled_state_code: "OR",
+    },
+  ]) {
+    store.setRaceCandidate({
+      athlete_id: "41740194",
+      operational_window_id: "ggma-2026",
+      activity_type: "Run",
+      moving_time_seconds: 10_800,
+      elapsed_time_seconds: 11_040,
+      elevation_gain_meters: 184.5,
+      summary_polyline: "_p~iF~ps|U_ulLnnqC",
+      end_latitude: candidate.start_latitude,
+      end_longitude: candidate.start_longitude,
+      source_updated_at: liveNow,
+      created_at: liveNow,
+      updated_at: liveNow,
+      classification_status: "included",
+      ...candidate,
+    }, { matched: true });
+  }
   return store;
 }
 
@@ -181,6 +225,34 @@ test("public status hides pre-race activities and preserves completed historical
   });
   const historicalRaces = await route(store, "public/races", afterWindow);
   assert.equal((await historicalRaces.json()).races[0].status, "completed");
+});
+
+test("three matched live activities populate public races and completed race status", async () => {
+  const store = threeCompletedStore();
+  const racesResponse = await route(store, "public/races", liveNow);
+  assert.equal(racesResponse.status, 200);
+  const body = await racesResponse.json();
+  assert.deepEqual(body.races.slice(0, 3).map((race) => ({
+    raceId: race.raceId,
+    status: race.status,
+    stravaActivityId: race.activity?.stravaActivityId,
+  })), [
+    { raceId: "ggma-2026-01", status: "completed", stravaActivityId: "20522781394" },
+    { raceId: "ggma-2026-02", status: "completed", stravaActivityId: "20532958293" },
+    { raceId: "ggma-2026-03", status: "completed", stravaActivityId: "20537857937" },
+  ]);
+  assert.equal(body.races.slice(3).every((race) => race.status === "scheduled" && race.activity === undefined), true);
+
+  const statusResponse = await route(store, "public/race-status", liveNow);
+  assert.equal(statusResponse.status, 200);
+  assert.deepEqual(await statusResponse.json(), {
+    active: true,
+    raceWindowId: "ggma-2026",
+    raceWindowStart: "2026-10-09T09:00:00-04:00",
+    raceWindowEnd: "2026-11-01T23:59:59-05:00",
+    completedRaces: 3,
+    totalRaces: 50,
+  });
 });
 
 test("public endpoints support retained and stripped cPanel mounts with restricted CORS", async (t) => {

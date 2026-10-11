@@ -20,6 +20,10 @@ const scheduleTimeMigration = readFileSync(
   new URL("../strava-app/migrations/008_ggma_2026_schedule_time_updates_mariadb.sql", import.meta.url),
   "utf8",
 );
+const matchCoordinateMigration = readFileSync(
+  new URL("../strava-app/migrations/009_ggma_2026_match_coordinates_mariadb.sql", import.meta.url),
+  "utf8",
+);
 const races = [...seed.matchAll(
   /\('ggma-2026-(\d{2})',\s*'ggma-2026',\s*(\d+),\s*'([^']+)',\s*'([^']+)',\s*'([A-Z]{2})',\s*'([^']+)'/g,
 )].map((match) => ({
@@ -32,6 +36,14 @@ const races = [...seed.matchAll(
   latitude: null,
   longitude: null,
   status: "scheduled",
+}));
+const matchCoordinates = new Map([...matchCoordinateMigration.matchAll(
+  /'(ggma-2026-\d{2})'(?: AS id)?,\s*(-?\d+\.\d+)(?: AS latitude)?,\s*(-?\d+\.\d+)(?: AS longitude)?/g,
+)].map((match) => [match[1], [Number(match[2]), Number(match[3])]]));
+const racesWithMatchCoordinates = races.map((race) => ({
+  ...race,
+  latitude: matchCoordinates.get(race.id)?.[0] ?? null,
+  longitude: matchCoordinates.get(race.id)?.[1] ?? null,
 }));
 
 function activity(overrides = {}) {
@@ -103,6 +115,47 @@ test("same-day races remain ambiguous without geographic evidence", () => {
   assert.equal(result.classificationStatus, "pending");
   assert.equal(result.reason, "geographic_confirmation_required");
   assert.deepEqual(result.candidateRaceIds, ["ggma-2026-16", "ggma-2026-17"]);
+});
+
+test("Hawaii, Alaska, and Oregon UTC rollovers match the correct local race date", () => {
+  const cases = [
+    {
+      id: "20522781394", start_date: "2026-10-10T01:00:16Z",
+      start_date_local: "2026-10-09T15:00:16", distance: 42_291.3,
+      start_latlng: [21.271163, -157.823692], expectedRaceId: "ggma-2026-01",
+    },
+    {
+      id: "20532958293", start_date: "2026-10-10T16:08:32Z",
+      start_date_local: "2026-10-10T08:08:32", distance: 42_686,
+      start_latlng: [61.174118, -149.981157], expectedRaceId: "ggma-2026-02",
+    },
+    {
+      id: "20537857937", start_date: "2026-10-11T04:26:40Z",
+      start_date_local: "2026-10-10T21:26:40", distance: 42_881,
+      start_latlng: [45.524361, -122.669506], expectedRaceId: "ggma-2026-03",
+    },
+  ];
+  for (const { expectedRaceId, ...candidate } of cases) {
+    const result = matchRaceActivityCandidate(activity(candidate), racesWithMatchCoordinates);
+    assert.equal(result.classificationStatus, "included", candidate.id);
+    assert.equal(result.raceId, expectedRaceId, candidate.id);
+    assert.equal(result.matchMethod, "date_distance_geo", candidate.id);
+  }
+});
+
+test("post-seed coordinate migration covers all races and safely reconciles pending runs", () => {
+  assert.equal(matchCoordinates.size, 50);
+  assert.deepEqual(matchCoordinates.get("ggma-2026-01"), [21.3099, -157.8581]);
+  assert.deepEqual(matchCoordinates.get("ggma-2026-02"), [61.2181, -149.9003]);
+  assert.deepEqual(matchCoordinates.get("ggma-2026-03"), [45.5152, -122.6784]);
+  assert.match(matchCoordinateMigration, /START TRANSACTION;[\s\S]+COMMIT;/);
+  assert.match(matchCoordinateMigration, /candidate\.activity_local_date/);
+  assert.match(matchCoordinateMigration, /candidate\.distance_meters BETWEEN 40000 AND 45000/);
+  assert.match(matchCoordinateMigration, /HAVING COUNT\(\*\) = 1/);
+  assert.match(matchCoordinateMigration, /strava_race_activity_matches/);
+  assert.match(matchCoordinateMigration, /candidate\.classification_status = 'pending'/);
+  assert.match(matchCoordinateMigration, /candidate\.classification_status = 'included'/);
+  assert.doesNotMatch(matchCoordinateMigration, /\b(?:DELETE|TRUNCATE|DROP)\b/i);
 });
 
 test("state and city evidence confidently select one race on a multi-race day", () => {

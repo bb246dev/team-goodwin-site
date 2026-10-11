@@ -99,6 +99,34 @@ test("malformed or incomplete API schedules fail closed to all 50 static races",
   assert.ok(snapshot.races.every((race) => race.status === "scheduled" && race.activity === null));
 });
 
+test("active polling retains its last valid API snapshot when a refresh falls back", async () => {
+  const timers = [];
+  const applied = [];
+  const initial = {
+    source: "api",
+    races: staticStops,
+    status: statusPayload({ active: true, completedRaces: 3 }),
+  };
+  const fallback = {
+    source: "static",
+    races: staticStops,
+    status: statusPayload({ active: false }),
+  };
+  const poller = createPublicRacePoller({
+    documentObject: { hidden: false, addEventListener() {}, removeEventListener() {} },
+    setTimeoutImpl(callback, delay) { timers.push({ callback, delay }); return timers.length; },
+    clearTimeoutImpl() {},
+    load: async () => fallback,
+    onSnapshot: (snapshot) => applied.push(snapshot),
+  });
+  await poller.start(initial);
+  const result = await poller.refresh();
+  assert.strictEqual(result, fallback);
+  assert.deepEqual(applied, []);
+  assert.equal(timers.at(-1).delay, ACTIVE_REFRESH_MS);
+  poller.stop();
+});
+
 test("raceId is preferred for the static-geometry join, with raceNumber as fallback", () => {
   const publicRaces = [
     { raceNumber: 1, raceId: "ggma-2026-01", date: "2026-10-09", state: "Hawaii", city: "Honolulu", status: "scheduled", activity: null },

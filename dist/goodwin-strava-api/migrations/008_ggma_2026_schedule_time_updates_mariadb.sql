@@ -5,7 +5,7 @@ UPDATE ggma_race_schedule
 SET scheduled_start_time = '22:45:00',
     timezone = 'America/Los_Angeles',
     updated_at = UNIX_TIMESTAMP()
-WHERE id = 'ggma-2026-26' AND operational_window_id = 'ggma-2026';
+WHERE id = 'ggma-2026-25' AND operational_window_id = 'ggma-2026';
 
 UPDATE ggma_race_schedule
 SET scheduled_start_time = '05:00:00',

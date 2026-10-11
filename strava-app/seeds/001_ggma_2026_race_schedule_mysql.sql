@@ -1,8 +1,8 @@
 -- Authoritative GGMA 2026 schedule seed.
 -- Source captured from https://goodwingoodge.com/fifty-runs/ on 2026-09-04.
 -- Dates, states and cities come from the published source. The three non-null
--- start times below were supplied by the client on 2026-10-04; all other start
--- times, timezones and coordinates remain unknown rather than inferred.
+-- start times below were supplied by the client on 2026-10-04. Coordinates are
+-- installed separately by post-seed migration 009 and are preserved on rerun.
 
 INSERT INTO ggma_race_schedule
   (id, operational_window_id, race_number, race_date, state, state_code, city, slug,
@@ -67,8 +67,8 @@ ON DUPLICATE KEY UPDATE
   slug = VALUES(slug),
   scheduled_start_time = VALUES(scheduled_start_time),
   timezone = VALUES(timezone),
-  latitude = VALUES(latitude),
-  longitude = VALUES(longitude),
+  latitude = COALESCE(VALUES(latitude), latitude),
+  longitude = COALESCE(VALUES(longitude), longitude),
   status = VALUES(status),
   source_url = VALUES(source_url),
   updated_at = UNIX_TIMESTAMP();

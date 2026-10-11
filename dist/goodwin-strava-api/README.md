@@ -18,14 +18,19 @@ registration are separate, later operations.
    `migrations/003_strava_race_activity_candidates_mysql.sql`, then
    `migrations/004_ggma_race_schedule_mysql.sql`, then
    `migrations/005_strava_candidate_runtime_fields_mariadb.sql`, then
-   `migrations/006_strava_webhook_admin_hardening_mariadb.sql`. Finally import
-   `seeds/001_ggma_2026_race_schedule_mysql.sql`.
+   `migrations/006_strava_webhook_admin_hardening_mariadb.sql`. Next import
+   `seeds/001_ggma_2026_race_schedule_mysql.sql`, followed by the post-seed
+   migrations `migrations/008_ggma_2026_schedule_time_updates_mariadb.sql` and
+   `migrations/009_ggma_2026_match_coordinates_mariadb.sql`.
    If an earlier generated-column version of migration 004 failed with MariaDB
    error 1901, keep the schedule table and import
    `migrations/004b_ggma_race_schedule_mariadb_repair.sql` instead of retrying
-   migration 004. Then import migrations 005 and 006 followed by the same seed file.
+   migration 004. Then import migrations 005 and 006 followed by the same seed
+   file and post-seed migrations 008 and 009.
    Migration 005 adds the nullable candidate activity fields required by the
-   current runtime, including the public map API.
+   current runtime, including the public map API. Migration 009 populates race
+   coordinates required for automatic geographic matching and safely reconciles
+   already-ingested pending marathon candidates.
 4. Confirm these InnoDB tables exist: `strava_connection`,
    `strava_oauth_states`, `strava_refresh_lock`, and
    `strava_connection_links`, plus `strava_race_activity_candidates` and

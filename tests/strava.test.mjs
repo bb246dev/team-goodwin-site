@@ -450,6 +450,11 @@ test("encryption authenticates the athlete and rejects tampering or a changed ke
 
 test("authenticated requests stay on Strava and never follow redirects", async (t) => {
   const s = setup(t);
+  s.setTime("2026-11-02T00:00:00-05:00");
+  s.payload({
+    access_token: "test-only-access-token", refresh_token: "test-only-refresh-token",
+    expires_at: s.now() + 21600, athlete: { id: 456, firstname: "Test", lastname: "Athlete" },
+  });
   await s.seed();
   const seen = [];
   s.dependencies.fetchImpl = async (url, options) => {
