@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Enforce runner, scheduled-flight, then RV priority so the production live map renders at most one moving status marker while preserving the existing Garmin, Strava, flight, and RV eligibility logic.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-single-status-marker-2026-10-11/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "e0201513d1fb563d49cc443f4d63914b80ec74819223e467dfdf90ca46efb09b",
+      "expectedRemoteSha256": "2312218747966a1ab20d99e39916885f30195015dee8e4afca85e14b6534d976"
+    },
+    {
+      "source": "single-status-marker-release-2026-10-11-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "e4dfae51d59b745879f667c8c76b977de4ab4061bdc0083d8f95e7ffa3a1c9fd",
+      "expectedRemoteSha256": "1b79be11f875956244a01234fcaf5511a156fc56cf9056efeae91dceb5f1b017"
+    },
+    {
+      "source": "single-status-marker-release-2026-10-11-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "e4dfae51d59b745879f667c8c76b977de4ab4061bdc0083d8f95e7ffa3a1c9fd",
+      "expectedRemoteSha256": "1b79be11f875956244a01234fcaf5511a156fc56cf9056efeae91dceb5f1b017"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/strava-public-race-feed-release.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/strava-map-integration.test.mjs",
+      "tests/mission-clock-dynamic-subtext.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Public Strava race schedule remains available",
+        "path": "/strava/public/races",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "races"
+        ]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "completedRaces",
+          "totalRaces"
+        ]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
