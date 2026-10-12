@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "End the PDX to SLC live-map flight window at Will's actual 8:13 PM MDT landing so the existing single-marker priority falls through to the RV unless Will is actively running.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-pdx-slc-landed-2026-10-11/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "c218e63bba862655ea3438baa30f0bff26254378020915ca6af098fc1785d0e7",
+      "expectedRemoteSha256": "e0201513d1fb563d49cc443f4d63914b80ec74819223e467dfdf90ca46efb09b"
+    },
+    {
+      "source": "pdx-slc-landed-release-2026-10-11-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "9136beca752df8878cf46d2f8888bf1a6488ea2fa89d5130aacbb51a4ff7c272",
+      "expectedRemoteSha256": "e4dfae51d59b745879f667c8c76b977de4ab4061bdc0083d8f95e7ffa3a1c9fd"
+    },
+    {
+      "source": "pdx-slc-landed-release-2026-10-11-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "9136beca752df8878cf46d2f8888bf1a6488ea2fa89d5130aacbb51a4ff7c272",
+      "expectedRemoteSha256": "e4dfae51d59b745879f667c8c76b977de4ab4061bdc0083d8f95e7ffa3a1c9fd"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-pdx-slc-landed.test.mjs",
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/strava-public-race-feed-release.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/strava-map-integration.test.mjs",
+      "tests/mission-clock-dynamic-subtext.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Public Strava race schedule remains available",
+        "path": "/strava/public/races",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "races"
+        ]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "completedRaces",
+          "totalRaces"
+        ]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
