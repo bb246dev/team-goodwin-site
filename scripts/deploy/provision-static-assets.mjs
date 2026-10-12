@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { createFtpsClient } from "./ftps-client.mjs";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 
-const TRACKING_PREVIEW_RUNTIME_PATTERN = /^public_html\/tracking-preview\/assets\/(?:app|tracking-map|route-data)-[a-f0-9]{16}\.mjs$/;
+const TRACKING_PREVIEW_RUNTIME_PATTERN = /^public_html\/tracking-preview\/assets\/(?:app|garmin-kml|tracking-map|route-data)-[a-f0-9]{16}\.mjs$/;
 
 function productionUrl(baseUrl, publicPath, expectedSha256) {
   const origin = new URL(baseUrl);

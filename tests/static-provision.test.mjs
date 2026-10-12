@@ -8,22 +8,24 @@ import { sha256 } from "../scripts/deploy/lib.mjs";
 import { assertProvisioningRelease, provisionStaticAssets } from "../scripts/deploy/provision-static-assets.mjs";
 
 test("static provisioning permits only the exact content-hashed tracking preview runtimes", () => {
-  const runtime = {
-    source: "assets/releases/race-times/tracking-preview/assets/app-0123456789abcdef.mjs",
-    destination: "public_html/tracking-preview/assets/app-0123456789abcdef.mjs",
-    publicPath: "/tracking-preview/assets/app-0123456789abcdef.mjs",
+  const runtime = (name) => ({
+    source: `assets/releases/race-times/tracking-preview/assets/${name}-0123456789abcdef.mjs`,
+    destination: `public_html/tracking-preview/assets/${name}-0123456789abcdef.mjs`,
+    publicPath: `/tracking-preview/assets/${name}-0123456789abcdef.mjs`,
     expectedSha256: "a".repeat(64),
     newSha256: "a".repeat(64),
     expectedRemoteAbsent: true,
-  };
-  assert.doesNotThrow(() => assertProvisioningRelease({ deploymentType: "static", files: [runtime] }));
+  });
+  for (const name of ["app", "garmin-kml", "tracking-map", "route-data"]) {
+    assert.doesNotThrow(() => assertProvisioningRelease({ deploymentType: "static", files: [runtime(name)] }));
+  }
   for (const destination of [
     "public_html/tracking-preview/assets/tracking-preview-0123456789abcdef.css",
     "public_html/tracking-preview/assets/feeds-0123456789abcdef.mjs",
   ]) {
     assert.throws(() => assertProvisioningRelease({
       deploymentType: "static",
-      files: [{ ...runtime, destination, publicPath: destination.slice("public_html".length) }],
+      files: [{ ...runtime("app"), destination, publicPath: destination.slice("public_html".length) }],
     }), /limited to public static assets/);
   }
 });

@@ -165,8 +165,8 @@ test("production routes cache-bust only the new tracker and manifest pins the im
   assert.equal(candidateHome, baselineHome.replace(oldTag, newTag));
   assert.equal(candidateLive, baselineLive.replace(oldTag, newTag));
   assert.match(candidate, /GARMIN_KML_MODULE_URL = "\/tracking-preview\/assets\/garmin-kml-af3a85bfc4b14a78\.mjs"/);
-  assert.deepEqual(manifest.files.map(({ destination, expectedRemoteAbsent }) => ({ destination, expectedRemoteAbsent }))[0], {
+  assert.deepEqual(manifest.files.map(({ destination, expectedRemoteSha256 }) => ({ destination, expectedRemoteSha256 }))[0], {
     destination: "public_html/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
-    expectedRemoteAbsent: true,
+    expectedRemoteSha256: "af3a85bfc4b14a78306ab389f97bb26b7d919c7f2db654dc5983cf8319373896",
   });
 });

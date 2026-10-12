@@ -12,7 +12,7 @@
       "destination": "public_html/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
       "publicPath": "/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
       "expectedSha256": "af3a85bfc4b14a78306ab389f97bb26b7d919c7f2db654dc5983cf8319373896",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "af3a85bfc4b14a78306ab389f97bb26b7d919c7f2db654dc5983cf8319373896"
     },
     {
       "source": "assets/releases/live-map-garmin-ii-priority-2026-10-12/tracker-base.js",

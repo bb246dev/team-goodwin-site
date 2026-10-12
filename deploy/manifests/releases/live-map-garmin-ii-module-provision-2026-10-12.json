@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Provision the reviewed content-hashed Garmin II KML parser module after independently confirming its production URL returns HTTP 404.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "assets/releases/live-map-garmin-ii-priority-2026-10-12/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
+      "destination": "public_html/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
+      "publicPath": "/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
+      "expectedSha256": "af3a85bfc4b14a78306ab389f97bb26b7d919c7f2db654dc5983cf8319373896",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-garmin-ii-priority.test.mjs",
+      "tests/static-provision.test.mjs"
+    ],
+    "browserRoutes": [
+      "/live-tracking.html"
+    ],
+    "apiChecks": []
+  }
+}
