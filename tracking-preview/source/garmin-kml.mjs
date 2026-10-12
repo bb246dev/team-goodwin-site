@@ -203,9 +203,17 @@ export function parseGarminFeed(xml, { nowMs = Date.now(), freshMs = GARMIN_FRES
     const when = nodeText(firstDescendant(placemark, "when"));
     const observedMs = Date.parse(when);
     const data = extendedData(placemark);
+    const validGpsFix = /^true$/i.test((data["Valid GPS Fix"] || "").trim());
     if (!position || !Number.isFinite(observedMs) || observedMs > nowMs + 5 * 60_000
-      || /^false$/i.test(data["Valid GPS Fix"] || "")) return [];
-    return [{ placemark, folder: nearestFolder(placemark), position, observedMs }];
+      || !validGpsFix) return [];
+    return [{
+      placemark,
+      folder: nearestFolder(placemark),
+      position,
+      observedMs,
+      validGpsFix,
+      deviceType: (data["Device Type"] || "").trim() || null,
+    }];
   }).sort((left, right) => left.observedMs - right.observedMs);
   const latest = points.at(-1);
   if (!latest) return { available: false, trail: [] };
@@ -221,6 +229,8 @@ export function parseGarminFeed(xml, { nowMs = Date.now(), freshMs = GARMIN_FRES
   }
   return {
     available: true,
+    validGpsFix: latest.validGpsFix,
+    deviceType: latest.deviceType,
     stale: nowMs - latest.observedMs > freshMs,
     observedAt: new Date(latest.observedMs).toISOString(),
     position: { ...latest.position },

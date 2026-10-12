@@ -303,6 +303,8 @@ test("Garmin KML point and trail coordinates use KML longitude-latitude order", 
   });
   assert.deepEqual(result, {
     available: true,
+    validGpsFix: true,
+    deviceType: "inReach Mini 2",
     stale: false,
     observedAt: "2026-10-08T00:24:00.000Z",
     position: { lat: 21.32, lng: -157.85 },
@@ -315,6 +317,20 @@ test("Garmin KML point and trail coordinates use KML longitude-latitude order", 
   assert.equal(parseGarminFeed(readFixture("garmin-feed-with-track.kml"), {
     nowMs: Date.parse("2026-10-08T00:40:01Z"),
   }).stale, true);
+});
+
+test("Garmin KML accepts only an explicit true GPS fix", () => {
+  const feed = readFixture("garmin-feed-with-track.kml");
+  const now = { nowMs: Date.parse("2026-10-08T00:25:00Z") };
+  assert.equal(parseGarminFeed(feed, now).validGpsFix, true);
+  assert.deepEqual(parseGarminFeed(feed.replaceAll("<value>True</value>", "<value>False</value>"), now), {
+    available: false,
+    trail: [],
+  });
+  assert.deepEqual(parseGarminFeed(feed.replaceAll('<Data name="Valid GPS Fix"><value>True</value></Data>', ""), now), {
+    available: false,
+    trail: [],
+  });
 });
 
 test("Garmin adapter follows the loader through the same-origin proxy", async () => {

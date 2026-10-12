@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Require an explicit fresh valid Garmin II GPS fix and give it sole priority over scheduled flights and the RV while preserving flight, RV, polling, route, styling, and layout behavior.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-garmin-ii-priority-2026-10-12/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
+      "destination": "public_html/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
+      "publicPath": "/tracking-preview/assets/garmin-kml-af3a85bfc4b14a78.mjs",
+      "expectedSha256": "af3a85bfc4b14a78306ab389f97bb26b7d919c7f2db654dc5983cf8319373896",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "assets/releases/live-map-garmin-ii-priority-2026-10-12/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "c5a9d7eb5f112d765a1bb2663f0e8442523482344ef8826e8bbfcd8bbef77318",
+      "expectedRemoteSha256": "4fb7e22ff2d6b7ff8b0cd0fc425022665312ddea2f90a8fcd28e13a6a6ef24ce"
+    },
+    {
+      "source": "garmin-ii-priority-release-2026-10-12-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "63fb909d1358a47e72a8fda470c3198943e06f7e449c58046ed45775a6c3fbcf",
+      "expectedRemoteSha256": "da57fcafe89ea42cae6a4d6953203a46af22f13e5ac0d1ffa4dabb8e9b291c56"
+    },
+    {
+      "source": "garmin-ii-priority-release-2026-10-12-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "63fb909d1358a47e72a8fda470c3198943e06f7e449c58046ed45775a6c3fbcf",
+      "expectedRemoteSha256": "da57fcafe89ea42cae6a4d6953203a46af22f13e5ac0d1ffa4dabb8e9b291c56"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-garmin-ii-priority.test.mjs",
+      "tests/live-map-flight-itinerary-rows-04-08.test.mjs",
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/mission-clock-dynamic-subtext.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}

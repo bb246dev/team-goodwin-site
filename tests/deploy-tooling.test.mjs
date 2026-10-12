@@ -164,6 +164,22 @@ test("protected files require an exact manifest approval", async (t) => {
   assert.deepEqual(accepted.protectedPathsApproved, [protectedFile.destination]);
 });
 
+test("static manifests allow a content-hashed Garmin KML module under tracking-preview", async (t) => {
+  const root = await fixture(t);
+  const releaseDir = join(root, "assets/releases/garmin-priority/tracking-preview/assets");
+  await mkdir(releaseDir, { recursive: true });
+  await writeFile(join(releaseDir, "garmin-kml-0123456789abcdef.mjs"), "export const validGpsFix = true;\n");
+  const accepted = await validateManifestObject(validManifest({
+    files: [{
+      source: "assets/releases/garmin-priority/tracking-preview/assets/garmin-kml-0123456789abcdef.mjs",
+      destination: "public_html/tracking-preview/assets/garmin-kml-0123456789abcdef.mjs",
+      publicPath: "/tracking-preview/assets/garmin-kml-0123456789abcdef.mjs",
+      expectedRemoteAbsent: true,
+    }],
+  }), { root });
+  assert.equal(accepted.files[0].destination, "public_html/tracking-preview/assets/garmin-kml-0123456789abcdef.mjs");
+});
+
 test("every file requires exactly one prior state and rejects both", async (t) => {
   const root = await fixture(t);
   const manifest = protectedManifest({ expectedRemoteSha256: undefined });

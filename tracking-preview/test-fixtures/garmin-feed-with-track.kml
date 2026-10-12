@@ -7,19 +7,19 @@
       <Placemark>
         <name>Will Goodge</name>
         <TimeStamp><when>2026-10-08T00:20:00Z</when></TimeStamp>
-        <ExtendedData><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
+        <ExtendedData><Data name="Device Type"><value>inReach Mini 2</value></Data><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
         <Point><coordinates>-157.860000,21.310000,5</coordinates></Point>
       </Placemark>
       <Placemark>
         <name>Will Goodge</name>
         <TimeStamp><when>2026-10-08T00:22:00Z</when></TimeStamp>
-        <ExtendedData><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
+        <ExtendedData><Data name="Device Type"><value>inReach Mini 2</value></Data><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
         <Point><coordinates>-157.855000,21.315000,6</coordinates></Point>
       </Placemark>
       <Placemark>
         <name>Will Goodge</name>
         <TimeStamp><when>2026-10-08T00:24:00Z</when></TimeStamp>
-        <ExtendedData><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
+        <ExtendedData><Data name="Device Type"><value>inReach Mini 2</value></Data><Data name="Valid GPS Fix"><value>True</value></Data></ExtendedData>
         <Point><coordinates>-157.850000,21.320000,7</coordinates></Point>
       </Placemark>
       <Placemark>

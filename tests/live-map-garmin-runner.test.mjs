@@ -140,7 +140,7 @@ test("live Garmin adapter follows the loader NetworkLink and places the latest K
   assert.equal(result.observedAt, "2026-10-08T00:24:00.000Z");
   assert.ok(result.trail.length > 1);
   assert.match(tracker, /GARMIN_KML_MODULE_URL = "\/tracking-preview\/assets\/garmin-kml-3deff4779671db1e\.mjs"/);
-  assert.equal(sha256(read("tracking-preview/source/garmin-kml.mjs")).slice(0, 16), "3deff4779671db1e");
+  assert.equal(sha256(read("tracking-preview/source/garmin-kml.mjs")).slice(0, 16), "af3a85bfc4b14a78");
 });
 
 test("Garmin polling is clamped to no faster than 120 seconds", async () => {

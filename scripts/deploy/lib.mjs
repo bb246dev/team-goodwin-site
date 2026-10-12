@@ -16,7 +16,7 @@ const CREDENTIAL_PATH_PATTERN = /(^|\/)(?:\.env(?:\..*)?|credentials?(?:\..*)?|s
 const SAFE_PATH_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+@()/ -]*$/;
 const FORBIDDEN_PATH_PATTERN = /[\\*?\[\]{};$`|&<>!\r\n\0]/;
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
-const TRACKING_PREVIEW_FILE_PATTERN = /^(?:index\.html|embed\/index\.html|asset-manifest\.json|assets\/(?:app|tracking-map|route-data)-[a-f0-9]{16}\.mjs)$/;
+const TRACKING_PREVIEW_FILE_PATTERN = /^(?:index\.html|embed\/index\.html|asset-manifest\.json|assets\/(?:app|garmin-kml|tracking-map|route-data)-[a-f0-9]{16}\.mjs)$/;
 
 const TOP_LEVEL_KEYS = new Set([
   "schemaVersion",
