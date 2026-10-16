@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Keep a valid Garmin II point as the sole live runner marker through 30 minutes, then preserve scheduled-flight and RV fallback priority without changing polling or map content.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-garmin-30m-freshness-2026-10-15/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "f71de482598cf7f7fe723e9fcb006147a2bd9acbbeb0db23e82aa57de130d481",
+      "expectedRemoteSha256": "fe826c7060c045ab0673b07cd4f0f53544c2beecb585d001dd01b8ffd1c64509"
+    },
+    {
+      "source": "garmin-30m-freshness-release-2026-10-15-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "ad25925877e6d6399df70d532de4bbaa55d9941b60ac057e172b368288b16b06",
+      "expectedRemoteSha256": "4214d4a801891b28c69ae2af9a30995ab90453b796ebdeee1ee83ff48f63c5e9"
+    },
+    {
+      "source": "garmin-30m-freshness-release-2026-10-15-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "ad25925877e6d6399df70d532de4bbaa55d9941b60ac057e172b368288b16b06",
+      "expectedRemoteSha256": "4214d4a801891b28c69ae2af9a30995ab90453b796ebdeee1ee83ff48f63c5e9"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-garmin-30m-freshness.test.mjs",
+      "tests/live-map-garmin-startup-gate.test.mjs",
+      "tests/live-map-garmin-ii-priority.test.mjs",
+      "tests/live-map-flight-itinerary-rows-04-08.test.mjs",
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/mission-clock-dynamic-subtext.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
