@@ -1632,8 +1632,7 @@
 
     function setMissionJourneyState(value) {
       const signature = JSON.stringify(value);
-      if (signature === JSON.stringify(missionJourneyState)) return;
-      missionJourneyState = value;
+      if (signature !== JSON.stringify(missionJourneyState)) missionJourneyState = value;
       if (missionMapTopology) renderMissionMap(missionMapTopology, true);
     }
 

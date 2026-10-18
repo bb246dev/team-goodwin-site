@@ -217,6 +217,11 @@ test("missing transition data cannot invent finishes and explicit offsets are vi
 test("rendering wires shared state before first paint and keeps all four subjects mutually exclusive", () => {
   assert.match(candidate, /await Promise\.all\(\[trackingPromise, journeyStatePromise\]\)/);
   assert.match(candidate, /const JOURNEY_STATE_REFRESH_MS = 30_000/);
+  assert.doesNotMatch(
+    namedFunction(candidate, "setMissionJourneyState"),
+    /JSON\.stringify\(missionJourneyState\)\) return/,
+    "unchanged shared state still repaints estimated road progress and arrival holds",
+  );
   assert.match(candidate, /const hotelMarker = appendImageMarker/);
   assert.match(candidate, /willDisplay\.journeyOverride === true[\s\S]*willDisplay\.position/);
   const h = harness();

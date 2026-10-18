@@ -11,7 +11,7 @@
       "source": "assets/releases/live-map-journey-overrides-2026-10-18/tracker-base.js",
       "destination": "public_html/assets/tracker-base.js",
       "publicPath": "/assets/tracker-base.js",
-      "expectedSha256": "b34a21c220982acc295580f285c1f5421609c24643e45dd4ab6dca288f3baaea",
+      "expectedSha256": "386cf061ccd29de6b75c7536f50c367feeac34e53c734d5671d47307b5b38c79",
       "expectedRemoteSha256": "6bc58f5f5bcc3ded908a3b382078e5a04607c28a645ce31c57c7a73074099544"
     },
     {
