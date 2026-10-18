@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn } from "node:child_process";
 import {
-  cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
 } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
@@ -15,8 +15,9 @@ const candidateRoot = fileURLToPath(new URL(
   "../production-merge/hapn-api2-live-compatible-2026-09-09/goodwin-strava-api/",
   import.meta.url,
 ));
+const localNode22 = "/Users/micah/.npm/_npx/5dad66f2cb301fc2/node_modules/node/bin/node";
 const node22 = process.env.GOODWIN_NODE_22
-  || "/Users/micah/.npm/_npx/5dad66f2cb301fc2/node_modules/node/bin/node";
+  || (existsSync(localNode22) ? localNode22 : process.execPath);
 
 function completeEnvironment() {
   return {
