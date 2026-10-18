@@ -15,25 +15,25 @@
       "source": "dist/goodwin-strava-api/app.js",
       "destination": "goodwin-node-test/app.js",
       "expectedSha256": "e2e7c16e4ef32c9526a03ec2281a23e8c6e2c23c9a9aaa2f68e5cd71d04c231b",
-      "expectedRemoteSha256": "d6842bf9f07a56d5bedcf0be56e73512c754bc6d4a63d155d6a05d499b83c929"
+      "expectedRemoteSha256": "15bf00c814a8bbbcdad876316c5e7b122b6291cfcbf78733f722042a364cc13b"
     },
     {
       "source": "dist/goodwin-strava-api/lib/mysql-store.mjs",
       "destination": "goodwin-node-test/lib/mysql-store.mjs",
       "expectedSha256": "2b6e714942cfa42fe0bd98568f1efb88c2eeb04e041f30119d073852d0a06398",
-      "expectedRemoteSha256": "1beab1429c0e8d3171bd02bbbb57a65c00bce8c8bf8f087fcb43415eb91e0f21"
+      "expectedRemoteSha256": "1bbc8aa8e709d3aeaeaf7aa476de06c9ecda1c1002bdfe432685d44653663211"
     },
     {
       "source": "dist/goodwin-strava-api/lib/routes.mjs",
       "destination": "goodwin-node-test/lib/routes.mjs",
       "expectedSha256": "907e9c07c7c300a0a1662071da67f91000cdf13662de86646746c728d23836d9",
-      "expectedRemoteSha256": "b407c8b964bc06cffa1518fa2e42b504f6589ecc20439b0a412093a332a4a79b"
+      "expectedRemoteSha256": "53772a0d2c199008e4488dd378ae736e34133eef127c0263eb4dbeec8fe0cf8a"
     },
     {
       "source": "dist/goodwin-strava-api/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
       "destination": "goodwin-node-test/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
       "expectedSha256": "652de8ed9febb8a0412c14cfda0c288ae019018345bd31e2ded0429e3a82a95b",
-      "expectedRemoteSha256": "a141977c8d1501e7d5d29079ac3831ac60535cc899d875877d8135acd69e7501"
+      "expectedRemoteAbsent": true
     }
   ],
   "validation": {
