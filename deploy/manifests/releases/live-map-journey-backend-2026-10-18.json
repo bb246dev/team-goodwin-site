@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "backend",
+  "releaseType": "major",
+  "previousReleaseGeneration": "8c68c2357a2dee3f0c081a5b7cb7fd26f97a1c08cb64f7ecacf846ee5138f1c7",
+  "description": "Add server-shared, idempotent journey transitions, the authenticated finish control, public journey state, and one-time Los Angeles Garmin departure capture.",
+  "protectedPathsApproved": [
+    "goodwin-node-test/app.js",
+    "goodwin-node-test/lib/mysql-store.mjs",
+    "goodwin-node-test/lib/routes.mjs",
+    "goodwin-node-test/migrations/009_ggma_2026_match_coordinates_mariadb.sql"
+  ],
+  "files": [
+    {
+      "source": "dist/goodwin-strava-api/app.js",
+      "destination": "goodwin-node-test/app.js",
+      "expectedSha256": "e2e7c16e4ef32c9526a03ec2281a23e8c6e2c23c9a9aaa2f68e5cd71d04c231b",
+      "expectedRemoteSha256": "d6842bf9f07a56d5bedcf0be56e73512c754bc6d4a63d155d6a05d499b83c929"
+    },
+    {
+      "source": "dist/goodwin-strava-api/lib/mysql-store.mjs",
+      "destination": "goodwin-node-test/lib/mysql-store.mjs",
+      "expectedSha256": "2b6e714942cfa42fe0bd98568f1efb88c2eeb04e041f30119d073852d0a06398",
+      "expectedRemoteSha256": "1beab1429c0e8d3171bd02bbbb57a65c00bce8c8bf8f087fcb43415eb91e0f21"
+    },
+    {
+      "source": "dist/goodwin-strava-api/lib/routes.mjs",
+      "destination": "goodwin-node-test/lib/routes.mjs",
+      "expectedSha256": "907e9c07c7c300a0a1662071da67f91000cdf13662de86646746c728d23836d9",
+      "expectedRemoteSha256": "b407c8b964bc06cffa1518fa2e42b504f6589ecc20439b0a412093a332a4a79b"
+    },
+    {
+      "source": "dist/goodwin-strava-api/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
+      "destination": "goodwin-node-test/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
+      "expectedSha256": "652de8ed9febb8a0412c14cfda0c288ae019018345bd31e2ded0429e3a82a95b",
+      "expectedRemoteSha256": "a141977c8d1501e7d5d29079ac3831ac60535cc899d875877d8135acd69e7501"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/strava-journey-controls.test.mjs",
+      "tests/strava-public-api.test.mjs",
+      "tests/passenger-startup.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [],
+    "apiChecks": [
+      {
+        "name": "Generic Strava health path",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Shared journey state",
+        "path": "/strava/public/journey-state",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "transitions", "origins"]
+      },
+      {
+        "name": "Public race status",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Public HAPN tracking",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Journey control requires authentication",
+        "path": "/strava/journey-control",
+        "expectedStatus": 401,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
