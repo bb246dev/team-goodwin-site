@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Source the mission clock label from the definitive 50-race start schedule, switching at exact timezone-aware starts without changing maps, feeds, flights, timers, or status behavior.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/mission-clock-race-schedule-2026-10-18/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "6bc58f5f5bcc3ded908a3b382078e5a04607c28a645ce31c57c7a73074099544",
+      "expectedRemoteSha256": "f71de482598cf7f7fe723e9fcb006147a2bd9acbbeb0db23e82aa57de130d481"
+    },
+    {
+      "source": "mission-clock-race-schedule-release-2026-10-18-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "5ded2cb83e43fefb299a78cccbd5547f2f6bdfccaf2994a3bd042118941d8107",
+      "expectedRemoteSha256": "ad25925877e6d6399df70d532de4bbaa55d9941b60ac057e172b368288b16b06"
+    },
+    {
+      "source": "mission-clock-race-schedule-release-2026-10-18-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "5ded2cb83e43fefb299a78cccbd5547f2f6bdfccaf2994a3bd042118941d8107",
+      "expectedRemoteSha256": "ad25925877e6d6399df70d532de4bbaa55d9941b60ac057e172b368288b16b06"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/mission-clock-race-schedule.test.mjs",
+      "tests/live-map-garmin-30m-freshness.test.mjs",
+      "tests/live-map-garmin-startup-gate.test.mjs",
+      "tests/live-map-garmin-ii-priority.test.mjs",
+      "tests/live-map-flight-itinerary-rows-04-08.test.mjs",
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/live-map-scheduled-flights.test.mjs",
+      "tests/live-map-garmin-runner.test.mjs",
+      "tests/live-map-rv-plane-markers.test.mjs",
+      "tests/mission-clock-dynamic-subtext.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
