@@ -278,7 +278,8 @@ function mountedPath(rawUrl) {
   }
   // Passenger may instead strip the /strava mount prefix before app.js sees the request.
   if (["/connect", "/connect-link", "/connect-athlete", "/callback", "/status", "/webhook", "/candidates", "/journey-control"].includes(url.pathname)
-    || url.pathname.startsWith("/candidates/") || url.pathname.startsWith("/public/")) {
+    || url.pathname.startsWith("/candidates/") || url.pathname.startsWith("/admin/")
+    || url.pathname.startsWith("/public/")) {
     return `/api/strava${url.pathname}${url.search}`;
   }
   return `/api${url.pathname.startsWith("/") ? "" : "/"}${url.pathname}${url.search}`;

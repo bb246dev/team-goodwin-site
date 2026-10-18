@@ -143,6 +143,18 @@ test("app.js serves generic health plus visible and Passenger-stripped mount pat
     assert.equal(status.raceWindowStart, "2026-10-09T09:00:00-04:00");
     assert.equal(status.raceWindowEnd, "2026-11-01T23:59:59-05:00");
   }
+  for (const path of [
+    "/api/strava/admin/runtime-status",
+    "/strava/admin/runtime-status",
+    "/admin/runtime-status",
+  ]) {
+    const anonymous = await fetch(`${base}${path}`);
+    assert.equal(anonymous.status, 401, path);
+    const response = await fetch(`${base}${path}`, { headers: { Authorization: authorization } });
+    assert.equal(response.status, 200, path);
+    assert.equal(response.headers.get("cache-control"), "no-store, private", path);
+    assert.match((await response.json()).releaseGeneration, /^[a-f0-9]{64}$/, path);
+  }
   await assertGenericHealth(base, "/strava/health", 200, { status: "ok" });
   await assertGenericHealth(base, "/health", 200, { status: "ok" });
   assert.equal((await fetch(`${base}/api/health`)).status, 404);
