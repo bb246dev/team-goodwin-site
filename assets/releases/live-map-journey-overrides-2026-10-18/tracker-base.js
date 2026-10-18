@@ -942,11 +942,14 @@
       losAngelesDeparture: "2026-10-20T22:00:00-07:00",
       lasVegasHotelArrival: "2026-10-21T03:30:00-07:00",
       lasVegasRaceStart: "2026-10-21T10:30:00-07:00",
+      lasVegasRaceEnd: "2026-10-21T15:30:00-07:00",
       arizonaRaceStart: "2026-10-21T18:00:00-07:00",
+      arizonaRaceEnd: "2026-10-21T23:00:00-07:00",
       arkansasFlightDeparture: "2026-10-22T05:00:00-07:00",
       arkansasFlightArrival: "2026-10-22T09:42:00-05:00",
       miamiOverrideStart: "2026-10-23T21:00:00-04:00",
       miamiRaceStart: "2026-10-24T09:00:00-04:00",
+      miamiRaceEnd: "2026-10-24T14:00:00-04:00",
       miamiNormalRulesResume: "2026-10-24T18:24:00-04:00",
       lasVegasToArizonaDurationMs: 80 * 60_000,
       arizonaToKlasDurationMs: 110 * 60_000,
@@ -969,11 +972,14 @@
       MISSION_JOURNEY.losAngelesDeparture,
       MISSION_JOURNEY.lasVegasHotelArrival,
       MISSION_JOURNEY.lasVegasRaceStart,
+      MISSION_JOURNEY.lasVegasRaceEnd,
       MISSION_JOURNEY.arizonaRaceStart,
+      MISSION_JOURNEY.arizonaRaceEnd,
       MISSION_JOURNEY.arkansasFlightDeparture,
       MISSION_JOURNEY.arkansasFlightArrival,
       MISSION_JOURNEY.miamiOverrideStart,
       MISSION_JOURNEY.miamiRaceStart,
+      MISSION_JOURNEY.miamiRaceEnd,
       MISSION_JOURNEY.miamiNormalRulesResume
     ].map(Date.parse));
     const MISSION_CLOCK_AIRPORT_STOPS = Object.freeze({
@@ -1100,11 +1106,6 @@
         && observedMs >= startMs
         && observedMs <= Number(nowMs) + 5 * 60_000
         && missionDistanceKm(garminRunner.position, center) <= radiusKm;
-    }
-
-    function missionJourneyTransitionMs(transitionId, state = missionJourneyState) {
-      const occurredMs = Date.parse(state?.transitions?.[transitionId]?.occurredAt);
-      return Number.isFinite(occurredMs) ? occurredMs : null;
     }
 
     function decodeMissionPolyline6(encoded) {
@@ -1266,10 +1267,13 @@
       const now = Number(nowMs);
       const losAngelesDeparture = Date.parse(MISSION_JOURNEY.losAngelesDeparture);
       const lasVegasHotelArrival = Date.parse(MISSION_JOURNEY.lasVegasHotelArrival);
+      const lasVegasRaceEnd = Date.parse(MISSION_JOURNEY.lasVegasRaceEnd);
+      const arizonaRaceEnd = Date.parse(MISSION_JOURNEY.arizonaRaceEnd);
       const arkansasFlightDeparture = Date.parse(MISSION_JOURNEY.arkansasFlightDeparture);
       const arkansasFlightArrival = Date.parse(MISSION_JOURNEY.arkansasFlightArrival);
       const miamiOverrideStart = Date.parse(MISSION_JOURNEY.miamiOverrideStart);
       const miamiRaceStart = Date.parse(MISSION_JOURNEY.miamiRaceStart);
+      const miamiRaceEnd = Date.parse(MISSION_JOURNEY.miamiRaceEnd);
       const miamiNormalRulesResume = Date.parse(MISSION_JOURNEY.miamiNormalRulesResume);
       const scheduledFlight = missionScheduledFlightAt(now);
 
@@ -1290,28 +1294,26 @@
       }
 
       if (now >= lasVegasHotelArrival && now < arkansasFlightDeparture) {
-        const lasVegasFinished = missionJourneyTransitionMs("las-vegas-race-finished", state);
-        const arizonaFinished = missionJourneyTransitionMs("arizona-race-finished", state);
         const lasVegasRun = missionQualifiedGarminRunAt(now, garminRunner,
           MISSION_JOURNEY.lasVegasRaceStart, MISSION_JOURNEY.coordinates.lasVegasRace);
         const arizonaRun = missionQualifiedGarminRunAt(now, garminRunner,
           MISSION_JOURNEY.arizonaRaceStart, MISSION_JOURNEY.coordinates.willowBeachHooverDam);
 
-        if (arizonaFinished !== null && now >= arizonaFinished) {
+        if (now >= arizonaRaceEnd) {
           return missionJourneyTravelDisplay(
             "drive-arizona-to-klas",
             "arizonaToKlas",
-            arizonaFinished,
+            arizonaRaceEnd,
             MISSION_JOURNEY.arizonaToKlasDurationMs,
             now
           );
         }
         if (arizonaRun) return missionJourneyRunnerDisplay("arizona-run", garminRunner);
-        if (lasVegasFinished !== null && now >= lasVegasFinished) {
+        if (now >= lasVegasRaceEnd) {
           return missionJourneyTravelDisplay(
             "drive-las-vegas-to-arizona",
             "lasVegasToArizona",
-            lasVegasFinished,
+            lasVegasRaceEnd,
             MISSION_JOURNEY.lasVegasToArizonaDurationMs,
             now
           );
@@ -1332,8 +1334,7 @@
         if (scheduledFlight?.from === "KMIA" && scheduledFlight?.to === "KATL") {
           return missionJourneyFlightDisplay(scheduledFlight, "flight-kmia-to-katl");
         }
-        const miamiFinished = missionJourneyTransitionMs("miami-race-finished", state);
-        if (now < miamiRaceStart || (miamiFinished !== null && now >= miamiFinished)) {
+        if (now < miamiRaceStart || now >= miamiRaceEnd) {
           return missionJourneyHotelDisplay(
             now < miamiRaceStart ? "fontainebleau-miami-before-race" : "fontainebleau-miami-after-race",
             MISSION_JOURNEY.coordinates.fontainebleauMiami,

@@ -49,7 +49,6 @@ function harness() {
     ${namedFunction(candidate, "missionGarminLiveFreshAt")}
     ${namedFunction(candidate, "missionDistanceKm")}
     ${namedFunction(candidate, "missionQualifiedGarminRunAt")}
-    ${namedFunction(candidate, "missionJourneyTransitionMs")}
     ${namedFunction(candidate, "decodeMissionPolyline6")}
     ${namedFunction(candidate, "missionRoutePosition")}
     ${namedFunction(candidate, "missionLosAngelesOriginAt")}
@@ -94,6 +93,9 @@ test("journey constants use the approved locations and authorized road estimates
   assert.deepEqual(journey.coordinates.fontainebleauMiami, { lat: 25.8180847, lng: -80.1220423 });
   assert.equal(journey.lasVegasToArizonaDurationMs, 80 * 60_000);
   assert.equal(journey.arizonaToKlasDurationMs, 110 * 60_000);
+  assert.equal(journey.lasVegasRaceEnd, "2026-10-21T15:30:00-07:00");
+  assert.equal(journey.arizonaRaceEnd, "2026-10-21T23:00:00-07:00");
+  assert.equal(journey.miamiRaceEnd, "2026-10-24T14:00:00-04:00");
 });
 
 test("Los Angeles departure changes exactly at 10 PM Pacific and uses the captured Garmin origin", () => {
@@ -112,48 +114,84 @@ test("Los Angeles departure changes exactly at 10 PM Pacific and uses the captur
   only(h.missionMarkerVisibility(atArrival, true), "hotel");
 });
 
-test("shared Las Vegas and Arizona finish timestamps drive, hold, and remain idempotent inputs", () => {
+test("Las Vegas and Arizona switch automatically at their definitive scheduled ends", () => {
   const h = harness();
-  const lasVegasFinishedAt = "2026-10-21T12:00:00-07:00";
-  const drivingState = structuredClone(emptyState);
-  drivingState.transitions["las-vegas-race-finished"] = transition(
-    "las-vegas-race-finished", lasVegasFinishedAt, "drive-las-vegas-to-arizona",
+  const legacyState = structuredClone(emptyState);
+  legacyState.transitions["las-vegas-race-finished"] = transition(
+    "las-vegas-race-finished", "2026-10-21T12:00:00-07:00", "drive-las-vegas-to-arizona",
   );
-  const start = h.missionJourneyDisplayStateAt(Date.parse(lasVegasFinishedAt), noGarmin, drivingState);
+  legacyState.transitions["arizona-race-finished"] = transition(
+    "arizona-race-finished", "2026-10-21T20:00:00-07:00", "drive-arizona-to-klas",
+  );
+  const lasVegasRunner = {
+    available: true,
+    validGpsFix: true,
+    kind: "fresh",
+    observedAt: "2026-10-21T15:30:00-07:00",
+    position: { ...h.MISSION_JOURNEY.coordinates.lasVegasRace },
+    trail: [],
+  };
+  assert.equal(
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-21T15:29:59.999-07:00"), lasVegasRunner, legacyState).phaseId,
+    "las-vegas-run",
+  );
+  const start = h.missionJourneyDisplayStateAt(
+    Date.parse(h.MISSION_JOURNEY.lasVegasRaceEnd), lasVegasRunner, legacyState,
+  );
+  assert.equal(start.phaseId, "drive-las-vegas-to-arizona");
   assert.equal(start.progress, 0);
-  const exactArrival = h.missionJourneyDisplayStateAt(Date.parse("2026-10-21T13:20:00-07:00"), noGarmin, drivingState);
+  only(h.missionMarkerVisibility(start, true), "rv");
+  assert.equal(
+    h.missionJourneyDisplayStateAt(Date.parse(h.MISSION_JOURNEY.lasVegasRaceEnd) + 1, lasVegasRunner, legacyState).phaseId,
+    "drive-las-vegas-to-arizona",
+  );
+  const exactArrival = h.missionJourneyDisplayStateAt(
+    Date.parse("2026-10-21T16:50:00-07:00"), lasVegasRunner, legacyState,
+  );
   assert.equal(exactArrival.kind, "drive-arrived");
   assert.deepEqual(exactArrival.position, h.MISSION_JOURNEY.coordinates.willowBeachHooverDam);
-  const held = h.missionJourneyDisplayStateAt(Date.parse("2026-10-21T17:59:59-07:00"), noGarmin, drivingState);
+  const held = h.missionJourneyDisplayStateAt(Date.parse("2026-10-21T17:59:59.999-07:00"), noGarmin, legacyState);
   assert.equal(held.progress, 1);
   only(h.missionMarkerVisibility(held, true), "rv");
 
-  drivingState.transitions["arizona-race-finished"] = transition(
-    "arizona-race-finished", "2026-10-21T20:00:00-07:00", "drive-arizona-to-klas",
+  const arizonaRunner = {
+    ...lasVegasRunner,
+    observedAt: "2026-10-21T23:00:00-07:00",
+    position: { ...h.MISSION_JOURNEY.coordinates.willowBeachHooverDam },
+  };
+  assert.equal(
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-21T22:59:59.999-07:00"), arizonaRunner, legacyState).phaseId,
+    "arizona-run",
   );
-  const klas = h.missionJourneyDisplayStateAt(Date.parse("2026-10-21T21:50:00-07:00"), noGarmin, drivingState);
+  const arizonaEnd = h.missionJourneyDisplayStateAt(
+    Date.parse(h.MISSION_JOURNEY.arizonaRaceEnd), arizonaRunner, legacyState,
+  );
+  assert.equal(arizonaEnd.phaseId, "drive-arizona-to-klas");
+  assert.equal(arizonaEnd.progress, 0);
+  only(h.missionMarkerVisibility(arizonaEnd, true), "rv");
+  assert.equal(
+    h.missionJourneyDisplayStateAt(Date.parse(h.MISSION_JOURNEY.arizonaRaceEnd) + 1, arizonaRunner, legacyState).phaseId,
+    "drive-arizona-to-klas",
+  );
+  const klas = h.missionJourneyDisplayStateAt(Date.parse("2026-10-22T00:50:00-07:00"), arizonaRunner, legacyState);
   assert.equal(klas.kind, "drive-arrived");
   assert.deepEqual(klas.position, h.MISSION_JOURNEY.coordinates.klas);
 });
 
-test("a qualified Arizona Garmin observation interrupts estimated driving and survives silence without an 11 PM cutoff", () => {
+test("subsequent Garmin fixes cannot reactivate either completed race", () => {
   const h = harness();
-  const state = structuredClone(emptyState);
-  state.transitions["las-vegas-race-finished"] = transition(
-    "las-vegas-race-finished", "2026-10-21T17:45:00-07:00", "drive-las-vegas-to-arizona",
-  );
   const runner = {
     available: true,
     validGpsFix: true,
-    kind: "stale",
-    observedAt: "2026-10-21T18:04:00-07:00",
+    kind: "fresh",
+    observedAt: "2026-10-22T04:59:00-07:00",
     position: { lat: 35.876, lng: -114.661 },
     trail: [],
   };
-  for (const instant of ["2026-10-21T18:05:00-07:00", "2026-10-21T23:00:00-07:00", "2026-10-22T04:59:59.999-07:00"]) {
-    const display = h.missionJourneyDisplayStateAt(Date.parse(instant), runner, state);
-    assert.equal(display.phaseId, "arizona-run", instant);
-    only(h.missionMarkerVisibility(display, true), "runner");
+  for (const instant of ["2026-10-21T23:00:00-07:00", "2026-10-22T00:50:00-07:00", "2026-10-22T04:59:59.999-07:00"]) {
+    const display = h.missionJourneyDisplayStateAt(Date.parse(instant), runner, emptyState);
+    assert.equal(display.phaseId, "drive-arizona-to-klas", instant);
+    only(h.missionMarkerVisibility(display, true), "rv");
   }
 });
 
@@ -165,15 +203,19 @@ test("the confirmed KLAS flight replaces every ground phase and expires exactly 
   );
   const departure = Date.parse("2026-10-22T05:00:00-07:00");
   const arrival = Date.parse("2026-10-22T09:42:00-05:00");
+  only(h.missionMarkerVisibility(h.missionJourneyDisplayStateAt(departure - 1, noGarmin, state), true), "rv");
   only(h.missionMarkerVisibility(h.missionJourneyDisplayStateAt(departure, noGarmin, state), true), "plane");
   only(h.missionMarkerVisibility(h.missionJourneyDisplayStateAt(arrival - 1, noGarmin, state), true), "plane");
   assert.equal(h.missionJourneyDisplayStateAt(arrival, noGarmin, state), null);
   assert.equal(h.missionJourneyDisplayStateAt(arrival + 1, noGarmin, state), null);
 });
 
-test("Miami hotel, race, finish, and flights transition at explicit Eastern instants", () => {
+test("Miami switches automatically to the hotel at the definitive end and flights retain precedence", () => {
   const h = harness();
   const state = structuredClone(emptyState);
+  state.transitions["miami-race-finished"] = transition(
+    "miami-race-finished", "2026-10-24T10:00:00-04:00", "fontainebleau-miami-hotel",
+  );
   const start = Date.parse("2026-10-23T21:00:00-04:00");
   assert.equal(h.missionJourneyDisplayStateAt(start - 1, noGarmin, state), null);
   only(h.missionMarkerVisibility(h.missionJourneyDisplayStateAt(start, noGarmin, state), true), "hotel");
@@ -186,19 +228,37 @@ test("Miami hotel, race, finish, and flights transition at explicit Eastern inst
   const race = h.missionJourneyDisplayStateAt(raceStart, noGarmin, state);
   assert.equal(race.phaseId, "miami-run");
   only(h.missionMarkerVisibility(race, true), "runner");
-  state.transitions["miami-race-finished"] = transition(
-    "miami-race-finished", "2026-10-24T13:30:00-04:00", "fontainebleau-miami-hotel",
+  const lateRunner = {
+    available: true,
+    validGpsFix: true,
+    kind: "fresh",
+    observedAt: "2026-10-24T14:01:00-04:00",
+    position: { ...h.MISSION_JOURNEY.coordinates.miamiRace },
+    trail: [],
+  };
+  only(h.missionMarkerVisibility(
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T13:59:59.999-04:00"), lateRunner, state), true,
+  ), "runner");
+  only(h.missionMarkerVisibility(
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T14:00:00-04:00"), lateRunner, state), true,
+  ), "hotel");
+  assert.equal(
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T14:01:00-04:00"), lateRunner, state).phaseId,
+    "fontainebleau-miami-after-race",
   );
   only(h.missionMarkerVisibility(
-    h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T13:30:00-04:00"), noGarmin, state), true,
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T16:20:59.999-04:00"), lateRunner, state), true,
   ), "hotel");
   only(h.missionMarkerVisibility(
     h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T16:21:00-04:00"), noGarmin, state), true,
   ), "plane");
+  only(h.missionMarkerVisibility(
+    h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T18:23:59.999-04:00"), noGarmin, state), true,
+  ), "plane");
   assert.equal(h.missionJourneyDisplayStateAt(Date.parse("2026-10-24T18:24:00-04:00"), noGarmin, state), null);
 });
 
-test("missing transition data cannot invent finishes and explicit offsets are viewer-timezone independent", () => {
+test("automatic scheduled finishes are viewer-timezone independent and ignore unavailable legacy state", () => {
   const h = harness();
   const unavailable = { available: false, transitions: {}, origins: {} };
   const equivalent = [
@@ -209,9 +269,54 @@ test("missing transition data cannot invent finishes and explicit offsets are vi
   ];
   for (const instant of equivalent) {
     const display = h.missionJourneyDisplayStateAt(Date.parse(instant), noGarmin, unavailable);
-    assert.equal(display.phaseId, "fontainebleau-las-vegas", instant);
-    only(h.missionMarkerVisibility(display, true), "hotel");
+    assert.equal(display.phaseId, "drive-las-vegas-to-arizona", instant);
+    only(h.missionMarkerVisibility(display, true), "rv");
   }
+});
+
+test("finish instants are explicit scheduler boundaries and background resume repaints immediately", () => {
+  const boundaries = constStatement(candidate, "MISSION_JOURNEY_BOUNDARIES");
+  for (const name of ["lasVegasRaceEnd", "arizonaRaceEnd", "miamiRaceEnd"]) {
+    assert.match(boundaries, new RegExp(`MISSION_JOURNEY\\.${name}`));
+  }
+  const scheduler = namedFunction(candidate, "createMissionAirportPlacementScheduler");
+  assert.match(scheduler, /visibilitychange/);
+  assert.match(scheduler, /onTransition\(Number\(now\(\)\)\)/);
+  assert.match(scheduler, /schedule\(\)/);
+
+  const boundary = Date.parse("2026-10-21T15:30:00-07:00");
+  let current = boundary - 1;
+  let scheduled = null;
+  const listeners = new Map();
+  const transitions = [];
+  const documentObject = {
+    hidden: false,
+    addEventListener(name, callback) { listeners.set(name, callback); },
+    removeEventListener(name) { listeners.delete(name); },
+  };
+  const create = new Function(`
+    const MISSION_AIRPORT_BOUNDARIES = [${boundary}];
+    const missionScheduledFlightAt = () => null;
+    const missionJourneyDisplayStateAt = () => ({ animate: false });
+    ${scheduler}
+    return createMissionAirportPlacementScheduler;
+  `)();
+  const instance = create({
+    onTransition: (now) => transitions.push(now),
+    now: () => current,
+    setTimeoutImpl: (callback, delay) => { scheduled = { callback, delay }; return 1; },
+    clearTimeoutImpl: () => { scheduled = null; },
+    documentObject,
+  });
+  instance.start();
+  assert.equal(scheduled.delay, 1);
+  current = boundary;
+  scheduled.callback();
+  assert.deepEqual(transitions, [boundary]);
+  current = boundary + 60_000;
+  listeners.get("visibilitychange")();
+  assert.deepEqual(transitions, [boundary, boundary + 60_000]);
+  instance.destroy();
 });
 
 test("rendering wires shared state before first paint and keeps all four subjects mutually exclusive", () => {

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "deploymentType": "static",
   "releaseType": "standard",
-  "description": "Add deterministic shared journey phases and exactly-one-subject marker selection for Los Angeles, Las Vegas, Willow Beach, KLAS, Arkansas, and Miami without changing the definitive mission clock schedule or independent feeds.",
+  "description": "Advance the Las Vegas, Willow Beach / Hoover Dam, and Miami journey phases automatically at the definitive scheduled race end times while preserving exactly-one-subject marker selection, the mission clock, and independent feeds.",
   "protectedPathsApproved": [
     "public_html/assets/tracker-base.js"
   ],
@@ -11,22 +11,22 @@
       "source": "assets/releases/live-map-journey-overrides-2026-10-18/tracker-base.js",
       "destination": "public_html/assets/tracker-base.js",
       "publicPath": "/assets/tracker-base.js",
-      "expectedSha256": "386cf061ccd29de6b75c7536f50c367feeac34e53c734d5671d47307b5b38c79",
-      "expectedRemoteSha256": "6bc58f5f5bcc3ded908a3b382078e5a04607c28a645ce31c57c7a73074099544"
+      "expectedSha256": "9e27a92988db9632df4c6174d155b9e2450a8bd9cbe250abee375826ce6b670a",
+      "expectedRemoteSha256": "386cf061ccd29de6b75c7536f50c367feeac34e53c734d5671d47307b5b38c79"
     },
     {
       "source": "live-map-journey-overrides-release-2026-10-18-index.html",
       "destination": "public_html/index.html",
       "publicPath": "/",
-      "expectedSha256": "d74920bdec45489c978eaf7849365f028c404cc98e2b0d40f1d8d3ccec7045a1",
-      "expectedRemoteSha256": "5ded2cb83e43fefb299a78cccbd5547f2f6bdfccaf2994a3bd042118941d8107"
+      "expectedSha256": "95e9f940555755a43ce301026bb91c4412a9b30d33564f0dab94c91d3c057384",
+      "expectedRemoteSha256": "d74920bdec45489c978eaf7849365f028c404cc98e2b0d40f1d8d3ccec7045a1"
     },
     {
       "source": "live-map-journey-overrides-release-2026-10-18-live-tracking.html",
       "destination": "public_html/live-tracking.html",
       "publicPath": "/live-tracking.html",
-      "expectedSha256": "d74920bdec45489c978eaf7849365f028c404cc98e2b0d40f1d8d3ccec7045a1",
-      "expectedRemoteSha256": "5ded2cb83e43fefb299a78cccbd5547f2f6bdfccaf2994a3bd042118941d8107"
+      "expectedSha256": "95e9f940555755a43ce301026bb91c4412a9b30d33564f0dab94c91d3c057384",
+      "expectedRemoteSha256": "d74920bdec45489c978eaf7849365f028c404cc98e2b0d40f1d8d3ccec7045a1"
     }
   ],
   "validation": {
