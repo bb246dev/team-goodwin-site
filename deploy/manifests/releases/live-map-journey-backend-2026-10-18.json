@@ -8,13 +8,14 @@
     "goodwin-node-test/app.js",
     "goodwin-node-test/lib/mysql-store.mjs",
     "goodwin-node-test/lib/routes.mjs",
+    "goodwin-node-test/lib/runtime-status.mjs",
     "goodwin-node-test/migrations/009_ggma_2026_match_coordinates_mariadb.sql"
   ],
   "files": [
     {
       "source": "dist/goodwin-strava-api/app.js",
       "destination": "goodwin-node-test/app.js",
-      "expectedSha256": "e2e7c16e4ef32c9526a03ec2281a23e8c6e2c23c9a9aaa2f68e5cd71d04c231b",
+      "expectedSha256": "49089bfe546b62f901a3b781e456fa7a4cf0e8eb9d94548cbb17883f6b101c69",
       "expectedRemoteSha256": "15bf00c814a8bbbcdad876316c5e7b122b6291cfcbf78733f722042a364cc13b"
     },
     {
@@ -26,8 +27,14 @@
     {
       "source": "dist/goodwin-strava-api/lib/routes.mjs",
       "destination": "goodwin-node-test/lib/routes.mjs",
-      "expectedSha256": "907e9c07c7c300a0a1662071da67f91000cdf13662de86646746c728d23836d9",
+      "expectedSha256": "a7c96c839ab06d97cdfabb3ff990dff2d419cebf3876bffd4f0e91ec5bec9282",
       "expectedRemoteSha256": "53772a0d2c199008e4488dd378ae736e34133eef127c0263eb4dbeec8fe0cf8a"
+    },
+    {
+      "source": "dist/goodwin-strava-api/lib/runtime-status.mjs",
+      "destination": "goodwin-node-test/lib/runtime-status.mjs",
+      "expectedSha256": "e0df4c3b7364eeca4c718890adc77a057f46ce6f4aa51679feadff4cdd6aa2fc",
+      "expectedRemoteSha256": "e0df4c3b7364eeca4c718890adc77a057f46ce6f4aa51679feadff4cdd6aa2fc"
     },
     {
       "source": "dist/goodwin-strava-api/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
@@ -48,8 +55,8 @@
       {
         "name": "Generic Strava health path",
         "path": "/strava/health",
-        "expectedStatus": 404,
-        "requiredJsonFields": ["error"]
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
       },
       {
         "name": "Shared journey state",
