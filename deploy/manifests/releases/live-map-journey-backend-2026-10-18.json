@@ -33,7 +33,7 @@
       "source": "dist/goodwin-strava-api/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
       "destination": "goodwin-node-test/migrations/009_ggma_2026_match_coordinates_mariadb.sql",
       "expectedSha256": "652de8ed9febb8a0412c14cfda0c288ae019018345bd31e2ded0429e3a82a95b",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "652de8ed9febb8a0412c14cfda0c288ae019018345bd31e2ded0429e3a82a95b"
     }
   ],
   "validation": {
