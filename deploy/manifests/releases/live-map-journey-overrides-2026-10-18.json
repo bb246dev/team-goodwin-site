@@ -46,10 +46,10 @@
     ],
     "apiChecks": [
       {
-        "name": "Required Strava backend health baseline remains unchanged",
+        "name": "Required Strava backend health is available",
         "path": "/strava/health",
-        "expectedStatus": 404,
-        "requiredJsonFields": ["error"]
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
       },
       {
         "name": "Shared journey state is available",
