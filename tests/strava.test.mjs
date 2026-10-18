@@ -73,6 +73,33 @@ test("connect and status require administrator credentials, not query-string sec
   assert.equal(s.store.states.size, 0);
 });
 
+test("runtime status remains authenticated and reports the approved process fields", async (t) => {
+  const s = setup(t);
+  const anonymous = await s.route("admin/runtime-status");
+  assert.equal(anonymous.status, 401);
+  assert.deepEqual(await anonymous.json(), { error: "unauthorized" });
+
+  const response = await s.route("admin/runtime-status", { headers: s.admin });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store, private");
+  assert.equal(response.headers.get("access-control-allow-origin"), null);
+  const payload = await response.json();
+  assert.deepEqual(Object.keys(payload).sort(), [
+    "pid",
+    "processStartedAt",
+    "processUptimeSeconds",
+    "raceWindowEnd",
+    "raceWindowModuleVersion",
+    "raceWindowStart",
+    "releaseGeneration",
+  ]);
+  assert.match(payload.releaseGeneration, /^[a-f0-9]{64}$/);
+  assert.equal(payload.pid, process.pid);
+  assert.ok(Number.isFinite(Date.parse(payload.processStartedAt)));
+  assert.ok(Number.isInteger(payload.processUptimeSeconds));
+  assert.match(payload.raceWindowModuleVersion, /^[a-f0-9]{64}$/);
+});
+
 test("administrator creates a hashed 24-hour athlete connection link without exposing admin credentials", async (t) => {
   const s = setup(t);
   const generated = await s.createConnectionLink();

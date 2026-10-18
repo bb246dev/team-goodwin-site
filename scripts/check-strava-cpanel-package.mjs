@@ -6,7 +6,8 @@ const required = [
   "passenger.cjs", "app.js", "package.json", "package-lock.json", "README.md",
   "lib/mysql-store.mjs",
   "lib/hapn-route.mjs", "lib/hapn-tracking-core.mjs",
-  "lib/race-matching.mjs", "lib/race-window.mjs", "lib/routes.mjs", "lib/security.mjs", "lib/service.mjs", "lib/store.mjs",
+  "lib/race-matching.mjs", "lib/race-window.mjs", "lib/routes.mjs", "lib/runtime-status.mjs",
+  "lib/security.mjs", "lib/service.mjs", "lib/store.mjs",
   "migrations/001_strava_oauth_mysql.sql", "migrations/002_strava_connection_links_mysql.sql",
   "migrations/003_strava_race_activity_candidates_mysql.sql",
   "migrations/004_ggma_race_schedule_mysql.sql",
@@ -44,7 +45,8 @@ const source = allFiles.map((path) => readFileSync(path, "utf8")).join("\n");
 const applicationSource = readFileSync(join(root, "app.js"), "utf8");
 for (const route of [
   "/api/strava/connect", "/api/strava/connect-link", "/api/strava/connect-athlete",
-  "/api/strava/callback", "/api/strava/status", "/api/strava/webhook", "/api/strava/journey-control",
+  "/api/strava/callback", "/api/strava/status", "/api/strava/webhook",
+  "/api/strava/admin/runtime-status", "/api/strava/journey-control",
 ]) {
   if (!source.includes(route)) throw new Error(`Deployment package is missing ${route}`);
 }
@@ -103,9 +105,11 @@ const routesSource = readFileSync(join(root, "lib/routes.mjs"), "utf8");
 const adminCheckIndex = routesSource.indexOf("!await authorizedAdmin(request, env)");
 const candidateResponseIndex = routesSource.indexOf("if (candidateReview)");
 const assignmentResponseIndex = routesSource.indexOf("if (candidateAssignment)");
+const runtimeDiagnosticResponseIndex = routesSource.indexOf("if (runtimeDiagnostic)");
 const journeyControlResponseIndex = routesSource.indexOf("if (journeyControl)");
 if (adminCheckIndex < 0 || candidateResponseIndex < 0 || assignmentResponseIndex < 0
-  || journeyControlResponseIndex < 0 || adminCheckIndex > candidateResponseIndex
+  || runtimeDiagnosticResponseIndex < 0 || journeyControlResponseIndex < 0
+  || adminCheckIndex > candidateResponseIndex || adminCheckIndex > runtimeDiagnosticResponseIndex
   || adminCheckIndex > assignmentResponseIndex || adminCheckIndex > journeyControlResponseIndex) {
   throw new Error("Candidate administration can be reached before the shared admin authentication check");
 }

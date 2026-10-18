@@ -10,6 +10,7 @@ import {
 import {
   operationalWindowAt, publicRaceResultsVisibleAt, raceWindowStatusAt,
 } from "./race-window.mjs";
+import { runtimeStatus } from "./runtime-status.mjs";
 
 const STATE_COOKIE = "__Host-goodwin-strava-state";
 const STATE_LIFETIME = 600;
@@ -55,7 +56,8 @@ const WEBHOOK_RETRY_DELAYS = [250, 1_000, 4_000, 10_000, 50_000];
 const ROUTES = new Set([
   "/api/strava/connect", "/api/strava/connect-link", "/api/strava/connect-athlete",
   "/api/strava/callback", "/api/strava/status", "/api/strava/webhook", "/api/strava/candidates",
-  "/api/strava/journey-control", "/api/strava/public/races", "/api/strava/public/race-status",
+  "/api/strava/admin/runtime-status", "/api/strava/journey-control",
+  "/api/strava/public/races", "/api/strava/public/race-status",
   "/api/strava/public/journey-state",
 ]);
 
@@ -558,6 +560,7 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
     const connectionLink = path === "/api/strava/connect-link";
     const athleteConnect = path === "/api/strava/connect-athlete";
     const candidateReview = path === "/api/strava/candidates";
+    const runtimeDiagnostic = path === "/api/strava/admin/runtime-status";
     const candidateAssignment = /^\/api\/strava\/candidates\/([1-9]\d{0,19})\/assign$/.exec(path);
     const journeyControl = path === "/api/strava/journey-control";
     const publicRaces = path === "/api/strava/public/races";
@@ -694,6 +697,7 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
         ...raceWindowStatusAt(timestamp),
       });
     }
+    if (runtimeDiagnostic) return stravaResponse(runtimeStatus());
     store ||= createStravaStore(env);
     if (journeyControl) {
       const timestamp = now();
