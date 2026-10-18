@@ -36,8 +36,10 @@ registration are separate, later operations.
    `strava_connection_links`, plus `strava_race_activity_candidates` and
    `ggma_race_schedule`, `strava_race_activity_matches`,
    `strava_webhook_events`, `strava_webhook_activity_state`,
-   `strava_webhook_rate_state`, and `strava_admin_auth_failures`. Confirm the
-   schedule contains exactly 50 rows numbered 1 through 50.
+   `strava_webhook_rate_state`, `strava_admin_auth_failures`, and
+   `ggma_journey_events`. Confirm the schedule contains exactly 50 rows numbered
+   1 through 50. Migration 009 creates the journey-events table idempotently;
+   application startup also verifies that it exists.
 
 MySQL/MariaDB is used because a Passenger application can run multiple Node
 processes. The transactional shared tables keep OAuth state and rotating refresh
@@ -170,6 +172,12 @@ the application listener port; the code does not bind to public ports 80 or 443.
   candidates that are both included and present in the one-to-one match table.
 - `GET /strava/public/race-status` is read-only and public. It returns the
   operational-window state and completed/total race counts.
+- `GET /strava/public/journey-state` is read-only and public. It returns only the
+  three explicit shared journey transitions and the one captured Los Angeles
+  departure origin used by the public map.
+- `GET|POST /strava/journey-control` requires the existing administrator auth.
+  It presents the shared journey state, requires a preview of the selected
+  explicit phase, and then applies that transition idempotently.
 - `GET /strava/public/tracking-status` is the read-only, same-origin HAPN API #2
   projection. It exposes only availability, staleness, observation time, and a
   rounded RV position while within retention. Unsupported methods return 405.
@@ -178,6 +186,25 @@ the application listener port; the code does not bind to public ports 80 or 443.
   the configured subscription and connected athlete can enqueue activity work.
   Event registration, deduplication, per-activity ordering/leases, and burst
   limits are shared through MariaDB across Passenger processes.
+
+## Shared journey finish controls
+
+Open `https://goodwingoodge.com/strava/journey-control` and authenticate with the
+existing Basic Auth credentials: username `strava` and the production
+`STRAVA_ADMIN_TOKEN` as the password. Choose one transition and click **Preview
+selected phase**. Confirm the displayed phase identifier and description, then
+click **Apply selected transition**:
+
+- `las-vegas-race-finished` starts the estimated Las Vegas race → Willow Beach /
+  Hoover Dam drive.
+- `arizona-race-finished` starts the estimated Willow Beach / Hoover Dam → KLAS
+  drive.
+- `miami-race-finished` moves the shared public phase to Fontainebleau Miami
+  Beach until the next flight departs.
+
+The first submission stores the server timestamp. Repeating the same submission
+is safe and retains that original timestamp for every visitor. These controls are
+not linked from the public map and do not use backend race numbers.
 
 ## GGMA 2026 operational window
 

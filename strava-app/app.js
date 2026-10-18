@@ -3,7 +3,13 @@ import { readFileSync } from "node:fs";
 import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
-import { handleStravaRequest, resumeWebhookEvents } from "./lib/routes.mjs";
+import {
+  LOS_ANGELES_DEPARTURE_CAPTURE_AT,
+  LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL,
+  captureLosAngelesDepartureOrigin,
+  handleStravaRequest,
+  resumeWebhookEvents,
+} from "./lib/routes.mjs";
 import { requiredSecret, StravaError, tokenEncryptionKey } from "./lib/security.mjs";
 import { STRAVA_PUBLIC_ORIGIN } from "./lib/service.mjs";
 import {
@@ -271,7 +277,7 @@ function mountedPath(rawUrl) {
     return `/api${url.pathname}${url.search}`;
   }
   // Passenger may instead strip the /strava mount prefix before app.js sees the request.
-  if (["/connect", "/connect-link", "/connect-athlete", "/callback", "/status", "/webhook", "/candidates"].includes(url.pathname)
+  if (["/connect", "/connect-link", "/connect-athlete", "/callback", "/status", "/webhook", "/candidates", "/journey-control"].includes(url.pathname)
     || url.pathname.startsWith("/candidates/") || url.pathname.startsWith("/public/")) {
     return `/api/strava${url.pathname}${url.search}`;
   }
@@ -328,6 +334,29 @@ export function createApplication({
       try { logger.info("strava_webhook_recovery_failed"); } catch { /* Logging is best effort. */ }
     }
   });
+
+  if (databasePool) {
+    const attemptDepartureCapture = async () => {
+      const current = Math.floor(currentDate(now).getTime() / 1000);
+      if (current > LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL) return;
+      let captured = null;
+      try {
+        captured = await captureLosAngelesDepartureOrigin(runtimeStore, {
+          fetchImpl,
+          now: () => Math.floor(currentDate(now).getTime() / 1000),
+        });
+      } catch {
+        try { logger.info("journey_departure_origin_capture_failed"); } catch { /* Logging is best effort. */ }
+      }
+      if (!captured && Math.floor(currentDate(now).getTime() / 1000) <= LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL) {
+        scheduleBackground(attemptDepartureCapture, 120_000);
+      }
+    };
+    const current = Math.floor(currentDate(now).getTime() / 1000);
+    if (current <= LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL) {
+      scheduleBackground(attemptDepartureCapture, Math.max(0, LOS_ANGELES_DEPARTURE_CAPTURE_AT - current) * 1000);
+    }
+  }
 
   const listener = async (incoming, outgoing) => {
     try {
@@ -468,6 +497,7 @@ export async function startApplication(processEnvironment = process.env) {
   let runtimeStore;
   try {
     runtimeStore = storeModule.createMySqlStravaStore(databasePool);
+    await runtimeStore.initialize();
     await runtimeStore.ping();
   } catch (error) {
     const categories = startupDiagnostics(error, env);

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Add deterministic shared journey phases and exactly-one-subject marker selection for Los Angeles, Las Vegas, Willow Beach, KLAS, Arkansas, and Miami without changing the definitive mission clock schedule or independent feeds.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-journey-overrides-2026-10-18/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "b34a21c220982acc295580f285c1f5421609c24643e45dd4ab6dca288f3baaea",
+      "expectedRemoteSha256": "6bc58f5f5bcc3ded908a3b382078e5a04607c28a645ce31c57c7a73074099544"
+    },
+    {
+      "source": "live-map-journey-overrides-release-2026-10-18-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "d74920bdec45489c978eaf7849365f028c404cc98e2b0d40f1d8d3ccec7045a1",
+      "expectedRemoteSha256": "5ded2cb83e43fefb299a78cccbd5547f2f6bdfccaf2994a3bd042118941d8107"
+    },
+    {
+      "source": "live-map-journey-overrides-release-2026-10-18-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "d74920bdec45489c978eaf7849365f028c404cc98e2b0d40f1d8d3ccec7045a1",
+      "expectedRemoteSha256": "5ded2cb83e43fefb299a78cccbd5547f2f6bdfccaf2994a3bd042118941d8107"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-journey-overrides.test.mjs",
+      "tests/mission-clock-race-schedule.test.mjs",
+      "tests/live-map-garmin-30m-freshness.test.mjs",
+      "tests/live-map-garmin-startup-gate.test.mjs",
+      "tests/live-map-flight-itinerary-rows-04-08.test.mjs",
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health baseline remains unchanged",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": ["error"]
+      },
+      {
+        "name": "Shared journey state is available",
+        "path": "/strava/public/journey-state",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "transitions", "origins"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}

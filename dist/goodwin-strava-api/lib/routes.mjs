@@ -23,13 +23,40 @@ const WEBHOOK_RATE_WINDOW_SECONDS = 60;
 const WEBHOOK_RATE_EVENT_LIMIT = 120;
 const ADMIN_RATE_WINDOW_SECONDS = 300;
 const ADMIN_RATE_FAILURE_LIMIT = 10;
+const LOS_ANGELES_RUN_START = Math.floor(Date.parse("2026-10-20T17:00:00-07:00") / 1000);
+export const LOS_ANGELES_DEPARTURE_CAPTURE_AT = Math.floor(Date.parse("2026-10-20T22:00:00-07:00") / 1000);
+export const LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL = LOS_ANGELES_DEPARTURE_CAPTURE_AT + 30 * 60;
+const LOS_ANGELES_ORIGIN_EVENT_ID = "los-angeles-departure-origin";
+const GARMIN_LOADER_URL = "https://share.garmin.com/Feed/ShareLoader/missionamerica";
+const GARMIN_PROXY_PATH = "/tracking-preview/garmin-feed.php";
+const JOURNEY_TRANSITIONS = Object.freeze({
+  "las-vegas-race-finished": Object.freeze({
+    transitionId: "las-vegas-race-finished",
+    label: "Las Vegas race finished → drive to Willow Beach / Hoover Dam",
+    nextPhase: "drive-las-vegas-to-arizona",
+    availableAt: Math.floor(Date.parse("2026-10-21T10:30:00-07:00") / 1000),
+  }),
+  "arizona-race-finished": Object.freeze({
+    transitionId: "arizona-race-finished",
+    label: "Arizona race finished → drive to KLAS",
+    nextPhase: "drive-arizona-to-klas",
+    availableAt: Math.floor(Date.parse("2026-10-21T18:00:00-07:00") / 1000),
+  }),
+  "miami-race-finished": Object.freeze({
+    transitionId: "miami-race-finished",
+    label: "Miami race finished → Fontainebleau Miami Beach",
+    nextPhase: "fontainebleau-miami-hotel",
+    availableAt: Math.floor(Date.parse("2026-10-24T09:00:00-04:00") / 1000),
+  }),
+});
 // The final retry crosses the 60-second lease boundary so a queued event can
 // reclaim work even when the preceding Passenger worker stalls until expiry.
 const WEBHOOK_RETRY_DELAYS = [250, 1_000, 4_000, 10_000, 50_000];
 const ROUTES = new Set([
   "/api/strava/connect", "/api/strava/connect-link", "/api/strava/connect-athlete",
   "/api/strava/callback", "/api/strava/status", "/api/strava/webhook", "/api/strava/candidates",
-  "/api/strava/public/races", "/api/strava/public/race-status",
+  "/api/strava/journey-control", "/api/strava/public/races", "/api/strava/public/race-status",
+  "/api/strava/public/journey-state",
 ]);
 
 function stravaResponse(body, status = 200, headers = {}) {
@@ -46,6 +73,176 @@ function stravaResponse(body, status = 200, headers = {}) {
   }
   values.set("Content-Type", "application/json; charset=utf-8");
   return new Response(JSON.stringify(body), { status, headers: values });
+}
+
+function htmlResponse(body, status = 200) {
+  return new Response(body, {
+    status,
+    headers: {
+      "Cache-Control": "no-store, private",
+      "Content-Security-Policy": "default-src 'none'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+      "Content-Type": "text/html; charset=utf-8",
+      "Referrer-Policy": "no-referrer",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]);
+}
+
+function isoSeconds(value) {
+  return new Date(Number(value) * 1000).toISOString();
+}
+
+function journeyPublicState(events) {
+  const byId = new Map(events.map((event) => [event.eventId, event]));
+  const transitions = Object.fromEntries(Object.keys(JOURNEY_TRANSITIONS).map((transitionId) => {
+    const event = byId.get(transitionId);
+    return [transitionId, event ? {
+      transitionId,
+      occurredAt: isoSeconds(event.occurredAt),
+      nextPhase: JOURNEY_TRANSITIONS[transitionId].nextPhase,
+    } : null];
+  }));
+  const origin = byId.get(LOS_ANGELES_ORIGIN_EVENT_ID);
+  return {
+    transitions,
+    origins: {
+      "los-angeles-departure": origin?.position ? {
+        capturedAt: isoSeconds(origin.occurredAt),
+        observedAt: isoSeconds(origin.sourceObservedAt),
+        position: origin.position,
+      } : null,
+    },
+  };
+}
+
+function decodeXmlText(value) {
+  return String(value).replace(/&(?:#(\d+)|#x([\da-f]+)|(amp|apos|gt|lt|quot));/gi,
+    (match, decimal, hexadecimal, named) => {
+      if (decimal) return String.fromCodePoint(Number(decimal));
+      if (hexadecimal) return String.fromCodePoint(Number.parseInt(hexadecimal, 16));
+      return { amp: "&", apos: "'", gt: ">", lt: "<", quot: '"' }[named.toLowerCase()];
+    });
+}
+
+function garminNetworkLink(xml) {
+  if (typeof xml !== "string" || /<!DOCTYPE|<!ENTITY/i.test(xml)) throw new Error("invalid_garmin_loader");
+  const href = decodeXmlText(xml.match(/<href>\s*([^<]+?)\s*<\/href>/i)?.[1] || "");
+  const url = new URL(href);
+  if (url.protocol !== "https:" || url.username || url.password || url.port || url.search || url.hash
+    || !/^[-a-z0-9]+-share\.explore\.garmin\.com$/i.test(url.hostname)
+    || url.pathname.toLowerCase() !== "/feed/share/missionamerica") {
+    throw new Error("invalid_garmin_loader");
+  }
+  return url.href;
+}
+
+function latestValidGarminFix(xml, nowSeconds, observedAtLimit = nowSeconds) {
+  if (typeof xml !== "string" || /<!DOCTYPE|<!ENTITY/i.test(xml)) throw new Error("invalid_garmin_feed");
+  const points = [...xml.matchAll(/<Placemark\b[\s\S]*?<\/Placemark>/gi)].flatMap(([placemark]) => {
+    if (!/<Data\b[^>]*\bname=["']Valid GPS Fix["'][^>]*>[\s\S]*?<value>\s*true\s*<\/value>/i.test(placemark)) return [];
+    const observedAt = Math.floor(Date.parse(placemark.match(/<when>\s*([^<]+?)\s*<\/when>/i)?.[1] || "") / 1000);
+    const point = placemark.match(/<Point\b[\s\S]*?<coordinates>\s*([^<]+?)\s*<\/coordinates>[\s\S]*?<\/Point>/i)?.[1];
+    const [lng, lat] = String(point || "").trim().split(",").map(Number);
+    if (!Number.isSafeInteger(observedAt) || observedAt <= 0 || observedAt > nowSeconds + 300
+      || observedAt > observedAtLimit
+      || !Number.isFinite(lat) || lat < -90 || lat > 90 || lat === 0
+      || !Number.isFinite(lng) || lng < -180 || lng > 180 || lng === 0) return [];
+    return [{ observedAt, position: { lat, lng } }];
+  });
+  return points.sort((left, right) => left.observedAt - right.observedAt).at(-1) || null;
+}
+
+async function fetchGarminKml(fetchImpl, target) {
+  const proxy = new URL(GARMIN_PROXY_PATH, STRAVA_PUBLIC_ORIGIN);
+  proxy.searchParams.set("url", target);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 4_000);
+  try {
+    const response = await fetchImpl(proxy, { headers: { Accept: "application/vnd.google-earth.kml+xml" }, signal: controller.signal });
+    if (!response?.ok) throw new Error("garmin_request_failed");
+    const text = await response.text();
+    if (!text || new TextEncoder().encode(text).byteLength > 2 * 1024 * 1024) throw new Error("garmin_response_invalid");
+    return text;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export async function captureLosAngelesDepartureOrigin(store, {
+  fetchImpl = fetch,
+  now = () => Math.floor(Date.now() / 1000),
+} = {}) {
+  const current = Number(now());
+  const events = await store.listJourneyEvents();
+  const existing = events.find((event) => event.eventId === LOS_ANGELES_ORIGIN_EVENT_ID);
+  if (existing) return existing;
+  if (!Number.isSafeInteger(current) || current < LOS_ANGELES_DEPARTURE_CAPTURE_AT
+    || current > LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL) return null;
+  const loader = await fetchGarminKml(fetchImpl, GARMIN_LOADER_URL);
+  const feed = await fetchGarminKml(fetchImpl, garminNetworkLink(loader));
+  const fix = latestValidGarminFix(feed, current, LOS_ANGELES_DEPARTURE_CAPTURE_AT);
+  if (!fix || fix.observedAt < LOS_ANGELES_RUN_START
+    || fix.position.lat < 33.4 || fix.position.lat > 34.6
+    || fix.position.lng < -119.0 || fix.position.lng > -117.3) return null;
+  const recorded = await store.recordJourneyEvent(LOS_ANGELES_ORIGIN_EVENT_ID, LOS_ANGELES_DEPARTURE_CAPTURE_AT, {
+    sourceObservedAt: fix.observedAt,
+    position: fix.position,
+  });
+  return recorded.event;
+}
+
+async function readJourneyControlPayload(request) {
+  const contentType = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
+  if (!["application/json", "application/x-www-form-urlencoded"].includes(contentType)) {
+    throw new StravaError("strava_admin_requires_json_or_form", 415);
+  }
+  const length = request.headers.get("content-length");
+  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_ADMIN_BODY_BYTES)) {
+    throw new StravaError("strava_admin_body_too_large", 413);
+  }
+  const text = await request.text();
+  if (new TextEncoder().encode(text).byteLength > MAX_ADMIN_BODY_BYTES) throw new StravaError("strava_admin_body_too_large", 413);
+  let payload;
+  try {
+    payload = contentType === "application/json" ? JSON.parse(text) : Object.fromEntries(new URLSearchParams(text));
+  } catch {
+    throw new StravaError("strava_invalid_journey_transition", 400);
+  }
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new StravaError("strava_invalid_journey_transition", 400);
+  const action = payload.action === "preview" ? "preview" : payload.action === "apply" ? "apply" : null;
+  const transitionId = typeof payload.transitionId === "string" ? payload.transitionId : "";
+  const confirmTransitionId = typeof payload.confirmTransitionId === "string" ? payload.confirmTransitionId : "";
+  if (!action || !JOURNEY_TRANSITIONS[transitionId]
+    || (action === "apply" && confirmTransitionId !== transitionId)) {
+    throw new StravaError("strava_invalid_journey_transition", 400);
+  }
+  return { action, transitionId };
+}
+
+function journeyControlPage(events, { previewId = null, result = null, nowSeconds } = {}) {
+  const byId = new Map(events.map((event) => [event.eventId, event]));
+  const options = Object.values(JOURNEY_TRANSITIONS).map((transition) =>
+    `<option value="${escapeHtml(transition.transitionId)}"${transition.transitionId === previewId ? " selected" : ""}>${escapeHtml(transition.label)}</option>`).join("");
+  const status = Object.values(JOURNEY_TRANSITIONS).map((transition) => {
+    const event = byId.get(transition.transitionId);
+    return `<li>${escapeHtml(transition.label)}: ${event ? `applied ${escapeHtml(isoSeconds(event.occurredAt))}` : "not applied"}</li>`;
+  }).join("");
+  let preview = "";
+  if (previewId) {
+    const selected = JOURNEY_TRANSITIONS[previewId];
+    const available = nowSeconds >= selected.availableAt;
+    preview = `<h2>Selected phase</h2><p><strong>${escapeHtml(selected.label)}</strong></p><p>Phase identifier: <code>${escapeHtml(selected.nextPhase)}</code></p>`
+      + (available ? `<form method="post"><input type="hidden" name="action" value="apply"><input type="hidden" name="transitionId" value="${escapeHtml(previewId)}"><input type="hidden" name="confirmTransitionId" value="${escapeHtml(previewId)}"><button type="submit">Apply selected transition</button></form>`
+        : `<p>This transition becomes available at ${escapeHtml(isoSeconds(selected.availableAt))}.</p>`);
+  }
+  const resultMarkup = result ? `<p><strong>${escapeHtml(result)}</strong></p>` : "";
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mission journey controls</title><body><main><h1>Mission journey controls</h1>${resultMarkup}<h2>Shared state</h2><ul>${status}</ul><form method="post"><label for="transitionId">Transition</label><select id="transitionId" name="transitionId">${options}</select><input type="hidden" name="action" value="preview"><button type="submit">Preview selected phase</button></form>${preview}</main></body></html>`;
 }
 
 function stateCookie(value, maxAge) {
@@ -362,13 +559,27 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
     const athleteConnect = path === "/api/strava/connect-athlete";
     const candidateReview = path === "/api/strava/candidates";
     const candidateAssignment = /^\/api\/strava\/candidates\/([1-9]\d{0,19})\/assign$/.exec(path);
+    const journeyControl = path === "/api/strava/journey-control";
     const publicRaces = path === "/api/strava/public/races";
     const publicRaceStatus = path === "/api/strava/public/race-status";
+    const publicJourneyState = path === "/api/strava/public/journey-state";
     if (!ROUTES.has(path) && !candidateAssignment) return stravaResponse({ error: "not_found" }, 404);
     const allowed = webhook ? ["GET", "POST"]
-      : connectionLink || candidateAssignment ? ["POST"] : ["GET"];
+      : journeyControl ? ["GET", "POST"]
+        : connectionLink || candidateAssignment ? ["POST"] : ["GET"];
     if (!allowed.includes(request.method)) {
       return stravaResponse({ error: "method_not_allowed" }, 405, { Allow: allowed.join(", ") });
+    }
+    if (publicJourneyState) {
+      const timestamp = now();
+      const store = createStravaStore(env);
+      if (timestamp >= LOS_ANGELES_DEPARTURE_CAPTURE_AT && timestamp <= LOS_ANGELES_DEPARTURE_CAPTURE_UNTIL) {
+        await captureLosAngelesDepartureOrigin(store, { fetchImpl: dependencies.fetchImpl, now }).catch(() => null);
+      }
+      return stravaResponse({
+        active: true,
+        ...journeyPublicState(await store.listJourneyEvents()),
+      }, 200, publicHeaders(request, timestamp));
     }
     if (publicRaces || publicRaceStatus) {
       const timestamp = now();
@@ -484,6 +695,32 @@ export async function handleStravaRequest(request, env = {}, dependencies = {}) 
       });
     }
     store ||= createStravaStore(env);
+    if (journeyControl) {
+      const timestamp = now();
+      const events = await store.listJourneyEvents();
+      if (request.method === "GET") return htmlResponse(journeyControlPage(events, { nowSeconds: timestamp }));
+      const origin = request.headers.get("origin");
+      if (origin && origin !== STRAVA_PUBLIC_ORIGIN) return stravaResponse({ error: "forbidden" }, 403);
+      const payload = await readJourneyControlPayload(request);
+      const transition = JOURNEY_TRANSITIONS[payload.transitionId];
+      const jsonRequest = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() === "application/json";
+      if (payload.action === "preview") {
+        if (jsonRequest) return stravaResponse({ selected: transition, existing: events.find((event) => event.eventId === payload.transitionId) || null });
+        return htmlResponse(journeyControlPage(events, { previewId: payload.transitionId, nowSeconds: timestamp }));
+      }
+      if (timestamp < transition.availableAt) throw new StravaError("strava_journey_transition_not_available", 409);
+      const recorded = await store.recordJourneyEvent(payload.transitionId, timestamp);
+      if (jsonRequest) return stravaResponse({
+        applied: true,
+        idempotentReplay: !recorded.created,
+        transition: journeyPublicState([recorded.event]).transitions[payload.transitionId],
+      });
+      const updatedEvents = await store.listJourneyEvents();
+      return htmlResponse(journeyControlPage(updatedEvents, {
+        nowSeconds: timestamp,
+        result: recorded.created ? "Transition applied for all visitors." : "Transition was already applied; the original timestamp is unchanged.",
+      }));
+    }
     if (candidateReview) {
       return stravaResponse({
         candidates: await store.listPendingRaceCandidates(),

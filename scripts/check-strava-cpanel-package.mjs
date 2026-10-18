@@ -44,7 +44,7 @@ const source = allFiles.map((path) => readFileSync(path, "utf8")).join("\n");
 const applicationSource = readFileSync(join(root, "app.js"), "utf8");
 for (const route of [
   "/api/strava/connect", "/api/strava/connect-link", "/api/strava/connect-athlete",
-  "/api/strava/callback", "/api/strava/status", "/api/strava/webhook",
+  "/api/strava/callback", "/api/strava/status", "/api/strava/webhook", "/api/strava/journey-control",
 ]) {
   if (!source.includes(route)) throw new Error(`Deployment package is missing ${route}`);
 }
@@ -74,7 +74,7 @@ for (const table of [
   "strava_connection", "strava_oauth_states", "strava_refresh_lock",
   "strava_connection_links", "strava_race_activity_candidates", "strava_race_activity_matches", "ggma_race_schedule",
   "strava_webhook_events", "strava_webhook_activity_state", "strava_webhook_rate_state",
-  "strava_admin_auth_failures",
+  "strava_admin_auth_failures", "ggma_journey_events",
 ]) {
   if (!source.includes(table)) throw new Error(`Deployment package is missing ${table}`);
 }
@@ -87,7 +87,7 @@ for (const statusField of ["raceWindowActive", "raceWindowId", "raceWindowStart"
 for (const route of ["/api/strava/candidates", "/assign"]) {
   if (!source.includes(route)) throw new Error(`Deployment package is missing admin review route: ${route}`);
 }
-for (const route of ["/api/strava/public/races", "/api/strava/public/race-status"]) {
+for (const route of ["/api/strava/public/races", "/api/strava/public/race-status", "/api/strava/public/journey-state"]) {
   if (!source.includes(route)) throw new Error(`Deployment package is missing public race route: ${route}`);
 }
 if (!source.includes("/api/strava/public/tracking-status")) {
@@ -103,8 +103,10 @@ const routesSource = readFileSync(join(root, "lib/routes.mjs"), "utf8");
 const adminCheckIndex = routesSource.indexOf("!await authorizedAdmin(request, env)");
 const candidateResponseIndex = routesSource.indexOf("if (candidateReview)");
 const assignmentResponseIndex = routesSource.indexOf("if (candidateAssignment)");
+const journeyControlResponseIndex = routesSource.indexOf("if (journeyControl)");
 if (adminCheckIndex < 0 || candidateResponseIndex < 0 || assignmentResponseIndex < 0
-  || adminCheckIndex > candidateResponseIndex || adminCheckIndex > assignmentResponseIndex) {
+  || journeyControlResponseIndex < 0 || adminCheckIndex > candidateResponseIndex
+  || adminCheckIndex > assignmentResponseIndex || adminCheckIndex > journeyControlResponseIndex) {
   throw new Error("Candidate administration can be reached before the shared admin authentication check");
 }
 const seed = readFileSync(join(root, "seeds/001_ggma_2026_race_schedule_mysql.sql"), "utf8");

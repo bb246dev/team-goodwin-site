@@ -93,11 +93,43 @@ function publicActivity(row) {
   };
 }
 
+function journeyEventRow(row) {
+  if (!row || typeof row.event_id !== "string") return null;
+  const occurredAt = Number(row.occurred_at);
+  const sourceObservedAt = row.source_observed_at === null ? null : Number(row.source_observed_at);
+  if (!Number.isSafeInteger(occurredAt) || occurredAt <= 0
+    || (sourceObservedAt !== null && (!Number.isSafeInteger(sourceObservedAt) || sourceObservedAt <= 0))) {
+    throw new StravaError("strava_storage_unavailable");
+  }
+  const position = publicCoordinatePair(row.latitude, row.longitude);
+  return {
+    eventId: row.event_id,
+    occurredAt,
+    sourceObservedAt,
+    position: position ? { lat: position[0], lng: position[1] } : null,
+  };
+}
+
 export function createMySqlStravaStore(pool) {
   if (!pool || typeof pool.execute !== "function" || typeof pool.getConnection !== "function") {
     throw new StravaError("strava_storage_unavailable");
   }
   return {
+    async initialize() {
+      await pool.execute(
+        `CREATE TABLE IF NOT EXISTS ggma_journey_events (
+           event_id VARCHAR(64) NOT NULL,
+           occurred_at BIGINT UNSIGNED NOT NULL,
+           source_observed_at BIGINT UNSIGNED NULL,
+           latitude DECIMAL(9,6) NULL,
+           longitude DECIMAL(10,6) NULL,
+           created_at BIGINT UNSIGNED NOT NULL,
+           PRIMARY KEY (event_id),
+           KEY ggma_journey_events_occurred (occurred_at)
+         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+      );
+    },
+
     async ping() {
       await pool.execute("SELECT 1 FROM strava_connection LIMIT 0");
       await pool.execute("SELECT 1 FROM strava_oauth_states LIMIT 0");
@@ -113,6 +145,7 @@ export function createMySqlStravaStore(pool) {
       await pool.execute("SELECT 1 FROM strava_webhook_activity_state LIMIT 0");
       await pool.execute("SELECT 1 FROM strava_webhook_rate_state LIMIT 0");
       await pool.execute("SELECT 1 FROM strava_admin_auth_failures LIMIT 0");
+      await pool.execute("SELECT 1 FROM ggma_journey_events LIMIT 0");
       const [schedule] = await pool.execute(
         `SELECT COUNT(*) AS race_count, COUNT(DISTINCT race_number) AS number_count,
            MIN(race_number) AS first_race, MAX(race_number) AS last_race
@@ -514,6 +547,32 @@ export function createMySqlStravaStore(pool) {
 
     async clearAdminAuthFailures(clientKey) {
       await pool.execute("DELETE FROM strava_admin_auth_failures WHERE client_key = ?", [clientKey]);
+    },
+
+    async listJourneyEvents() {
+      const [rows] = await pool.execute(
+        `SELECT event_id, occurred_at, source_observed_at, latitude, longitude
+         FROM ggma_journey_events ORDER BY occurred_at, event_id`,
+      );
+      return rows.map(journeyEventRow);
+    },
+
+    async recordJourneyEvent(eventId, occurredAt, details = {}) {
+      const sourceObservedAt = details.sourceObservedAt ?? null;
+      const latitude = details.position?.lat ?? null;
+      const longitude = details.position?.lng ?? null;
+      const [result] = await pool.execute(
+        `INSERT IGNORE INTO ggma_journey_events
+           (event_id, occurred_at, source_observed_at, latitude, longitude, created_at)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [eventId, occurredAt, sourceObservedAt, latitude, longitude, occurredAt],
+      );
+      const [rows] = await pool.execute(
+        `SELECT event_id, occurred_at, source_observed_at, latitude, longitude
+         FROM ggma_journey_events WHERE event_id = ? LIMIT 1`,
+        [eventId],
+      );
+      return { created: Number(result.affectedRows) === 1, event: journeyEventRow(rows[0]) };
     },
 
     async assignRaceCandidate(activityId, raceId, now) {

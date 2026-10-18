@@ -4,6 +4,19 @@
 -- Safe to rerun: coordinate writes are deterministic, the match table enforces
 -- one race per activity, and only still-pending candidates are reconciled.
 
+-- Shared, explicit journey events back the authenticated temporary phase controls.
+-- INSERT IGNORE in the application makes the first transition timestamp immutable.
+CREATE TABLE IF NOT EXISTS ggma_journey_events (
+  event_id VARCHAR(64) NOT NULL,
+  occurred_at BIGINT UNSIGNED NOT NULL,
+  source_observed_at BIGINT UNSIGNED NULL,
+  latitude DECIMAL(9,6) NULL,
+  longitude DECIMAL(10,6) NULL,
+  created_at BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (event_id),
+  KEY ggma_journey_events_occurred (occurred_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 START TRANSACTION;
 
 UPDATE ggma_race_schedule AS race_schedule

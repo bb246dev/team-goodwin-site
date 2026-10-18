@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Provision the two reviewed transparent hotel marker assets required by the temporary Los Angeles, Las Vegas, Arizona, and Miami journey phases after independently confirming both production URLs return HTTP 404.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "assets/releases/live-map-journey-overrides-2026-10-18/map-hotel-fontainebleau-las-vegas.png",
+      "destination": "public_html/assets/map-hotel-fontainebleau-las-vegas.png",
+      "publicPath": "/assets/map-hotel-fontainebleau-las-vegas.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "ccda40f5f3dd3bc43fdd8d2c71977ad0cd028720f6e389f25250e9d00d26fbd8",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "assets/releases/live-map-journey-overrides-2026-10-18/map-hotel-fontainebleau-miami.png",
+      "destination": "public_html/assets/map-hotel-fontainebleau-miami.png",
+      "publicPath": "/assets/map-hotel-fontainebleau-miami.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "14dbfbad9d3352b91e0159ec098c3bf94f8caa5f8814a46d9c994def72ce1f61",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-journey-overrides.test.mjs",
+      "tests/static-provision.test.mjs"
+    ],
+    "browserRoutes": [
+      "/live-tracking.html"
+    ],
+    "apiChecks": []
+  }
+}

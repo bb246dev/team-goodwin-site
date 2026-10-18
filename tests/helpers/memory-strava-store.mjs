@@ -10,6 +10,7 @@ export function createMemoryStravaStore(now) {
   const webhookEvents = new Map();
   const webhookActivityState = new Map();
   const adminAuthFailures = new Map();
+  const journeyEvents = new Map();
   let webhookRateState = null;
   let raceSchedule = [];
   let connection = null;
@@ -18,6 +19,7 @@ export function createMemoryStravaStore(now) {
   return {
     states,
     async ping() {},
+    async initialize() {},
     async listRaceSchedule() {
       return copy(raceSchedule);
     },
@@ -239,6 +241,21 @@ export function createMemoryStravaStore(now) {
     async clearAdminAuthFailures(clientKey) {
       adminAuthFailures.delete(clientKey);
     },
+    async listJourneyEvents() {
+      return copy([...journeyEvents.values()].sort((left, right) => left.occurredAt - right.occurredAt));
+    },
+    async recordJourneyEvent(eventId, occurredAt, details = {}) {
+      const previous = journeyEvents.get(eventId);
+      if (previous) return { created: false, event: copy(previous) };
+      const event = {
+        eventId,
+        occurredAt,
+        sourceObservedAt: details.sourceObservedAt ?? null,
+        position: details.position ? copy(details.position) : null,
+      };
+      journeyEvents.set(eventId, event);
+      return { created: true, event: copy(event) };
+    },
     async assignRaceCandidate(activityId, raceId, current) {
       const candidate = raceCandidates.get(activityId);
       const race = raceSchedule.find((item) => item.id === raceId && item.status === "scheduled");
@@ -319,6 +336,7 @@ export function createMemoryStravaStore(now) {
     inspectWebhookActivityState: () => copy([...webhookActivityState.entries()]),
     inspectWebhookRateState: () => copy(webhookRateState),
     inspectAdminAuthFailures: () => copy([...adminAuthFailures.entries()]),
+    inspectJourneyEvents: () => copy([...journeyEvents.values()]),
     inspectLock: () => copy(lock),
     expireLock: () => { if (lock) lock.expires_at = 0; },
     failNextSaves: (count) => { failedSaves = count; },
