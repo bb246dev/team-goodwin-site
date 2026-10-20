@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Replace the obsolete October 20 AA1360 flight with Delta DL766 KDTW to KLAS, show only the plane in flight, then hold the Fontainebleau Las Vegas hotel between definitive scheduled Garmin-qualified runs until the unchanged KLAS to KLIT flight restores normal marker rules.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/live-map-dl766-las-vegas-2026-10-20/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "fe9b06aebe6890b0b84eace534dc634e39e55819f0c1751c110d2f159fb8379c",
+      "expectedRemoteSha256": "9e27a92988db9632df4c6174d155b9e2450a8bd9cbe250abee375826ce6b670a"
+    },
+    {
+      "source": "live-map-dl766-las-vegas-release-2026-10-20-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "cf643ef6df4fc42b0a06ffe1a8007477c5375bb9051e3cb41abdaf75e35cb7a6",
+      "expectedRemoteSha256": "95e9f940555755a43ce301026bb91c4412a9b30d33564f0dab94c91d3c057384"
+    },
+    {
+      "source": "live-map-dl766-las-vegas-release-2026-10-20-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "cf643ef6df4fc42b0a06ffe1a8007477c5375bb9051e3cb41abdaf75e35cb7a6",
+      "expectedRemoteSha256": "95e9f940555755a43ce301026bb91c4412a9b30d33564f0dab94c91d3c057384"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/live-map-dl766-las-vegas.test.mjs",
+      "tests/mission-clock-race-schedule.test.mjs",
+      "tests/live-map-garmin-30m-freshness.test.mjs",
+      "tests/live-map-garmin-startup-gate.test.mjs",
+      "tests/live-map-flight-itinerary-rows-04-08.test.mjs",
+      "tests/live-map-single-status-marker.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health is available",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
+      },
+      {
+        "name": "Shared journey state is available",
+        "path": "/strava/public/journey-state",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "transitions", "origins"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
