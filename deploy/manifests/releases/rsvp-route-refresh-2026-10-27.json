@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Update only the October 27 through November 1 RSVP route order, dates, cities, and matching map coordinates while preserving the current live-map, Garmin, flight, journey, and form behavior.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js",
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/rsvp-route-refresh-2026-10-27/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "173235835b1613f50199559e7c73e5c9ccaf3d4b9222b57dc4e2ccc8299495a8",
+      "expectedRemoteSha256": "fe9b06aebe6890b0b84eace534dc634e39e55819f0c1751c110d2f159fb8379c"
+    },
+    {
+      "source": "assets/releases/rsvp-route-refresh-2026-10-27/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "fbcface13ac7f2bdbfface204c6f06a3bdc3ebb9cef153ea386b27f50093a1dc",
+      "expectedRemoteSha256": "3f476d314f48615ee0f9ae8dca165f2d940ef8d0b5a84651bb303711573125ca"
+    },
+    {
+      "source": "rsvp-route-refresh-release-2026-10-27-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "c11a17fd4a2aa1e45dbc9394d789af21d943289ceb806b88038561b48a81a254",
+      "expectedRemoteSha256": "cf643ef6df4fc42b0a06ffe1a8007477c5375bb9051e3cb41abdaf75e35cb7a6"
+    },
+    {
+      "source": "rsvp-route-refresh-release-2026-10-27-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "c11a17fd4a2aa1e45dbc9394d789af21d943289ceb806b88038561b48a81a254",
+      "expectedRemoteSha256": "cf643ef6df4fc42b0a06ffe1a8007477c5375bb9051e3cb41abdaf75e35cb7a6"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/rsvp-route-refresh.test.mjs",
+      "tests/live-map-dl766-las-vegas.test.mjs",
+      "tests/mission-clock-race-schedule.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health is available",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
