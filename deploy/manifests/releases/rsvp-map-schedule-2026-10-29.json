@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Update the final five RSVP and live-map stops to the October 29 schedule: Boston at 10:00 AM, Portsmouth at 5:00 PM, Kittery at 6:30 AM, Springfield at 2:00 PM, and New York City at 7:00 AM, with matching dates, coordinates, API display overrides, and mission-clock timing.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js",
+    "public_html/assets/strava-race-map.mjs"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/rsvp-map-schedule-2026-10-29/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "fc691354a90e3fb5c9119f020f09cd89a1022e40f6116a1571855a40e4315b06",
+      "expectedRemoteSha256": "173235835b1613f50199559e7c73e5c9ccaf3d4b9222b57dc4e2ccc8299495a8"
+    },
+    {
+      "source": "assets/releases/rsvp-map-schedule-2026-10-29/strava-race-map.mjs",
+      "destination": "public_html/assets/strava-race-map.mjs",
+      "publicPath": "/assets/strava-race-map.mjs",
+      "expectedSha256": "546de5ab4b71b9556515cdbc9ff6d3cb14c9e094cde1d020ba7d40feeee890a0",
+      "expectedRemoteSha256": "fbcface13ac7f2bdbfface204c6f06a3bdc3ebb9cef153ea386b27f50093a1dc"
+    },
+    {
+      "source": "rsvp-map-schedule-release-2026-10-29-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "38824166a28cd01f49475392fa880619424ba34d2273dc2eab073b970def8797",
+      "expectedRemoteSha256": "c11a17fd4a2aa1e45dbc9394d789af21d943289ceb806b88038561b48a81a254"
+    },
+    {
+      "source": "rsvp-map-schedule-release-2026-10-29-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "38824166a28cd01f49475392fa880619424ba34d2273dc2eab073b970def8797",
+      "expectedRemoteSha256": "c11a17fd4a2aa1e45dbc9394d789af21d943289ceb806b88038561b48a81a254"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/rsvp-map-schedule-2026-10-29.test.mjs",
+      "tests/live-map-dl766-las-vegas.test.mjs",
+      "tests/mission-clock-race-schedule.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health is available",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
