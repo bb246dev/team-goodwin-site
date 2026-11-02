@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Set the completed Mission Clock to the official confirmed duration of 22 days, 17 hours, 16 minutes, and 34 seconds, and refresh only the tracker cache key on the two public entry pages.",
+  "protectedPathsApproved": [
+    "public_html/assets/tracker-base.js"
+  ],
+  "files": [
+    {
+      "source": "assets/releases/mission-clock-final-2026-11-02/tracker-base.js",
+      "destination": "public_html/assets/tracker-base.js",
+      "publicPath": "/assets/tracker-base.js",
+      "expectedSha256": "3a0015799943932cb54c417c6d759e651ef66a5e23d2a7bd4fefcc0e59e8c271",
+      "expectedRemoteSha256": "fc691354a90e3fb5c9119f020f09cd89a1022e40f6116a1571855a40e4315b06"
+    },
+    {
+      "source": "mission-clock-final-release-2026-11-02-index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f",
+      "expectedRemoteSha256": "38824166a28cd01f49475392fa880619424ba34d2273dc2eab073b970def8797"
+    },
+    {
+      "source": "mission-clock-final-release-2026-11-02-live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f",
+      "expectedRemoteSha256": "38824166a28cd01f49475392fa880619424ba34d2273dc2eab073b970def8797"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/mission-clock-final-2026-11-02.test.mjs",
+      "tests/rsvp-map-schedule-2026-10-29.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/live-tracking.html",
+      "/live-tracking/"
+    ],
+    "apiChecks": [
+      {
+        "name": "Required Strava backend health is available",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
+      },
+      {
+        "name": "Public Strava completed count remains available",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "completedRaces", "totalRaces"]
+      },
+      {
+        "name": "Independent HAPN public RV tracking remains available",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      },
+      {
+        "name": "Garmin same-origin proxy target guard",
+        "path": "/tracking-preview/garmin-feed.php",
+        "expectedStatus": 400,
+        "requiredJsonFields": []
+      }
+    ]
+  }
+}
