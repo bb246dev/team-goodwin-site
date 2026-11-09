@@ -88,7 +88,13 @@ export function createFtpsClient(env = process.env, { createDirectories = false 
       throw new Error(`FTPS download failed for ${destination} (curl ${result.status}): ${result.stderr.trim() || "no diagnostic"}`);
     },
     async upload(localPath, destination) {
-      const result = await runCurl(configuration, ["--fail", ...(createDirectories ? ["--ftp-create-dirs"] : []), "--upload-file", localPath, remoteUrl(configuration, destination)]);
+      // cPanel FTP accounts commonly reject a single CWD into a missing nested
+      // path. When provisioning is explicitly enabled, walk the hierarchy so
+      // curl can create each missing directory before uploading the file.
+      const directoryArguments = createDirectories
+        ? ["--ftp-create-dirs", "--ftp-method", "multicwd"]
+        : [];
+      const result = await runCurl(configuration, ["--fail", ...directoryArguments, "--upload-file", localPath, remoteUrl(configuration, destination)]);
       if (result.status !== 0) throw new Error(`FTPS upload failed for ${destination} (curl ${result.status}): ${result.stderr.trim() || "no diagnostic"}`);
     },
   };
