@@ -12,8 +12,10 @@ const built = read("dist/index.html");
 
 test("rebuild homepage uses central final event facts and the verified Hawaii route", () => {
   assert.equal(content.achievement.elapsed.display, "22:17:16:34");
-  assert.equal(content.achievement.elapsed.status, "final-event-time");
+  assert.equal(content.achievement.elapsed.status, "guinness-world-record-title-confirmed");
   assert.equal(content.achievement.miles, 1310);
+  assert.equal(content.achievement.verification.organization, "Guinness World Records");
+  assert.equal(content.achievement.verification.badgeStatus, "licensed-artwork-required");
   assert.equal(content.journey.start.state, "Hawaii");
   assert.equal(content.journey.finish.city, "New York City");
   assert.match(source, /data-content-key="elapsedDisplay">22:17:16:34/);
@@ -23,14 +25,17 @@ test("rebuild homepage uses central final event facts and the verified Hawaii ro
   assert.match(build, /data-content-key/);
 });
 
-test("rebuild homepage follows the required content structure without an unapproved certification badge", () => {
+test("rebuild homepage presents the confirmed title with an official source but no unlicensed badge", () => {
   for (const id of ["home", "record", "story", "goodwin", "film", "legacy"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
   assert.match(source, /Mission<br>accomplished\./i);
   assert.match(source, /Impossible is just<br>a logistics problem\./i);
-  assert.doesNotMatch(source, /guinness/i);
-  assert.doesNotMatch(source, /official world record/i);
+  assert.match(source, /One world record\./i);
+  assert.match(source, /achieved the Guinness World Records title/i);
+  assert.match(source, /class="record-verification-source"[^>]+guinnessworldrecords\.com\/news\/commercial\/2026\/11\//i);
+  assert.match(source, /Insert an official record-holder badge here only when licensed artwork is supplied and approved/);
+  assert.doesNotMatch(source, /<img[^>]+(?:guinness|gwr|record-holder-badge)/i);
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
   assert.doesNotMatch(source, /legacy-brand|brand-wordmark/);
   assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
@@ -126,6 +131,7 @@ test("built review homepage resolves central content and ships its local media",
   assert.match(built, /22:17:16:34/);
   assert.match(built, /1,310/);
   assert.match(built, /Honolulu, Hawaii/);
+  assert.match(built, /Guinness World Records title/);
   assert.doesNotMatch(built, /{{[A-Za-z0-9]+}}/);
   assert.match(built, /<nav class="site-footer-nav" aria-label="Footer navigation">/);
   for (const asset of [

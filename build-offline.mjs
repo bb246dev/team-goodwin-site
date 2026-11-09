@@ -52,6 +52,8 @@ function renderRebuildHomepage(html) {
     elapsedDaysLabel: `${achievement.elapsed.days} days`,
     elapsedBreakdown: `${achievement.elapsed.hours} hours, ${achievement.elapsed.minutes} minutes, ${achievement.elapsed.seconds} seconds`,
     recordClaim: achievement.recordClaim,
+    recordVerifier: achievement.verification.organization,
+    recordAnnouncementDate: achievement.verification.announcementDate,
     recordStatus: achievement.recordStatus,
     startCity: journey.start.city,
     startState: journey.start.state,

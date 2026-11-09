@@ -90,7 +90,15 @@ section[id] { scroll-margin-top: var(--header-height); }
 .section-copy h2, .people-heading h2, .goodwin-content h2, .legacy-copy h2 { font-size: var(--section-heading-size); line-height: var(--section-heading-line-height); }
 .brand-rule { width: 105px; height: 2px; margin: 29px 0; background: var(--green); }
 .section-copy p, .goodwin-content p, .legacy-copy p { max-width: 620px; margin: 0 0 18px; color: rgba(255,255,255,.76); font-size: clamp(.98rem, 1.3vw, 1.16rem); line-height: 1.65; }
-.section-copy .verification-note { margin-top: 6px; padding: 17px 20px; border-left: 2px solid var(--gold); background: rgba(255,255,255,.04); color: rgba(255,255,255,.62); font-size: .78rem; }
+.record-verification { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(170px, .65fr); gap: 1px; max-width: 680px; margin-top: 8px; border: 1px solid rgba(188,162,115,.48); background: rgba(188,162,115,.48); }
+.record-verification-copy { padding: 20px 22px; background: rgba(3,3,3,.72); }
+.record-verification .record-verification-kicker { margin: 0 0 9px; color: var(--gold); font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.record-verification-copy p:last-child { margin: 0; color: rgba(255,255,255,.8); font-size: .8rem; line-height: 1.55; }
+.record-verification-source { display: flex; min-height: 100%; flex-direction: column; justify-content: center; gap: 7px; padding: 20px; background: linear-gradient(145deg, rgba(20,63,60,.96), rgba(6,18,14,.98)); text-decoration: none; transition: background 180ms ease; }
+.record-verification-source:hover, .record-verification-source:focus-visible { background: linear-gradient(145deg, rgba(28,111,74,.96), rgba(6,18,14,.98)); }
+.record-verification-source > span { color: var(--gold); font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.record-verification-source > strong { font-size: .92rem; line-height: 1.15; text-transform: uppercase; }
+.record-verification-source small { color: rgba(255,255,255,.64); font-size: .58rem; line-height: 1.4; }
 .text-link { width: fit-content; margin-top: 15px; padding-bottom: 7px; border-bottom: 1px solid var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .11em; text-decoration: none; text-transform: uppercase; }
 
 .people-section { display: grid; grid-template-columns: .85fr 1.55fr; gap: clamp(35px, 6vw, 100px); padding: clamp(82px, 9vw, 140px) var(--gutter); background: var(--paper); color: var(--black); }
@@ -233,6 +241,8 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .achievement-time strong { font-size: 1.9rem; }
   .achievement-item span { font-size: .58rem; }
   .section-copy { min-height: 0; }
+  .record-verification { grid-template-columns: 1fr; }
+  .record-verification-source { min-height: 132px; }
   .story-route { right: 12px; bottom: 12px; left: 12px; font-size: .5rem; }
   .story-route { grid-template-columns: 1fr; gap: 7px; }
   .story-route i { width: 100%; }

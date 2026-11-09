@@ -10,11 +10,18 @@
       "minutes": 16,
       "seconds": 34,
       "display": "22:17:16:34",
-      "status": "final-event-time",
-      "label": "Final Mission America time"
+      "status": "guinness-world-record-title-confirmed",
+      "label": "World-record time"
     },
-    "recordClaim": "Mission America recorded a 22-day, 17-hour, 16-minute and 34-second completion across all 50 U.S. states.",
-    "recordStatus": "Mission complete · November 1, 2026"
+    "recordTitle": "Fastest time to run a marathon distance in all 50 U.S. states",
+    "recordClaim": "William Goodge achieved the Guinness World Records title for the fastest time to run a marathon distance in all 50 U.S. states: 22 days, 17 hours, 16 minutes and 34 seconds.",
+    "recordStatus": "World record confirmed · November 1, 2026",
+    "verification": {
+      "organization": "Guinness World Records",
+      "announcementDate": "November 6, 2026",
+      "sourceUrl": "https://www.guinnessworldrecords.com/news/commercial/2026/11/athlete-runs-marathon-in-all-50-states-to-break-record-raise-funds-for-cancer-research",
+      "badgeStatus": "licensed-artwork-required"
+    }
   },
   "journey": {
     "start": {
@@ -30,6 +37,7 @@
   },
   "sources": {
     "route": "Existing Mission America itinerary and public route data",
-    "elapsed": "Repository mission-clock final-state test and recorded event finish timestamp"
+    "elapsed": "Guinness World Records official announcement, November 6, 2026",
+    "record": "https://www.guinnessworldrecords.com/news/commercial/2026/11/athlete-runs-marathon-in-all-50-states-to-break-record-raise-funds-for-cancer-research"
   }
 }
