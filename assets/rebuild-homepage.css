@@ -20,6 +20,9 @@
   --header-height: 86px;
   --font-sans: "Inter", Arial, sans-serif;
   --font-display: "Inter", Arial, sans-serif;
+  --body-copy-size: clamp(.98rem, 1.3vw, 1.16rem);
+  --body-copy-line-height: 1.6;
+  --body-copy-letter-spacing: 0;
   --section-heading-size: clamp(3rem, 5.4vw, 6rem);
   --section-heading-line-height: .88;
 }
@@ -89,7 +92,8 @@ section[id] { scroll-margin-top: var(--header-height); }
 .section-copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(68px, 8vw, 124px) var(--gutter); background: linear-gradient(135deg, #0b211a, #020706); }
 .section-copy h2, .people-heading h2, .goodwin-content h2, .legacy-copy h2 { font-size: var(--section-heading-size); line-height: var(--section-heading-line-height); }
 .brand-rule { width: 105px; height: 2px; margin: 29px 0; background: var(--green); }
-.section-copy p, .goodwin-content p, .legacy-copy p { max-width: 620px; margin: 0 0 18px; color: rgba(255,255,255,.76); font-size: clamp(.98rem, 1.3vw, 1.16rem); line-height: 1.65; }
+.section-copy p, .people-heading p, .goodwin-content p, .legacy-copy p { font-family: var(--font-sans); font-size: var(--body-copy-size); font-weight: 400; line-height: var(--body-copy-line-height); letter-spacing: var(--body-copy-letter-spacing); font-kerning: normal; font-feature-settings: "kern" 1, "liga" 1; }
+.section-copy p, .goodwin-content p, .legacy-copy p { max-width: 620px; margin: 0 0 18px; color: rgba(255,255,255,.76); }
 .record-verification { max-width: 680px; margin-top: 8px; border: 1px solid rgba(188,162,115,.48); background: linear-gradient(145deg, rgba(16,29,24,.96), rgba(3,3,3,.82)); }
 .record-verification-copy { padding: 20px 22px; }
 .record-verification .record-verification-kicker { margin: 0 0 9px; color: var(--gold); font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
@@ -105,7 +109,7 @@ section[id] { scroll-margin-top: var(--header-height); }
 
 .people-section { display: grid; grid-template-columns: .85fr 1.55fr; gap: clamp(35px, 6vw, 100px); padding: clamp(82px, 9vw, 140px) var(--gutter); background: var(--paper); color: var(--black); }
 .people-heading { align-self: end; max-width: 540px; padding-bottom: 25px; }
-.people-heading p { max-width: 500px; margin: 26px 0 0; color: rgba(3,3,3,.68); font-size: 1.04rem; line-height: 1.58; }
+.people-heading p { max-width: 500px; margin: 26px 0 0; color: rgba(3,3,3,.68); }
 .people-gallery { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 14px; }
 .people-card { position: relative; margin: 0; overflow: hidden; background: var(--emerald); }
 .people-card:nth-child(2) { transform: translateY(-50px); }

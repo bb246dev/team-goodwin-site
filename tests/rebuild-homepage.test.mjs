@@ -29,8 +29,16 @@ test("rebuild homepage presents the confirmed title with the official organizati
   for (const id of ["home", "record", "story", "goodwin", "film", "legacy"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
-  assert.match(source, /Mission<br>accomplished\./i);
-  assert.match(source, /Impossible is just <br>a logistics problem\./i);
+  assert.match(source, /Mission<br>accomplished</i);
+  assert.match(source, /The mission<br>The journey<br>The record</i);
+  assert.match(source, /The person<br>inside the miles</i);
+  assert.match(source, /Impossible is just <br>a logistics problem</i);
+  assert.match(source, /The first chapter<br>is complete</i);
+  for (const id of ["hero-title", "story-title", "people-title", "goodwin-title", "legacy-title"]) {
+    const headline = source.match(new RegExp(`<h[12] id="${id}">([\\s\\S]*?)<\\/h[12]>`, "i"));
+    assert.ok(headline, `missing ${id}`);
+    assert.doesNotMatch(headline[1], /\./, `${id} should not end its lines with periods`);
+  }
   assert.match(source, /One world record\./i);
   assert.match(source, /achieved the Guinness World Records title/i);
   assert.match(source, /class="record-verification-source"[^>]+guinnessworldrecords\.com\/news\/commercial\/2026\/11\//i);
@@ -58,6 +66,9 @@ test("homepage uses the Goodwin green theme without the previous blue accent sys
 test("homepage typography uses the bundled Inter family without synthetic variants", () => {
   assert.match(styles, /--font-sans:\s*"Inter", Arial, sans-serif/);
   assert.match(styles, /--font-display:\s*"Inter", Arial, sans-serif/);
+  assert.match(styles, /--body-copy-size:\s*clamp\(\.98rem, 1\.3vw, 1\.16rem\)/);
+  assert.match(styles, /--body-copy-line-height:\s*1\.6/);
+  assert.match(styles, /--body-copy-letter-spacing:\s*0/);
   assert.match(styles, /--section-heading-size:\s*clamp\(3rem, 5\.4vw, 6rem\)/);
   assert.match(
     styles,
@@ -66,7 +77,10 @@ test("homepage typography uses the bundled Inter family without synthetic varian
   assert.doesNotMatch(styles, /font-weight:\s*800/);
   assert.doesNotMatch(styles, /font-style:\s*italic/);
   assert.doesNotMatch(styles, /\.people-heading h2 \{[^}]*font-size/);
-  assert.match(styles, /\.people-heading p \{[^}]*line-height:\s*1\.58/);
+  assert.match(
+    styles,
+    /\.section-copy p, \.people-heading p, \.goodwin-content p, \.legacy-copy p \{[^}]*font-family:\s*var\(--font-sans\);[^}]*font-size:\s*var\(--body-copy-size\);[^}]*font-weight:\s*400;[^}]*line-height:\s*var\(--body-copy-line-height\);[^}]*letter-spacing:\s*var\(--body-copy-letter-spacing\);[^}]*font-kerning:\s*normal;[^}]*font-feature-settings:\s*"kern" 1, "liga" 1;/,
+  );
   assert.doesNotMatch(styles, /\.people-heading p:last-child/);
   assert.match(styles, /\.goodwin-content h2 \{ max-width: 830px; text-wrap: balance; \}/);
   assert.match(styles, /@media \(max-width: 560px\)[\s\S]*\.goodwin-content h2 \{ font-size: clamp\(2\.45rem, 10vw, 3\.2rem\)/);
