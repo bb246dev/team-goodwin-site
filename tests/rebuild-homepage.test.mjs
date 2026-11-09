@@ -45,6 +45,19 @@ test("homepage uses the Goodwin green theme without the previous blue accent sys
   assert.doesNotMatch(source, /blue-rule/);
 });
 
+test("homepage typography uses the bundled Inter family without synthetic variants", () => {
+  assert.match(styles, /--font-sans:\s*"Inter", Arial, sans-serif/);
+  assert.match(styles, /--font-display:\s*"Inter", Arial, sans-serif/);
+  assert.match(styles, /--section-heading-size:\s*clamp\(3rem, 5\.4vw, 6rem\)/);
+  assert.match(
+    styles,
+    /\.section-copy h2, \.people-heading h2, \.goodwin-content h2, \.legacy-copy h2 \{ font-size: var\(--section-heading-size\); line-height: var\(--section-heading-line-height\); \}/,
+  );
+  assert.doesNotMatch(styles, /font-weight:\s*800/);
+  assert.doesNotMatch(styles, /font-style:\s*italic/);
+  assert.doesNotMatch(styles, /\.people-heading h2 \{[^}]*font-size|\.goodwin-content h2 \{[^}]*font-size/);
+});
+
 test("source is readable without running the build and includes completed journey details", () => {
   for (const detail of [
     "1,310",
