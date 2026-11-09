@@ -49,23 +49,31 @@ function renderRebuildHomepage(html) {
     miles: achievement.miles.toLocaleString("en-US"),
     elapsedDisplay: achievement.elapsed.display,
     elapsedLabel: achievement.elapsed.label,
-    elapsedDays: achievement.elapsed.days,
-    elapsedHours: achievement.elapsed.hours,
-    elapsedMinutes: achievement.elapsed.minutes,
-    elapsedSeconds: achievement.elapsed.seconds,
+    elapsedDaysLabel: `${achievement.elapsed.days} days`,
+    elapsedBreakdown: `${achievement.elapsed.hours} hours, ${achievement.elapsed.minutes} minutes, ${achievement.elapsed.seconds} seconds`,
     recordClaim: achievement.recordClaim,
     recordStatus: achievement.recordStatus,
     startCity: journey.start.city,
     startState: journey.start.state,
-    finishCity: journey.finish.city,
-    finishState: journey.finish.state,
+    startLabel: `${journey.start.city}, ${journey.start.state} · ${journey.start.date}`,
+    finishLabel: `${journey.finish.city}, ${journey.finish.state} · ${journey.finish.date}`,
   };
 
   let output = html;
   for (const [key, value] of Object.entries(replacements)) {
-    output = output.replaceAll(`{{${key}}}`, String(value));
+    const pattern = new RegExp(`(<[^>]+data-content-key="${key}"[^>]*>)[^<]*(</[^>]+>)`, "g");
+    let matches = 0;
+    output = output.replace(pattern, (_match, openingTag, closingTag) => {
+      matches += 1;
+      const escapedValue = String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+      return `${openingTag}${escapedValue}${closingTag}`;
+    });
+    if (matches === 0) throw new Error(`Missing Mission America content hook: ${key}`);
   }
-  if (/{{[A-Za-z0-9]+}}/.test(output)) throw new Error("Unresolved Mission America homepage content token");
   return output;
 }
 

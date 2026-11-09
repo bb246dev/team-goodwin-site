@@ -10,11 +10,11 @@
       "minutes": 16,
       "seconds": 34,
       "display": "22:17:16:34",
-      "status": "pending-independent-verification",
-      "label": "Draft elapsed time · pending independent verification"
+      "status": "final-event-time",
+      "label": "Final Mission America time"
     },
-    "recordClaim": "Fastest completion of a marathon-distance run in all 50 U.S. states",
-    "recordStatus": "Record claim pending independent verification"
+    "recordClaim": "Mission America recorded a 22-day, 17-hour, 16-minute and 34-second completion across all 50 U.S. states.",
+    "recordStatus": "Mission complete · November 1, 2026"
   },
   "journey": {
     "start": {
@@ -30,6 +30,6 @@
   },
   "sources": {
     "route": "Existing Mission America itinerary and public route data",
-    "elapsed": "Repository mission-clock test; retained as draft pending independent verification"
+    "elapsed": "Repository mission-clock final-state test and recorded event finish timestamp"
   }
 }
