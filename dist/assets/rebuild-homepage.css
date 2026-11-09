@@ -90,21 +90,22 @@ section[id] { scroll-margin-top: var(--header-height); }
 .section-copy h2, .people-heading h2, .goodwin-content h2, .legacy-copy h2 { font-size: var(--section-heading-size); line-height: var(--section-heading-line-height); }
 .brand-rule { width: 105px; height: 2px; margin: 29px 0; background: var(--green); }
 .section-copy p, .goodwin-content p, .legacy-copy p { max-width: 620px; margin: 0 0 18px; color: rgba(255,255,255,.76); font-size: clamp(.98rem, 1.3vw, 1.16rem); line-height: 1.65; }
-.record-verification { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(190px, .65fr); gap: 1px; max-width: 680px; margin-top: 8px; border: 1px solid rgba(188,162,115,.48); background: rgba(188,162,115,.48); }
-.record-verification-copy { padding: 20px 22px; background: rgba(3,3,3,.72); }
+.record-verification { max-width: 680px; margin-top: 8px; border: 1px solid rgba(188,162,115,.48); background: linear-gradient(145deg, rgba(16,29,24,.96), rgba(3,3,3,.82)); }
+.record-verification-copy { padding: 20px 22px; }
 .record-verification .record-verification-kicker { margin: 0 0 9px; color: var(--gold); font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .record-verification-copy p:last-child { margin: 0; color: rgba(255,255,255,.8); font-size: .8rem; line-height: 1.55; }
-.record-verification-source { display: flex; min-height: 100%; flex-direction: column; justify-content: center; gap: 7px; padding: 20px; background: linear-gradient(145deg, rgba(20,63,60,.96), rgba(6,18,14,.98)); text-decoration: none; transition: background 180ms ease; }
-.record-verification-source:hover, .record-verification-source:focus-visible { background: linear-gradient(145deg, rgba(28,111,74,.96), rgba(6,18,14,.98)); }
-.record-verification-logo { width: min(108px, 72%); height: auto; margin: 0 auto 7px; object-fit: contain; }
-.record-verification-source > span { color: var(--gold); font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.record-verification-source > strong { font-size: .92rem; line-height: 1.15; text-transform: uppercase; }
-.record-verification-source small { color: rgba(255,255,255,.64); font-size: .58rem; line-height: 1.4; }
+.record-verification-source { display: grid; grid-template-columns: minmax(0, 1fr) clamp(52px, 5vw, 68px); align-items: center; gap: 18px; margin-top: 15px; padding-top: 14px; border-top: 1px solid rgba(188,162,115,.28); text-decoration: none; }
+.record-verification-source:hover .record-verification-source-text > strong, .record-verification-source:focus-visible .record-verification-source-text > strong { color: var(--gold); }
+.record-verification-source-text { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.record-verification-source-text > span { color: var(--gold); font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.record-verification-source-text > strong { font-size: .86rem; line-height: 1.15; text-transform: uppercase; transition: color 180ms ease; }
+.record-verification-source-text small { color: rgba(255,255,255,.64); font-size: .58rem; line-height: 1.4; }
+.record-verification-logo { width: 100%; height: auto; margin: 0; object-fit: contain; }
 .text-link { width: fit-content; margin-top: 15px; padding-bottom: 7px; border-bottom: 1px solid var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .11em; text-decoration: none; text-transform: uppercase; }
 
 .people-section { display: grid; grid-template-columns: .85fr 1.55fr; gap: clamp(35px, 6vw, 100px); padding: clamp(82px, 9vw, 140px) var(--gutter); background: var(--paper); color: var(--black); }
 .people-heading { align-self: end; max-width: 540px; padding-bottom: 25px; }
-.people-heading p:last-child { max-width: 500px; margin: 28px 0 0; color: rgba(3,3,3,.68); font-size: 1.04rem; line-height: 1.65; }
+.people-heading p { max-width: 500px; margin: 26px 0 0; color: rgba(3,3,3,.68); font-size: 1.04rem; line-height: 1.58; }
 .people-gallery { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 14px; }
 .people-card { position: relative; margin: 0; overflow: hidden; background: var(--emerald); }
 .people-card:nth-child(2) { transform: translateY(-50px); }
@@ -116,7 +117,7 @@ section[id] { scroll-margin-top: var(--header-height); }
 .goodwin-background { position: absolute; z-index: -3; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 58%; }
 .goodwin-overlay { position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, rgba(2,14,10,.98) 0%, rgba(2,14,10,.88) 43%, rgba(2,14,10,.18) 78%), linear-gradient(0deg, rgba(3,3,3,.76), transparent 56%); }
 .goodwin-content { max-width: 780px; padding: clamp(88px, 10vw, 150px) var(--gutter) 190px; }
-.goodwin-content h2 { max-width: 830px; }
+.goodwin-content h2 { max-width: 830px; text-wrap: balance; }
 .goodwin-content .button { margin-top: 12px; }
 .operations-grid { position: absolute; right: var(--gutter); bottom: 45px; display: grid; grid-template-columns: repeat(3, minmax(140px, 1fr)); width: min(610px, calc(100% - 2 * var(--gutter))); margin: 0; border: 1px solid rgba(255,255,255,.2); background: rgba(3,3,3,.65); backdrop-filter: blur(10px); }
 .operations-grid div { padding: 20px; }
@@ -242,9 +243,10 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .achievement-time strong { font-size: 1.9rem; }
   .achievement-item span { font-size: .58rem; }
   .section-copy { min-height: 0; }
-  .record-verification { grid-template-columns: 1fr; }
-  .record-verification-source { min-height: 250px; }
-  .record-verification-logo { width: 118px; }
+  .record-verification-copy { padding: 18px; }
+  .record-verification-source { grid-template-columns: minmax(0, 1fr) 52px; gap: 13px; }
+  .goodwin-content h2 { font-size: clamp(2.45rem, 10vw, 3.2rem); line-height: .9; letter-spacing: -.045em; }
+  .goodwin-content h2 br { display: none; }
   .story-route { right: 12px; bottom: 12px; left: 12px; font-size: .5rem; }
   .story-route { grid-template-columns: 1fr; gap: 7px; }
   .story-route i { width: 100%; }

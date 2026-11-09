@@ -30,14 +30,17 @@ test("rebuild homepage presents the confirmed title with the official organizati
     assert.match(source, new RegExp(`id="${id}"`));
   }
   assert.match(source, /Mission<br>accomplished\./i);
-  assert.match(source, /Impossible is just<br>a logistics problem\./i);
+  assert.match(source, /Impossible is just <br>a logistics problem\./i);
   assert.match(source, /One world record\./i);
   assert.match(source, /achieved the Guinness World Records title/i);
   assert.match(source, /class="record-verification-source"[^>]+guinnessworldrecords\.com\/news\/commercial\/2026\/11\//i);
+  assert.match(source, /class="record-verification-copy"[\s\S]*class="record-verification-source"[\s\S]*class="record-verification-logo"/i);
   assert.match(source, /<img class="record-verification-logo" src="assets\/rebuild\/guinness-world-records-logo\.png" alt="Guinness World Records logo"/i);
   assert.equal(content.achievement.verification.logoSourceUrl, "https://www.guinnessworldrecords.com/images/logo.png");
   assert.equal(content.achievement.verification.logoSha256, "8f0002dd46285de911f7eb6d7e394e40c7c8fe690c9c35f34cd36d91e4003f8a");
   assert.ok(existsSync(new URL("../assets/rebuild/guinness-world-records-logo.png", import.meta.url)));
+  assert.match(styles, /\.record-verification-source \{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(52px, 5vw, 68px\)/);
+  assert.doesNotMatch(styles, /\.record-verification-source \{[^}]*min-height:\s*250px/);
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
   assert.doesNotMatch(source, /legacy-brand|brand-wordmark/);
   assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
@@ -62,7 +65,11 @@ test("homepage typography uses the bundled Inter family without synthetic varian
   );
   assert.doesNotMatch(styles, /font-weight:\s*800/);
   assert.doesNotMatch(styles, /font-style:\s*italic/);
-  assert.doesNotMatch(styles, /\.people-heading h2 \{[^}]*font-size|\.goodwin-content h2 \{[^}]*font-size/);
+  assert.doesNotMatch(styles, /\.people-heading h2 \{[^}]*font-size/);
+  assert.match(styles, /\.people-heading p \{[^}]*line-height:\s*1\.58/);
+  assert.doesNotMatch(styles, /\.people-heading p:last-child/);
+  assert.match(styles, /\.goodwin-content h2 \{ max-width: 830px; text-wrap: balance; \}/);
+  assert.match(styles, /@media \(max-width: 560px\)[\s\S]*\.goodwin-content h2 \{ font-size: clamp\(2\.45rem, 10vw, 3\.2rem\)/);
 });
 
 test("source is readable without running the build and includes completed journey details", () => {
