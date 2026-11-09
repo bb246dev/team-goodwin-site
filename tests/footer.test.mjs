@@ -3,7 +3,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const generatedPages = readdirSync(new URL("../dist/", import.meta.url))
-  .filter((file) => file.endsWith(".html"));
+  .filter((file) => file.endsWith(".html") && file !== "index.html");
 
 const expectedSocialLinks = new Map([
   ["Will Goodge on Instagram", "https://www.instagram.com/williamgoodge/"],

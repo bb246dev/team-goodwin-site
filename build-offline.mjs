@@ -4,6 +4,7 @@ import { applyApprovedSponsorFooter, approvedGlobalSponsorFooterHtml, approvedSp
 
 const root = process.cwd();
 const dist = join(root, "dist");
+const missionAmericaContent = JSON.parse(readFileSync(join(root, "content", "mission-america-2026.json"), "utf8"));
 
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
@@ -18,7 +19,7 @@ if (existsSync(join(root, "api"))) {
 }
 
 const pages = [
-  ["restore-2026-09-30-index.html", "index.html"],
+  ["rebuild-homepage.html", "index.html"],
   ["restore-2026-09-30-athletes.html", "athletes.html"],
   ["restore-2026-09-30-partners.html", "partners.html"],
   ["restore-2026-09-30-live-tracking.html", "live-tracking.html"],
@@ -39,6 +40,34 @@ const pages = [
   ["restore-2026-09-30-participation-terms.html", "participation-terms.html"],
   ["restore-2026-09-30-accessibility.html", "accessibility.html"],
 ];
+
+function renderRebuildHomepage(html) {
+  const { achievement, journey } = missionAmericaContent;
+  const replacements = {
+    marathons: achievement.marathons,
+    states: achievement.states,
+    miles: achievement.miles.toLocaleString("en-US"),
+    elapsedDisplay: achievement.elapsed.display,
+    elapsedLabel: achievement.elapsed.label,
+    elapsedDays: achievement.elapsed.days,
+    elapsedHours: achievement.elapsed.hours,
+    elapsedMinutes: achievement.elapsed.minutes,
+    elapsedSeconds: achievement.elapsed.seconds,
+    recordClaim: achievement.recordClaim,
+    recordStatus: achievement.recordStatus,
+    startCity: journey.start.city,
+    startState: journey.start.state,
+    finishCity: journey.finish.city,
+    finishState: journey.finish.state,
+  };
+
+  let output = html;
+  for (const [key, value] of Object.entries(replacements)) {
+    output = output.replaceAll(`{{${key}}}`, String(value));
+  }
+  if (/{{[A-Za-z0-9]+}}/.test(output)) throw new Error("Unresolved Mission America homepage content token");
+  return output;
+}
 
 const videoIds = [
   "n4ryq66g73w",
@@ -302,9 +331,11 @@ for (const [source, target] of pages) {
   const html = readFileSync(join(root, source), "utf8");
   const destination = join(dist, target);
   mkdirSync(dirname(destination), { recursive: true });
-  const output = source.startsWith("restore-2026-09-30-")
-    ? applyApprovedSponsorFooter(html)
-    : localize(html, target);
+  const output = source === "rebuild-homepage.html"
+    ? renderRebuildHomepage(html)
+    : source.startsWith("restore-2026-09-30-")
+      ? applyApprovedSponsorFooter(html)
+      : localize(html, target);
   writeFileSync(destination, output);
 }
 

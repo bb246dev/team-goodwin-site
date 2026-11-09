@@ -11,5 +11,6 @@ tracking-preview/dist/
 goodwin-strava-config.json
 .recovery/
 portfolio/mission-america-2026/dist/
+review/
 .DS_Store
 *.bundle

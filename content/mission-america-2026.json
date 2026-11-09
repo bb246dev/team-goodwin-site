@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "achievement": {
+    "marathons": 50,
+    "states": 50,
+    "miles": 1310,
+    "elapsed": {
+      "days": 22,
+      "hours": 17,
+      "minutes": 16,
+      "seconds": 34,
+      "display": "22:17:16:34",
+      "status": "pending-independent-verification",
+      "label": "Draft elapsed time · pending independent verification"
+    },
+    "recordClaim": "Fastest completion of a marathon-distance run in all 50 U.S. states",
+    "recordStatus": "Record claim pending independent verification"
+  },
+  "journey": {
+    "start": {
+      "city": "Honolulu",
+      "state": "Hawaii",
+      "date": "October 9, 2026"
+    },
+    "finish": {
+      "city": "New York City",
+      "state": "New York",
+      "date": "November 1, 2026"
+    }
+  },
+  "sources": {
+    "route": "Existing Mission America itinerary and public route data",
+    "elapsed": "Repository mission-clock test; retained as draft pending independent verification"
+  }
+}
