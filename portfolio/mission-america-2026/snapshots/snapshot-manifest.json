@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-09T21:22:26Z",
+  "sourceOrigin": "https://goodwingoodge.com",
+  "productionCommit": "6b2949dfcf3e3b70957d6e5fbb61f8d0ae81abb5",
+  "productionRelease": "deploy/manifests/releases/mission-clock-final-2026-11-02.json",
+  "publicData": {
+    "races.json": {
+      "sourcePath": "/strava/public/races",
+      "sha256": "792f42125143c57cfcdccb7ffd7ec5ccbe8f465dac29aa585abdbddb3acd72dd"
+    },
+    "race-status.json": {
+      "sourcePath": "/strava/public/race-status",
+      "sha256": "707a259dfa893a3764f5262beb56e24d68f7da97bb760eca0ce0a3d8f2d65f45"
+    },
+    "tracking-status.json": {
+      "sourcePath": "/strava/public/tracking-status",
+      "sha256": "f876d90145ee522dca2e380a582fb0fe2f2bfd510546a03fae79485ca0b152af"
+    },
+    "journey-state.json": {
+      "sourcePath": "/strava/public/journey-state",
+      "sha256": "fcd073031bfcd293522489bc785f2bf722fb54c0d103c32184df1d5063d1b104"
+    }
+  },
+  "limitations": [
+    "The public race feed contained 27 completed races and 23 scheduled races at capture time.",
+    "No authenticated tracking data or private GPS history was captured.",
+    "The public tracking-status response is preserved only as a stale last-known snapshot."
+  ]
+}

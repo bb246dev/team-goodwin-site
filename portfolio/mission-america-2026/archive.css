@@ -1,0 +1,38 @@
+.mission-archive-banner {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 42px;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(94, 234, 212, 0.32);
+  background: #07110f;
+  color: #d8fff3;
+  font: 600 0.72rem/1.45 Inter, system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.mission-archive-banner strong { color: #5eead4; }
+body[data-archive-route] .tracker-nav { top: var(--mission-archive-banner-height, 42px) !important; }
+
+.mission-archive-notice {
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(94, 234, 212, 0.34);
+  border-radius: 3px;
+  background: rgba(94, 234, 212, 0.08);
+  color: inherit;
+  font: 500 0.85rem/1.55 Inter, system-ui, sans-serif;
+}
+
+.mission-archive-notice strong { color: #5eead4; }
+.mission-archive-notice a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.mission-archive-notice[data-archive-form] { max-width: 48rem; }
+
+@media (max-width: 640px) {
+  .mission-archive-banner { align-items: flex-start; font-size: 0.66rem; }
+}

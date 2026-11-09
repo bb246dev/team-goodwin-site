@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-09T21:22:26Z",
+  "sourceOrigin": "https://goodwingoodge.com",
+  "files": [
+    {
+      "name": "ambient-pages.css",
+      "sourcePath": "/assets/ambient-pages.css",
+      "sha256": "b7d881a6e0879287f754ba8aa63e5eddc6121776ecb056746a38557719598bf5",
+      "bytes": 19818
+    },
+    {
+      "name": "ambient-pages.js",
+      "sourcePath": "/assets/ambient-pages.js",
+      "sha256": "45b7f03c5575de0218ab6016d2074839c5dd4e7ee78538b2eaec85ea0466045e",
+      "bytes": 7539
+    },
+    {
+      "name": "ambient-scroll.css",
+      "sourcePath": "/assets/ambient-scroll.css",
+      "sha256": "d01338eb5af886d21560e85df385b9d5ab7d868573f3129f6d9e004d9bf5186f",
+      "bytes": 28353
+    },
+    {
+      "name": "ambient-scroll.js",
+      "sourcePath": "/assets/ambient-scroll.js",
+      "sha256": "2de400da6bb682ea18414805a09d213af1d3a8fcfbd71e5eabd80ff9cf67cad4",
+      "bytes": 7087
+    },
+    {
+      "name": "athlete-will.jpeg",
+      "sourcePath": "/assets/athlete-will.jpeg",
+      "sha256": "bdf6c959c6e5effe4d593ffd16ea7252bdbb59a5b7dbe7622e9bb78826e85206",
+      "bytes": 82373
+    },
+    {
+      "name": "hero-signal-optimized.mp4",
+      "sourcePath": "/assets/hero-signal-optimized.mp4",
+      "sha256": "645f4566281c46553dee644613e2a8084d71dba6cdd2ab9c7668423ac9f4507f",
+      "bytes": 1472481
+    },
+    {
+      "name": "hero-video-first-frame.jpg",
+      "sourcePath": "/assets/hero-video-first-frame.jpg",
+      "sha256": "8ff2885777d6df22eea0c9a47e15423b1dde0290ad1f0cd35a1d3c8e89c55073",
+      "bytes": 87636
+    },
+    {
+      "name": "mission-america-logo-mobile.png",
+      "sourcePath": "/assets/mission-america-logo-mobile.png",
+      "sha256": "79a66712a2ff1f8bf10656c522380f5760a3b84c0c9ba6e14b6f4378c7e7b9dd",
+      "bytes": 32049
+    },
+    {
+      "name": "mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+      "sourcePath": "/assets/mission-america-william-goodge-thumbnail-bg-768x675.jpg",
+      "sha256": "907d579da4d114b6e575395f3546cbd1c41af52ca6719a8f848b9d1c8c35ba8a",
+      "bytes": 84974
+    },
+    {
+      "name": "overview-the-run.jpeg",
+      "sourcePath": "/assets/overview-the-run.jpeg",
+      "sha256": "b6c0420d45c5a0a46e191a510ed7fbfb88c4ea3e5df8c5387b0c0b65104a2180",
+      "bytes": 70936
+    },
+    {
+      "name": "tracker-base.css",
+      "sourcePath": "/assets/tracker-base.css",
+      "sha256": "750328a315bed7e75273dbd7c8722553d1e87a2857bbcdf3532931d8c54cb8f8",
+      "bytes": 106143
+    },
+    {
+      "name": "world-record-50-states.jpeg",
+      "sourcePath": "/assets/world-record-50-states.jpeg",
+      "sha256": "3581e206b5d0046a93cd5cc64eb2068d7aaf24f14a607ff77c9c95f5e2c00e7b",
+      "bytes": 64740
+    }
+  ]
+}

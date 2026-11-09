@@ -1,0 +1,89 @@
+name: Deploy Mission America portfolio archive
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Confirm absence only or provision the isolated portfolio archive
+        required: true
+        type: choice
+        default: dry-run
+        options:
+          - dry-run
+          - deploy
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  portfolio:
+    name: ${{ inputs.mode == 'deploy' && 'Publish isolated portfolio archive' || 'Validate portfolio boundary' }}
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DEPLOYMENT_ENVIRONMENT: production
+    steps:
+      - name: Check out selected commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Build isolated archive
+        run: npm run build:portfolio
+
+      - name: Verify routes, assets, forms, data, and noindex policy
+        run: npm run verify:portfolio
+
+      - name: Confirm production homepage boundary before deployment
+        env:
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+        run: |
+          expected="1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f"
+          observed="$(curl --fail --silent --show-error --location "$PRODUCTION_BASE_URL/" | sha256sum | cut -d' ' -f1)"
+          test "$observed" = "$expected"
+
+      - name: Confirm absence and optionally provision archive-only paths
+        env:
+          CONFIRM_PORTFOLIO_ARCHIVE_DEPLOY: ${{ inputs.mode == 'deploy' && 'YES' || 'NO' }}
+          NAMECHEAP_FTPS_HOST: ${{ secrets.NAMECHEAP_FTPS_HOST }}
+          NAMECHEAP_FTPS_USERNAME: ${{ secrets.NAMECHEAP_FTPS_USERNAME }}
+          NAMECHEAP_FTPS_PASSWORD: ${{ secrets.NAMECHEAP_FTPS_PASSWORD }}
+          NAMECHEAP_FTPS_PORT: ${{ secrets.NAMECHEAP_FTPS_PORT }}
+          NAMECHEAP_FTPS_BASE_PATH: ${{ vars.NAMECHEAP_FTPS_BASE_PATH }}
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+          DEPLOY_TEMP_ROOT: ${{ runner.temp }}/goodwin-portfolio-ftps-${{ github.run_id }}
+        run: node portfolio/mission-america-2026/deploy.mjs --mode "${{ inputs.mode }}" --output deployment-results/portfolio-archive.json
+
+      - name: Confirm production homepage remains unchanged
+        if: inputs.mode == 'deploy'
+        env:
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://goodwingoodge.com' }}
+        run: |
+          expected="1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f"
+          observed="$(curl --fail --silent --show-error --location "$PRODUCTION_BASE_URL/" | sha256sum | cut -d' ' -f1)"
+          test "$observed" = "$expected"
+
+      - name: Save deployment report and immutable inventory
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: mission-america-portfolio-${{ github.run_id }}
+          path: |
+            deployment-results/portfolio-archive.json
+            portfolio/mission-america-2026/dist/deployment-inventory.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Delete temporary credential files
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/goodwin-portfolio-ftps-$GITHUB_RUN_ID"

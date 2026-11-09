@@ -9,5 +9,7 @@ tracking-preview/dist/
 !.env.example
 .goodwin-strava-config.json
 goodwin-strava-config.json
+.recovery/
+portfolio/mission-america-2026/dist/
 .DS_Store
 *.bundle

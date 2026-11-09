@@ -1,0 +1,863 @@
+{
+  "races": [
+    {
+      "raceNumber": 1,
+      "raceId": "ggma-2026-01",
+      "date": "2026-10-09",
+      "state": "Hawaii",
+      "city": "Honolulu",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20522781394",
+        "startTime": "2026-10-10T01:00:16.000Z",
+        "distanceMeters": 42291.3,
+        "movingTimeSeconds": 14372,
+        "elapsedTimeSeconds": 14397,
+        "elevationGainMeters": 164,
+        "summaryPolyline": "woy`Cb}gb]w@gDnDwAfw@yLnJkFnBSnCkAHUcAyDzByAhAwDxEqH\\aFb@_CKeG`CsWMmIcK{]sDsGu@_GeDaDoCmBaH}A_CKcC\\{EfBu@fAeClAcB|BwA~@a@dAmB~Aw@xByAT{A`A{@fBk@hCwB|Aa@t@]fDd@fDe@~AArJk@pFI`Cn@nOrBfKOtJFdDeBr]s@bC_BdCe@R?t@sGlBgRfImFxEiClDeMjNsDhDm@BeFlCwJ~DwKxFo@z@Gv@^~@bB~HPlB~@zCT|Ci@fC_DdDnA|BUf@mHnEo@QYyASOqEv@gAr@A`@Xr@DnB|CzG}@bFxMbD~GbAbAn@Rf@fBKLJgBhAgAzBU`CTlC}ATw@ScB_CwAy@Qe@AwAiC}CuB[sDb@_BG{A|HuBfBi@dAIjBf@bD}DzRyAdEmAjCwAl@cAGgDgB[@y@~ADlAmGbOElAzAbCXpDhDvA`JfFfAhCaCxDm@^OfAiAbBgAv@c@nAkCnC}BxD}@\\mBmCBy@tCc@bBy@bAmBBmDnBMxCeBfAJ~FaJKS?p@mAnAi@WUs@s@k@uI}E}CoAIqCeBiDD{@xG_POaAt@sAXGpC|AvARzAs@n@uA`CqGjFeYlD}OpAR|Dc@rB`@x@pAbAx@XbCvAx@hAjA\\v@x@T`BYU}@AsAR}BdAyBfBiAMKmBH[s@y@a@gHcAiMeDz@iFoC_GGeC_@k@?i@dAo@tEq@V^HhB\\TnIwFt@MrBmA~@G`AZhFvHj@NP]EYoCeBaCaEI}@qAoCeBaGq@}EPQ|AFzEwA~@mAvA_Fh@e@|Aa@xA`@`AtAnCzAt@z@t@fC`@G`B{ANaAYq@dBiCHg@gAsB_CLz@yAJ{AgDqDyBgBqCu@bEiBnDaChRuT|FiFdPmHvHkC|Cq@tr@kK`IyDx@s@zB[hCeAF]_AeCAk@xB}AdAiDlDiFr@iBTeEf@qCKaGdCiXKoGeKk^{DeHsCsWeFs_@_MkZ_R}YwAaBoT_OoGeIm@wAkAeAy@sB]iBBq@|@}BAk@YOIZLdAe@hB?n@ZfB|@nBdA~@t@bBlF`H|BlBbQ~KlBtBhQbYnL`YdF|]hDxZvDjHlJv[ZpBJjEiCbZHvFg@vCOlDc@rA_EfGiAnDsBzAfAhDG^yCjAgDv@_InEar@fKgDl@wFbB_TnJsHzHyNzPjRmTzFqFbXwKbE_ApLgBwPtCmExAIPRSJNa@b@",
+        "startLatLng": [
+          21.271163,
+          -157.823692
+        ],
+        "endLatLng": [
+          21.271666,
+          -157.823148
+        ]
+      }
+    },
+    {
+      "raceNumber": 2,
+      "raceId": "ggma-2026-02",
+      "date": "2026-10-10",
+      "state": "Alaska",
+      "city": "Anchorage",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20532958293",
+        "startTime": "2026-10-10T16:08:32.000Z",
+        "distanceMeters": 42686,
+        "movingTimeSeconds": 15721,
+        "elapsedTimeSeconds": 15738,
+        "elevationGainMeters": 254,
+        "summaryPolyline": "eaktJfelr[pBmBl@cCd@qQkAiEeP}Uw@oQo@}EQqy@z@cA|Hub@fA{KcHyTqAaORqEuDwKiE}HePaOwDkSeBqX_Qwg@aC{\\QtBkJhHaAcAaj@IkAzDcIPm@pKaA~HUpPqVJyKqTcCVmC`CkB_BuBvEi@gIyHQ_CaFFgElDwJx@gIl@yKlAqBrJs]_Kn^cAxAm@~K{@~HeDfJSlD`CdGrHN^v@DpHyAzKxAnSpAxBb@fEo@rCIxFd@|KdDrQrDl`@fD`GZtFvC`TtDzSvB|^NjJzCpTRvL|@dCvCpVoAfHQvCh@`AfH[d@fBa@jJ_BbMIhGeA~Gf@xT{AlId@vGo@fJy@jD^`Lw@tNw@tHoBdE{@hPuEvRm@dLsFt]IfH}ArKY`If@{JnAwILsHjFe]r@aLrEoR|@gQnB}Dl@kG~@sOa@eKdAiEb@yIe@kH`ByHm@eT|E_k@g@iBcHTm@_ALyCjAuC@oCqC_V}@mCOaLeCcOg@cPiBkQWmMoDoS}Dk\\eDiGqDo`@{CyNk@{MFeGl@}Ce@sDuAoBuA_TbBqLz@K_AJu@lGv@}G[sHgI_@yBmFL}DfD_Jz@sIl@sKlAqBnJq]gFcM~@xKSzM{D`PmAvBeBxUgD~IQlD`CdGvHPd@dA?xG}A~KzA`TxAzB\\nDo@tCIpGj@~K~CrPzDza@rC~DfAzK`DsE_DjElHbe@ZbO~AjOIdE|@tKxBhLRbMdDhQj@pKwAvDM|Ch@dAbH_@j@jBc@hJ_B`LKbIaAjFGvHn@dL_B~Hj@`HmBvN`@|Lw@fNy@xHoBbEw@dPgE~PgAzOmBhJ{BnPK|H}AbLW`IzAqRgAtHMjINgI`BmLNgIpBsNnBgKjAgPvEsRf@yNtBgEn@wGv@iO_@gKfAoE`@qIe@{GfBkIq@uJ?{H~AmR`BcLVsJe@iAcHLo@iANiCpAgDGuCqEkYI_LgDcUOaKuBe_@sDmSyBiPlDkF^b@c@Rr@}@AiFEfF}EzDcAiJ_DsFmDy_@}CqPk@}LLaGn@gCk@_EoAyByAsR|AeME_Hg@eAsHQuDqGyFb@wDoHW}ClA`BqA_B\\fDjEjIbFiAvDrGbI\\d@~HrBmEbB|A~F}CpLlTxTJjAqADiNnAsIJgJtIc@^s@NcHzDpBve@l@r@mAhDE~EaCt@bQ|@vFlPze@pBrY`EzS`PfOzDzGjDvKrFrD|AhXeAfWhAkY{@~McAu@b@V",
+        "startLatLng": [
+          61.174118,
+          -149.981157
+        ],
+        "endLatLng": [
+          61.175236,
+          -149.950373
+        ]
+      }
+    },
+    {
+      "raceNumber": 3,
+      "raceId": "ggma-2026-03",
+      "date": "2026-10-10",
+      "state": "Oregon",
+      "city": "Portland",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20537857937",
+        "startTime": "2026-10-11T04:26:40.000Z",
+        "distanceMeters": 42881,
+        "movingTimeSeconds": 15605,
+        "elapsedTimeSeconds": 16914,
+        "elevationGainMeters": 89,
+        "summaryPolyline": "gnztGl{ukVqHpAqDfBr@EGhC]l@o@A[rBaMxPoFbGuFlJ}@^H\\Kj@aQf]yEzKmK~SyCuD}A`CsBJqAlBIp@^bBbCbDRj@CVaZ`k@iZ|j@gJxWiDlNcAvFkM~f@sDxLzDmMfM_f@hAmG|EmR~HyTpt@wuAAk@gCaEq@eBBWbByB|B[vNcUV_BbHwL}@`BnB|AdRs^bCyFxRsVlDeFZiBj@E`@c@\\yBj@kApF}AlBUt@Zj@CP`ACmB~@UxEZ`AIjDh@nDbAhMrGpNpFpAnAdA?lGrANTPzBj@rAzA`AbB`@x@k@ZgCXm@pBN`Dk@nDwBt@qB`@a@vD[~AmAdB[dA{AtF}A~EsB~@CtC|@RSaAeEaRg\\m@{FVQhB?j@r@IzCmBr@aBlAoBjDiCnA{@|@_AZmA?wBfA}IvB}D`@{Bl@_EG_MaBeOcD{NmCo@VmDBuEUsMwBaDVuAnAqCpFO~A|@rDhDhJbEgB`HqAn@`@r@ATvAIaCVUlBInA^dCEfCXpF~ArQvIlFhBjD~BnBL~EfAbArExAjA|Af@h@C`@e@v@uDlBL|C_@|DcCnAmClEi@hAu@pBi@t@y@@a@tEiAvGmCt@@dCz@\\O{@{DkRc]e@mFXQzABf@f@KhD_CzAcA^kBjDsB`AcBzAyBH}BbAwIxBsBd@yA@wAd@uFAcRiC_G_B{J}AgEgAo@TwCBiGYmKkBiBE{AV_Az@{CpFW|AHz@rA~E`CjGtEcBrLqBlIP~HpBhSnJeUgK}EgAwH_@w@l@m@FKfAMgAu@Fi@[cEn@}C`AoA|Ey@Ju@fC_J|KwBpDyHxI}D|IsAfCo@|@aAhC}JfRO@yAgBQ?sEzISpAuNjUe@R}@Mm@`@u@zAG`A\\tAfCxDBj@mp@pnAgDjHwG`QmHx[}CxLuOzj@cLbb@gHvXaNxRqClCsGlJ`JqKfCiDfJuMfAaC~GyWhBcFz[amAdBmHlDiPfFyP~GoPxDsGfBgEbh@qaAIw@cC_EWqAJeAlA}AlA?n@YlMiS^s@RqAxEqIRKb@Vj@pAh@QlKkTHm@}@kBLq@hCsCz@x@TGfF}JFa@\\KjCeDaG|GoAYPX~@DdAy@pPoS|DeGR}AJFQJOtA}DrF`E}FTaBf@EZa@hAcEbF}A~BWn@^t@?b@dBtB@WsBw@s@gAFLrBIpDTlAAqChD]fHd@fGpC",
+        "startLatLng": [
+          45.524361,
+          -122.669506
+        ],
+        "endLatLng": [
+          45.520195,
+          -122.671307
+        ]
+      }
+    },
+    {
+      "raceNumber": 4,
+      "raceId": "ggma-2026-04",
+      "date": "2026-10-11",
+      "state": "Washington",
+      "city": "Vancouver",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20547068183",
+        "startTime": "2026-10-11T15:53:52.000Z",
+        "distanceMeters": 42587,
+        "movingTimeSeconds": 15436,
+        "elapsedTimeSeconds": 17080,
+        "elevationGainMeters": 91,
+        "summaryPolyline": "kfouG~oukVIwB{@CMZQlEe@f@gACOb@L~CWzFHnDAtMW~D_CpGOdAExBa@z@Itg@O~B]xA{Jt[{KpWgAjAyAl@mHXsAz@iAzAeA~Ci@fEiDpQuAnEsChFsCbDyE`EgAgAkA_@uWeF}A@oDy@G_@Jk@vVuq@f@}@~@Ly@wBSOyPa@g@GUi@P`@`@LdQh@XTHr@LWG\\As@LSjLX|DShPRVr@@dIYhGi@lEmCtNeAfE?nAq@hBuBrEiCnCiDnBuAXiAeAyAa@oV}E{AB}D{@MYDa@hXwt@\\wA|CLnG@TPH`@QTqDj@iAn@kBbB}@xAYH_@]Kq@l@aDp@eAW}@WAObAeDvHyN|`@?^]d@kBdFOjAVd@tFpAxBRnUvEz@t@Jx@yArCw@xCGv@wGpY_GfXi@hDsFxVe@vCeAlCgDdMu@|@mGjP_ExHqj@x{@oHbKsF`GqH`GeLbGkFbB{GzAcApBS~Bv@bNp@vBv@FXh@fOzw@Dz@SzARZh@Ri@Oc@u@cBc@uXCeBf@qAlAwBjDaBhA}c@pFaMvBQVc@xBq@pAQlCcApBMbE]\\qAJi@b@K`@B`Ag@lA_@lB_O{Cm@Hw@p@m@@q@f@uBd@yIqBiCQu@JOZV_@fCRv@ArIjBdDoAr@E|@o@t@K}AqBKc@bAoTJa@KQ}QIaN`A}HbA_B?gEq@m@g@PDDYQ\\yQeDaLiCaDa@gAHgGc@gLuDwUy@{AYqJb@sAEuQaI{FuC_@g@QTNOuIuA}Ds@iGiB}M}BeFQaBRqAY|KXvMxBlElApQhD|ZlN`BD`G[d[nAzBf@fHbC|OtApHhBxOnCpGzAfCV|NaBnLm@~WRlPOxCRpLmB|c@qFfBgAzCmEdA{@n@Q~XCp@Dt@`@TIXu@CoA}Nsv@g@iAsAAw@kE{@sN~@kA`BmAlGuAjFgBnG_DzFyDtH}GlHaJ`Vw^nV_`@bHiNfGuP~CqMdAmAJgAjH}\\jPwt@dDaHbDyD~AaAjCwCtBqEnDwKvDgTlAkC|@y@z@_@xFW~@SxA{@lAyAvCqH~@uA|EkMzIgZh@aDHoDHwi@\\iBvBiGLqCXQYm@EgKpAAf@w@@aPLyAmBMOOG{J`CuMh@r@e@y@\\j@W[OFkAjFo@pEAdKZTtCHT}AE_BHA@X^sCb@ANV@dAa@g@SZGq@Hf@C~A",
+        "startLatLng": [
+          45.630622,
+          -122.667672
+        ],
+        "endLatLng": [
+          45.630578,
+          -122.667532
+        ]
+      }
+    },
+    {
+      "raceNumber": 5,
+      "raceId": "ggma-2026-05",
+      "date": "2026-10-11",
+      "state": "Utah",
+      "city": "Salt Lake City",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20550575903",
+        "startTime": "2026-10-12T02:44:53.000Z",
+        "distanceMeters": 42415,
+        "movingTimeSeconds": 18733,
+        "elapsedTimeSeconds": 18847,
+        "elevationGainMeters": 83,
+        "summaryPolyline": "it|wFnxnjTCWL{@AiB`@sBAmAjAyDfGOrFg@lBc@vCQpAi@rFa@fBHl@`@b@kAbCq@rNaAvA[rC}Cd@cBn@mG|DkG\\MN^BlHAyBHm@fAu@bKsLz@gD`BiKrAqE~BkEzEgEPa@m@kBrAiAFJY@cAt@OCvAoAH[C{@{AgJwAqFy@_COy@{GgTbGpRd@rBLHnBxGn@jDx@xFDnAO^mAbA^?tAaAFg@YaCiCgNkB_HqCgIQ_B{AuECi@j@c@@WuHqTuFgRsAmGMmAIiB?mMI{B@sMH{CGuAF{KC}pAX_DX{@CcBrAe@rBI`ALjDr@t@RfCLvGSvF^\\OJgAZGXJLjArASxDP`@SRg@L{GNa@\\QnHmAtB}@pAC~Ak@pM_@\\QbAoAhAWlCTdHDjBT`At@vAFNQ@aAH]rAQRcARUbEoAd@sAh@AhCh@RCLS]aCB_BXcAxAaBQcGAuBNeBRWFc@KgC?_CFqBQcANsB@}ACqIKkAJaAByGK_HA}b@NeOGiDHkKKaBAyIF}@EAKuH@sWHkAKoP?{XDuXIiEHmL^O`ALVlAGB?KK`A?~BNbAt@zA~Ar@na@@x@KbAm@dAlAtBr@rl@Cv@_@f@{CAsVHeDI[]Ws_B?kGWoE@[Nk@x@GZAhLLpAXNrIAt@RR\\^g@j@?Rh@DxET~At@nAlA`@`b@?r@Ir@c@z@~@`@VNb@~@Qdk@FzBCPKd@NfA@zl@Cl@InCL`NBjyBRtWQdDDdBPrv@BdBT`DBtAx@e@aBYWMs@@oUKeC{BScA}@g@OM]wBGeAH_KKmMF}AKiMFwLKeGPuGKw`AGuCDWL[M}EOiMHkCIeFVwEOcALyAWmGBoAOiVNwVCwHIoN?{@JqBMuBFIZc@a@{g@@{@NYlAPz@_@nAHlEA`BGNMCGc@MC}CNaJD}DCsAQcP?y@TEnDLfAIn@IUBaEEf@Ni@?tDVdBv@dApAf@ja@Cz@Kz@c@tAzAt@P|BJtMCzBOz@LlDM|CPvLAv@KFU?y^e@QyH@wFQgBP_DBqVGs@LS|@YRiAkAiAUuE@oE^sTBmA\\g@d@_@p@]tCD|FDd@HHKxATh@KnAPhAd@hA^ZxAX~a@Bx@_@z@iAXyABmA@mIK}Fo@kBkAs@oA?zAHp@`@j@|@TlAI`Se@nB}@t@o@LuGHkZImAs@u@cBG}AJiC",
+        "startLatLng": [
+          40.784217,
+          -111.983592
+        ],
+        "endLatLng": [
+          40.749122,
+          -111.874512
+        ]
+      }
+    },
+    {
+      "raceNumber": 6,
+      "raceId": "ggma-2026-06",
+      "date": "2026-10-12",
+      "state": "Idaho",
+      "city": "Idaho Falls",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20558984430",
+        "startTime": "2026-10-12T14:29:43.000Z",
+        "distanceMeters": 42405,
+        "movingTimeSeconds": 16948,
+        "elapsedTimeSeconds": 18540,
+        "elevationGainMeters": 199,
+        "summaryPolyline": "wrmhGtb{jT\\iB}CkCsF]eIaCgBsDkG^aKhCqJrHaRjYuElDuEaH@y@j@[CjBuCb@u@tCaBEwIcDkDfAgFxD_BeAcEyAYlBnFz@Vz@{AtBu@hFgCzB}ExBuWImHw@oARu@y@{FL`G@tBTpSbAnNBnCc@~EaFvBwH_A_BkCCwBeAeCcDkDwA[kAjHrBfAlBWlB~Av@r@gAvE|@hEkDnC{@z@DvHtCbB@j@qC|Ci@NkCxCqGvQeUpKiHvOmCpG}B|CdAlCjCfLzG_AdFpFfEpIjD`GHrO|DdClAxChFeDoEsBmAqIEyA`@cEoCyEd@oCs@@uB_DoBy@rB`@{BqDoDHYzCjDaDqCpBcHuB|GkJ}A_F_CwAyAuLvAeExAuFdEyEpEmMxSmEvCw@`Bi@MmDgGE{@l@_@?bBuCd@OlBe@h@cK}CqAEgHtEqBp@qBrDk@hE{B|BgErAmB{AvDkFrCyLfE|AzAdAdFqDfDiAhJbD`BAd@mCzCk@RkCnCiGzQkUpKkHtOmCxG_CtC`A~PjL_AxFlFtDdDxAuDk@w@dBf@cCeEgEsI_A_B{AkEwBiG^gKnC{J|HwRfZyBv@q@fAg@MoDeGAaAl@Y@bB{Ch@q@pC}AAmJ_D}CbAkFrDyAcAcEwAWjB`Bn@jC?`@z@gBnCi@fEkBrBq@nBeDj@iN?cUy@bY`@s@}@V}AUsAGoKuGYuEt@s@~@qAxFfAn@lA_GfBuCxJGp@wHbFeFXyXW{DXUzJZ@rFlITDhLq@zAkS?_@fFoEhEs@`C_@vRT~A[rA`BbAhMQnFgFrBgHq@mBaDKuAu@ViB`H~CjFqDfDaAbJ~CfBAb@kC|Ci@LgCrCmG`RoU|IqGrQiDfGyBpDtAfEpDzIdFoAdG`CjAvAoDh@dBK{@s@a@_@fCdB~BhIhDdGFxJ~BFvAgEIsAn@eGuCyBb@iDu@G_CcD}Am@jA`@}AaBsByA]uEpNe@q@tDqMcAgA{Em@{EaCwAqAoLrAcFlBiLpJqO|VsEfDsEyGAy@l@YCdByCf@o@nC_BC_JaDoDhA}DjDeFeAaB{Aa@hBvB~@nFEbEmDhDeAfJ`DdBCd@kC|Cc@JkCrCoG|QkU|JaHtP{CjGwBvC~@|PhLqDvMf@d@vAwDbBPb@oAe@lA~AxBa@xA^eBsDkDrHmWcBo@|@uEeA}@aDrKjAp@|AyD|AxAaHhVhB\\hArB`JpDpGLjPhEhBdAhBtCkDgEgQaF{GOsE_Ck@^aB[k@hA",
+        "startLatLng": [
+          43.492442,
+          -112.04667
+        ],
+        "endLatLng": [
+          43.49241,
+          -112.046618
+        ]
+      }
+    },
+    {
+      "raceNumber": 7,
+      "raceId": "ggma-2026-07",
+      "date": "2026-10-12",
+      "state": "Montana",
+      "city": "Bozeman",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20563302078",
+        "startTime": "2026-10-13T00:30:06.000Z",
+        "distanceMeters": 42381,
+        "movingTimeSeconds": 18495,
+        "elapsedTimeSeconds": 19476,
+        "elevationGainMeters": 164,
+        "summaryPolyline": "yz|uGf|ydTEbDRrBhUl@\\a@ByNX_Ad@BtDhCzLBKaCP}EMqGDwGPmDIgBPkIEgHp@sBNwECUmAVqBE_A{AdA|@t@Dd@Zj@MTuGAmFKw@X}@JBZjAzL@R`BdHA|Ab@|UHhPa@dLAtGJTZFl@FvMbQLN^@lEJRhEQ`D?pFVzB@hFUpIVpEy@xAAJd@InDP`CO`CF~E`CfDbHLCtIl@vCOnDJnGOzBkEFK_@EsMa@EQc@I`AKDc@i@iAS]yAmBDClATl@AzMNxACx[HXTCO~Am@TVnJGrQ@hlAwA@_B`@aD}@[LSlCVxBMv@VzCyDjBaCCZ}@QiDJxDUZsAb@mFQQb@qA`@_G]_XQM^A`QOb@sg@YkB]CmZKqD[}AFwHOmKFiNLk@OmA?mEMi@L_AAa[EeLQsT]QqHz@}_@b@aARGtAPbG?fPPjA?jIWnOPlNKhDBrl@a@~B\\n@HhAA~~@Z`@lHPAjIGcNwEQ_HNsd@g@IXH~KKx@V`C@fHOz@@t[PvA^v@lLg@pVL|BYd@m@t@HVbAZNlCI`d@VAyZBgA}h@e@o@OHY~@GdED?{^}@ScGEKOBwy@Gy@]q@JaAZw@EiY@u@XBOs@GwB]g@Mo@Nv@VNAwo@TsCMqWYwD@{DMc@EmBL{RK}BxA}FhHYt@WfC}AtM@rEzArG?nBLt@\\rCBhDc@PaAbAcAXs@LVh@_@dBVTK\\l@j@L\\[R{@?qGSy@o@]YP]`AUxHXj@p@^hHNt@]x@sC@kx@HmPId@qD^m_@ZaCMwVJaBQEcCaLA{@^Wj@BjIQxCg@La@n@c@PsB@u@x@yDLoBxB{DfJIhA{ArGs@nA}AjG_EdMyCxHOPe@?c@lEAdFs@vB_@AOUKkFJ]|@@Vm@QEHHIpBJzANNxGA`IL|AVv@S?oAQYCo@FiKRaADwADcWIQ}@c@{Bw@fBcHNuAvD{I|AeBvBC~@Ur@b@rBeBzCJpMI~APtPWnHVdf@_@ThEOlCHvJEr{@QtN{AKIUXuBp@gB`@WHiFFkpACa@MKwd@\\yL[cO@}@BMb@i@[wLFoEG{@~@qE\\{AhBwD|Ie@~CeE|O_AnBaH`Sm@xCSzGRf@`EJHeBN[jFHhAOPLExBePa@o@PYk@CuBgACK\\XfHxAA@gCS@WlAIOF}@",
+        "startLatLng": [
+          45.70045,
+          -111.057479
+        ],
+        "endLatLng": [
+          45.70056,
+          -111.05899
+        ]
+      }
+    },
+    {
+      "raceNumber": 8,
+      "raceId": "ggma-2026-08",
+      "date": "2026-10-13",
+      "state": "North Dakota",
+      "city": "Bowman",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20572983446",
+        "startTime": "2026-10-13T15:06:57.000Z",
+        "distanceMeters": 42304,
+        "movingTimeSeconds": 17347,
+        "elapsedTimeSeconds": 17854,
+        "elevationGainMeters": 180,
+        "summaryPolyline": "mzzxGz{avRo@AaAFaDBQEGSAmJFyDEqC@iOD{@Hy@^mCDQJMRCxAJl@AjAD|AAz@EbF@pHCnAC~AHr@?NDDH@PEhA@`ENdABf@@xHBvA?zDDxCC~E@nTCf@M`AOlCWvC[~B{A~JIBa@EcBByF?uGBeABkME}AByA?sDEOEGSB_@fAyJl@iHZeBNSTCdBDhE@jCE~@BlAA|@DfBGrH?bEDf@EHGDSCmD?kIA[KSWEgIFeFCuASGEKW]MCF\\FJF@PCBQAPADDb@CwA?mCJyACKCEGCQB}@AqBBcAEeCJFE}@@yBAkC?cO@]VcCZsBLMXCfAD|EBpBExABtNEnABp@DDFBR?vGJpB?pHFzAAdCFtDCnDBrGAlD?hHAXMfAE`AKdASvAGFKBoBGkFFQBMFIRATBtJCzAGf@EHGB_ECyC?sADuBCwBBmBCwHDcDEKCGM@Yn@eG^}Cl@{GReAFOFGPCvL@`AB|ACxAB|AExCBfBCnE@d@ELGFID[GkFB}FAUGOWEyG?mCB{@Cq@Km@Du@AICGKG@TDNCa@@JCbAFBCB{C?oACu@?gCp@F~@B`BCnDDLFHNBTBbAHJtEDNBt@^nACb@DJJHPRx@BZ@zA@THNZTLRJXBZBpDChBA~DGlDObCk@dGEnAUx@Mr@s@~EATBXHXHF@TDLOHSb@[^gAt@IPETCX@TR|@Bd@CRYdAId@CrCGzA?\\HZRTjDtAxCr@fCVlAFdD@vs@?lGC~@BpKAtJDnDEv@B`I?xHEtk@?|DELGDICgY?{^@jx@BZBJFFNBlIEf|@?EEA@VDxp@CbCBpJC~MB`DEv@Bdr@A`MCvRBlAChCB~O?lAEf@DpC?vt@ALB^R\\BfCCRCZQLCjtA?j@VNBdCAn@@@NHVC[BMn@CVUjN?TAPGFE?K?nLDrW?hJFbr@?uEAy]Is`@AqVAu@MMC@FCLgAHOLEbB@tPAxGDpBExRChbA?xKAt@INF`@?tV?zICzJ?~GB~GClT@zKCtK@`U?^CnABfuAAr@Cr@@xP@`@Aj@@pL@z@AJCHKZNd@B~HApc@DfWAxe@D`FCtR@Z@f@Vt@BJFJTH@AOGAVMTWTEz\\AfHBfOCdNBzPEb@BzE@jEGvCOxBWhBWnXmFrDm@dDq@rBg@j\\qGtEoA|FaCxF_DfDaCpE_EpD}DdDoEjAgBfBwCDKIGFBJKbAqBxCmGHMB?@PCT_EdIk@bAIBGK",
+        "startLatLng": [
+          46.181676,
+          -103.397892
+        ],
+        "endLatLng": [
+          45.950773,
+          -103.400562
+        ]
+      }
+    },
+    {
+      "raceNumber": 9,
+      "raceId": "ggma-2026-09",
+      "date": "2026-10-13",
+      "state": "South Dakota",
+      "city": "Keystone",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 10,
+      "raceId": "ggma-2026-10",
+      "date": "2026-10-14",
+      "state": "Wyoming",
+      "city": "Sundance",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20586534503",
+        "startTime": "2026-10-14T14:16:49.000Z",
+        "distanceMeters": 42339.2,
+        "movingTimeSeconds": 17354,
+        "elapsedTimeSeconds": 17447,
+        "elevationGainMeters": 313,
+        "summaryPolyline": "ea`nGd}`|R\\hAPJ\\FJPhAxDXp@tAnFTb@Tt@|@rD`@`A|@~CTf@TTVN\\DbE@h@BvAAlBOh@HpDOzB^x@FdBv@dAp@fBzAt@bAtA|BJn@EJKF`@LVd@xApE\\x@fObe@dAxCp@|BZvAJXRR\\RhARdMlA|Gv@`Dl@|@Z`IpBjAT~@J~BHtA@rDSbBWfJ}BrGsArCc@vBUhMg@x@J`@OZEnSq@p@@pPi@pCOzDe@pB]tDy@bDaAnEiB`RaIz@c@hFoB~C}@zCq@pB[xC]bIg@vS}@~O{@lEGdLBdEPdLn@lE@`|@_CjHOzCDnCLtBPrCb@dJbBrYbG|HzAfB`@`HjA~I~@fEXlEPdDDfE?z@Dl@?d@Gx@HpA?p@IdJAtEBlZ?x@HhE?lB?r@KpAAfABdGApFDfXApDE~COn@Hf@E@F`@c@hDe@hDw@vF}A`C]fBMbBCnHT`Tf@dAH`B\\tAd@dHfEhBx@jCp@xANnBBzAG|AQdMiBlBQlG_@bEClGTdg@xC~ANfCJnBVjB\\z@ZpD|@P?JSF?HHFVLHvMlDp@f@~DfA|@BhD|@bBp@n@ZzClBbDvCpV~W~ArBnAnBlBrDl@zA~@nCfAjErDjRbAbGfJ~f@fAnEd@`Bf@vAl@zAtB`ElCtE`EpG|B~DlD|Fz@bBp@dBx@xCf@pC`H`g@z@~Dx@tCx@vBhAjDdXfv@jCxHtKpZdBtDjBxCfBzB~@~@dA|@lBxApAt@lOvG|c@fRtZrMZHPMEBPX|CrAtBt@lB`@nBNnB?tYsBrHc@t[}B`CKdDYvCMpb@KdG?hBB`MjAh@@vFn@jDXpABnCMxHqAjCGvDT`^nDpCh@`Bn@|@d@tB|A|BbClAlBp@lAv@jBbAfDn@hDbClSNhBfFbc@NdB`@rHG|LKfEUvT@|DF`CXtEzGhs@XhDrAdXLhDRtH@~FE~Em@zWS|HMpKPtxBOnAAjBCHDJ@^@`OD^LRCl@?pFH~_AHrn@@fb@DxMDhl@DdDPrEXnE`@lDnA~Hf@zBh@nB|@xC~@bCzAlDtAhClBzCpDvE`UnXtA~AnAnA|BfB|AbAtCpA~f@lPxDz@|Dd@dBHtDDvBGjA@NEXJbBPzAZ`C~@~A~@vAjAoAkAaAs@EKFe@La@Oz@",
+        "startLatLng": [
+          44.406115,
+          -104.376023
+        ],
+        "endLatLng": [
+          44.142754,
+          -104.593363
+        ]
+      }
+    },
+    {
+      "raceNumber": 11,
+      "raceId": "ggma-2026-11",
+      "date": "2026-10-14",
+      "state": "Nebraska",
+      "city": "Morrill",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20590666118",
+        "startTime": "2026-10-14T22:50:53.000Z",
+        "distanceMeters": 42348.1,
+        "movingTimeSeconds": 17736,
+        "elapsedTimeSeconds": 18310,
+        "elevationGainMeters": 63,
+        "summaryPolyline": "}pj_GnnazREUxHiUnFwOfCsGrBmEfBoDfAkBzHyLrBuCfEyEjAiAdCoBfCeBrHaEbGqDjCoBtDeD``AadAlBeCdBkCbBeDh@mAvA}D`AiDrNqk@D_@CcAD]HM`@YTk@bOam@hAwFp@sDd@mDp@mGf@kIdBwd@RwEH}@ASW_@?_@DGHNJBHKd@}Eb@mDr@uEjBwKZyCZoEvGsuBEBDUHeBxCyaAdB}h@VkK@aGEqICDBC@OCsDBcC@gL@_@TiALQ]RIHAFBcACoLC}DEgACgJf@wBXgBDFAKEBGCQWK[AY?yECm@@}ACKAe@?gICsKQsWSq@Kw@i@e@Lc@`@a@@e@EwGEeUEoA@qF]c~@W}X[iVIkKIoQ@iT]sd@?aBFqCRwDn@}Fj@eDz@oDrW{~@bIaYx@{CdJa\\hGiTfAmE`AmDrCeJtYcdAvByIzEmT~CeMhBgGpCqItCuHbF_M^wAPeBBsCCqYBSRc@FY@m@A{DBUTo@CIB@KCMg@G}@BmBCaLCsA@eCEUYi@CWC{N@_OLy@RiERaDr@{Hj@yDz@}EnA}FjAmEn@sBvA{DbTyh@rDmJLe@JMx@mB|Yqt@pBmFvBgFbCgGjBoFrDwLbCqJjCaM`G{YxAsGzByIrAmEViAvDsKbCiGvEiK`BeDfCuElD_Gpp@qeA\\u@dDcF`OuUdAeB^_Ah@o@`CqDpBcD@IEIDIpAyBh@oAhKkPNc@NmAr@qA~@eAr@[NMtDcG|@oA~@eBhDqF`PeWZq@h@wB`@U@JJLPBJGzBcDbBsCrP{WbBmCFUtAsBbH}KvJwOZq@jDkFzKaR|@oBzJaOt@qAd@cAfAyCf@kBVmAVkBRiCNeD@sCCwB@gDIoA?{CFwHQeq@D[V]HUBiBDSHILCpABpBIR@d@VLWPCnBLb@JJCXUNChE?t@HnJKbA@vDFxAGXI|AAhH@HBBPB@XUHCtFGzE?l@Jr@K~JCfAKnBB~ECpAGdCBlCGnDA^Dp@CrF?bDIn@F~@?hJKFELYNIjCGJGHMN_AR_AlAuGPs@^aC`AqEH}@XaA\\kBHu@Pk@ViA^qBHw@Vy@r@{D?WSeAc@oAa@u@e@OkD@sAEoB?mKDsCCi@@g@JoAIcABwBGyCBiAD_CW_DBg@EsADkL?iAL]PQBcHAiEHuOFm@CeBBWGkD?[DKTCbEG|AYp@G\\?dJCFKB{AEOIGSDQHIlAJTAD@[FTBBPAHIF{@@[IMWBMJEb@N",
+        "startLatLng": [
+          42.002235,
+          -104.051114
+        ],
+        "endLatLng": [
+          41.87431,
+          -103.669512
+        ]
+      }
+    },
+    {
+      "raceNumber": 12,
+      "raceId": "ggma-2026-12",
+      "date": "2026-10-15",
+      "state": "Colorado",
+      "city": "Denver",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20600203592",
+        "startTime": "2026-10-15T14:10:44.000Z",
+        "distanceMeters": 42390,
+        "movingTimeSeconds": 17628,
+        "elapsedTimeSeconds": 19019,
+        "elevationGainMeters": 194,
+        "summaryPolyline": "odgqFtpo_SCwFLo@TG`_@VNxAb@hAbDHj@XcEm@M]CuVOu@UwGF_u@`CiGr@k@|OOEqTkLKg^Zo]OuJhNEni@tPJp@d@Kvo@DvC^@AtN~j@J~@SEgEtFB{FEc@rCDvFMv@as@BwBPQrJDnfAObLDro@h@bASdEm\\Ay@rC}A}@HkA^G{RBoAz@gC}@{J@sCt@_@zAPtBaBTn@pGDpER~@^VtBIj@m@KXj@l@jBNrSWf@RrBU~K?tGX`CSnTXdBw@\\y@IuRe@{Bl@yDi@_AkBKOc@c@b@_BHSdE_@Xur@CuA|@qC}@wJBeBTaAlAHbDg@Tw@Fn@bGB|ENx@^ZnBGdHl@nTQ\\SvCP`PL~BUrDVtNH`Bs@b@m@EiSc@yCh@eDs@aA{AE{CJM~D]`@yr@GsA|@kC{@yJ?eBVm@Z[l@IfAR`Bi@Tu@Bl@`GDzEN|@`@ZpBEbEf@tPCxF]lCPbJK`EX`CUvCRnPBnAw@Z}@KkRe@}Bj@yDk@eAaBIY_@|A@q@G]?bADkAC^@aBd@eALMfE[V_s@KuA|@kC{@cMN}@`@a@l@IfAP`Bi@Vi@KI\\j@tFFdFP|@^RrBCzGh@rTQb@SpXHtDVtOAtA}@TiAKyQg@eCj@yD}@aAgFFUdE_@Zyr@EqA|@uC{@oMNq@^[v@H|Ce@Vu@Dj@bGDdFRx@XPvBC~Gn@dTUj@SvCR~II|DVbCYlDZvOAtA{@V{@MgRg@cCn@yDk@_AiBIUe@Yd@kBRMzD[\\yr@GqA|@oBs@aBKaKN{@Zc@v@KhAR|Ai@Vm@EGf@l@pFBvETx@VRdH`@hDFxRO`@QvND|DXpCSzCRfODzAs@b@_AMwRc@{Bj@}Di@_AcBI_@e@Wb@gBTO`E[Zkr@CeBx@eC}@iMJ{@Z_@j@MlAPfBg@Tm@KG\\l@vFBtEXlA\\RlBGnIh@~RQd@UfDRXQDo@x@`ArFIhEXxBUlDXlO?~A}@V_AOiRe@{Cl@}Cw@eAyFLG`EZ\\?XkAfCoB~@qBEuFiBoKZyLwAeBJ}@b@q@x@YfA@XvK}D`Hz@hJ[xGfBzBCtAs@lAkCa@q@R{DxFIl@l@ElADgAi@q@uAIc@c@wCBnC?",
+        "startLatLng": [
+          39.69112,
+          -104.942346
+        ],
+        "endLatLng": [
+          39.693988,
+          -104.96747
+        ]
+      }
+    },
+    {
+      "raceNumber": 13,
+      "raceId": "ggma-2026-13",
+      "date": "2026-10-15",
+      "state": "New Mexico",
+      "city": "Albuquerque",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20605396396",
+        "startTime": "2026-10-16T02:35:46.000Z",
+        "distanceMeters": 42326,
+        "movingTimeSeconds": 17601,
+        "elapsedTimeSeconds": 19728,
+        "elevationGainMeters": 222,
+        "summaryPolyline": "oubuEfa}iSx@PDPi@`KsAnOu@lL[tGb@}IhAuORuAT}DEOd@sEVGjBTgBWkCMWK_@s@X{DnAFjARhGd@nM|ApBbAjCd@gA~P`@dMPda@Dx@f@h@gAjBPn@yG~KwElDmFlDcCxCq@bB{@lAgAi@o@m@uF{KGs@VsAd@qE`AyPjHyeAAUMKqAMMb@OdDHP~@`@B\\yAzSs@zKI|BgDpi@e@vFFHnCXf@T@`A_@hHjA~BbBhAFXiCrDmAfAkf@|j@sMhLeB`ESFg@I}@}@}@Z}EtKmClFqJ~SuAhAiCrAeBxAsAt@yQ|IiDh@qZ]WPEdAYHgDy@aY}DAKIFwAIwLM_OsBnOtBhKJdBJrY`EnAf@hA\\p@OLqALIj[ZxCi@~QcJzA_ArAiAfDiBz@y@hM_YpG{MnAo@Lc@GhAHXf@Th@EhB_EnMiLve@gj@nBkBzBmDGYiBwAiF{JM{@f@uDfCka@r@iNdDmf@DkCmAQITNMdANFjCyDhj@qD~j@k@jFNz@hD|GCRnBlDVLj@S@TcClD}AtAkf@bk@cMzK[f@mAxCWFe@I_A}@y@ZmFpLqA~BaLtV}ApAcCjAeCnB_TdKoB\\cABsY]SLGdAULu@A}Aq@s@MmYaE}NWeY}DjYbEbOVbZdE~@b@tAb@\\STqALK|Y^lAGpAShRcJzAy@nB_BvC}A|A}AbLaWz@{AlFiLz@Ux@z@`@DTGfByDvMqLve@ij@~A{AfCyDGWeAm@e@i@iFgKK{@ZsAJsANsE|Bi]l@oL`@cEdCe`@HyBmAUUF~ASHIZgF\\c@z@kON_AhD^tFb@dj@i@rDDx@VZWxDKr[a@nDYf@YzCGtBUj@}@BcH`@iCbCcKh@WP]zAcJTKIO?]VmBTmFf@yENIhB@`B]fCEMy@HaDn@mBBg@|@wBEWiA_AK[hAkD@}Aa@WyAMUwEYa@gA[Yo@EgCH]?qAf@sBn@eHVaAVIfBB`CUhCANT?dCPl@XHrDFD^A~BUhADd@j@t@lCbIp@j@~ARDlBTb@\\XxALxK@tENnAWvCCPzAF~BCrDFbAMgLNm@nCmArCwC\\Qh@w@vA}@fBc@fDCl@i@Z_AD_IJeA\\_BvBiHTi@h@q@r@e@nAW|S?|Di@vA?TOHe@@yG\\gECkA]{CJa@zA}C?a@M?QNmAvC@VLD~@_BZC",
+        "startLatLng": [
+          35.080726,
+          -106.649953
+        ],
+        "endLatLng": [
+          35.036437,
+          -106.618953
+        ]
+      }
+    },
+    {
+      "raceNumber": 14,
+      "raceId": "ggma-2026-14",
+      "date": "2026-10-16",
+      "state": "Texas",
+      "city": "Dallas",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20612883350",
+        "startTime": "2026-10-16T15:34:05.000Z",
+        "distanceMeters": 42408.2,
+        "movingTimeSeconds": 17448,
+        "elapsedTimeSeconds": 17539,
+        "elevationGainMeters": 226,
+        "summaryPolyline": "gxhgE`|dqQt@MZf@tGEDb@^V`T@VpJzXHZFj@t@`HFV\\HdEnI@?wSS{CiAwGT_WKmC_u@WKXCrVMxDWZVbBI`EYLuHUgKL[k@{@PnAnBv@DHRTpAIr@VnDPr@ZL`AMDwAz@Qn@t@Kz@h@AtAmBJqAs@QoDfAq@AYSYsAYWKj@XjDZEPa@UiCe@q@B_@UHa@sAs@KA]~c@ClFVfBaAlSBTgP~Gi@NSLo\\`@kFHaUzOaB|@_@fIgBfJ_AQq`@Fud@TQxRAQsQHoHUwAZwALwQBgs@o@oCc@g@Hi@Ev@z@_BRmE@ucBn@_B^kjBZuHe@kf@\\ey@Bc]QmB\\ggAqAgIb@sAnFeDj@eBSqAyDuFc@cDZaPMew@mFEw@i@iIGi@eBHkIKvIPlAj@VvWCnAUzAVrD?nAh@hGVdMQ~PVh@V?lENFxB?tAk@xCNZVp@{AT{BjBXGpCj@zD}@tJYYVh@b@zGhHnXtG`QzBhJvAfKbAfBzDrE|@jD`@zEVTjCRbDk@rCpCrBEzBrAfAa@zDdEzAKSlAZjCi@lFiAdEkAz@Ix@{@bAj@b@T~@t@z@bBKNXqBv[`@~AIq@_@e@aE@gBdCa@xByA~Ae@`B`@h@bARdAhAzAp@`LI`At@zEnB|ArA`CfCbDtGt@MlDj@|@v@l@xA@l@W^uBz@G~@TjC_AtASdAK~LVlVW}T?_HPwFlA_CIy@u@s@ZuAtC}@LkAeBoCaEk@s@L{CuGkDoDkIkEoBuDw@}DUgE[aApBw[Qc@gBNw@eASy@g@a@~@aAXu@jAkA`A}D^uDWmE\\m@z@a@cD\\yDaEYCo@`@{BoAsBDuCqC}Ch@cCQc@[e@uEy@mD{DsEgAoBmAkJ{BqJ_HmQiHaY[_Gx@_Lm@kDD{CqAQ_@R\\W`ARVVIbCj@zD{@nMd@~EhHrXnGlP~B|JvA`K|@jB~DjEx@zCd@fFZTdCLzCg@|CtChBEbCrAh@a@\\@bE~DzCa@{@Vc@x@XxBAxAyAvIqAdBW~@{@z@~@~A|@bAzAONPmB`\\Z`AJhDf@`Dx@bCpAtBjIdEjDlD|CvGv@O`Ep@h@j@p@dBIz@uBt@U`Ag@b@n@XLjAIb@_AjAKx@K|GT~KCvMOfBRiB@cNWyKZwIWiBPg@B}BFx@",
+        "startLatLng": [
+          32.81813,
+          -97.351209
+        ],
+        "endLatLng": [
+          32.766305,
+          -97.261018
+        ]
+      }
+    },
+    {
+      "raceNumber": 15,
+      "raceId": "ggma-2026-15",
+      "date": "2026-10-16",
+      "state": "Oklahoma",
+      "city": "Afton",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 16,
+      "raceId": "ggma-2026-16",
+      "date": "2026-10-17",
+      "state": "Kansas",
+      "city": "Kansas City",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 17,
+      "raceId": "ggma-2026-17",
+      "date": "2026-10-17",
+      "state": "Missouri",
+      "city": "Kansas City",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 18,
+      "raceId": "ggma-2026-18",
+      "date": "2026-10-17",
+      "state": "Minnesota",
+      "city": "Minneapolis",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 19,
+      "raceId": "ggma-2026-19",
+      "date": "2026-10-18",
+      "state": "Iowa",
+      "city": "Lansing",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 20,
+      "raceId": "ggma-2026-20",
+      "date": "2026-10-18",
+      "state": "Wisconsin",
+      "city": "De Soto",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 21,
+      "raceId": "ggma-2026-21",
+      "date": "2026-10-19",
+      "state": "Illinois",
+      "city": "Chicago",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20651242341",
+        "startTime": "2026-10-19T13:06:44.000Z",
+        "distanceMeters": 42373,
+        "movingTimeSeconds": 18272,
+        "elapsedTimeSeconds": 18963,
+        "elevationGainMeters": 94,
+        "summaryPolyline": "ukv~Fz{xuOKcEgDcC@aDc@yE[i@{BjBLnW}GuASmAwAdAnDmEh@gDPyGrAgD`r@qa@~BSlPB`F|AlBChBgBpC{@?iBfQF`BfAnA`Cd@rCJzEb@bBjAdAvBP}B]eAiAk@_Ic@eCuAoC_B}@kQEOzBwHdBcGy@qLViB_@{BV}CpAaUvNJxCaBfAOfJ\\hLcE\\{AUs@^GlCbAfAy@}KQ{JgHhDEvXuFoAk@cBmB`BwP|D{OpCgG^aCKuBoAiCDiCmBkDW{FvEyBtDcCdCaHbEcHbCod@hImBMwEaCyBf@{ErEsDrAcG`@kG_@kCfBuF_@_Fv@aGvBqFpDwLhSkErDaFxDsCJSd@o@]gBr@}BlD}DdCcBf@gDyAoJzKs@PsB}@}ElFmR`FqHkB{Af@pAg@jIpBdRaFvEgFvCj@rAaAjHcJbDzAxA_@fEqC~@oBjAaAtH_AzEqDtE}DlCgEhHaM~FyDdGsBhEq@zFXfCeB~F^|Fa@xDmAzEmEnBm@z@EjDbCtBLxd@qIdFaBtFwCnEwDnCoE`GsExCTnCnBbCA~BnAtCFbHe@`MwB~PmErCgBlBlCjDh@HqXpIuE]^?jG_BKw@fH\\l@nAE`BjF_BzBLcAj@@r@u@Fq@Az@CgBW{A{C}@[y@w@uG?_DcCnBHpWaF{@}@mBuB`BmUnFuLjBgEPoCIoBoAqC@eCmBgDU{FrEuEbHyHtEaJ|C{c@|HiBUgE_CaCn@uElEqDpAsFb@}G_@mChBuF]mEr@mFhBeGvDuHlMsCnEcL~IcHx@{AjA{@xBkGfDmEuAaI|JbIuJ`DrAx@CxFkD`AwBxAgAhHy@jLkJhAkCvFgI_@_DxA~@~@wAfFgDrG}BbEo@vFVpCcB|F^`Gc@zDoArEkEpBm@|@BlDzBlBLjd@iIxHmCrFcDpCiCdCcEbG}EhCHhDxBbCAtBjAlCHtHg@|JaBbScFjCgB`BdCnD\\Xi@FoEQsOvB}AXdBDjJ`CNdAvFf@k@WIJvAZ\\UNBx@x@l@`B[zC`@z@[`AXnHKtEp@dEq@rP\\bCw@fE`BnDLjA_@tEfAl@e@fBEdDt@fB{AbEUB_F\\El@z@hAQbAmADuAv@h@pGC_HDc@]bDc@n@j@Sk`@aCw@gCiDm@yIqA}DeCeB}TGsBNW|@RhCY`DI|PL~Ec@jAQdE^fAuQoA[yKkMaA}Cr@sB[k@Pa@jAJjKuCrAsCJKdGgM_@k@JEpDv@dANdA",
+        "startLatLng": [
+          41.898995,
+          -87.623179
+        ],
+        "endLatLng": [
+          41.898872,
+          -87.623448
+        ]
+      }
+    },
+    {
+      "raceNumber": 22,
+      "raceId": "ggma-2026-22",
+      "date": "2026-10-19",
+      "state": "Indiana",
+      "city": "South Bend",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 23,
+      "raceId": "ggma-2026-23",
+      "date": "2026-10-19",
+      "state": "Michigan",
+      "city": "Sturgis",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 24,
+      "raceId": "ggma-2026-24",
+      "date": "2026-10-20",
+      "state": "Ohio",
+      "city": "Columbus",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 25,
+      "raceId": "ggma-2026-25",
+      "date": "2026-10-20",
+      "state": "Arizona",
+      "city": "Willow Beach / Hoover Dam",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 26,
+      "raceId": "ggma-2026-26",
+      "date": "2026-10-21",
+      "state": "California",
+      "city": "Los Angeles",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 27,
+      "raceId": "ggma-2026-27",
+      "date": "2026-10-21",
+      "state": "Nevada",
+      "city": "Las Vegas",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 28,
+      "raceId": "ggma-2026-28",
+      "date": "2026-10-22",
+      "state": "Arkansas",
+      "city": "Little Rock",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20693491128",
+        "startTime": "2026-10-22T16:45:22.000Z",
+        "distanceMeters": 42322.3,
+        "movingTimeSeconds": 17215,
+        "elapsedTimeSeconds": 17236,
+        "elevationGainMeters": 113,
+        "summaryPolyline": "erbsEh{crPi@jCu@dBj@|BBhBaBzOc@hHiAlDu@vESbF_@nCqA`E_AbFcBlDHjAQ~@{Sn^iFjFoClEuKjKdMyLbB_DpFuF|S{^Js@IgAbBqDfAmF`A_Df@sDT_FdA}Ft@sBZcGfBmQEeBk@{B\\yCx@aBg@rCs@bBj@|BDrBgBfQ]dGgAbDu@fEu@jKoArD_AfFcBpDHjAEZmD~GkNrUyFfGyBtDeO~NGp@|@dA?v@mChCeEnGsG`HiCvAuHdHsDnAmD|CwEdC_Y`XuA`@sJlGcBNa@}@Rp@IVuLfJmHdCqFVyAUgI_EqAZ_B@u@}@aALaAYkA`@]z@VhDC`CkDvEs@jB{ApB?tAF}AxAsBp@cBnDaFDkC[qCZw@~@YfAT~@Or@z@lD]zHvDdC\\hF_@~G_C`H{EdC_CvCi@nJiGjA_@pYmX`EuBbEmDvCeA|HiHpC{AfG{GjEsGnCmCBo@w@iA?m@lNcNpCoEjGuGnPiYhAiCR{@EqAfBmD`C}Jl@kEPoEz@cF|@gCdC_ZC}Ag@cCtA}FyAdGd@rBDrBcChY}@lC_AzFKvDc@lDsA~D{@`FgBpDFvASbAmSl]wF~FkAbCcAlAkNbNCn@z@pAKx@yBhBcEnGyCdDkDdDmBbAqH`HqDrAaEhDaEvBeGhF}JjJeEpEmA^mJfGyCf@gCbCeDvB@b@c@GmAdA}HjC}DVoC[}H_ErHvDhCb@jESdIoCpGsEfCcCzCi@tJmGlAc@zPoPhGwFxB}@lGaF`DkAxHmHhCwAtGeHnEwG|B{BBo@u@gA?k@vNqNbAmA~@sB~FaGfFsJ~KmRRaAGoAjB}DhCkKb@cDRmF~@iF|@aCXeGfBqQq@uErAgGqAnGb@xBFdBaCbYgAdDs@tEWlFa@zCoAtD}@bFeBhDFxAQz@aQjZgBnC_F~EoCnEeN~MIj@t@nACv@}BtBuEdHmGxGkC|A{HdHcFxA@h@cBvAgFtCuAbBqEnDaPnOqAf@kJbGcBPq@}@?y@xFyA`FgClCa@xIaIxJ{HbBkBbAWfC_B|DiD~CoAxHcHxCiBpGwG~DkGjCmC@k@w@mABk@fOaOvBoDnFsFtSs^P_AEkAbBoDlCoKb@oDRyEx@gFdAwCV}FfBkQCuAk@oCrA_Gm@dDf@oAHuAwAvF?f@j@bBDzAmBhRYlF_AlC{@zEQnF_@nCoAxDeArFmBrD^t@WYA_@hBuDnCwKb@{DPmEz@}E`AwCX{FhBsQG}AcAaEX_ElAeAVyHSzJ",
+        "startLatLng": [
+          34.75251,
+          -92.266926
+        ],
+        "endLatLng": [
+          34.752599,
+          -92.266828
+        ]
+      }
+    },
+    {
+      "raceNumber": 29,
+      "raceId": "ggma-2026-29",
+      "date": "2026-10-22",
+      "state": "Louisiana",
+      "city": "Shreveport",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20697133048",
+        "startTime": "2026-10-23T02:36:23.000Z",
+        "distanceMeters": 42299.8,
+        "movingTimeSeconds": 15265,
+        "elapsedTimeSeconds": 15601,
+        "elevationGainMeters": 94,
+        "summaryPolyline": "eqfeE|swzPw@uAj@g@~CtGv@zBS\\\\^dCkAxs@yKtCcA|C@nBnAzAFVa@BqATJ~AiAbCa@x@y@x]mFfCd@|@_@`EVjF`ArQzFhE?bDs@fFaCdCiEzA{EvA}@zBe@hAwAVoB]_FR_NtCqPlC}El@eGpF_OnAo@fHg@rIkJ`Ck@hF^r@sBvNpCrDIxC{@}Cx@mDF_OoCq@tBiFa@uBb@uInJkHh@}Ax@kFdOc@tFqCdFiCrNYjCCpLXzDSfBkAzA_Cb@sA~@cBnF}BxDeGjCoDl@cDEqQ{FuHqAyBGaAVaC_@{]nFw@x@kEnAUdB{@Z}AMyAkAoD@wC~@yo@~JmEj@cBsA{CsH[Ga@h@`A`C@_@U?NZB]S@PZ@_@U@XBEZS[XCMZEQR@MJCo@s@kAx@a@lElJjCPvs@{KvC_AfDAdBnAzADz@_@VeBdEkA|@y@n]iF~B\\lA]~KvA|Q`G~D?bE_AhFsClBoDfBeFdEwAlA}AT{Aa@kFT}MrCiPpCeFj@kGdFmN~A}@jFUtAc@hGqHjBeAlHR`@iB^MvLfCaMeCWL]fBqHUeBz@eGzH_Bh@kFR}Ax@eFvNg@dGwCfFmCvOU|MZxFSvAqA`ByBb@sAz@eBnFoChEwF`CgDh@qDIeR_GmHkAeBImA\\wB_@o]jFaAz@wDdAa@d@CjA{@XyAKeBiAgD?_EhAkr@pK{Cg@wDqI[Ic@h@fAbC?a@U?P\\U]PZDUCXB]W?R\\H[WI@Zs@yBz@]hEhKXLzAk@\\RfEm@xm@sJvC}@|C@~AlA|AFt@[TiBnEoAp@w@j]kFnB^|AYbGZu@?pHrAnN|EbEJzCg@jGoCxBuDlBuFpA}@zBa@jAsAXwB]gFN}LtCaQ`C_EeClEuCfQIpL\\rFUvAiAzAaCd@uAz@gBtFgCdEeGbCsCd@wDEoQ_GkGeAcDS}A`@cBc@}]nFy@x@cElASbBy@\\_BIyAkAkDA}C`Aqs@zK{CYaEcJy@b@fA|BAa@WFTXQWB]s@kA|@]jElJnCLns@}K|By@~DElBpAxADv@a@RcBjEoAx@y@p]kFdC`@`A[rBHfHhAdRbGzCDnDe@kDd@kCEaDm@gMsEgHmAiCIw@XkC_@s]lF}@x@aEjAW^AjAe@VmBE_BoAmD?wDfA{r@tKqCUeEkJiAVy@~AxA]Zf@",
+        "startLatLng": [
+          32.479078,
+          -93.678866
+        ],
+        "endLatLng": [
+          32.479169,
+          -93.678871
+        ]
+      }
+    },
+    {
+      "raceNumber": 30,
+      "raceId": "ggma-2026-30",
+      "date": "2026-10-23",
+      "state": "Mississippi",
+      "city": "Meridian",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20703475113",
+        "startTime": "2026-10-23T13:15:41.000Z",
+        "distanceMeters": 42445.3,
+        "movingTimeSeconds": 17029,
+        "elapsedTimeSeconds": 17396,
+        "elevationGainMeters": 275,
+        "summaryPolyline": "g}pdExir|Of@uAj@w@MuAq@g@iCqCW}@_B_BKm@yD{Dk@H_Cc@oAKeRu@iCHsGEo@WOSg@eBi@uC[eDa@kGGyI@sJM{@VuCWeBH_AB{BAqHM]qFGgBHqBUqCAuHBKQFkAEkGMGs@APM?GcGwDsAe@cAQoVqCcOyAwEu@_Fg@qK_@iAMwP@u@KQOG[ByIAqBKSuWAkTaAcBAi@SaAGMIK[YmCi@k@WqCU_@s@sF[}@Vm@_@uBBu@w@sHf@eBBo@t@w@YX{@XIN|@~IJTTRPj@fBl@~MAjCJdJQbD@z@C|De@~DI|MEbN@hCH^b@Fp@EpH]~MFdFTj@|ClBd@l@H`@EbGFPvBR`G~@jLdAdS|BbFr@fBb@fHjEv@TI`C@zEHR|LCvBP~DCpCNNn@G~CFpBCbEH~Ai@v@QDp@XNd@?jSFvDI\\_@f@`@SPTt@nJrAnFPLTBhMCfT~@pBn@~@n@nFvFl@r@Z|@zCbDV|@pAxBEHNBQINOR@LICODKz@G\\]~AkHbB_K~B}NpBkKJgAB_DOmHFiBIiCFqAC}TKkB]}BOmEDk@ImJD}HAgGK{DD}LMePBsDZiA?yCQ_DD_EKqPLSp@B^InAs@dBkB`CoBJW?[Qo@aAyAuCyF[y@m@i@c@o@aA{BaAkBeBwC{FyKQcAIqHIi@Yk@m@{@aFsF{FmD}AwAuJaQoAiBiDgDOYCm@Vi@bQiNv@e@XFBZOVeAr@YC}CeGmEiHmDaFeC}CaB}Ai@[uFqFqE{EaS_ScAsAoFyEq@{@aJgJw^y^yCuDaD}FaBkE{@wC}Kik@yAsKc@}GSaIBkbAJ}@BoFdA@cA?FETB[BFGx@FYGY@b@@JHCEDA?ZK]m@CMS@cAPk@_@aABwDI}HMcDq@oJuA{PcCmW}F}e@_EyWcC}LeByFgTco@oCeJeEyPyKac@_Jk]qAsFwNuj@mA_F[iBW{BKsCFyDNsBzA}KzCyQViEAaEi@mF{@aEiCoIc@kBu@cEW{C{CecAYsFWwBs@iCyAqDkAoBiBwB_CkB{HcEkC}AuAeAwBaCkAmBkAkCyAgF]sEE_Fj@w\\n@gYRgADeABF@IWk@A[P}Ej@s\\LgENOIy@DmFnAsn@LyJ`@mOHsHQiJe@cI[oC_OkdA_@qDmAuHGuAgAeH[mAcDyTEMKAHC?GWPLQDa@]wCgCuPyEk]o@uD",
+        "startLatLng": [
+          32.368369,
+          -88.736444
+        ],
+        "endLatLng": [
+          32.425315,
+          -88.468147
+        ]
+      }
+    },
+    {
+      "raceNumber": 31,
+      "raceId": "ggma-2026-31",
+      "date": "2026-10-23",
+      "state": "Alabama",
+      "city": "Tuscaloosa",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20706646104",
+        "startTime": "2026-10-23T19:58:20.000Z",
+        "distanceMeters": 42354.2,
+        "movingTimeSeconds": 17388,
+        "elapsedTimeSeconds": 17602,
+        "elevationGainMeters": 229,
+        "summaryPolyline": "glviEpxluOiCjByBOG`AhAtGbGnIPpF`DtNzBxGk@bDRhB_@x@ZrCz@`BG{@b@THo@d@n@OhChAzBb@xEt@l@`DJpBw@\\eApA_AxE}AdFdErLcC~BrMq@fCT``@yAlGh@bBQzDx@nDsAfDEjDj@t@jC`@nArCxCtAPp@Rq@r@B~AjCfJrH^qTh@gA?}NdBy|@vCeg@c@o[VuAQsA|B{gAm@cIkZmA@gBkAdBaJoD_XgFm@e@sCkIuA_@sAlAqRu@iBs@_NcBmAgAsI~BiBrAVfAqBp@MfBbAnC|C`@bDhGH|V`CpQYrBv@`CUzApAbGvBfEz@bGtBLpC}BkCpByBJ_AmG}BsEiA_H\\k@y@eCXwBoCoREsJZeFUeCgA{C}AsBoDw@{@_Do@k@MaBs@WoAkG^a@GmCyCuM_@oIXjIzClMBzBd@zA[fAd@lCVh@hA@vBrADAbBiBbDwA|Da@vD|@z@Sn@mGlHJr@{Gz@y@zCf@`Gi@hTx@Lm@yD`_@vUvER`D]fEDpJgApm@zIjc@i@d@lApGeAh@AvCRHq@qA^QoAPwU`H_Ah@Db@f@{AiAmG{AuH}@NcCyM_K`AgE`BgFsEsBcDa@cGT_Cr@}@AAmCtAsAcEgJei@OgHX{Ig@wEcAqDuF{KvCcCA_Gy@cDXmC_Ak@lAO@y@NfAj@L`DmArB^`@n@jAiGfCcEKw@gG}Ia@cENqNvEeHnBaGhDwBxVuJxFqAdH?~LzANuDZ_@v@d@@nB`AnAbBJB~B\\v@{@lh@rH@fA`@fGQnA_@k@sVqD\\qBmBwIODgEh@gC~EoGvBm@bBcD|A{@xHw@fTH`@_HvBkFjGdAbNPlBs@jDp@GzD`@p@c@r@Tr@e@pJqG?_Bl@c@lMtANTh@]xFm@b@p@b@@lAoA~EWxFbAl@aED_C~`@aBFeDrA_A~XiAx@o@`Nh@jAlAFi@vUi@oAsv@gBKk@iAo@n@gTuBuA_QaDc@f@cDpYm@jAeDoA?iF~@gHYwBjAgKYkFLp@zFPq@aBhB_CkA@MlA_@~@}FbGqAUk@cAfBaQzM^k@rEyE`FmDaMlGF^vCk@bDyC@P_@e@i@k@Rd@G`@vAgAdB?~Gq@tEmAt@q@pIB\\xAl@DnGfBx@t@hAoFhi@mKTo@XUr@j@dDu@`CaAc@eCsD",
+        "startLatLng": [
+          33.215568,
+          -87.561209
+        ],
+        "endLatLng": [
+          33.215536,
+          -87.561217
+        ]
+      }
+    },
+    {
+      "raceNumber": 32,
+      "raceId": "ggma-2026-32",
+      "date": "2026-10-24",
+      "state": "Florida",
+      "city": "Miami",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20715917010",
+        "startTime": "2026-10-24T11:22:15.000Z",
+        "distanceMeters": 42464.7,
+        "movingTimeSeconds": 18008,
+        "elapsedTimeSeconds": 20979,
+        "elevationGainMeters": 31,
+        "summaryPolyline": "kkq|Cjv_hNa@EJq@~n@~EMMB[Bd@f@LfKx@nE~@bx@jU`FhA~@@tBl@z@M~C`Ad@C|F`A|@St@\\dDd@hAKz@b@jIn@~@Kx@XjBI~AXjBOVZDtAbCR~BCPVEd@^m@pDdAjDe@LNClAf@\\hAW`B@|Ej@hAk@l@X~@Dz@x@|B^fAz@|AK`DdA`H]@hA\\V~CWz@i@JcAVIfCd@x@Ij@ZtAPvAEz@Xp@CdAv@zBt@~AQ`JBlBUbNJzEaBj@PI|@Na@Ma@g@Q}EbBkLGqJXiDKcAL{Bq@eAu@w@D}@a@eAHuCk@{@DeCc@WJKdAq@\\iDVgCiA{DF}CiA_BJ{@o@eCg@}@{@}@Ce@YuAn@_Fk@aB?_ATg@[BoAMMiDd@_EgAQn@Fc@[_@}BF_CYGsAYYaAV_BGo@Y_ANcBYsBD_Hq@o@a@cAPoDk@q@_@{@VmF{@u@@gDmAgAT_Bo@u@BkDq@o`AkXu{@kH[BJn@vAC]Mq@HSa@HMsJy@_PEiOo@_PsAcOCcESq@P_C_@pBd@jAQ~UZpNjA|Op@bP@rIz@Vn@So@iJ}@{PE_No@sPqA_OAyDS{@PkCg@yKg@aDBvGHtHd@~Bd@z@YbFTrNBtOxAfOp@`JOpELbIx@Pn@Go@b|@jHhKhCjt@zSdFr@jCt@iCu@i@B_Es@me@iNyY}Hk|@oH@h@Gg@QMwIs@uOAcOq@oPqAsNCqEUy@RcCe@oLk@oJBoH^_RC{McAgFG{NoAuDDyA^oBe@{_@Z{On@cESqFb@{D[}DPkDd@{@a@gCF_BS}IFqBbAgDb@KLJZmA[mALsCeA{Bf@iB?sAScAZcAa@cCh@kA[{DPyAM}EJ{wAbHo@g@y@p@kH\\yDd@iEDoKp@yB@uAc@uC^{@Cw@f@|ANnE_@lEGlPu@bEq@hHU|@i@Z@VzBGvBd@Vo@|AEpHRtKTnBBxKJBm@sUMkKLs@GmB^m@Os@DgBKw@XUzeAoEnVeBrBPdEQ`AXxBi@pA`@`A]dBVdBEfB_@tCbAtBEx@_@~Cc@~@u@l@MjJCpEH`A^|Dg@jDM|D^jFg@`EThIc@jLQbYSrBd@~Ac@tCAdNjAvN`@nJz@tQK",
+        "startLatLng": [
+          25.817026,
+          -80.121493
+        ],
+        "endLatLng": [
+          25.836458,
+          -80.119914
+        ]
+      }
+    },
+    {
+      "raceNumber": 33,
+      "raceId": "ggma-2026-33",
+      "date": "2026-10-24",
+      "state": "Georgia",
+      "city": "Atlanta",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20720580100",
+        "startTime": "2026-10-25T00:09:57.000Z",
+        "distanceMeters": 42327,
+        "movingTimeSeconds": 18371,
+        "elapsedTimeSeconds": 19468,
+        "elevationGainMeters": 241,
+        "summaryPolyline": "akymElqoaOr@WFUKuBLgFIm\\J_CAiNSaBo@g@eIeDwC_BcVmKeSoJiEgDqFuG_@Qb@LvBzCdDfDdDdCvCrAPj@C_@b@J`DxA|AdAhCz@lAz@rAX`RrIdBdA~IvDxAbAHlBInQ@jPFdFMfOc@Ti@c@w@IGSDi@tAy@xAUr@d@JZDrAAjOFsAVEOZTB~AUFMeAZ{@DO^AxXRhGxCzF^DzCgA|Ca@nUAVd@K~@JdIV\\zZM`ODjNPhLK\\Dx@d@lBF^j@^R`@wAx@q@?oBRu@Gy@}BcKa@kCWsCO{Hq@}CcDgDcDgEKoASc@iFwFyGkIoJsIaLmGs[}N]Ig@Ra@Ak`@cQOd@IdHCjYLx@M`D@|HDhAj@`BAhJJnPTP~HOfID\\QMyAVxCf@RgB{@}R^Mt@FrNGzAd@tAzAdC^dAXNvDmAdC]vV?kFDa@Jm@K}M?oBR}DpAo@uAsBsDIeA?go@G{BLXBv@D`\\pRBz@MNRGj@r@PcAWxARwAM|ALMEmAEfAFy@Av@Ds@I[k@[IgSd@CrRZ`B|AbCb@lAVLpDmAjC[~UAPf@?jK?cJQmAuV@_BRkEnAWMi@uAwAyBYsAEiB?um@SqARKPRKnEHlWRHjQEn@C^SNTOViAKYPF\\dA@LI?Uq@UyDPaMPCbRXjBdCtETLhDiArC]lVAFREfLGYHqHMkB}VBgH`B[Oi@uAsAmBMi@MgDAwm@Gi@_@i@~@JQdAA`VH~D`R?zAQHPSr@r@Nq@So@k@eS`@I\\@tPDhAV|@pCzEdHaB`GMdOBHXCtKCHDqKQe@cHJaLMaCTeFpASI]oAeBoCUcB@{o@Gw@a@_@NOp@LO|@Dh\\nLEnDHzAQLVSn@`AD_AIw@m@wANgPPI^B`QZtBzA`Cd@lAPLfDgAhC_@dWACvLCwKO]oF@}@MyLBiC`@{DlAs@aBaBkCSkBHoC?iEK}@?gc@Ci@a@]BO|@JSrAHp[THlHMxGFrAOJPCt@t@A^HwAGn@Fm@ArAAsAAj@Fo@MWe@a@K}Rb@K\\@|ODpAR~@bBnC^dA\\RzCaAzDg@hU@JTE~KDyGQ}CqV?yAPmErA[McCoESo@GqABsQ\\IhPET\\lCRs@Uq@m@wAL{JHmC@[MSgA@gYKoB`@FMd@ElABvOMlD@lCLv@BxPEpAOHJa@A}OJeAxPQnAMr@FRGISm@BTh@VMNc@^B",
+        "startLatLng": [
+          33.886091,
+          -84.298625
+        ],
+        "endLatLng": [
+          33.881479,
+          -84.302635
+        ]
+      }
+    },
+    {
+      "raceNumber": 34,
+      "raceId": "ggma-2026-34",
+      "date": "2026-10-25",
+      "state": "South Carolina",
+      "city": "Greenville",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20728608198",
+        "startTime": "2026-10-25T11:15:19.000Z",
+        "distanceMeters": 42341.7,
+        "movingTimeSeconds": 18864,
+        "elapsedTimeSeconds": 19782,
+        "elevationGainMeters": 176,
+        "summaryPolyline": "{}tsEzazuNzAdG~@`@t@]\\mBpD`@fJgB`EyCjBsEzECpFsA`DaHnAcAfIWlAaFbDoBbBoFjB{BzDyA~D@jCy@?fAMoAaC`AiFJ{F`EsBsD{Ah@eBqFf@sACeBkCaGJg@Of@lC|F?pBc@dAfBtFxAApBtCiBxFyChB_AhEuFr@cBQaGxJ}E`AyE?w@mAq@Is@~CcCpE{Ct@_JNsAtE{ARd@wA_@Yb@Oi@hBZXS]`@uBqHaM}D}A@w@qDk@mBgA}D~@eAw@[qCd@|BFe@iHwc@LiHrEqWlCcHpJkPwJdPiBxEuFxZElIfHza@Kb@_@_CPlClAdAzDgA|GbCFp@rDxA~HzMw@fBp@wAk@zAh@iA`@jAtBi@~BzFlAIhDhIrBjC|HpEu@tCRxAd@VsBxB?lLpAbCFnAuChEyA^e@|BqFhIy@dDeAb@eEeC_GvEsI|CqBlBWz@lA~AjArGApDeA`GcEnMY^w@a@sA|@g@bBoC`CmCpFeOxSPSMr@x@f@pB}@bIn@rA{@zAsE\\cEi@xEuCnFeJm@_B~@iAo@qE`IoFxF_UbJzQcHtF}DhRiZ\\BpDkFpC{F~CyC`@yArAy@dATHyAjFkO^kD{@eKoByBVo@hCuBxFyAdJcFjDnApAi@r@wCzFsIZuBtA]pCcDHwByA}C?gLvBsBk@YUyAz@mCcI}EaCaDuCkHu@`@[YcC}FmCOo@|@j@i@~@a@nA^bCzFjAMxAzCuAoCgANiCkGiAUgAhAeAY~AVt@oAhAd@~B`GlAM|CbI~BpC|HrEw@pCNtAh@XoBxBEhLvA|BE~Bg@r@XmBk@Q@|BFqB`@BKzAaCnCmAVa@vBwCrDyCdI}@^{DgCaAv@`DVNhAe@W`AqBOcBw@o@oALwC~AcBlFyI~CqBhBWz@pAzAz@pEFjGy@vEiEhLuArIqBbC{CbAkEfGoAc@qFfHiOnUsHhEsQvF_We@wEj@aGlCaGZsAyBeEn@Mb@m@MKTj@_@Tb@Ie@Uz@RcBqAQwGzAkCjEmI`EcFrEub@jm@oSjWoGfFq}Apa@sZzF}]|PcF|AnDs@z^}Q~ZaGz}Aua@jEcD|UuYhb@_m@jFyEhI_EfCmE|FaBjBRAl@L}@tAi@nB\\z@pBx@^fIw@vBgBzCq@~NXcNe@_Ex@wBdBkIr@yCkDwAByCb@o@^`CCEt@d@Qa@P",
+        "startLatLng": [
+          34.846547,
+          -82.38638
+        ],
+        "endLatLng": [
+          34.870083,
+          -82.421732
+        ]
+      }
+    },
+    {
+      "raceNumber": 35,
+      "raceId": "ggma-2026-35",
+      "date": "2026-10-25",
+      "state": "North Carolina",
+      "city": "Asheville",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20732361838",
+        "startTime": "2026-10-25T19:45:58.000Z",
+        "distanceMeters": 42479.7,
+        "movingTimeSeconds": 18019,
+        "elapsedTimeSeconds": 18349,
+        "elevationGainMeters": 323,
+        "summaryPolyline": "enexE`|yvN_@jDgB|AIxCc@v@mHOkLkC[ZyBYkUnEQd@tAvKpBxC\\fBfJ_BbHFpZsBlGdE|@hAp@Gla@wQbAmB_@}AEyBiAkDaGtBgLtBiJSsJdBqBIwBeEuCw@hCjAlBlCjBNpKkBhId@lM{BdH}DvEwGbB}AzGsCpFcAxEcEpDq@vAqAlKw@|PuE[SE^gBZo@u@aB}IcCuPkDmJyEgOSgCVaRe@{DmKuTyDqDoBeALOHd@pDxBxA`Bi@v@mM{Fu@u@c@uCh@iI_@sDi@E\\k@YeBoAmCmFaHyAiLqDkFE_BnAsEpA{BxCqA`C}Cl@D`BlBiBpERdC?uDtAwCqBuBwBlCqEdCkApAcAdEAhBnD`FjBpKhChDn@XpCfGt@`I?jCe@|E`@~Bz@|@nI~CbBzApAW~J`Td@fEQlTtCfIfGtRxBhPx@hCn@zEIl@a@LfDw@r@rAxADbBnKZWcA{H`EuAhAaAQgBfBwByAoEwDiEbByFXeCYk@r@qAtGiWbGk_@fC}JlKqTjGcFlLmEfHsEbFuBtCo@bHNhc@fKvF?nDm@Xm@a@n@kFr@uDG{`@wJ}De@kDAcDt@kF~BoF|DgMhEcFlDmCxD{FnLcC|H{ChOyDnVoFpTwBxGMpBqFrMKnBf@vDoEbAm@kAmAmGkCyQwFuQ}CuILkTk@}E{J{SiAZ_C}AqHmCo@c@i@oAQgBl@iIcA{HkAoCeBaBkCkEaB{L{CwDe@sAhA}FjAcB|FuCbBoBdBpBiBrDTdBdAUtAeAC{@pA{AfLwAtNs@vDBhDcCtFk@~By@|KcArBCnAnAVbAr@R`f@qB]@EZJpKiB~FwEzJqHCoBdBqA^yBGmBfB_JxC@pF{@rEqAxD{@fIc@zKgAzD{CfGW`BXzKrDxGhBlJ@hLu@nIpAnGfAi@fAkDrFcUvDuUEyAAtAeDdTaJf_@q@bAGlB{FnMCfCb@dDoEjAoAkGq@{BeCaQgGwRcBsDc@oBMcB`@iRm@qDaEoJaEuH}A\\mB_BcIyCu@}@_@kCl@eIKiEe@}C{BkEFg@kAc@gCkDkBsKqDcFBiCtAkEtFsCrCeDdB`BAh@qA`CoGjF[~@rBxEl@?nFmEl@KpAx@~BuAbCoCiAgNeC\\@zAX~@eAVsAdCEz@uA~@y@uAFYb@IiCfBgDvCUr@JpApAhC\\R`@YB]{BeFXAfBnDh@PiBeF`@?xBnDqBkFlB}AbBt@[cC^a@AXa@HZpDg@n@t@|AGRYMPN",
+        "startLatLng": [
+          35.586439,
+          -82.549287
+        ],
+        "endLatLng": [
+          35.577107,
+          -82.515447
+        ]
+      }
+    },
+    {
+      "raceNumber": 36,
+      "raceId": "ggma-2026-36",
+      "date": "2026-10-25",
+      "state": "Tennessee",
+      "city": "Pigeon Forge",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 37,
+      "raceId": "ggma-2026-37",
+      "date": "2026-10-26",
+      "state": "Virginia",
+      "city": "Norton",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20741999785",
+        "startTime": "2026-10-26T04:27:26.000Z",
+        "distanceMeters": 42594,
+        "movingTimeSeconds": 18519,
+        "elapsedTimeSeconds": 18926,
+        "elevationGainMeters": 125,
+        "summaryPolyline": "uda~ErpsvNzVdMcD`IqHdO{Bs@mA`A_@tALdCaBhBGtEcBrBu@dD}@~@q@hGqEtDg@vEyExCH|Cw@~CgGnJ}FbQ_IjIkBhEuHvJZt@~BZlAYp@n@lAIxBx@o@bE~D~Bx@e@|@Nr@pCcAzLh@hKk@pAGxBaBpDyAtHcBhCChBcCfJiC~D{@vEn@nVvAXtEiChHhJhF~B|NtB{SiEeBeAyGwIkErCuA[u@uV~@sEhC{DdCgJDmBbBgCzA}HvAmDl@qE_@wK`A_Lw@oCqBPaEiCn@}DuB{@eC_@sAXuB][o@|IsLdAwCdIgI|FkQpGuJf@kCQ{C`F}Cb@_FlEiDr@sG|@w@p@gDhBoB?}EhB_BS_Cf@eBbAy@fCt@jAuDlFwIdB}F|DcEzAsDrEcExDcA\\cCbB_DlBy@i@{El@pEwBfAoC~HsDj@cEtDwAlDiChCcT}JgAgB]h@^c@jAhBjTpJzBgCxAmDvDmDzDo@vCkIjBq@a@}FzCmG_B}KHwGmA{BqCmBTeAqAeBQ{Bp@aQgAqAaEaKyCoC_LkP}DcIjPtXfE`EhEvKbAdAo@jRb@hCv@d@MfAnCfBlAzBI~GxA~KyCnGd@lFoB`AgCxH}Dz@_EtDgBxDsDlDsB~G_F`IkAtDeCs@gAbAe@zAL~BeBfBAxEeBnBu@lDaAv@q@tGkElDi@tEsE~CDpCs@~CmG|JwFzPcIhIkAzCwI`LxIaLhAyCfIkI|FiQlGoJj@wCO{CdF_D^{ErEiDl@uG`A{@l@_DjBoBEsEnBoBUyBZsAjAoAlCj@dAcDrFeJnC}HiReJ{A{@i@}@I`@h@Qa@tAH`De^rsAg]dr@yE`Q@zAzDTrC[lFvATd@y@`D`EbCpBWt@~BaAxMh@lJo@~AG|BuA~CeBlI}A`CElB}@fBcAxFkC|DaAdH|@lTzB?dD}B~G`JnAl@}A_AsGuIkEvCqAMaAoT~@cHdC{D|@cFnAiCBmBbBiCzA}HzAkDj@cFa@oKz@{Ls@mBqBT{DgCh@_E_C{@yC`@wH}A~EmRrYyj@|DwK~Msh@@mDlFkSc@iCjBo@|B_JKiA`AeAhKqb@dAZjAi@z]hF`DBuAwLPkGu@qBoDiCTw@mAsAQoELvEfAjAY`A`DrBbAlBGtGlAtLkJi@yUeDgCn@yDhO{@L]v@gJv]eBzAw@iAx@oBy@jBz@jAReAv@WlCgHZeE",
+        "startLatLng": [
+          36.547475,
+          -82.516738
+        ],
+        "endLatLng": [
+          36.547402,
+          -82.516441
+        ]
+      }
+    },
+    {
+      "raceNumber": 38,
+      "raceId": "ggma-2026-38",
+      "date": "2026-10-26",
+      "state": "Kentucky",
+      "city": "Pikeville",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20741999762",
+        "startTime": "2026-10-26T15:10:27.000Z",
+        "distanceMeters": 42430,
+        "movingTimeSeconds": 17334,
+        "elapsedTimeSeconds": 17514,
+        "elevationGainMeters": 169,
+        "summaryPolyline": "oppaFvncwNq@c@gFLiPrK_FnAwB~CwAxNUjU~@hIk@lFBxC`BzECt@Wa@^`Aa@tBlAbAt@B~@cAcC{KSeCXlChAzCZrGmAb@yAgANqCeB_Hf@}Iy@{IFwTnAuMYgBoC_FVwArJsOrJuFdCgHpKqMhB{IhAqB`PuLbHDbDo@zIgEvCkExD}@KpA{GbHuDbCqCt@WjEeBxCy@NsBu@eCLuHtAeAn@cGxNqDxA_C~D_@fBhAtGHzDp@lFw@\\`@V`DAcECoBYcPvKgFnAsAfBoBrM_@pGElPn@pFk@pL~A|FB|Ay@lCcEbGAlGWxA|@wJ~DoFv@gDmB_Ih@cK}@}IVqTrAiNyDqGRiBxJkObG_C`BoAfCcI`FiFnDiFtAaItA}BfFqClIcHbBUnIEbJoEjDsFh@RnB_@G~@aGlG}DnC}C`A[hE}ApC}@P_Ey@cLrCuEvI}@jDgDpA_C|Dk@tBdAbGJvEj@~Dq@~@fENkDEkAc@cAN{OrKcGzA_AvAm@vBYdJYG_@jC@~IYvE~@hLe@pKv@lChAz@e@|DqFzIS`F\\vAcCrCfCyCW_Bb@wF`EqFp@{CmBsHh@iK}@qHJ{RnAqNm@wCuCyEXmA|J}O`GoChB}AlCqHlKeMfByIdBcCbF{CjHsGfINtMwFvCqEpDk@G`AmGtGkEpCgCt@YbAB`CyApCoA\\yDy@_LdC_EvHsAxE}EtByBjG~@|EHlEz@pFiAzAVd@~DA{@yAqFHkPxKaFnA}@`AqAtDeApLQpRv@lKc@xJbBrFBlBeAxC{AtAaB~COfFb@dA{AjBp@iBh@mIlDsEfAiDMsByAkE`@kM{@yHR{RrAeLk@eCoC_Gr@eCvI{M`BiA`GiChC_I`LyMzA{I|@aBjP}LlASvGXfMqFrCsEnDi@I|@gGlGeEvCmCt@WnEcBpCk@LeFu@}JdCgF|IaAxD_FdCoBlFbAxFHhFr@jEsAv@b@`AbE?S[mDJi@mA_ALkPtKcFrA}@x@}@fC}A`MWbTx@pIg@hLfBlFFpBq@zBqEtGi@zIs@`A~@}Aj@wIzD_Fz@kDQ_C}AqEf@wJ}@_JZwTlA{Jq@iCwCsFb@{AhIcNrG_DnB{ArC_IdL_NpAqIlAqBzDyBrJcIbBYhCj@~BGhKqEdEeFbD{@EbA_FvFmE`DmDfA]lADvBcBzCu@LmCu@mB?_IlBaAx@{AxDaBvB{@zDiEfBcClFnB|UoE`AqBjB}LhHbRmLdAMh@p@zDL",
+        "startLatLng": [
+          37.117687,
+          -82.598354
+        ],
+        "endLatLng": [
+          37.117563,
+          -82.59852
+        ]
+      }
+    },
+    {
+      "raceNumber": 39,
+      "raceId": "ggma-2026-39",
+      "date": "2026-10-27",
+      "state": "West Virginia",
+      "city": "Hazelton",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20752594746",
+        "startTime": "2026-10-27T10:44:53.000Z",
+        "distanceMeters": 42414.8,
+        "movingTimeSeconds": 16414,
+        "elapsedTimeSeconds": 18385,
+        "elevationGainMeters": 276,
+        "summaryPolyline": "sywpFpqhdN}IbEnRyHjDiCrg@mn@oEdGhQj\\X_@dPfDzDeER}Do@cBqDyCsDuKl@aB|EaD`@yC]mBqB_AgAxB}H~@sIbFmA`B|AnLxAxAbD|HBvBkAXhPrCpEyEPmDiAcCyCcCqDaKr@yBvE{C\\wC[kBgBaAmDOuH|A_CxA}@bEsChCnAtKbGlK^vDrJvCdBCbEqERsDs@gBsD}CmDcKh@aBfF{DNqE{BmCxD}JlAzE_@rC_C|AoJq@wHnCoAlBU|BeCpB^bGcCdDnKzRh@o@kACeAmB`A~BXa@`PfDnAgCtBmAPuDcAaC}C_CuDeKl@gB~EeDZcD[oBaBy@mEMaHfB{BrAy@|DoChC~AvLxAtAfDfI@pBmA^oEiIrEbKJsA`PhDnAcCxBqALsDk@cBiDsC_EwKr@cB~EsDJyEwBeCdE{JtAjGw@fBcCzAmJw@}G~B}ArBY~BkCfCxArL|AxAvCxG`@tDtMvCtAeCnBiAPkDeAkCwCwByDsKr@cB~EoDL}EwBkCdEuJjAtGmBvCmDSuHJyGlCuAbFqE~Bq@Oi@kBqCfDjQv\\u@{AxAdCd@s@_A_@Av@a@}@X`ANs@hPpDfE}EP}Cm@qBwD_DsDsKn@}AbFoDHeF_CqBnEqKbBrH_AfAeC|AsIu@uGjBkBzAq@tDgCnBd@`GgCjDjJdQN]gCmC{FaLrCuCp@|DtAnAzCbHn@vDhLpCvEqEJsFmEcE{DqKn@kBpDiBv@sAFkE}BcCfEaKtAbGq@rB_CxAgBs@wFC{GrBiB`Bc@bDmCpBrAfM~AvAxC~GLbD}Bo@}HaOtC}Cl@`ErAfA|CfHZzER[lLvChEqEb@sBOkCqEeEwDoKr@qB~EiDJyE{BaChEcKdBjHeCfCaAZcBq@}FEaHzBoBvBUhCmCxB~AxL~AzAtCtGJjDeAPsJkQpCiCh@lD|AtAvC`Hn@vDnLrDbBiDxBeAK_GeEsDwDoKf@iBzDqBp@qAFmEyBgC~DeKzAfGo@vB{BvAaJo@sGjByBpBa@~CeClBrAvL`B`BzCfHBzC}B}@_I}NlCiCj@rDdBzAtC~Gh@lDrLrCdFcFGaFqEiEuDgKt@sBjF{DAmEyB}BbEcKvA`Gq@vB}BvAyIw@yGnByBtB]tCoCvBxAfMzAnAfDdIBxBmALPz@@JeKkSnCmCh@vD|AvArExMbLpCzEuEBwFmEeEwDkKh@cB`D{AjAiBFkEyBaC~DgKlAtFc@bC}BzAkIw@qHtBiBjBc@xCmChCzAhLvFbKXfDjMzD_BfIr@]v@yEOaB}PmEqCuEpCrEfEjAoDa@",
+        "startLatLng": [
+          39.612584,
+          -79.511442
+        ],
+        "endLatLng": [
+          39.601965,
+          -79.508538
+        ]
+      }
+    },
+    {
+      "raceNumber": 40,
+      "raceId": "ggma-2026-40",
+      "date": "2026-10-27",
+      "state": "Maryland",
+      "city": "Elkton",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 41,
+      "raceId": "ggma-2026-41",
+      "date": "2026-10-28",
+      "state": "Delaware",
+      "city": "Glasgow",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 42,
+      "raceId": "ggma-2026-42",
+      "date": "2026-10-28",
+      "state": "Pennsylvania",
+      "city": "Philadelphia",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 43,
+      "raceId": "ggma-2026-43",
+      "date": "2026-10-29",
+      "state": "New Jersey",
+      "city": "Teterboro",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 44,
+      "raceId": "ggma-2026-44",
+      "date": "2026-10-29",
+      "state": "Connecticut",
+      "city": "Stamford",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20783238992",
+        "startTime": "2026-10-29T15:09:27.000Z",
+        "distanceMeters": 42424.8,
+        "movingTimeSeconds": 16131,
+        "elapsedTimeSeconds": 18547,
+        "elevationGainMeters": 235,
+        "summaryPolyline": "ki`{Fbf}{LdIyQvBqA~Dm@~Ay@r@{@z@cE`@Yx{@fU`Ed@lg@nNvRbAjCa@`B}A|AoKXiFQ_@c]S_j@qHwXeHe\\aFg@EIh@Og@oCa@[RiD~PiB|AcEd@qCzAiBdD{EhMfE}K|BkE~BqAvDc@`BaAdAgBz@oDtDlAHgAhAvA~d@nLT?tXrIdOjDpFbBJx@b@g@zHtBzDTdM`@lBSb@|@l@KG`@k@a@Q{@nBwBdAwGt@kJ`JiBhEXrAbAbJqIzDkCB_A~HgDnGiEj@SpBNlFdAj@wB|DlBk@G_@~BRxC`AtCdA~IfHdTXF`CkA~BhFzGnEEhBfAvBmA`C~C`@zDWpALF\\F[e@YVqBe@@c@d@iE_AmB{@_@_AJyAPy@uBcJwA}@}FgB{FgKyDaYcLwGLi@nB}@tGhCtFo@`DaAdIuHxBMnDt@jM_D|DnWTZlAEXTOtCwBjGHpArAbBbGfBdJiMjA~@t@}@yF}OkBkAiBl@bBWZTaBvJi@J_FaBIfDFkC{AOW]mDoUc@{@eM`DeEk@iBV}GtGgBz@kI~@yGeCyBlAFx@lGfD]xEb@zCjAtChAjItGhS^FdE_CvD~@zAtB`A~EC|DHMT~@zBlAhFx@QDgGiBk@}AyB_Mc@y@oBeA_C]sByA{FyKaDuW_LgGDo@tBcAbHpBjI_A~@_@~HoHlAM|Et@bM_DdEnWdA^Np@X[NLO~ByBlGHfAf@hArHhCbJsMbAjAv@{@@i@iFwMkAoA[RgBxJaG_BoBEgE{Ws@kIFyEr@mHsDqTc@qZRq@|BaCdRs@q@iEo@_SgAgQe@uWc@{C_@DRYuAyIy@m@aCWo@Na@fAk@ZkCEeBw@wBeGmEsCV{CW~Cz@|@nCpAvBzFhBbAnBNFk@c@aCr@fDn@]`@kAtCBjAn@jChPj@fYz@dMh@fQ_T\\zA~IOh@kBnAh@r[tDtT}@tI`@bNeM`EeEk@cBR}GxGwAl@qInAeHiCwBjAEj@dLtGlDxXpF|JfFhB~BlB|AjGEdE\\eCeAoF{@wBq@q@uGaCsFmJk@uBwCaVuKgGGq@zBoAtGlC`HeAtBs@`IiHnAOxEt@dMmDFu@k@iF?}Ez@yIsDkTe@eZLs@tBiC|Re@nFtZyGg`@q@mSiAsQe@cWcC_Oi@u@l@r@d@|CY`@{@G`BFh@hCvDI@u@",
+        "startLatLng": [
+          41.294466,
+          -72.899695
+        ],
+        "endLatLng": [
+          41.245455,
+          -72.863361
+        ]
+      }
+    },
+    {
+      "raceNumber": 45,
+      "raceId": "ggma-2026-45",
+      "date": "2026-10-30",
+      "state": "Rhode Island",
+      "city": "Providence",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 46,
+      "raceId": "ggma-2026-46",
+      "date": "2026-10-30",
+      "state": "Massachusetts",
+      "city": "Boston",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 47,
+      "raceId": "ggma-2026-47",
+      "date": "2026-10-30",
+      "state": "Vermont",
+      "city": "Brattleboro",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 48,
+      "raceId": "ggma-2026-48",
+      "date": "2026-10-31",
+      "state": "New Hampshire",
+      "city": "Portsmouth",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 49,
+      "raceId": "ggma-2026-49",
+      "date": "2026-10-31",
+      "state": "Maine",
+      "city": "Kittery",
+      "status": "scheduled"
+    },
+    {
+      "raceNumber": 50,
+      "raceId": "ggma-2026-50",
+      "date": "2026-11-01",
+      "state": "New York",
+      "city": "New York City",
+      "status": "completed",
+      "activity": {
+        "stravaActivityId": "20821206576",
+        "startTime": "2026-11-01T14:11:38.000Z",
+        "distanceMeters": 42750.3,
+        "movingTimeSeconds": 14313,
+        "elapsedTimeSeconds": 14776,
+        "elevationGainMeters": 294,
+        "summaryPolyline": "e`yvFbd`cMH}GMwCwBqLyGgZu@aCqHi^{O_s@_AkD_@{BkJ_b@u@qCu@kBmB}DoAyAgEuCuDuDyEuFoDiB]Pe@v@}FxNw@vA_AnCYp@SDgEaBwS_GoNkEad@cNkb@yMkLqMmHgHoEcFq^a_@_i@uj@qPsQu@gAoD_DiKuKaGmGgHmIi@UqAcBqCkCiKiLiDiC{DsDyEyC_GaFyAw@]k@yKqIgAkAuAu@uA{AgCaByHoGuImF{[oRqI}EqBaAwC{@_Bp@aD`CkA`@QE]eIe@yFqIazAe@{K_ByWU}Aaq@|H}JbAc@EOm@Ad@ILuCh@{@\\u@r@qRlToAjB{AvAwBpC_HlHy@JyCm@yGq@_Ba@gA?cBgAmA[eAaA}DgBeJaFsAiA_XgZgXiYaCkDy@oCwGhDgUtKmGhBQII_@e@_MK]QKsAf@}B`@uEh@oHd@qDt@yEf@sIl@uC]qX{GeD_@SJKXkAjJMj@OFqF{AwDk@gEcAmDeAqBaBKs@dC}UbAiHPcD`AcJiAaCqBkBaBw@y@{@w@[iDoEeAm@iAjD]rBe@n@e@~AsBvD[~CmCnIwA|DoAlE]xBcBzDiFlPsAbC[pAY`C]pAsElKiCdIq@hCaBdCMnBmBfE}BbIGp@NT`@]bA_DIc@eAoAe@OaFkDcHwD_C_BaAkA_Bw@eDgC}HyEkDoC{CwA}EmD{FgDo@y@cHkEcEkD_EmB{DyCkCgBaA_@wAoAgHcEoAcAgA_@gAcAcEeC}@}@uE}BaS_NKe@}CyAyEqDoCwAaBsAqGkEaEwBkS}MeOeKiCkAyG{EaCqBwE{B{E}CsDkCgBcBy@iAyKgXeAsAsEwDuBiAq@BeDvJW\\YDmOyJ_DaCi@SSL}@bCAz@rBdF~BxED^Uj@uJlNiErLIn@QnN{ArF?d@xMxIzC~B~OxJ~DzClF|CvCxBT\\A`@qBhGJ\\x@n@~KzGXQpBwFb@BhFvCbGdEvApAz@Xx]nUnDlBhKjHvSvMbQ`L|HrFV^@t@HTbKtG`BxARr@JpAOlFZ`Cv@|BnB~A|EhCnDdEhA|@xBhAnGjBfBCf@Jd@f@lBfEdCrBhB?fBy@l@EnATrBbAfAlAtBxEv@l@tAh@~@v@p@rAr@`C`Az@~Bn@fCLzB]jCgA~@Qt@XbCdBvAfALTEl@g@lB_ArBwBlGkGnRsB`I_@f@{@BYIkAqDe@}@kBk@sAu@kCuCkCqEwAkBcBqAuA]",
+        "startLatLng": [
+          40.601796,
+          -74.061612
+        ],
+        "endLatLng": [
+          40.772643,
+          -73.97668
+        ]
+      }
+    }
+  ]
+}

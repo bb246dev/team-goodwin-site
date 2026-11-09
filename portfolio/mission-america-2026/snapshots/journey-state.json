@@ -1,0 +1,11 @@
+{
+  "active": true,
+  "transitions": {
+    "las-vegas-race-finished": null,
+    "arizona-race-finished": null,
+    "miami-race-finished": null
+  },
+  "origins": {
+    "los-angeles-departure": null
+  }
+}
