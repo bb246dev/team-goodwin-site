@@ -34,6 +34,9 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(source, /The person<br>inside the miles</i);
   assert.match(source, /Impossible is just <br>a logistics problem</i);
   assert.match(source, /The first chapter<br>is complete</i);
+  assert.match(source, /starting lines across Hawaii, Alaska, the mainland, and New York/i);
+  assert.match(source, /real&#8209;time operational intelligence/i);
+  assert.doesNotMatch(source, /starting lines—|New York—was/i);
   for (const id of ["hero-title", "story-title", "people-title", "goodwin-title", "legacy-title"]) {
     const headline = source.match(new RegExp(`<h[12] id="${id}">([\\s\\S]*?)<\\/h[12]>`, "i"));
     assert.ok(headline, `missing ${id}`);
