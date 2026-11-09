@@ -31,6 +31,9 @@ test("rebuild homepage follows the required content structure without an unappro
   assert.match(source, /Impossible is just<br>a logistics problem\./i);
   assert.doesNotMatch(source, /guinness/i);
   assert.doesNotMatch(source, /official world record/i);
+  assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
+  assert.doesNotMatch(source, /legacy-brand|brand-wordmark/);
+  assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
 });
 
 test("homepage uses the Goodwin green theme without the previous blue accent system", () => {
@@ -95,9 +98,14 @@ test("footer retains the original complete mission-partner wall without distorti
     "Real SLX",
     "Skyway Aviation",
   ];
-  assert.equal((source.match(/class="partner-logo-item"/g) || []).length, partnerNames.length);
+  assert.equal((source.match(/class="partner-logo-item(?: [^"]*)?"/g) || []).length, partnerNames.length);
   for (const name of partnerNames) assert.match(source, new RegExp(`alt="${name} logo"`, "i"));
   assert.match(source, /<footer class="site-footer">[\s\S]*class="site-footer-partners"/);
+  assert.match(source, /class="site-footer-main"[\s\S]*class="site-footer-brand"[\s\S]*class="site-footer-nav"/);
+  assert.match(source, /class="partner-logo-wall"[\s\S]*class="partner-logo-row-new"/);
+  assert.match(styles, /\.site-footer-brand \{ max-width: 260px;/);
+  assert.match(styles, /\.site-footer-main \{[^}]*minmax\(220px, \.9fr\)[^}]*minmax\(0, 2\.1fr\)/);
+  assert.match(styles, /\.partner-logo-wall \{[^}]*repeat\(5, minmax\(0, 1fr\)\)/);
   assert.match(styles, /\.partner-logo-item img \{[^}]*width:\s*auto;[^}]*height:\s*auto;[^}]*object-fit:\s*contain;/);
 });
 
@@ -106,7 +114,7 @@ test("built review homepage resolves central content and ships its local media",
   assert.match(built, /1,310/);
   assert.match(built, /Honolulu, Hawaii/);
   assert.doesNotMatch(built, /{{[A-Za-z0-9]+}}/);
-  assert.match(built, /<nav class="footer-nav" aria-label="Footer navigation">/);
+  assert.match(built, /<nav class="site-footer-nav" aria-label="Footer navigation">/);
   for (const asset of [
     "dist/assets/rebuild-homepage.css",
     "dist/assets/rebuild-homepage.js",
