@@ -25,7 +25,7 @@ test("rebuild homepage uses central final event facts and the verified Hawaii ro
   assert.match(build, /data-content-key/);
 });
 
-test("rebuild homepage presents the confirmed title with an official source but no unlicensed badge", () => {
+test("rebuild homepage presents the confirmed title with the official organization logo and source", () => {
   for (const id of ["home", "record", "story", "goodwin", "film", "legacy"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
@@ -34,8 +34,10 @@ test("rebuild homepage presents the confirmed title with an official source but 
   assert.match(source, /One world record\./i);
   assert.match(source, /achieved the Guinness World Records title/i);
   assert.match(source, /class="record-verification-source"[^>]+guinnessworldrecords\.com\/news\/commercial\/2026\/11\//i);
-  assert.match(source, /Insert an official record-holder badge here only when licensed artwork is supplied and approved/);
-  assert.doesNotMatch(source, /<img[^>]+(?:guinness|gwr|record-holder-badge)/i);
+  assert.match(source, /<img class="record-verification-logo" src="assets\/rebuild\/guinness-world-records-logo\.png" alt="Guinness World Records logo"/i);
+  assert.equal(content.achievement.verification.logoSourceUrl, "https://www.guinnessworldrecords.com/images/logo.png");
+  assert.equal(content.achievement.verification.logoSha256, "8f0002dd46285de911f7eb6d7e394e40c7c8fe690c9c35f34cd36d91e4003f8a");
+  assert.ok(existsSync(new URL("../assets/rebuild/guinness-world-records-logo.png", import.meta.url)));
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
   assert.doesNotMatch(source, /legacy-brand|brand-wordmark/);
   assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
@@ -140,5 +142,6 @@ test("built review homepage resolves central content and ships its local media",
     "dist/assets/rebuild/william-goodge-go-will.jpeg",
     "dist/assets/rebuild/william-goodge-running.jpeg",
     "dist/assets/rebuild/william-goodge-recovery.jpeg",
+    "dist/assets/rebuild/guinness-world-records-logo.png",
   ]) assert.ok(existsSync(new URL(`../${asset}`, import.meta.url)), asset);
 });

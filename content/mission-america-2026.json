@@ -20,6 +20,8 @@
       "organization": "Guinness World Records",
       "announcementDate": "November 6, 2026",
       "sourceUrl": "https://www.guinnessworldrecords.com/news/commercial/2026/11/athlete-runs-marathon-in-all-50-states-to-break-record-raise-funds-for-cancer-research",
+      "logoSourceUrl": "https://www.guinnessworldrecords.com/images/logo.png",
+      "logoSha256": "8f0002dd46285de911f7eb6d7e394e40c7c8fe690c9c35f34cd36d91e4003f8a",
       "badgeStatus": "licensed-artwork-required"
     }
   },
