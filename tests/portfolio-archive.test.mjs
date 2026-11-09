@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const deploy = readFileSync(new URL("../portfolio/mission-america-2026/deploy.mjs", import.meta.url), "utf8");
-const workflow = readFileSync(new URL("../.github/workflows/deploy-portfolio-archive.yml", import.meta.url), "utf8");
+const workflow = readFileSync(new URL("../.github/workflows/provision-static-production.yml", import.meta.url), "utf8");
 const standardDeploy = readFileSync(new URL("../scripts/deploy/lib.mjs", import.meta.url), "utf8");
 
 test("portfolio deploy is hard-scoped and create-only", () => {
@@ -16,6 +16,8 @@ test("portfolio deploy is hard-scoped and create-only", () => {
 test("portfolio workflow protects the current production homepage", () => {
   assert.match(workflow, /1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f/g);
   assert.match(workflow, /concurrency:\n  group: production-deployment/);
+  assert.match(workflow, /default: static-assets/);
+  assert.match(workflow, /if: inputs\.target == 'mission-america-portfolio'/);
 });
 
 test("standard production deploy does not permit portfolio destinations", () => {
