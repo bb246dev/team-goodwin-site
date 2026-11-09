@@ -5,11 +5,12 @@ import test from "node:test";
 const source = readFileSync(new URL("../source-html/live-tracking.html", import.meta.url), "utf8");
 const generated = readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8");
 
-test("hero video and poster survive the offline build", () => {
+test("the live campaign source is retained while the production route hands off to the historical archive", () => {
   assert.match(source, /<video class="tracker-hero-bg"[^>]+autoplay[^>]+muted[^>]+loop[^>]+playsinline[^>]+poster="\.\.\/assets\/hero-runner-Ci5y42DW\.jpg"/);
   assert.match(source, /<source src="\.\.\/assets\/goodge-website\.mp4" type="video\/mp4">/);
-  assert.match(generated, /<video class="tracker-hero-bg"[^>]+poster="assets\/hero-runner-Ci5y42DW\.jpg"/);
-  assert.match(generated, /<source src="assets\/goodge-website\.mp4" type="video\/mp4">/);
+  assert.match(generated, /url=\/portfolio\/mission-america-2026\/live-tracking\.html/);
+  assert.match(generated, /Live tracking has ended/);
+  assert.doesNotMatch(generated, /setInterval|tracking-status|strava/i);
   assert.ok(existsSync(new URL("../dist/assets/goodge-website.mp4", import.meta.url)));
   assert.ok(existsSync(new URL("../dist/assets/hero-runner-Ci5y42DW.jpg", import.meta.url)));
 });

@@ -61,12 +61,17 @@ function stripAnalytics(html) {
 }
 
 function archiveForms(html) {
-  return html.replace(/<form\b[\s\S]*?<\/form>/gi, '<div class="mission-archive-notice" data-archive-form role="note"><strong>Archived event.</strong> Signups and participation forms are closed. This portfolio copy does not submit or store information.</div>');
+  const notice = '<div class="mission-archive-notice" data-archive-form role="note"><strong>Archived event.</strong> Signups and participation forms are closed. This portfolio copy does not submit or store information.</div>';
+  return html
+    .replace(/<form\b[\s\S]*?<\/form>\s*<p class="legal-note"[\s\S]*?<\/p>\s*<div class="follow-note"[^>]*><\/div>/gi, notice)
+    .replace(/<form\b[\s\S]*?<\/form>/gi, notice);
 }
 
 function rewritePaths(html) {
   return html
     .replace(/https:\/\/(?:www\.)?goodwingoodge\.com\//gi, archivePrefix)
+    .replace(/(["'])\/assets\//g, `$1${archivePrefix}assets/`)
+    .replace(/(["'])\/fonts\//g, `$1${archivePrefix}fonts/`)
     .replace(/(["'(=])\.\.\/assets\//g, `$1${archivePrefix}assets/`)
     .replace(/(["'(=])\.\.\/fonts\//g, `$1${archivePrefix}fonts/`)
     .replace(/((?:href|src|poster|content)=["'])\/(?!\/|portfolio\/mission-america-2026\/)/gi, `$1${archivePrefix}`)
@@ -90,6 +95,16 @@ function addArchiveShell(html, route) {
 function addHistoricalMapNotice(html) {
   const notice = '<div class="mission-archive-notice" id="archived-event" role="note"><strong>Archived route snapshot.</strong> Captured November 9, 2026 from the public race feed: 27 of 50 races had recorded activities. The remaining history was not publicly available and is not inferred. Map controls remain interactive; live GPS, authenticated APIs, and production polling are disabled.</div>';
   return html
+    .replace(/\s*<script>\s*\(\(\) => \{\s*try \{[\s\S]*?has-splash-modal-open[\s\S]*?<\/script>/, "")
+    .replace(/\s*<div class="splash-modal"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/, "")
+    .replace("Goodwin Generated Mission America Live Tracker | Goodwin", "Mission America Historical Route Archive | Goodwin")
+    .replace("50 Marathons, 50 States, 50 days. Follow William Goodge during Goodwin Generated Mission America's record setting cross-country endurance run.", "Historical Mission America route, field notes, and recorded race data from William Goodge’s confirmed 50-state world record.")
+    .replace('aria-label="Live tracker navigation"', 'aria-label="Historical archive navigation"')
+    .replaceAll("live ticker", "archived ticker")
+    .replace('<a href="#rsvp" class="tracker-cta">Join the Run</a>', '<a href="#archived-event" class="tracker-cta" data-archive-participation>Event Archive</a>')
+    .replace("50 marathons.<br class=\"hero-mobile-break\"> 50 states. 24 days.", "50 marathons.<br class=\"hero-mobile-break\"> 50 states. 22 days, 17 hours, 16 minutes and 34 seconds.")
+    .replace("William Goodge is attempting to become the fastest person ever to run a marathon in all 50 U.S. states.", "William Goodge completed a marathon-distance course in every U.S. state and set a new world record.")
+    .replace("Chasing a world record. Pushing the limits of human endurance. Carrying the memory of his mother, Amanda, through every mile.", "A confirmed world record. A test of human endurance. A mission carrying the memory of his mother, Amanda, through every mile.")
     .replace("<div class=\"tracker-map-stage\"", `${notice}<div class="tracker-map-stage"`)
     .replace("<div class=\"tracker-eyebrow\">LIVE MAP</div>", '<div class="tracker-eyebrow">ARCHIVED MAP</div>')
     .replace("<h2>Follow in Real Time</h2>", "<h2>Explore the Recorded Route</h2>");

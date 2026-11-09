@@ -41,6 +41,7 @@ for (const file of htmlFiles) {
   assert(!/googletagmanager|gtag\(/i.test(html), `${file} still contains production analytics`);
   assert(!/serviceWorker|navigator\.serviceWorker/i.test(html), `${file} registers a service worker`);
   assert(!/(?:href|src|poster)=["']\/(?!portfolio\/mission-america-2026\/)/i.test(html), `${file} contains a root-relative escape`);
+  assert(!/["']\/(?:assets|fonts)\//i.test(html), `${file} contains an inline root-relative asset escape`);
   for (const match of html.matchAll(/(?:href|src|poster)=["']([^"']+)["']/gi)) {
     const value = match[1];
     const target = localTarget(value);
@@ -51,6 +52,11 @@ for (const file of htmlFiles) {
 
 const tracker = readFileSync(join(root, "assets/tracker-base.js"), "utf8");
 const raceMap = readFileSync(join(root, "assets/strava-race-map.mjs"), "utf8");
+for (const route of ["index.html", "live-tracking.html"]) {
+  const historicalPage = readFileSync(join(root, route), "utf8");
+  assert(!/Join the Run|is attempting|Follow Along|data-splash-modal|By submitting|live ticker/i.test(historicalPage), `${route} retains expired live-event prompts`);
+  assert(/22 days, 17 hours, 16 minutes and 34 seconds/i.test(historicalPage), `${route} lacks the confirmed final time`);
+}
 assert(!tracker.includes("/strava/public/"), "tracker still calls the production race API");
 assert(!tracker.includes("tracking-preview/garmin"), "tracker still calls Garmin production polling");
 assert(!tracker.includes("docs.google.com/spreadsheets"), "tracker still calls the live updates sheet");

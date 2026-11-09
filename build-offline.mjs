@@ -1,6 +1,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { applyApprovedSponsorFooter, approvedGlobalSponsorFooterHtml, approvedSponsorFooterCss } from "./scripts/sponsor-footer.mjs";
+import { applyRetrospectiveLegacyPage, createHistoricalMapRedirectPage } from "./scripts/retrospective-site.mjs";
 
 const root = process.cwd();
 const dist = join(root, "dist");
@@ -337,14 +338,23 @@ function patchClientBundle() {
   writeFileSync(homeBundle, js);
 }
 
+function writeNestedPage(pageName) {
+  const html = readFileSync(join(dist, `${pageName}.html`), "utf8")
+    .replace(/((?:href|src|poster)=["'])assets\//g, '$1/assets/')
+    .replace(/((?:href|src|poster)=["'])fonts\//g, '$1/fonts/');
+  writeFileSync(join(dist, pageName, "index.html"), html);
+}
+
 for (const [source, target] of pages) {
   const html = readFileSync(join(root, source), "utf8");
   const destination = join(dist, target);
   mkdirSync(dirname(destination), { recursive: true });
   const output = source === "rebuild-homepage.html"
     ? renderRebuildHomepage(html)
+    : source === "restore-2026-09-30-live-tracking.html"
+      ? createHistoricalMapRedirectPage()
     : source.startsWith("restore-2026-09-30-")
-      ? applyApprovedSponsorFooter(html)
+      ? applyRetrospectiveLegacyPage(localize(html, target), target)
       : localize(html, target);
   writeFileSync(destination, output);
 }
@@ -367,22 +377,15 @@ mkdirSync(join(dist, "privacy"), { recursive: true });
 mkdirSync(join(dist, "terms"), { recursive: true });
 mkdirSync(join(dist, "participation-terms"), { recursive: true });
 mkdirSync(join(dist, "accessibility"), { recursive: true });
-cpSync(join(dist, "athletes.html"), join(dist, "athletes", "index.html"));
-cpSync(join(dist, "partners.html"), join(dist, "partners", "index.html"));
-cpSync(join(dist, "live-tracking.html"), join(dist, "live-tracking", "index.html"));
+writeNestedPage("athletes");
+writeNestedPage("partners");
+writeNestedPage("live-tracking");
 cpSync(join(dist, "live-tracking-gradient.html"), join(dist, "live-tracking-gradient", "index.html"));
-cpSync(join(dist, "the-run.html"), join(dist, "the-run", "index.html"));
-cpSync(join(dist, "will.html"), join(dist, "will", "index.html"));
-cpSync(join(dist, "fifty-runs.html"), join(dist, "fifty-runs", "index.html"));
-cpSync(join(dist, "updates.html"), join(dist, "updates", "index.html"));
-cpSync(join(dist, "faq.html"), join(dist, "faq", "index.html"));
-cpSync(join(dist, "week-1.html"), join(dist, "week-1", "index.html"));
-cpSync(join(dist, "week-2.html"), join(dist, "week-2", "index.html"));
-cpSync(join(dist, "week-3.html"), join(dist, "week-3", "index.html"));
-cpSync(join(dist, "privacy.html"), join(dist, "privacy", "index.html"));
-cpSync(join(dist, "terms.html"), join(dist, "terms", "index.html"));
-cpSync(join(dist, "participation-terms.html"), join(dist, "participation-terms", "index.html"));
-cpSync(join(dist, "accessibility.html"), join(dist, "accessibility", "index.html"));
+for (const pageName of [
+  "the-run", "will", "fifty-runs", "updates", "faq", "week-1", "week-2", "week-3",
+  "privacy", "terms", "participation-terms", "accessibility",
+]) writeNestedPage(pageName);
+cpSync(join(root, "deploy", "retrospective-site.htaccess"), join(dist, ".htaccess"));
 
 writeFileSync(
   join(dist, "README.txt"),
@@ -395,9 +398,9 @@ writeFileSync(
     "Keep the fonts folder next to the HTML files.",
     "The visible site assets are bundled locally for offline review.",
     "The display and body fonts are bundled locally for consistent typography.",
-    "The sponsor live tracker page is available at live-tracking.html.",
+    "The former live-tracking route redirects to the independently deployed historical map archive.",
     "The SharpLink-style gradient transition preview is available at live-tracking-gradient.html?intro=1.",
-    "The Instagram feed expects a server endpoint at /api/instagram-feed with INSTAGRAM_ACCESS_TOKEN set server-side.",
+    "The field-notes and William Goodge pages use captured local content without production polling.",
     "External video and teamGoodwin.com links still point to their original websites when internet is available.",
     "",
   ].join("\n"),
@@ -437,6 +440,7 @@ const deployAssetPaths = [
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.js",
   "assets/ticker-updates.json",
+  "assets/retrospective-context.css",
   "assets/strava-race-map.mjs",
   "assets/goodwin-favicon.png",
   "assets/goodwin-webclip.png",
@@ -496,7 +500,7 @@ const trackingCoreSource = readFileSync(join(root, "api", "flight-tracking-core.
 writeFileSync(
   join(dist, "server", "index.js"),
   `const pages = ${JSON.stringify(Object.fromEntries([
-    ["index.html", readFileSync(join(dist, "live-tracking.html"), "utf8")],
+    ["index.html", readFileSync(join(dist, "index.html"), "utf8")],
     ["live-tracking.html", readFileSync(join(dist, "live-tracking.html"), "utf8")],
     ["live-tracking/index.html", readFileSync(join(dist, "live-tracking.html"), "utf8")],
     ["live-tracking-gradient.html", readFileSync(join(dist, "live-tracking-gradient.html"), "utf8")],

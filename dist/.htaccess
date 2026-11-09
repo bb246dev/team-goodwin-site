@@ -1,0 +1,17 @@
+Options -Indexes
+DirectoryIndex index.html
+
+RewriteEngine On
+
+# Independent archives, tracking experiments, and backend mounts keep their
+# own routing and deployment boundaries.
+RewriteRule ^(?:portfolio/mission-america-2026|tracking-preview|client-preview|strava|api)(?:/|$) - [L]
+
+# The former live tracker now resolves to the recorded, non-polling map.
+RewriteRule ^live-tracking(?:\.html|/)?$ /portfolio/mission-america-2026/live-tracking.html [R=301,L,NE]
+
+# Preserve clean production URLs for retained retrospective and legal pages.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]

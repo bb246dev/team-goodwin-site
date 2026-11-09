@@ -1,0 +1,39 @@
+.retrospective-context {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  width: min(1180px, calc(100% - clamp(36px, 8vw, 112px)));
+  align-items: baseline;
+  gap: 14px;
+  margin: 104px auto 0;
+  padding: 13px 16px;
+  border: 1px solid rgba(188, 162, 115, 0.58);
+  background: #10251d;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.retrospective-context strong {
+  flex: 0 0 auto;
+  color: #fff;
+  font-size: 0.67rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.record strong {
+  font-size: clamp(1.75rem, 2.8vw, 3rem) !important;
+  line-height: 0.98 !important;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .retrospective-context {
+    width: calc(100% - 32px);
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 90px;
+  }
+}

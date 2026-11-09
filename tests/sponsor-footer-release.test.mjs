@@ -53,7 +53,7 @@ test("the offline builder uses restored production pages instead of stale raw pa
     assert.match(builder, new RegExp(`restore-2026-09-30-${page.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\.html`), page);
   }
   assert.match(builder, /\["rebuild-homepage\.html", "index\.html"\]/);
-  assert.match(builder, /source\.startsWith\("restore-2026-09-30-"\)[\s\S]+applyApprovedSponsorFooter\(html\)/);
+  assert.match(builder, /source\.startsWith\("restore-2026-09-30-"\)[\s\S]+applyRetrospectiveLegacyPage\(localize\(html, target\), target\)/);
   assert.doesNotMatch(builder, /source-html\/index\.raw\.html/);
 });
 

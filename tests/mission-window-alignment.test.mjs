@@ -80,7 +80,7 @@ function authoritativeStatus(active) {
   };
 }
 
-test("maintained runtimes align while built trackers preserve the deployed baseline", () => {
+test("maintained runtimes align while built live routes hand off to the historical archive", () => {
   for (const source of [
     trackerSource,
     readFileSync(new URL("public_html/assets/strava-race-map.mjs", candidateRoot), "utf8"),
@@ -100,9 +100,9 @@ test("maintained runtimes align while built trackers preserve the deployed basel
     readFileSync(new URL("../dist/live-tracking.html", import.meta.url), "utf8"),
     readFileSync(new URL("../dist/live-tracking/index.html", import.meta.url), "utf8"),
   ]) {
-    assert.match(source, /const startDate = new Date\("2026-10-09T06:00:00-04:00"\);/);
-    assert.doesNotMatch(source, /MISSION_WINDOW_(?:START|END)/);
-    assert.doesNotMatch(source, /scheduledStart: "2026-10-20T22:45:00-07:00"/);
+    assert.match(source, /\/portfolio\/mission-america-2026\/live-tracking\.html/);
+    assert.match(source, /Live tracking has ended/);
+    assert.doesNotMatch(source, /MISSION_WINDOW_(?:START|END)|scheduledStart|setInterval/);
   }
 });
 

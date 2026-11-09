@@ -85,7 +85,6 @@ test("the production homepage route asset exactly matches the approved 50-run pa
   for (const path of [
     "assets/releases/full-route-itinerary-2026-09-30/tracker-base.js",
     "source-html/live-tracking.html",
-    "dist/live-tracking.html",
   ]) {
     const actual = [...read(path).matchAll(
       /\{ n: (\d+), state: "([^"]+)", abbr: "[A-Z]{2}", city: "([^"]+)", date: "([^"]+)"/g,
@@ -94,6 +93,10 @@ test("the production homepage route asset exactly matches the approved 50-run pa
     }));
     assert.deepEqual(actual, expected.map((stop) => ({ ...stop, date: displayDate(stop.date) })), path);
   }
+
+  const historicalHandoff = read("dist/live-tracking.html");
+  assert.match(historicalHandoff, /\/portfolio\/mission-america-2026\/live-tracking\.html/);
+  assert.doesNotMatch(historicalHandoff, /setInterval|tracking-status|strava/i);
 });
 
 test("the maintained and built client bundles preserve the corrected numbered route", () => {
@@ -127,9 +130,9 @@ test("the production fifty-runs page exactly matches the approved 50-run path", 
 
   for (const path of ["dist/fifty-runs.html", "dist/fifty-runs/index.html"]) {
     const built = [...read(path).matchAll(
-      /<article class="state"><strong>([^<]+)<\/strong><span>([^|<]+) \| ([^<]+)<\/span><\/article>/g,
+      /<div class="stop-row"><span class="stop-number">(\d+)<\/span><span class="stop-date">([^<]+)<\/span><strong class="stop-state">([^<]+)<\/strong><span class="stop-city">([^<]+)<\/span><\/div>/g,
     )].map((match, index) => ({
-      number: index + 1, date: match[3], state: match[1], city: match[2],
+      number: Number(match[1]), date: match[2], state: match[3], city: match[4],
     }));
     assert.deepEqual(built, expected.map((stop) => ({ ...stop, date: displayDate(stop.date) })), path);
   }
