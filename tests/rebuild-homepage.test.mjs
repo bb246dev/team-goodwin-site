@@ -63,7 +63,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-mobile-section-order-v4/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-youtube-film-v5/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -172,9 +172,8 @@ test("source is readable without running the build and includes completed journe
   ]) assert.match(source, new RegExp(detail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 });
 
-test("homepage uses the currently selected event photographs as accessible images", () => {
+test("homepage uses the selected event imagery and confirmed campaign film", () => {
   for (const asset of [
-    "william-goodge-rhode-island-story-crop.jpg",
     "william-goodge-running.jpeg",
     "william-goodge-delaware-person.jpg",
     "mission-america-legacy-team.jpg",
@@ -182,7 +181,11 @@ test("homepage uses the currently selected event photographs as accessible image
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
   }
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
-  assert.match(source, /<video[^>]+poster="assets\/rebuild\/william-goodge-rhode-island-story-crop\.jpg\?v=20261109-story-crop-v4"/);
+  assert.match(source, /<iframe[\s\S]*?class="story-film-embed"[\s\S]*?src="https:\/\/www\.youtube-nocookie\.com\/embed\/5OW3GNlPP2g\?rel=0"/);
+  assert.match(source, /title="Is This The Hardest Challenge I've Ever Done\? \| Mission America \| EP\.1"/);
+  assert.match(source, /allowfullscreen/);
+  assert.doesNotMatch(source, /assets\/goodge-website\.mp4/);
+  assert.match(styles, /\.story-film-embed \{[^}]*min-height: 720px;[^}]*border: 0;/);
   assert.match(source, /class="people-image"[\s\S]*william-goodge-delaware-person\.jpg[^>]+width="1024" height="768"/);
   assert.doesNotMatch(source, /class="people-gallery"|class="people-card/);
   assert.match(styles, /\.people-image img \{[^}]*object-fit: cover;[^}]*object-position: center;/);
