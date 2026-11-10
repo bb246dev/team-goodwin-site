@@ -32,7 +32,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(source, /Mission<br>accomplished</i);
   assert.match(source, /The mission<br>The journey<br>The record</i);
   assert.match(source, /The person<br>inside the miles</i);
-  assert.match(source, /Impossible is just <br>a logistics problem</i);
+  assert.match(source, /Impossible<br>is just a<br>logistics<br>problem</i);
   assert.match(source, /The first chapter<br>is complete</i);
   assert.match(source, /starting lines across Hawaii, Alaska, the mainland, and New York/i);
   assert.match(source, /real&#8209;time operational intelligence/i);
@@ -54,13 +54,17 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(styles, /@media \(max-width: 560px\)[\s\S]*\.record-verification-source \{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 62\.4px/);
   assert.doesNotMatch(styles, /\.record-verification-source \{[^}]*min-height:\s*250px/);
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
+  assert.doesNotMatch(source, /class="brand-rule"/i);
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-header-photo-v5/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-story-layout-v6/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-mark \{ display: block;/);
+  assert.match(styles, /\.record-verification \{[^}]*margin-top:\s*8px;\s*\}/);
+  assert.doesNotMatch(styles, /\.record-verification \{[^}]*(?:border|background):/);
+  assert.doesNotMatch(source, /class="legacy-copy"[\s\S]*?class="eyebrow"/i);
 });
 
 test("homepage uses the Goodwin green theme without the previous blue accent system", () => {
@@ -109,7 +113,7 @@ test("source is readable without running the build and includes completed journe
 
 test("all supplied event photographs are used as individual accessible images", () => {
   for (const asset of [
-    "william-goodge-rhode-island-night.jpg",
+    "william-goodge-rhode-island-story-crop.jpg",
     "william-goodge-running.jpeg",
     "william-goodge-recovery.jpeg",
     "mission-america-legacy-team.jpg",
@@ -117,7 +121,7 @@ test("all supplied event photographs are used as individual accessible images", 
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
   }
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
-  assert.match(source, /<video[^>]+poster="assets\/rebuild\/william-goodge-rhode-island-night\.jpg\?v=20261109-story-v3"/);
+  assert.match(source, /<video[^>]+poster="assets\/rebuild\/william-goodge-rhode-island-story-crop\.jpg\?v=20261109-story-crop-v4"/);
   assert.match(source, /class="people-card"[\s\S]*william-goodge-go-will\.jpeg/);
 });
 
@@ -182,7 +186,7 @@ test("built review homepage resolves central content and ships its local media",
   for (const asset of [
     "dist/assets/rebuild-homepage.css",
     "dist/assets/rebuild-homepage.js",
-    "dist/assets/rebuild/william-goodge-rhode-island-night.jpg",
+    "dist/assets/rebuild/william-goodge-rhode-island-story-crop.jpg",
     "dist/assets/rebuild/william-goodge-running.jpeg",
     "dist/assets/rebuild/william-goodge-recovery.jpeg",
     "dist/assets/rebuild/guinness-world-records-logo.png",

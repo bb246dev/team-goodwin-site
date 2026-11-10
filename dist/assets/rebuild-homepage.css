@@ -92,14 +92,14 @@ section[id] { scroll-margin-top: var(--header-height); }
 .story-route i { height: 1px; background: linear-gradient(90deg, var(--green), var(--gold)); }
 .section-copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(68px, 8vw, 124px) var(--gutter); background: linear-gradient(135deg, #0b211a, #020706); }
 .section-copy h2, .people-heading h2, .goodwin-content h2, .legacy-copy h2 { font-size: var(--section-heading-size); line-height: var(--section-heading-line-height); }
-.brand-rule { width: 105px; height: 2px; margin: 29px 0; background: var(--green); }
 .section-copy p, .people-heading p, .goodwin-content p, .legacy-copy p { font-family: var(--font-sans); font-size: var(--body-copy-size); font-weight: 400; line-height: var(--body-copy-line-height); letter-spacing: var(--body-copy-letter-spacing); font-kerning: normal; font-feature-settings: "kern" 1, "liga" 1; }
 .section-copy p, .goodwin-content p, .legacy-copy p { max-width: 620px; margin: 0 0 18px; color: rgba(255,255,255,.76); }
-.record-verification { max-width: 680px; margin-top: 8px; border: 1px solid rgba(188,162,115,.48); background: linear-gradient(145deg, rgba(16,29,24,.96), rgba(3,3,3,.82)); }
-.record-verification-copy { padding: 20px 22px; }
+.section-copy h2 + p, .goodwin-content h2 + p { margin-top: 29px; }
+.record-verification { max-width: 680px; margin-top: 8px; }
+.record-verification-copy { padding: 0; }
 .record-verification .record-verification-kicker { margin: 0 0 9px; color: var(--gold); font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.record-verification-copy p:last-child { margin: 0; color: rgba(255,255,255,.8); font-size: .8rem; line-height: 1.55; }
-.record-verification-source { display: grid; grid-template-columns: minmax(0, 1fr) clamp(62.4px, 6vw, 81.6px); align-items: center; gap: 18px; margin-top: 15px; padding-top: 14px; border-top: 1px solid rgba(188,162,115,.28); text-decoration: none; }
+.record-verification-copy > p:nth-child(2) { margin-bottom: 0; color: rgba(255,255,255,.8); }
+.record-verification-source { display: grid; grid-template-columns: minmax(0, 1fr) clamp(62.4px, 6vw, 81.6px); align-items: center; gap: 18px; margin-top: 15px; text-decoration: none; }
 .record-verification-source:hover .record-verification-source-text > strong, .record-verification-source:focus-visible .record-verification-source-text > strong { color: var(--gold); }
 .record-verification-source-text { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
 .record-verification-source-text > span { color: var(--gold); font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
@@ -134,7 +134,6 @@ section[id] { scroll-margin-top: var(--header-height); }
 .legacy-section::after { position: absolute; right: -8%; bottom: -75%; width: 75%; aspect-ratio: 1; border: 1px solid rgba(120,144,144,.18); border-radius: 50%; box-shadow: 0 0 0 70px rgba(28,111,74,.025), 0 0 0 140px rgba(28,111,74,.018); content: ""; }
 .legacy-glow { position: absolute; inset: 0; pointer-events: none; }
 .legacy-copy { position: relative; z-index: 2; align-self: center; max-width: 900px; padding: clamp(64px, 6vw, 88px) var(--gutter); }
-.legacy-copy .eyebrow { margin-bottom: 25px; }
 .legacy-media { position: relative; z-index: 1; align-self: center; min-width: 0; min-height: 0; aspect-ratio: 2400 / 1907; margin: 0; overflow: hidden; background: var(--emerald); }
 .legacy-media::after { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,20,15,.55), transparent 18%), linear-gradient(0deg, rgba(3,3,3,.2), transparent 34%); content: ""; pointer-events: none; }
 .legacy-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
@@ -256,7 +255,6 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .achievement-time strong { font-size: 1.9rem; }
   .achievement-item span { font-size: .58rem; }
   .section-copy { min-height: 0; }
-  .record-verification-copy { padding: 18px; }
   .record-verification-source { grid-template-columns: minmax(0, 1fr) 62.4px; gap: 13px; }
   .goodwin-content h2 { font-size: clamp(2.45rem, 10vw, 3.2rem); line-height: .9; letter-spacing: -.045em; }
   .goodwin-content h2 br { display: none; }
