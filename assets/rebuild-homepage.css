@@ -230,6 +230,7 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .people-heading { max-width: none; padding-block: 80px; }
   .people-image { min-height: 0; aspect-ratio: 4 / 3; }
   .goodwin-section { min-height: 900px; }
+  .goodwin-background { object-position: 78% 58%; }
   .goodwin-content { padding-bottom: 245px; }
   .operations-grid { right: var(--gutter); left: var(--gutter); width: auto; }
   .legacy-section { grid-template-columns: 1fr; min-height: 0; }
@@ -267,7 +268,7 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .story-route { font-size: .5rem; }
   .story-route { grid-template-columns: 1fr; gap: 7px; }
   .story-route i { width: 100%; }
-  .goodwin-background { object-position: 62% center; }
+  .goodwin-background { object-position: 82% center; }
   .goodwin-overlay { background: linear-gradient(0deg, rgba(2,14,10,.98) 18%, rgba(2,14,10,.76) 66%, rgba(2,14,10,.2)); }
   .goodwin-content { padding-top: 72px; }
   .operations-grid { grid-template-columns: 1fr; bottom: 25px; }

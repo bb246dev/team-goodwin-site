@@ -63,7 +63,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-mobile-menu-v1/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-plane-tail-v2/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -98,6 +98,11 @@ test("mobile navigation follows the full-screen accessible menu pattern", () => 
   assert.match(homepageScript, /event\.key === "Escape" && open/);
   assert.match(homepageScript, /event\.key !== "Tab" \|\| !open/);
   assert.match(homepageScript, /if \(willOpen\) nav\?\.querySelector\("a"\)\?\.focus\(\)/);
+});
+
+test("mobile Goodwin aviation crop keeps the aircraft tail in frame", () => {
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.goodwin-background \{ object-position: 78% 58%; \}/);
+  assert.match(styles, /@media \(max-width: 560px\) \{[\s\S]*?\.goodwin-background \{ object-position: 82% center; \}/);
 });
 
 test("homepage retains the live site's scrolling ambient gradient behavior", () => {
