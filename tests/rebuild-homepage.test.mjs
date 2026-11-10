@@ -6,6 +6,8 @@ const root = new URL("../", import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), "utf8");
 const source = read("rebuild-homepage.html");
 const styles = read("assets/rebuild-homepage.css");
+const ambientStyles = read("assets/rebuild-ambient-scroll.css");
+const ambientScript = read("assets/rebuild-ambient-scroll.js");
 const build = read("build-offline.mjs");
 const content = JSON.parse(read("content/mission-america-2026.json"));
 const built = read("dist/index.html");
@@ -32,11 +34,13 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(source, /Mission<br>accomplished</i);
   assert.match(source, /The mission<br>The journey<br>The record</i);
   assert.match(source, /The person<br>inside the miles</i);
-  assert.match(source, /Impossible<br>is just a<br>logistics<br>problem</i);
+  assert.match(source, /Impossible <br>is just a <br>logistics <br>problem</i);
   assert.match(source, /The first chapter<br>is complete</i);
   assert.match(source, /starting lines across Hawaii, Alaska, the mainland, and New York/i);
   assert.match(source, /real&#8209;time operational intelligence/i);
   assert.doesNotMatch(source, /starting lines—|New York—was/i);
+  assert.match(source, /“time machines” - turning/);
+  assert.doesNotMatch(source, /“time machines”—turning/);
   for (const id of ["hero-title", "story-title", "people-title", "goodwin-title", "legacy-title"]) {
     const headline = source.match(new RegExp(`<h[12] id="${id}">([\\s\\S]*?)<\\/h[12]>`, "i"));
     assert.ok(headline, `missing ${id}`);
@@ -58,7 +62,9 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-gallery-spacing-v7/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-person-image-v9/);
+  assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
+  assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-mark \{ display: block;/);
@@ -71,6 +77,16 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(styles, /\.section-copy h2 \+ p, \.goodwin-content h2 \+ p, \.legacy-copy h2 \+ p \{ margin-top: 29px; \}/);
   assert.match(styles, /\.story-visual \{[^}]*display: grid;[^}]*grid-template-rows: minmax\(0, 1fr\) auto;/);
   assert.doesNotMatch(styles, /\.story-route \{[^}]*position: absolute/);
+});
+
+test("homepage retains the live site's scrolling ambient gradient behavior", () => {
+  assert.match(ambientStyles, /\.ambient-scroll-background \{/);
+  assert.match(ambientStyles, /\.ambient-scroll-cloud-one \{/);
+  assert.match(ambientStyles, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(ambientScript, /\["#home", DARK\]/);
+  assert.match(ambientScript, /\["\.people-section", LIGHT\]/);
+  assert.match(ambientScript, /requestAnimationFrame\(render\)/);
+  assert.match(ambientScript, /prefers-reduced-motion: reduce/);
 });
 
 test("homepage uses the Goodwin green theme without the previous blue accent system", () => {
@@ -103,6 +119,7 @@ test("homepage typography uses the bundled Inter family without synthetic varian
   assert.doesNotMatch(styles, /\.people-heading p:last-child/);
   assert.match(styles, /\.goodwin-content h2 \{ max-width: 830px; text-wrap: balance; \}/);
   assert.match(styles, /@media \(max-width: 560px\)[\s\S]*\.goodwin-content h2 \{ font-size: clamp\(2\.45rem, 10vw, 3\.2rem\)/);
+  assert.match(source, /<h2 id="goodwin-title">Impossible <br>is just a <br>logistics <br>problem<\/h2>/);
 });
 
 test("source is readable without running the build and includes completed journey details", () => {
@@ -117,21 +134,20 @@ test("source is readable without running the build and includes completed journe
   ]) assert.match(source, new RegExp(detail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 });
 
-test("all supplied event photographs are used as individual accessible images", () => {
+test("homepage uses the currently selected event photographs as accessible images", () => {
   for (const asset of [
     "william-goodge-rhode-island-story-crop.jpg",
     "william-goodge-running.jpeg",
-    "william-goodge-recovery.jpeg",
-    "william-goodge-hawaii-gallery-tight.jpg",
-    "william-goodge-go-will-tight.jpg",
+    "william-goodge-connecticut-person.jpg",
     "mission-america-legacy-team.jpg",
   ]) {
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
   }
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
   assert.match(source, /<video[^>]+poster="assets\/rebuild\/william-goodge-rhode-island-story-crop\.jpg\?v=20261109-story-crop-v4"/);
-  assert.match(source, /class="people-card"[\s\S]*william-goodge-go-will-tight\.jpg[^>]+width="424" height="540"/);
-  assert.match(source, /class="people-card"[\s\S]*william-goodge-hawaii-gallery-tight\.jpg[^>]+width="1020" height="810"/);
+  assert.match(source, /class="people-image"[\s\S]*william-goodge-connecticut-person\.jpg[^>]+width="1024" height="768"/);
+  assert.doesNotMatch(source, /class="people-gallery"|class="people-card/);
+  assert.match(styles, /\.people-image img \{[^}]*object-fit: cover;[^}]*object-position: center;/);
 });
 
 test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
@@ -195,11 +211,11 @@ test("built review homepage resolves central content and ships its local media",
   for (const asset of [
     "dist/assets/rebuild-homepage.css",
     "dist/assets/rebuild-homepage.js",
+    "dist/assets/rebuild-ambient-scroll.css",
+    "dist/assets/rebuild-ambient-scroll.js",
     "dist/assets/rebuild/william-goodge-rhode-island-story-crop.jpg",
     "dist/assets/rebuild/william-goodge-running.jpeg",
-    "dist/assets/rebuild/william-goodge-recovery.jpeg",
-    "dist/assets/rebuild/william-goodge-hawaii-gallery-tight.jpg",
-    "dist/assets/rebuild/william-goodge-go-will-tight.jpg",
+    "dist/assets/rebuild/william-goodge-connecticut-person.jpg",
     "dist/assets/rebuild/guinness-world-records-logo.png",
   ]) assert.ok(existsSync(new URL(`../${asset}`, import.meta.url)), asset);
 });
