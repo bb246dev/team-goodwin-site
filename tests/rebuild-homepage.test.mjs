@@ -55,11 +55,12 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(styles, /\.record-verification-source \{[^}]*min-height:\s*250px/);
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
   assert.doesNotMatch(source, /legacy-brand/);
-  assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
+  assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-record-badge-v4/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-header-photo-v5/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-mark \{ display: block;/);
 });
 
 test("homepage uses the Goodwin green theme without the previous blue accent system", () => {
@@ -116,6 +117,7 @@ test("all supplied event photographs are used as individual accessible images", 
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
   }
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
+  assert.match(source, /william-goodge-rhode-island-night\.jpg\?v=20261109-rhode-island-v2/);
 });
 
 test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
