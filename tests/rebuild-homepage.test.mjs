@@ -53,8 +53,12 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(styles, /\.record-verification-source \{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(52px, 5vw, 68px\)/);
   assert.doesNotMatch(styles, /\.record-verification-source \{[^}]*min-height:\s*250px/);
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
-  assert.doesNotMatch(source, /legacy-brand|brand-wordmark/);
+  assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
+  assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-desktop-wordmark/);
+  assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
 });
 
 test("homepage uses the Goodwin green theme without the previous blue accent system", () => {

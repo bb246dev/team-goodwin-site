@@ -30,6 +30,8 @@ function localTarget(url) {
 
 assert(existsSync(join(root, "index.html")), "archive index is missing");
 assert(existsSync(join(root, ".htaccess")), "archive .htaccess is missing");
+assert(existsSync(join(root, "assets/ambient-scroll.css")), "archive scrolling-gradient stylesheet is missing");
+assert(existsSync(join(root, "assets/ambient-scroll.js")), "archive scrolling-gradient runtime is missing");
 const htmlFiles = walk(root).filter((file) => file.endsWith(".html"));
 assert(htmlFiles.length >= 17, "expected archive pages are missing");
 
@@ -54,6 +56,8 @@ const tracker = readFileSync(join(root, "assets/tracker-base.js"), "utf8");
 const raceMap = readFileSync(join(root, "assets/strava-race-map.mjs"), "utf8");
 for (const route of ["index.html", "live-tracking.html"]) {
   const historicalPage = readFileSync(join(root, route), "utf8");
+  assert(historicalPage.includes(`${prefix}assets/ambient-scroll.css`), `${route} lacks the scrolling-gradient stylesheet`);
+  assert(historicalPage.includes(`${prefix}assets/ambient-scroll.js`), `${route} lacks the scrolling-gradient runtime`);
   assert(!/Join the Run|is attempting|Follow Along|data-splash-modal|By submitting|live ticker/i.test(historicalPage), `${route} retains expired live-event prompts`);
   assert(/22 days, 17 hours, 16 minutes and 34 seconds/i.test(historicalPage), `${route} lacks the confirmed final time`);
 }
