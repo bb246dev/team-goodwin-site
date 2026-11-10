@@ -73,8 +73,6 @@ section[id] { scroll-margin-top: var(--header-height); }
 .button svg { width: 18px; height: 18px; }
 .button-gold { border-color: var(--gold); color: var(--white); }
 .button-gold:hover, .button-gold:focus-visible { background: var(--gold); color: var(--black); }
-.hero-caption { position: absolute; right: var(--gutter); bottom: 23px; max-width: 310px; margin: 0; color: rgba(255,255,255,.54); font-size: .58rem; letter-spacing: .1em; text-align: right; text-transform: uppercase; }
-
 .achievement-strip { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #07130f; }
 .achievement-item { position: relative; display: grid; min-height: 142px; place-content: center; padding: 24px; text-align: center; }
 .achievement-item + .achievement-item::before { position: absolute; left: 0; top: 28%; width: 1px; height: 44%; background: var(--green); content: ""; }
@@ -83,6 +81,10 @@ section[id] { scroll-margin-top: var(--header-height); }
 .achievement-time strong { font-size: clamp(2rem, 3.6vw, 3.75rem); }
 .record-status { position: absolute; right: var(--gutter); bottom: -38px; z-index: 2; display: flex; align-items: center; gap: 8px; margin: 0; color: rgba(255,255,255,.58); font-size: .61rem; letter-spacing: .1em; text-transform: uppercase; }
 .record-status .record-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(188,162,115,.12); }
+
+@media (min-width: 821px) {
+  .record-status { display: none; }
+}
 
 .section-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(430px, .95fr); min-height: 720px; }
 .story-visual { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden; background: var(--black); }
@@ -248,7 +250,6 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .elapsed { width: 100%; min-width: 0; }
   .elapsed-value { font-size: clamp(2rem, 10vw, 3.5rem); }
   .elapsed-label { font-size: .54rem; letter-spacing: .08em; }
-  .hero-caption { display: none; }
   .achievement-item { min-height: 126px; padding: 18px 12px; }
   .achievement-item strong { font-size: 2.5rem; }
   .achievement-time strong { font-size: 1.9rem; }
