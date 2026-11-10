@@ -119,6 +119,7 @@ test("all supplied event photographs are used as individual accessible images", 
 
 test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
   assert.match(source, /class="legacy-media"[\s\S]*mission-america-legacy-team\.jpg/);
+  assert.doesNotMatch(source, /For Amanda|legacy-purpose/i);
   assert.match(source, /alt="William Goodge and the Mission America team beneath the Goodwin billboard in Times Square"/);
   assert.match(styles, /\.legacy-glow \{ position: absolute; inset: 0; pointer-events: none; \}/);
   assert.match(styles, /\.legacy-media \{[^}]*aspect-ratio: 2400 \/ 1907;/);
