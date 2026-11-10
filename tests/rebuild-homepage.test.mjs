@@ -117,7 +117,8 @@ test("all supplied event photographs are used as individual accessible images", 
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
   }
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
-  assert.match(source, /william-goodge-rhode-island-night\.jpg\?v=20261109-rhode-island-v2/);
+  assert.match(source, /<video[^>]+poster="assets\/rebuild\/william-goodge-rhode-island-night\.jpg\?v=20261109-story-v3"/);
+  assert.match(source, /class="people-card"[\s\S]*william-goodge-go-will\.jpeg/);
 });
 
 test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
