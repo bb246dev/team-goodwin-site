@@ -56,7 +56,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-desktop-wordmark/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-legacy-photo-v3/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
 });
@@ -110,10 +110,20 @@ test("all supplied event photographs are used as individual accessible images", 
     "william-goodge-go-will.jpeg",
     "william-goodge-running.jpeg",
     "william-goodge-recovery.jpeg",
+    "mission-america-legacy-team.jpg",
   ]) {
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
   }
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
+});
+
+test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
+  assert.match(source, /class="legacy-media"[\s\S]*mission-america-legacy-team\.jpg/);
+  assert.match(source, /alt="William Goodge and the Mission America team beneath the Goodwin billboard in Times Square"/);
+  assert.match(styles, /\.legacy-glow \{ position: absolute; inset: 0; pointer-events: none; \}/);
+  assert.match(styles, /\.legacy-media \{[^}]*aspect-ratio: 2400 \/ 1907;/);
+  assert.match(styles, /\.legacy-media img \{[^}]*object-fit: cover;[^}]*object-position: center;/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.legacy-media \{ min-height: 0; aspect-ratio: 2400 \/ 1907; \}/);
 });
 
 test("homepage build does not enter the protected portfolio boundary", () => {
