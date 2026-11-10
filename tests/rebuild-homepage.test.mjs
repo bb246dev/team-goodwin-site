@@ -58,13 +58,19 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-story-layout-v6/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-gallery-spacing-v7/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-mark \{ display: block;/);
   assert.match(styles, /\.record-verification \{[^}]*margin-top:\s*8px;\s*\}/);
   assert.doesNotMatch(styles, /\.record-verification \{[^}]*(?:border|background):/);
   assert.doesNotMatch(source, /class="legacy-copy"[\s\S]*?class="eyebrow"/i);
+  assert.doesNotMatch(source, /<figcaption/i);
+  assert.doesNotMatch(styles, /\.people-card figcaption/);
+  assert.doesNotMatch(styles, /\.eyebrow::after/);
+  assert.match(styles, /\.section-copy h2 \+ p, \.goodwin-content h2 \+ p, \.legacy-copy h2 \+ p \{ margin-top: 29px; \}/);
+  assert.match(styles, /\.story-visual \{[^}]*display: grid;[^}]*grid-template-rows: minmax\(0, 1fr\) auto;/);
+  assert.doesNotMatch(styles, /\.story-route \{[^}]*position: absolute/);
 });
 
 test("homepage uses the Goodwin green theme without the previous blue accent system", () => {
