@@ -116,6 +116,7 @@ test("all supplied event photographs are used as individual accessible images", 
     "william-goodge-rhode-island-story-crop.jpg",
     "william-goodge-running.jpeg",
     "william-goodge-recovery.jpeg",
+    "william-goodge-hawaii-gallery-crop.jpg",
     "mission-america-legacy-team.jpg",
   ]) {
     assert.match(source, new RegExp(asset.replace(".", "\\.")));
@@ -123,6 +124,7 @@ test("all supplied event photographs are used as individual accessible images", 
   assert.doesNotMatch(styles, /signal-2026-11-09-132141/);
   assert.match(source, /<video[^>]+poster="assets\/rebuild\/william-goodge-rhode-island-story-crop\.jpg\?v=20261109-story-crop-v4"/);
   assert.match(source, /class="people-card"[\s\S]*william-goodge-go-will\.jpeg/);
+  assert.match(source, /class="people-card"[\s\S]*william-goodge-hawaii-gallery-crop\.jpg[^>]+width="1020" height="900"/);
 });
 
 test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
@@ -189,6 +191,7 @@ test("built review homepage resolves central content and ships its local media",
     "dist/assets/rebuild/william-goodge-rhode-island-story-crop.jpg",
     "dist/assets/rebuild/william-goodge-running.jpeg",
     "dist/assets/rebuild/william-goodge-recovery.jpeg",
+    "dist/assets/rebuild/william-goodge-hawaii-gallery-crop.jpg",
     "dist/assets/rebuild/guinness-world-records-logo.png",
   ]) assert.ok(existsSync(new URL(`../${asset}`, import.meta.url)), asset);
 });
