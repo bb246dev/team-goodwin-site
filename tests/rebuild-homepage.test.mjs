@@ -50,13 +50,14 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.equal(content.achievement.verification.logoSourceUrl, "https://www.guinnessworldrecords.com/images/logo.png");
   assert.equal(content.achievement.verification.logoSha256, "8f0002dd46285de911f7eb6d7e394e40c7c8fe690c9c35f34cd36d91e4003f8a");
   assert.ok(existsSync(new URL("../assets/rebuild/guinness-world-records-logo.png", import.meta.url)));
-  assert.match(styles, /\.record-verification-source \{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(52px, 5vw, 68px\)/);
+  assert.match(styles, /\.record-verification-source \{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(62\.4px, 6vw, 81\.6px\)/);
+  assert.match(styles, /@media \(max-width: 560px\)[\s\S]*\.record-verification-source \{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 62\.4px/);
   assert.doesNotMatch(styles, /\.record-verification-source \{[^}]*min-height:\s*250px/);
   assert.doesNotMatch(source, /class="section-number"|\b0[1-9]\s*\//i);
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-legacy-photo-v3/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-record-badge-v4/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
 });
@@ -107,7 +108,7 @@ test("source is readable without running the build and includes completed journe
 
 test("all supplied event photographs are used as individual accessible images", () => {
   for (const asset of [
-    "william-goodge-go-will.jpeg",
+    "william-goodge-rhode-island-night.jpg",
     "william-goodge-running.jpeg",
     "william-goodge-recovery.jpeg",
     "mission-america-legacy-team.jpg",
@@ -178,7 +179,7 @@ test("built review homepage resolves central content and ships its local media",
   for (const asset of [
     "dist/assets/rebuild-homepage.css",
     "dist/assets/rebuild-homepage.js",
-    "dist/assets/rebuild/william-goodge-go-will.jpeg",
+    "dist/assets/rebuild/william-goodge-rhode-island-night.jpg",
     "dist/assets/rebuild/william-goodge-running.jpeg",
     "dist/assets/rebuild/william-goodge-recovery.jpeg",
     "dist/assets/rebuild/guinness-world-records-logo.png",

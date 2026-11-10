@@ -99,7 +99,7 @@ section[id] { scroll-margin-top: var(--header-height); }
 .record-verification-copy { padding: 20px 22px; }
 .record-verification .record-verification-kicker { margin: 0 0 9px; color: var(--gold); font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .record-verification-copy p:last-child { margin: 0; color: rgba(255,255,255,.8); font-size: .8rem; line-height: 1.55; }
-.record-verification-source { display: grid; grid-template-columns: minmax(0, 1fr) clamp(52px, 5vw, 68px); align-items: center; gap: 18px; margin-top: 15px; padding-top: 14px; border-top: 1px solid rgba(188,162,115,.28); text-decoration: none; }
+.record-verification-source { display: grid; grid-template-columns: minmax(0, 1fr) clamp(62.4px, 6vw, 81.6px); align-items: center; gap: 18px; margin-top: 15px; padding-top: 14px; border-top: 1px solid rgba(188,162,115,.28); text-decoration: none; }
 .record-verification-source:hover .record-verification-source-text > strong, .record-verification-source:focus-visible .record-verification-source-text > strong { color: var(--gold); }
 .record-verification-source-text { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
 .record-verification-source-text > span { color: var(--gold); font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
@@ -257,7 +257,7 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .achievement-item span { font-size: .58rem; }
   .section-copy { min-height: 0; }
   .record-verification-copy { padding: 18px; }
-  .record-verification-source { grid-template-columns: minmax(0, 1fr) 52px; gap: 13px; }
+  .record-verification-source { grid-template-columns: minmax(0, 1fr) 62.4px; gap: 13px; }
   .goodwin-content h2 { font-size: clamp(2.45rem, 10vw, 3.2rem); line-height: .9; letter-spacing: -.045em; }
   .goodwin-content h2 br { display: none; }
   .story-route { right: 12px; bottom: 12px; left: 12px; font-size: .5rem; }
