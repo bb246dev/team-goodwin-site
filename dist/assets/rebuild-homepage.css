@@ -234,8 +234,8 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .goodwin-content { padding-bottom: 245px; }
   .operations-grid { right: var(--gutter); left: var(--gutter); width: auto; }
   .legacy-section { grid-template-columns: 1fr; min-height: 0; }
-  .legacy-copy { padding-block: 80px; }
-  .legacy-media { min-height: 0; aspect-ratio: 2400 / 1907; }
+  .legacy-copy { grid-row: 2; padding-block: 80px; }
+  .legacy-media { grid-row: 1; min-height: 0; aspect-ratio: 2400 / 1907; }
   .legacy-media::after { background: linear-gradient(0deg, rgba(3,3,3,.24), transparent 34%); }
   .site-footer-main { grid-template-columns: 1fr; }
   .partner-logo-wall, .partner-logo-row-new { grid-template-columns: repeat(3, minmax(0, 1fr)); }

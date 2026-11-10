@@ -63,7 +63,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-mobile-people-order-v3/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-mobile-section-order-v4/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -108,6 +108,11 @@ test("mobile Goodwin aviation crop keeps the aircraft tail in frame", () => {
 test("mobile biography places the selected photo before the headline and copy", () => {
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.people-heading \{ grid-row: 2;/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.people-image \{ grid-row: 1;/);
+});
+
+test("mobile legacy section places the revised group photo before its headline", () => {
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.legacy-copy \{ grid-row: 2;/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.legacy-media \{ grid-row: 1;/);
 });
 
 test("homepage retains the live site's scrolling ambient gradient behavior", () => {
@@ -190,7 +195,7 @@ test("legacy section uses the supplied Times Square team photograph with a stabl
   assert.match(styles, /\.legacy-glow \{ position: absolute; inset: 0; pointer-events: none; \}/);
   assert.match(styles, /\.legacy-media \{[^}]*aspect-ratio: 2400 \/ 1907;/);
   assert.match(styles, /\.legacy-media img \{[^}]*object-fit: cover;[^}]*object-position: center;/);
-  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.legacy-media \{ min-height: 0; aspect-ratio: 2400 \/ 1907; \}/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.legacy-media \{ grid-row: 1; min-height: 0; aspect-ratio: 2400 \/ 1907; \}/);
 });
 
 test("homepage build does not enter the protected portfolio boundary", () => {
