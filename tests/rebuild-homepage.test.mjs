@@ -63,7 +63,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-plane-tail-v2/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-mobile-people-order-v3/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -103,6 +103,11 @@ test("mobile navigation follows the full-screen accessible menu pattern", () => 
 test("mobile Goodwin aviation crop keeps the aircraft tail in frame", () => {
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.goodwin-background \{ object-position: 78% 58%; \}/);
   assert.match(styles, /@media \(max-width: 560px\) \{[\s\S]*?\.goodwin-background \{ object-position: 82% center; \}/);
+});
+
+test("mobile biography places the selected photo before the headline and copy", () => {
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.people-heading \{ grid-row: 2;/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.people-image \{ grid-row: 1;/);
 });
 
 test("homepage retains the live site's scrolling ambient gradient behavior", () => {
@@ -179,7 +184,7 @@ test("homepage uses the currently selected event photographs as accessible image
 });
 
 test("legacy section uses the supplied Times Square team photograph with a stable responsive crop", () => {
-  assert.match(source, /class="legacy-media"[\s\S]*mission-america-legacy-team\.jpg/);
+  assert.match(source, /class="legacy-media"[\s\S]*mission-america-legacy-team\.jpg\?v=20261110-revised-v1[^>]+width="3840" height="3052"/);
   assert.doesNotMatch(source, /For Amanda|legacy-purpose/i);
   assert.match(source, /alt="William Goodge and the Mission America team beneath the Goodwin billboard in Times Square"/);
   assert.match(styles, /\.legacy-glow \{ position: absolute; inset: 0; pointer-events: none; \}/);

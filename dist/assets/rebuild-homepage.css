@@ -227,8 +227,8 @@ a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid 
   .story-visual video { min-height: 56vw; }
   .section-copy { min-height: 620px; }
   .people-section { grid-template-columns: 1fr; min-height: 0; }
-  .people-heading { max-width: none; padding-block: 80px; }
-  .people-image { min-height: 0; aspect-ratio: 4 / 3; }
+  .people-heading { grid-row: 2; max-width: none; padding-block: 80px; }
+  .people-image { grid-row: 1; min-height: 0; aspect-ratio: 4 / 3; }
   .goodwin-section { min-height: 900px; }
   .goodwin-background { object-position: 78% 58%; }
   .goodwin-content { padding-bottom: 245px; }
