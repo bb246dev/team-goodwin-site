@@ -62,7 +62,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-delaware-panel-v10/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-floating-panel-v11/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -119,6 +119,7 @@ test("homepage typography uses the bundled Inter family without synthetic varian
   assert.doesNotMatch(styles, /\.people-heading p:last-child/);
   assert.match(styles, /\.goodwin-content h2 \{ max-width: 830px; text-wrap: balance; \}/);
   assert.match(styles, /\.operations-grid \{[^}]*z-index: 2;[^}]*right: clamp\(22px, 2vw, 32px\);[^}]*bottom: clamp\(22px, 2vw, 32px\);/);
+  assert.match(styles, /@media \(min-width: 821px\) \{\s*\.operations-grid \{ right: 32px; bottom: 72px; box-shadow: 0 22px 55px rgba\(0,0,0,\.36\); \}\s*\}/);
   assert.match(styles, /@media \(max-width: 560px\)[\s\S]*\.goodwin-content h2 \{ font-size: clamp\(2\.45rem, 10vw, 3\.2rem\)/);
   assert.match(source, /<h2 id="goodwin-title">Impossible <br>is just a <br>logistics <br>problem<\/h2>/);
 });

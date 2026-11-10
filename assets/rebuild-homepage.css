@@ -181,6 +181,10 @@ section[id] { scroll-margin-top: var(--header-height); }
 
 a:focus-visible, button:focus-visible, video:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
 
+@media (min-width: 821px) {
+  .operations-grid { right: 32px; bottom: 72px; box-shadow: 0 22px 55px rgba(0,0,0,.36); }
+}
+
 @media (max-width: 1080px) {
   .brand-mission { display: none; }
   .brand-divider { display: none; }
