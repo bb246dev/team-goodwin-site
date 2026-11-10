@@ -8,6 +8,7 @@ const source = read("rebuild-homepage.html");
 const styles = read("assets/rebuild-homepage.css");
 const ambientStyles = read("assets/rebuild-ambient-scroll.css");
 const ambientScript = read("assets/rebuild-ambient-scroll.js");
+const homepageScript = read("assets/rebuild-homepage.js");
 const build = read("build-offline.mjs");
 const content = JSON.parse(read("content/mission-america-2026.json"));
 const built = read("dist/index.html");
@@ -62,7 +63,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261109-clean-footer-v14/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-mobile-menu-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -82,6 +83,21 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.match(styles, /\.section-copy h2 \+ p, \.goodwin-content h2 \+ p, \.legacy-copy h2 \+ p \{ margin-top: 29px; \}/);
   assert.match(styles, /\.story-visual \{[^}]*display: grid;[^}]*grid-template-rows: minmax\(0, 1fr\) auto;/);
   assert.doesNotMatch(styles, /\.story-route \{[^}]*position: absolute/);
+});
+
+test("mobile navigation follows the full-screen accessible menu pattern", () => {
+  assert.match(source, /data-nav-toggle-label>Menu<\/span>/);
+  assert.match(source, /aria-controls="primary-navigation"/);
+  assert.match(source, /assets\/rebuild-homepage\.js\?v=20261110-mobile-menu-v1/);
+  assert.match(styles, /body\.mobile-menu-open \{ overflow: hidden; \}/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.primary-nav \{ position: fixed;[^}]*inset: 0;[^}]*overflow-y: auto;/);
+  assert.match(styles, /\.site-header\.nav-open \.primary-nav \{[^}]*visibility: visible;[^}]*pointer-events: auto;/);
+  assert.match(homepageScript, /nav\.setAttribute\("role", "dialog"\)/);
+  assert.match(homepageScript, /nav\.setAttribute\("aria-modal", "true"\)/);
+  assert.match(homepageScript, /region\.inert = shouldOpen/);
+  assert.match(homepageScript, /event\.key === "Escape" && open/);
+  assert.match(homepageScript, /event\.key !== "Tab" \|\| !open/);
+  assert.match(homepageScript, /if \(willOpen\) nav\?\.querySelector\("a"\)\?\.focus\(\)/);
 });
 
 test("homepage retains the live site's scrolling ambient gradient behavior", () => {
