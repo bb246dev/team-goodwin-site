@@ -117,9 +117,12 @@ function updateUpdatesPage(html) {
 function addRetrospectiveNotice(html, target) {
   if (html.includes("data-retrospective-context")) return html;
   const notice = pageNotices[target] || "Mission America concluded on November 1, 2026. This page is retained as part of the completed mission’s historical account; the Guinness World Records title is confirmed.";
-  let output = html.includes("retrospective-context.css")
-    ? html
-    : html.replace("</head>", '<link rel="stylesheet" href="/assets/retrospective-context.css?v=20261109-retrospective-2">\n</head>');
+  let output = /<base\b/i.test(html)
+    ? html.replace(/<base\b[^>]*>/i, '<base href="/">')
+    : html.replace("</head>", '<base href="/">\n</head>');
+  output = output.includes("retrospective-context.css")
+    ? output
+    : output.replace("</head>", '<link rel="stylesheet" href="/assets/retrospective-context.css?v=20261109-retrospective-2">\n</head>');
   return output.replace("</nav>", `</nav>\n      <aside class="retrospective-context" data-retrospective-context role="note"><strong>Mission complete</strong><span>${notice}</span></aside>`);
 }
 

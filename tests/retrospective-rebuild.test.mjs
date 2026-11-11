@@ -28,6 +28,7 @@ test("retained production pages are clearly retrospective and remove expired par
     const output = applyRetrospectiveLegacyPage(read(`restore-2026-09-30-${page}.html`), `${page}.html`);
     assert.match(output, /data-retrospective-context/);
     assert.match(output, /retrospective-context\.css/);
+    assert.match(output, /<base href="\/">/);
     assert.doesNotMatch(output, />Join the Run</i);
     assert.doesNotMatch(output, /world record attempt/i);
     assert.match(output, /portfolio\/mission-america-2026/);

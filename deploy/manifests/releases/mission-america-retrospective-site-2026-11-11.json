@@ -23,7 +23,7 @@
       "source": "dist/athletes.html",
       "destination": "public_html/athletes.html",
       "publicPath": "/athletes/",
-      "expectedSha256": "f43edbe36dbc50bf598f33d84ca680ecb55a95b1db4a746585b40d1adfeb284d",
+      "expectedSha256": "a6f3e408fc4f3718c325a492264c5a2742e29e206b9171e4985be128e53801c8",
       "expectedRemoteSha256": "83880eb6c6b0d616bb13752fea243f162c9d1cdeb7434b2c8efe66c917ab6add"
     },
     {
@@ -37,7 +37,7 @@
       "source": "dist/fifty-runs.html",
       "destination": "public_html/fifty-runs.html",
       "publicPath": "/fifty-runs/",
-      "expectedSha256": "93348af644664bb7afc0c0189700df6b886f5939f885c6f8d471da1eeda8e0d4",
+      "expectedSha256": "09d5f61329ce1561e522afba35e6eb6f9e59fbd5394bffa3d8ca291aec83d03e",
       "expectedRemoteSha256": "c9eea661866b9f443994467a829070bc123c83efc01d5c16f99fc2ccfe6f1be5"
     },
     {
@@ -58,7 +58,7 @@
       "source": "dist/partners.html",
       "destination": "public_html/partners.html",
       "publicPath": "/partners/",
-      "expectedSha256": "f8b6baf27e45e3772a575313d273682458ff5891b9a649cda45c25819b4a9145",
+      "expectedSha256": "aa3fb7289a72c36597f2fc2c8c9424ec1f22cbeae42201aebe66c95b2a51f027",
       "expectedRemoteSha256": "4dad1a8c4a62a03c8299a633d4c3e5e24e02ff695d71e69dfb23e45b26053fc6"
     },
     {
@@ -79,7 +79,7 @@
       "source": "dist/the-run.html",
       "destination": "public_html/the-run.html",
       "publicPath": "/the-run/",
-      "expectedSha256": "2db1a6de408f436e55d33a2b9bc417a72c361906a22cd8b6a6306f69e7941da9",
+      "expectedSha256": "8e78fd99d8c691217fe7e10ba259327a55903353d955125c868fbb62bcabdd59",
       "expectedRemoteSha256": "9e3c92b442a1e9d9dac8524bbeb2fbbdc4391b926bfb2558cddb9ad117d91fd7"
     },
     {
@@ -93,28 +93,28 @@
       "source": "dist/week-1.html",
       "destination": "public_html/week-1.html",
       "publicPath": "/week-1/",
-      "expectedSha256": "9d552723e92d1f8edb93ccd7c5a3b0affb44320206e0663809e24c6c6d9a2a12",
+      "expectedSha256": "8178a30b3a41d92cb912db9d9cbb2e03515833afe0a5992c943896e7e2ca8e14",
       "expectedRemoteSha256": "473feee7d31b81264b5628c41265ef0a647694215b394196fa5a9ce34bd5673b"
     },
     {
       "source": "dist/week-2.html",
       "destination": "public_html/week-2.html",
       "publicPath": "/week-2/",
-      "expectedSha256": "1f7ab0d2271ab74d62bda53d91ef32401480b5c218ceb4cd1ef8c2c7603a1902",
+      "expectedSha256": "8e90be5b4cf18b2f797d5de74f565f03a67f7126106b14a4e8ed8ff826adda02",
       "expectedRemoteSha256": "f95c9ce55c24681b19e69dd964253e3fb2431aecf2773396ff489091ba7d7ac6"
     },
     {
       "source": "dist/week-3.html",
       "destination": "public_html/week-3.html",
       "publicPath": "/week-3/",
-      "expectedSha256": "a86151a6fe6261707d55ce4988764092aa9bf728a777915f433e7ab7d4036ed7",
+      "expectedSha256": "22d37dcebab73b63ebfeae1198934a82eb0537027f6d9b6fb7f68ccbecd936ba",
       "expectedRemoteSha256": "a8df2393a90d0786b0659a8875c49b989e4fcb738dfaaa52b032740bec8f8a0a"
     },
     {
       "source": "dist/will.html",
       "destination": "public_html/will.html",
       "publicPath": "/will/",
-      "expectedSha256": "bc16569b79f480d1a1d62bb1256f2413e12d0f6106095553a5463a9303926297",
+      "expectedSha256": "6bc379b78718ff46a3a0b878aca15042cdd42720083aee2cdd3753b0e1896425",
       "expectedRemoteSha256": "57329b8a46e97208505f7c282d4a3684c358803ee9671413035e1f8b27cb7bcb"
     }
   ],
