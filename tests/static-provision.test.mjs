@@ -30,6 +30,31 @@ test("static provisioning permits only the exact content-hashed tracking preview
   }
 });
 
+test("static provisioning permits only narrowly scoped root SEO assets", () => {
+  const file = (destination) => ({
+    source: destination.replace("public_html/", "dist/"),
+    destination,
+    publicPath: destination.slice("public_html".length),
+    expectedSha256: "a".repeat(64),
+    newSha256: "a".repeat(64),
+    expectedRemoteAbsent: true,
+  });
+  for (const destination of [
+    "public_html/favicon.ico",
+    "public_html/fonts/inter-latin.woff2",
+    "public_html/fonts/offline-fonts.css",
+  ]) {
+    assert.doesNotThrow(() => assertProvisioningRelease({ deploymentType: "static", files: [file(destination)] }));
+  }
+  for (const destination of [
+    "public_html/robots.txt",
+    "public_html/random.txt",
+    "public_html/fonts/nested/font.woff2",
+  ]) {
+    assert.throws(() => assertProvisioningRelease({ deploymentType: "static", files: [file(destination)] }), /limited to public static assets/);
+  }
+});
+
 test("static provisioning creates only approved absent assets and verifies exact bytes", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "goodwin-provision-test-"));
   t.after(() => rm(root, { recursive: true, force: true }));

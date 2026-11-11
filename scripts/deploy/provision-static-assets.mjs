@@ -6,6 +6,7 @@ import { createFtpsClient } from "./ftps-client.mjs";
 import { isMainModule, loadRelease, parseArgs, sha256 } from "./lib.mjs";
 
 const TRACKING_PREVIEW_RUNTIME_PATTERN = /^public_html\/tracking-preview\/assets\/(?:app|garmin-kml|tracking-map|route-data)-[a-f0-9]{16}\.mjs$/;
+const ROOT_STATIC_ASSET_PATTERN = /^public_html\/(?:favicon\.ico|fonts\/[A-Za-z0-9_.-]+)$/;
 
 function productionUrl(baseUrl, publicPath, expectedSha256) {
   const origin = new URL(baseUrl);
@@ -39,8 +40,9 @@ export function assertProvisioningRelease(release) {
       throw new Error(`Provisioning requires expectedRemoteAbsent for ${file.destination}`);
     }
     const isGeneralAsset = file.destination.startsWith("public_html/assets/");
+    const isRootStaticAsset = ROOT_STATIC_ASSET_PATTERN.test(file.destination);
     const isTrackingPreviewRuntime = TRACKING_PREVIEW_RUNTIME_PATTERN.test(file.destination);
-    if ((!isGeneralAsset && !isTrackingPreviewRuntime) || file.publicPath !== file.destination.slice("public_html".length)) {
+    if ((!isGeneralAsset && !isRootStaticAsset && !isTrackingPreviewRuntime) || file.publicPath !== file.destination.slice("public_html".length)) {
       throw new Error(`Provisioning is limited to public static assets: ${file.destination}`);
     }
     if (!file.expectedSha256 || file.expectedSha256 !== file.newSha256) {
