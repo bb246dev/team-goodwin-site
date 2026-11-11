@@ -13,6 +13,12 @@ const build = read("build-offline.mjs");
 const content = JSON.parse(read("content/mission-america-2026.json"));
 const built = read("dist/index.html");
 
+test("homepage applies browser-enforced CSP and referrer hardening without changing the archive runtime", () => {
+  assert.match(source, /<meta name="referrer" content="strict-origin-when-cross-origin">/);
+  assert.match(source, /<meta http-equiv="Content-Security-Policy" content="default-src 'self';[^\"]*script-src 'self';[^\"]*connect-src 'none';[^\"]*object-src 'none';[^\"]*base-uri 'none';[^\"]*form-action 'none';[^\"]*upgrade-insecure-requests">/);
+  assert.doesNotMatch(source, /frame-ancestors/);
+});
+
 test("rebuild homepage uses central final event facts and the verified Hawaii route", () => {
   assert.equal(content.achievement.elapsed.display, "22:17:16:34");
   assert.equal(content.achievement.elapsed.status, "guinness-world-record-title-confirmed");
@@ -29,7 +35,7 @@ test("rebuild homepage uses central final event facts and the verified Hawaii ro
 });
 
 test("rebuild homepage presents the confirmed title with the official organization logo and source", () => {
-  for (const id of ["home", "record", "story", "goodwin", "legacy"]) {
+  for (const id of ["home", "record", "story", "william", "gallery", "goodwin", "legacy"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
   assert.match(source, /Mission<br>accomplished</i);
@@ -63,7 +69,7 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261111-gallery-zoom-2x-v23/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261111-benchmark-black-menu-v35/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261111-gallery-position-v3/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
@@ -85,19 +91,47 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(styles, /\.story-route \{[^}]*position: absolute/);
 });
 
-test("mobile navigation follows the full-screen accessible menu pattern", () => {
+test("mobile navigation follows the benchmarked black full-screen menu pattern", () => {
   assert.match(source, /data-nav-toggle-label>Menu<\/span>/);
   assert.match(source, /aria-controls="primary-navigation"/);
   assert.match(source, /assets\/rebuild-homepage\.js\?v=20261110-mobile-menu-v1/);
   assert.match(styles, /body\.mobile-menu-open \{ overflow: hidden; \}/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.primary-nav \{ position: fixed;[^}]*inset: 0;[^}]*overflow-y: auto;/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.primary-nav \{[^}]*background: #0a0c0b;[^}]*transform: translateY\(-20px\);/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.primary-nav a \{[^}]*color: rgba\(255,255,255,\.58\);/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.site-header \{[^}]*background: rgba\(3,3,3,\.85\);/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-mark \{ display: block; width: 34px; height: 34px; \}/);
+  assert.doesNotMatch(styles, /\.site-header\.nav-open \.brand-mark/);
+  assert.doesNotMatch(styles, /\.site-header\.nav-open \.nav-toggle/);
   assert.match(styles, /\.site-header\.nav-open \.primary-nav \{[^}]*visibility: visible;[^}]*pointer-events: auto;/);
+  assert.doesNotMatch(styles, /\.site-header\.nav-open \.nav-toggle-lines i[^}]*rotate\(/);
+  assert.match(source, /class="nav-toggle-lines" aria-hidden="true"><i><\/i><i><\/i><i><\/i><\/span>/);
+  assert.match(styles, /\.nav-toggle \[data-nav-toggle-label\] \{[^}]*clip-path: inset\(50%\);/);
   assert.match(homepageScript, /nav\.setAttribute\("role", "dialog"\)/);
   assert.match(homepageScript, /nav\.setAttribute\("aria-modal", "true"\)/);
   assert.match(homepageScript, /region\.inert = shouldOpen/);
   assert.match(homepageScript, /event\.key === "Escape" && open/);
   assert.match(homepageScript, /event\.key !== "Tab" \|\| !open/);
   assert.match(homepageScript, /if \(willOpen\) nav\?\.querySelector\("a"\)\?\.focus\(\)/);
+});
+
+test("primary navigation links to every major homepage section", () => {
+  const expectedDestinations = [
+    ["record", "The Record"],
+    ["story", "The Story"],
+    ["william", "William"],
+    ["gallery", "Gallery"],
+    ["goodwin", "Made Possible by Goodwin"],
+    ["legacy", "Legacy"],
+  ];
+
+  const navSource = source.match(/<nav class="primary-nav"[\s\S]*?<\/nav>/)?.[0] ?? "";
+  assert.ok(navSource, "missing primary navigation");
+  for (const [id, label] of expectedDestinations) {
+    assert.match(navSource, new RegExp(`<a href="#${id}">${label}<\\/a>`));
+    assert.match(source, new RegExp(`<(?:section|div)[^>]*id="${id}"`));
+  }
+  assert.equal((navSource.match(/<a href="#/g) ?? []).length, expectedDestinations.length);
 });
 
 test("mobile Goodwin aviation crop keeps the aircraft tail in frame", () => {
@@ -124,7 +158,8 @@ test("gallery preview uses the requested image order and verified destination", 
   const gallerySection = source.indexOf('<section class="journey-gallery-section"');
   const logisticsSection = source.indexOf('<section class="goodwin-section"');
   assert.ok(peopleSection > 0 && peopleSection < gallerySection && gallerySection < logisticsSection);
-  assert.match(source, /<section class="journey-gallery-section"[\s\S]*?<h2[^>]*>50 states<br>One unforgettable journey<\/h2>/);
+  assert.match(source, /<nav class="primary-nav"[\s\S]*?<a href="#gallery">Gallery<\/a>/);
+  assert.match(source, /<section class="journey-gallery-section" id="gallery"[\s\S]*?<h2[^>]*>50 states<br>One unforgettable journey<\/h2>/);
   assert.match(source, /<a class="journey-gallery-link" href="https:\/\/seanevansphotos\.pixieset\.com\/missionamerica\/" target="_blank" rel="noopener noreferrer">/);
   assert.equal((source.match(/<a class="journey-gallery-card-link" href="https:\/\/seanevansphotos\.pixieset\.com\/missionamerica\/" target="_blank" rel="noopener noreferrer"/g) ?? []).length, 3);
   assert.doesNotMatch(source, /data-gallery-link-pending/);

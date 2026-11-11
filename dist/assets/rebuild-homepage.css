@@ -51,8 +51,9 @@ section[id] { scroll-margin-top: var(--header-height); }
 .primary-nav a { position: relative; padding-block: 12px; font-size: .69rem; font-weight: 700; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
 .primary-nav a::after { position: absolute; right: 0; bottom: 5px; left: 0; height: 2px; background: var(--green); content: ""; transform: scaleX(0); transform-origin: left; transition: transform 180ms ease; }
 .primary-nav a:hover::after, .primary-nav a:focus-visible::after { transform: scaleX(1); }
-.nav-toggle { position: relative; z-index: 2; display: none; align-items: center; gap: 12px; border: 0; background: transparent; color: var(--white); cursor: pointer; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.nav-toggle-lines { display: grid; width: 24px; gap: 6px; }
+.nav-toggle { position: relative; z-index: 2; display: none; align-items: center; border: 0; background: transparent; color: var(--white); cursor: pointer; }
+.nav-toggle [data-nav-toggle-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.nav-toggle-lines { display: grid; width: 26px; gap: 5px; }
 .nav-toggle-lines i { height: 2px; background: currentColor; transition: transform 180ms ease; }
 
 .hero { position: relative; min-height: min(900px, 100svh); overflow: hidden; background: var(--forest); isolation: isolate; }
@@ -220,8 +221,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline
   .nav-toggle { display: flex; }
   .primary-nav { position: fixed; z-index: 1; inset: 0; display: flex; overflow-y: auto; flex-direction: column; align-items: stretch; gap: 0; padding: calc(var(--header-height) + 48px) var(--gutter) max(56px, env(safe-area-inset-bottom)); overscroll-behavior: contain; background: #0a0c0b; transform: translateY(-20px); opacity: 0; visibility: hidden; pointer-events: none; transition: transform 280ms cubic-bezier(.22, 1, .36, 1), opacity 220ms ease, visibility 220ms; }
   .site-header.nav-open .primary-nav { transform: translateY(0); opacity: 1; visibility: visible; pointer-events: auto; }
-  .site-header.nav-open .nav-toggle-lines i:first-child { transform: translateY(4px) rotate(45deg); }
-  .site-header.nav-open .nav-toggle-lines i:last-child { transform: translateY(-4px) rotate(-45deg); }
   .primary-nav a { width: fit-content; padding: 9px 0; border: 0; color: rgba(255,255,255,.58); font-size: clamp(2rem, 8.4vw, 3.15rem); font-weight: 650; letter-spacing: -.045em; line-height: 1.05; text-transform: none; transition: color 160ms ease; }
   .primary-nav a:first-child, .primary-nav a:hover, .primary-nav a:focus-visible { color: var(--white); }
   .primary-nav a::after { display: none; }

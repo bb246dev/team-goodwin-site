@@ -4,10 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Mission America: 50 marathon-distance runs across 50 states, William Goodge's story, and the Goodwin operation that made the mission possible.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; media-src 'none'; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
   <title>Mission America | Goodwin Generated</title>
   <link rel="icon" href="assets/goodwin-favicon.png">
   <link rel="stylesheet" href="fonts/inter.css">
-  <link rel="stylesheet" href="assets/rebuild-homepage.css?v=20261111-gallery-zoom-2x-v23">
+  <link rel="stylesheet" href="assets/rebuild-homepage.css?v=20261111-benchmark-black-menu-v35">
   <link rel="stylesheet" href="assets/rebuild-ambient-scroll.css?v=20261109-live-gradient-v1">
 </head>
 <body>
@@ -23,14 +25,16 @@
 
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
       <span data-nav-toggle-label>Menu</span>
-      <span class="nav-toggle-lines" aria-hidden="true"><i></i><i></i></span>
+      <span class="nav-toggle-lines" aria-hidden="true"><i></i><i></i><i></i></span>
     </button>
 
     <nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-primary-nav>
-      <a href="#home">Home</a>
       <a href="#record">The Record</a>
       <a href="#story">The Story</a>
+      <a href="#william">William</a>
+      <a href="#gallery">Gallery</a>
       <a href="#goodwin">Made Possible by Goodwin</a>
+      <a href="#legacy">Legacy</a>
     </nav>
   </header>
 
@@ -105,7 +109,7 @@
       </div>
     </section>
 
-    <section class="people-section" aria-labelledby="people-title">
+    <section class="people-section" id="william" aria-labelledby="people-title">
       <div class="people-heading">
         <h2 id="people-title">The person<br>inside the miles</h2>
         <p>William began running after losing his mother, Amanda, to non-Hodgkin’s lymphoma in 2018. The miles became a way to carry her memory and support people affected by cancer.</p>
@@ -116,7 +120,7 @@
       </figure>
     </section>
 
-    <section class="journey-gallery-section" aria-labelledby="journey-gallery-title">
+    <section class="journey-gallery-section" id="gallery" aria-labelledby="journey-gallery-title">
       <div class="journey-gallery-intro">
         <h2 class="journey-gallery-title" id="journey-gallery-title">50 states<br>One unforgettable journey</h2>
         <a class="journey-gallery-link" href="https://seanevansphotos.pixieset.com/missionamerica/" target="_blank" rel="noopener noreferrer">View the full gallery <span aria-hidden="true">→</span></a>

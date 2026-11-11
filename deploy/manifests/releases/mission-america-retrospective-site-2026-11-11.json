@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "standard",
+  "description": "Publish the approved Mission America retrospective homepage and retained historical pages without changing the portfolio archive, tracking experiments, Passenger backend, APIs, or root infrastructure configuration.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "dist/index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "e1f2250db76a39aab07ee3c7d04793a304de60e75403e0c5ba36d4a8fef49a44",
+      "expectedRemoteSha256": "1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f"
+    },
+    {
+      "source": "dist/accessibility.html",
+      "destination": "public_html/accessibility.html",
+      "publicPath": "/accessibility/",
+      "expectedSha256": "512864f2ca3c65d4ab00d26cb4c029c3230d7234633631cc180e5d7964f67d21",
+      "expectedRemoteSha256": "44f859efb4d50a00e6ecfc61fb30205a1e0ec63c82ba6b9041dea59da350cd1e"
+    },
+    {
+      "source": "dist/athletes.html",
+      "destination": "public_html/athletes.html",
+      "publicPath": "/athletes/",
+      "expectedSha256": "f43edbe36dbc50bf598f33d84ca680ecb55a95b1db4a746585b40d1adfeb284d",
+      "expectedRemoteSha256": "83880eb6c6b0d616bb13752fea243f162c9d1cdeb7434b2c8efe66c917ab6add"
+    },
+    {
+      "source": "dist/faq.html",
+      "destination": "public_html/faq.html",
+      "publicPath": "/faq/",
+      "expectedSha256": "ad967addfdedd66c3927182189e24cb9e59727052502d36da6a48de0ee1a542e",
+      "expectedRemoteSha256": "19593ebb3461dbb1ebb683f26a1f3b6862138f67838775b9b8b8620b8cf04422"
+    },
+    {
+      "source": "dist/fifty-runs.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedSha256": "93348af644664bb7afc0c0189700df6b886f5939f885c6f8d471da1eeda8e0d4",
+      "expectedRemoteSha256": "c9eea661866b9f443994467a829070bc123c83efc01d5c16f99fc2ccfe6f1be5"
+    },
+    {
+      "source": "dist/live-tracking.html",
+      "destination": "public_html/live-tracking.html",
+      "publicPath": "/live-tracking.html",
+      "expectedSha256": "27674151228deb35008f65f5f948d488ec6abc9cef37f810cdb96030b3fc664d",
+      "expectedRemoteSha256": "1efb150152a85624f8bc8f37145214c5fb413aa4db0b5f26063f33a169ec193f"
+    },
+    {
+      "source": "dist/participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedSha256": "9d9dcce2d5b957c0e37888dc4a70f21fc6cd888db4811e4abbd97380763c359e",
+      "expectedRemoteSha256": "52d00581560bee950543490aef2beddab4c0fee9ad27185fea92fedcf0203923"
+    },
+    {
+      "source": "dist/partners.html",
+      "destination": "public_html/partners.html",
+      "publicPath": "/partners/",
+      "expectedSha256": "f8b6baf27e45e3772a575313d273682458ff5891b9a649cda45c25819b4a9145",
+      "expectedRemoteSha256": "4dad1a8c4a62a03c8299a633d4c3e5e24e02ff695d71e69dfb23e45b26053fc6"
+    },
+    {
+      "source": "dist/privacy.html",
+      "destination": "public_html/privacy.html",
+      "publicPath": "/privacy/",
+      "expectedSha256": "80784ef52df40ea08cb099c0f0b6737226c3257c7e20beac594bb98e1f2a236e",
+      "expectedRemoteSha256": "3bfd366d7e89298324fa90df3af60bace72b497c93c502ac042d3bf33c69f02d"
+    },
+    {
+      "source": "dist/terms.html",
+      "destination": "public_html/terms.html",
+      "publicPath": "/terms/",
+      "expectedSha256": "5eb91c9d7806d36d785f8ed7220c885bdcd9a6e45d88f6fb0fb20621d43c8bf2",
+      "expectedRemoteSha256": "90f5f7a289a4b97864b60dba8d6ac6ec20605e42ecfc7c13790b54bbb78cd373"
+    },
+    {
+      "source": "dist/the-run.html",
+      "destination": "public_html/the-run.html",
+      "publicPath": "/the-run/",
+      "expectedSha256": "2db1a6de408f436e55d33a2b9bc417a72c361906a22cd8b6a6306f69e7941da9",
+      "expectedRemoteSha256": "9e3c92b442a1e9d9dac8524bbeb2fbbdc4391b926bfb2558cddb9ad117d91fd7"
+    },
+    {
+      "source": "dist/updates.html",
+      "destination": "public_html/updates.html",
+      "publicPath": "/updates/",
+      "expectedSha256": "d55471e6fcae160f65109d149687a5af38f7bdd17569bc2c45b120406648e889",
+      "expectedRemoteSha256": "ae1b3f348b97518c69ca07d0fe439e598ff57fbc5f0f3c8e3d01c7450c5481b0"
+    },
+    {
+      "source": "dist/week-1.html",
+      "destination": "public_html/week-1.html",
+      "publicPath": "/week-1/",
+      "expectedSha256": "9d552723e92d1f8edb93ccd7c5a3b0affb44320206e0663809e24c6c6d9a2a12",
+      "expectedRemoteSha256": "473feee7d31b81264b5628c41265ef0a647694215b394196fa5a9ce34bd5673b"
+    },
+    {
+      "source": "dist/week-2.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedSha256": "1f7ab0d2271ab74d62bda53d91ef32401480b5c218ceb4cd1ef8c2c7603a1902",
+      "expectedRemoteSha256": "f95c9ce55c24681b19e69dd964253e3fb2431aecf2773396ff489091ba7d7ac6"
+    },
+    {
+      "source": "dist/week-3.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedSha256": "a86151a6fe6261707d55ce4988764092aa9bf728a777915f433e7ab7d4036ed7",
+      "expectedRemoteSha256": "a8df2393a90d0786b0659a8875c49b989e4fcb738dfaaa52b032740bec8f8a0a"
+    },
+    {
+      "source": "dist/will.html",
+      "destination": "public_html/will.html",
+      "publicPath": "/will/",
+      "expectedSha256": "bc16569b79f480d1a1d62bb1256f2413e12d0f6106095553a5463a9303926297",
+      "expectedRemoteSha256": "57329b8a46e97208505f7c282d4a3684c358803ee9671413035e1f8b27cb7bcb"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/rebuild-homepage.test.mjs",
+      "tests/retrospective-rebuild.test.mjs",
+      "tests/footer.test.mjs",
+      "tests/portfolio-archive.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/accessibility/",
+      "/athletes/",
+      "/faq/",
+      "/fifty-runs/",
+      "/live-tracking.html",
+      "/participation-terms/",
+      "/partners/",
+      "/privacy/",
+      "/terms/",
+      "/the-run/",
+      "/updates/",
+      "/week-1/",
+      "/week-2/",
+      "/week-3/",
+      "/will/",
+      "/portfolio/mission-america-2026/",
+      "/portfolio/mission-america-2026/live-tracking.html"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health documented production baseline",
+        "path": "/strava/health",
+        "expectedStatus": 404,
+        "requiredJsonFields": [
+          "error"
+        ]
+      },
+      {
+        "name": "Strava race status remains independent",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "active",
+          "raceWindowStart",
+          "raceWindowEnd"
+        ]
+      },
+      {
+        "name": "Tracking status remains independent",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": [
+          "available"
+        ]
+      }
+    ]
+  }
+}

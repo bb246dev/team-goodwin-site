@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Provision only the reviewed static assets required by the approved Mission America retrospective site. Every path was independently confirmed to return HTTP 404 on 2026-11-11.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "dist/assets/rebuild-ambient-scroll.css",
+      "destination": "public_html/assets/rebuild-ambient-scroll.css",
+      "publicPath": "/assets/rebuild-ambient-scroll.css",
+      "contentType": "text",
+      "expectedSha256": "16573573bc43d3db3c67fa6f0f44b5df1a1185a820b20f8e2c05912d045e7d67",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild-ambient-scroll.js",
+      "destination": "public_html/assets/rebuild-ambient-scroll.js",
+      "publicPath": "/assets/rebuild-ambient-scroll.js",
+      "contentType": "text",
+      "expectedSha256": "3a62de46775aff6d858a0a147f7c16d3daef0e16e8e8e2eaa28adaf746a72c1b",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild-homepage.css",
+      "destination": "public_html/assets/rebuild-homepage.css",
+      "publicPath": "/assets/rebuild-homepage.css",
+      "contentType": "text",
+      "expectedSha256": "6e6613c27635dec1634920978c68e960f3445996741672682e4d32d5494022a6",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild-homepage.js",
+      "destination": "public_html/assets/rebuild-homepage.js",
+      "publicPath": "/assets/rebuild-homepage.js",
+      "contentType": "text",
+      "expectedSha256": "b0599a5a869a42a9388078bd74eb53854435c661b09e440f360e46b7064d320f",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/retrospective-context.css",
+      "destination": "public_html/assets/retrospective-context.css",
+      "publicPath": "/assets/retrospective-context.css",
+      "contentType": "text",
+      "expectedSha256": "98ed9874d2f94f69c2245d8b1a4cc7d0ce075fbb585017859583a919d0c45ca5",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/guinness-world-records-logo.png",
+      "destination": "public_html/assets/rebuild/guinness-world-records-logo.png",
+      "publicPath": "/assets/rebuild/guinness-world-records-logo.png",
+      "contentType": "binary-asset",
+      "expectedSha256": "8f0002dd46285de911f7eb6d7e394e40c7c8fe690c9c35f34cd36d91e4003f8a",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-america-legacy-team.jpg",
+      "destination": "public_html/assets/rebuild/mission-america-legacy-team.jpg",
+      "publicPath": "/assets/rebuild/mission-america-legacy-team.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "190d552c2cf3b0183595e39c555f9a1bb4db20863305069ccb78179d3fe3a080",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-gallery-headlamp-arizona.jpg",
+      "destination": "public_html/assets/rebuild/mission-gallery-headlamp-arizona.jpg",
+      "publicPath": "/assets/rebuild/mission-gallery-headlamp-arizona.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "98419b81d89ab8be6e7abf093e7e310d5a8e87cbc66eeef1e7ce85dd5ef9a3c5",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-gallery-middle-missouri.jpg",
+      "destination": "public_html/assets/rebuild/mission-gallery-middle-missouri.jpg",
+      "publicPath": "/assets/rebuild/mission-gallery-middle-missouri.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "de97b22a250bfd932c7636eea544fe88025ce6a3475bedf022d0415163c4aac9",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-gallery-right-hawaii-motion.jpg",
+      "destination": "public_html/assets/rebuild/mission-gallery-right-hawaii-motion.jpg",
+      "publicPath": "/assets/rebuild/mission-gallery-right-hawaii-motion.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "3628fbb6ae4ba4d71b2fd3a5218a62663fb47cc5e8527d8a8cdbff736bca48d7",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/william-goodge-delaware-person.jpg",
+      "destination": "public_html/assets/rebuild/william-goodge-delaware-person.jpg",
+      "publicPath": "/assets/rebuild/william-goodge-delaware-person.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "0981c2111a5072dfa66c725d0a7f3938c76fc7e28eff4a39c1f3045165889352",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/william-goodge-rhode-island-story-crop.jpg",
+      "destination": "public_html/assets/rebuild/william-goodge-rhode-island-story-crop.jpg",
+      "publicPath": "/assets/rebuild/william-goodge-rhode-island-story-crop.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "358f261d41245d95f897817d71b2505a5fac15a5282bb4b839ab40184984f57d",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/william-goodge-running.jpeg",
+      "destination": "public_html/assets/rebuild/william-goodge-running.jpeg",
+      "publicPath": "/assets/rebuild/william-goodge-running.jpeg",
+      "contentType": "binary-asset",
+      "expectedSha256": "1bf2cde215b1977e605c8b8e3077f523eacf387bec781514e5c814128434a4e7",
+      "expectedRemoteAbsent": true
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/rebuild-homepage.test.mjs",
+      "tests/static-provision.test.mjs",
+      "tests/portfolio-archive.test.mjs"
+    ],
+    "browserRoutes": [
+      "/"
+    ],
+    "apiChecks": []
+  }
+}
