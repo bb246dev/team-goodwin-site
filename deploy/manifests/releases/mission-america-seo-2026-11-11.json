@@ -139,7 +139,7 @@
       "publicPath": "/fonts/inter-latin.woff2",
       "contentType": "binary-asset",
       "expectedSha256": "c940764593d0fe5d596be327ca7558855e018039fb78509aa21921fd3644c3e4",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "c940764593d0fe5d596be327ca7558855e018039fb78509aa21921fd3644c3e4"
     },
     {
       "source": "dist/fonts/fraunces-latin.woff2",
@@ -147,7 +147,7 @@
       "publicPath": "/fonts/fraunces-latin.woff2",
       "contentType": "binary-asset",
       "expectedSha256": "88e17be075f1be50ab67b057b99e3701b828f44ed28f9452df6c02645bb0cba9",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "88e17be075f1be50ab67b057b99e3701b828f44ed28f9452df6c02645bb0cba9"
     },
     {
       "source": "dist/favicon.ico",
@@ -155,7 +155,7 @@
       "publicPath": "/favicon.ico",
       "contentType": "binary-asset",
       "expectedSha256": "ad954f895da4bd0ac6533e8820043fd384655ff881c3df76287c35f04431fbb6",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "ad954f895da4bd0ac6533e8820043fd384655ff881c3df76287c35f04431fbb6"
     },
     {
       "source": "dist/assets/rebuild/mission-america-social.jpg",
@@ -163,7 +163,7 @@
       "publicPath": "/assets/rebuild/mission-america-social.jpg",
       "contentType": "binary-asset",
       "expectedSha256": "f8e30e6245b99a0009205782f31268bfea69a19f06435a2c1aa6983b11f4f89d",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "f8e30e6245b99a0009205782f31268bfea69a19f06435a2c1aa6983b11f4f89d"
     },
     {
       "source": "dist/assets/rebuild/mission-america-legacy-team-960.webp",
@@ -171,7 +171,7 @@
       "publicPath": "/assets/rebuild/mission-america-legacy-team-960.webp",
       "contentType": "binary-asset",
       "expectedSha256": "5dc103241d2f10bc333efe51d87c6833276e8a4e88b12f4b491e6478c16c8588",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "5dc103241d2f10bc333efe51d87c6833276e8a4e88b12f4b491e6478c16c8588"
     },
     {
       "source": "dist/assets/rebuild/mission-america-legacy-team-1600.webp",
@@ -179,7 +179,7 @@
       "publicPath": "/assets/rebuild/mission-america-legacy-team-1600.webp",
       "contentType": "binary-asset",
       "expectedSha256": "c86a4b216a908919e05c4243242dbb69c9cee07e245c1c456b9fa4787ab0a928",
-      "expectedRemoteAbsent": true
+      "expectedRemoteSha256": "c86a4b216a908919e05c4243242dbb69c9cee07e245c1c456b9fa4787ab0a928"
     },
     {
       "source": "dist/robots.txt",
