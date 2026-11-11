@@ -56,6 +56,23 @@ async function fetchChecked(url, options = {}) {
   }
 }
 
+async function verifyImageHttp(url, path) {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetchChecked(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      await response.body?.cancel();
+      return;
+    } catch (error) {
+      lastError = error;
+      if (/^HTTP 4\d\d$/.test(error?.message || "")) break;
+      if (attempt < 3) await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
+    }
+  }
+  throw new Error(`Broken image request on ${path}: ${new URL(url).pathname} (${lastError?.message || "request failed"})`);
+}
+
 function requiredField(payload, dottedPath) {
   let value = payload;
   for (const part of dottedPath.split(".")) {
@@ -168,9 +185,7 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   }
   const images = imageUrlsFromDom(result.stdout, url);
   for (const image of images) {
-    const response = await fetchChecked(image);
-    if (!response.ok) throw new Error(`Broken image (${response.status}) on ${path}: ${new URL(image).pathname}`);
-    await response.body?.cancel();
+    await verifyImageHttp(image, path);
   }
   console.log(`Browser smoke passed: ${path} at ${viewport.width}x${viewport.height}; ${images.length} same-origin image(s) checked`);
 }
