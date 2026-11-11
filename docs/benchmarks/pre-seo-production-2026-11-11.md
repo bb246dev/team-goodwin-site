@@ -45,10 +45,12 @@ consolidation changes in `mission-america-seo-2026-11-11.json`.
 | `/robots.txt` | `11e39bd839f0ea1a99e539f8ce982e02423d6dc4bf63ddd68cbaba4ebd95c8bf` |
 | `/sitemap.xml` | `e9699dfea3ebe76a54b8c3798f3b214e4ad0e9e57210711a9ba84cb893b0a7d5` |
 
-The protected `.htaccess` baseline is pinned to the previously reviewed source
-hash `e8d9e687a9a6ab28f1bba3563d0d0aa845907627f2e7591e30e2231aaab76d6b`.
-The controlled dry run must confirm that exact remote precondition before an
-upload is permitted.
+The protected live `.htaccess` hash observed by the controlled FTPS comparison
+is `e60b5f3b1f4677e2f9d5bbd82c17a4001f3a19303c0af26ae432be7112535713`.
+It contains separately managed HSTS and browser-security policy and is excluded
+from this SEO release. Canonical metadata ships now; server-level `www` and
+flat-file redirects require a separate read/merge/review of that protected
+configuration so the security blocks are not overwritten.
 
 ## New-path absence checks
 

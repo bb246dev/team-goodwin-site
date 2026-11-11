@@ -2,10 +2,8 @@
   "schemaVersion": 1,
   "deploymentType": "static",
   "releaseType": "major",
-  "description": "Publish the reviewed Mission America SEO metadata, structured data, sitemap, compact fonts, responsive imagery, and canonical URL policy without changing the portfolio archive, tracking previews, APIs, or Passenger backend.",
-  "protectedPathsApproved": [
-    "public_html/.htaccess"
-  ],
+  "description": "Publish the reviewed Mission America SEO metadata, structured data, sitemap, compact fonts, and responsive imagery without changing the separately managed root server configuration, portfolio archive, tracking previews, APIs, or Passenger backend.",
+  "protectedPathsApproved": [],
   "files": [
     {
       "source": "dist/index.html",
@@ -194,13 +192,6 @@
       "publicPath": "/sitemap.xml",
       "expectedSha256": "55d2b4c244705c7d34bc967299aa25628ac6ebf9a5e31d5d895d33bf70dbb0ac",
       "expectedRemoteSha256": "e9699dfea3ebe76a54b8c3798f3b214e4ad0e9e57210711a9ba84cb893b0a7d5"
-    },
-    {
-      "source": "dist/.htaccess",
-      "destination": "public_html/.htaccess",
-      "publicPath": "/",
-      "expectedSha256": "dee78415f8f940daedc7c4ddc2c3e083efaff13d37c7d709d1da1eea9695c793",
-      "expectedRemoteSha256": "e8d9e687a9a6ab28f1bba3563d0d0aa845907627f2e7591e30e2231aaab76d6b"
     }
   ],
   "validation": {
