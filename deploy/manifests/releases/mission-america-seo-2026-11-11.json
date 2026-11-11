@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "major",
+  "description": "Publish the reviewed Mission America SEO metadata, structured data, sitemap, compact fonts, responsive imagery, and canonical URL policy without changing the portfolio archive, tracking previews, APIs, or Passenger backend.",
+  "protectedPathsApproved": [
+    "public_html/.htaccess"
+  ],
+  "files": [
+    {
+      "source": "dist/index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "829b055aff8fbbe9caae07d944ff5edc9739c49ec6cc13403e9a1b9c7b5da955",
+      "expectedRemoteSha256": "e1f2250db76a39aab07ee3c7d04793a304de60e75403e0c5ba36d4a8fef49a44"
+    },
+    {
+      "source": "dist/accessibility.html",
+      "destination": "public_html/accessibility.html",
+      "publicPath": "/accessibility/",
+      "expectedSha256": "d345f8361de74c35119450666a4772b711574d4b6444faa91e154c2e75e2444c",
+      "expectedRemoteSha256": "512864f2ca3c65d4ab00d26cb4c029c3230d7234633631cc180e5d7964f67d21"
+    },
+    {
+      "source": "dist/athletes.html",
+      "destination": "public_html/athletes.html",
+      "publicPath": "/athletes/",
+      "expectedSha256": "6f4f22ec9787463feca8b9b90488c3d6e410075dd330350f0b2521bbc779d561",
+      "expectedRemoteSha256": "a6f3e408fc4f3718c325a492264c5a2742e29e206b9171e4985be128e53801c8"
+    },
+    {
+      "source": "dist/faq.html",
+      "destination": "public_html/faq.html",
+      "publicPath": "/faq/",
+      "expectedSha256": "a2308ad1eee355fbb8ea94b9d7e241a85a41327f49cf79fa965df1381b52c42a",
+      "expectedRemoteSha256": "ad967addfdedd66c3927182189e24cb9e59727052502d36da6a48de0ee1a542e"
+    },
+    {
+      "source": "dist/fifty-runs.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedSha256": "a762af495a513f6db1d5cf817fbd3dccc37c4792b15da190fbfc42ffcfea44ab",
+      "expectedRemoteSha256": "09d5f61329ce1561e522afba35e6eb6f9e59fbd5394bffa3d8ca291aec83d03e"
+    },
+    {
+      "source": "dist/participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedSha256": "346f4cb5d63517a052337796f351322645b43efd7241be0ccc710ce9ce0b8424",
+      "expectedRemoteSha256": "9d9dcce2d5b957c0e37888dc4a70f21fc6cd888db4811e4abbd97380763c359e"
+    },
+    {
+      "source": "dist/partners.html",
+      "destination": "public_html/partners.html",
+      "publicPath": "/partners/",
+      "expectedSha256": "932bbc44a1c8ecd9cf6bf5a5b0d6970d03515edd25f0270098b4e0a901908919",
+      "expectedRemoteSha256": "aa3fb7289a72c36597f2fc2c8c9424ec1f22cbeae42201aebe66c95b2a51f027"
+    },
+    {
+      "source": "dist/privacy.html",
+      "destination": "public_html/privacy.html",
+      "publicPath": "/privacy/",
+      "expectedSha256": "231b82d83c5297a84d24084b7328e61d2a546ee65a48e40693b24d5ac5991d6b",
+      "expectedRemoteSha256": "80784ef52df40ea08cb099c0f0b6737226c3257c7e20beac594bb98e1f2a236e"
+    },
+    {
+      "source": "dist/terms.html",
+      "destination": "public_html/terms.html",
+      "publicPath": "/terms/",
+      "expectedSha256": "6a4f21f43ad254b1939987f292764c18b17cf438425c06d5ed85f8421b128b03",
+      "expectedRemoteSha256": "5eb91c9d7806d36d785f8ed7220c885bdcd9a6e45d88f6fb0fb20621d43c8bf2"
+    },
+    {
+      "source": "dist/the-run.html",
+      "destination": "public_html/the-run.html",
+      "publicPath": "/the-run/",
+      "expectedSha256": "a5fcf6a32c32107a09393c44dc9bfc1b7d6d3174a9d17e8242ef9b25e5b9bc36",
+      "expectedRemoteSha256": "8e78fd99d8c691217fe7e10ba259327a55903353d955125c868fbb62bcabdd59"
+    },
+    {
+      "source": "dist/updates.html",
+      "destination": "public_html/updates.html",
+      "publicPath": "/updates/",
+      "expectedSha256": "3346145701a5a89e722e76100bd17388b57122e4cc1a343e4d8030f4009624f7",
+      "expectedRemoteSha256": "d55471e6fcae160f65109d149687a5af38f7bdd17569bc2c45b120406648e889"
+    },
+    {
+      "source": "dist/week-1.html",
+      "destination": "public_html/week-1.html",
+      "publicPath": "/week-1/",
+      "expectedSha256": "8d3f9a7f27a00e6d8fb3881968db433a27e6284cf6609c920ea8aeaa42c91c63",
+      "expectedRemoteSha256": "8178a30b3a41d92cb912db9d9cbb2e03515833afe0a5992c943896e7e2ca8e14"
+    },
+    {
+      "source": "dist/week-2.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedSha256": "442ab24a8d6dd0d332d5e99235650a494b78890f5b066b7fb8f4a754d655d775",
+      "expectedRemoteSha256": "8e90be5b4cf18b2f797d5de74f565f03a67f7126106b14a4e8ed8ff826adda02"
+    },
+    {
+      "source": "dist/week-3.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedSha256": "992b2d5bb2787fc3c62074713bae4b201dbae07e8efa40e977c0517f8e25f220",
+      "expectedRemoteSha256": "22d37dcebab73b63ebfeae1198934a82eb0537027f6d9b6fb7f68ccbecd936ba"
+    },
+    {
+      "source": "dist/will.html",
+      "destination": "public_html/will.html",
+      "publicPath": "/will/",
+      "expectedSha256": "8ebd201be0bb73730d0a09a4bdb36e137f71b85527fbf1406b0a05d1f62b21c7",
+      "expectedRemoteSha256": "6bc379b78718ff46a3a0b878aca15042cdd42720083aee2cdd3753b0e1896425"
+    },
+    {
+      "source": "dist/assets/rebuild-homepage.css",
+      "destination": "public_html/assets/rebuild-homepage.css",
+      "publicPath": "/assets/rebuild-homepage.css",
+      "expectedSha256": "a0347685dc9d387596236bfabee9c794e6e33f51e9fe2775faab96d78435fbb7",
+      "expectedRemoteSha256": "6e6613c27635dec1634920978c68e960f3445996741672682e4d32d5494022a6"
+    },
+    {
+      "source": "dist/fonts/inter.css",
+      "destination": "public_html/fonts/inter.css",
+      "publicPath": "/fonts/inter.css",
+      "expectedSha256": "b3619c37efe179d803388cf5e452853fc03c4c62657d7889403e0c516dcd6238",
+      "expectedRemoteSha256": "db54ee5d401202261cbf38e676f1842c3928f0be52bbb4ddbac8d2009e3b53a5"
+    },
+    {
+      "source": "dist/fonts/offline-fonts.css",
+      "destination": "public_html/fonts/offline-fonts.css",
+      "publicPath": "/fonts/offline-fonts.css",
+      "expectedSha256": "de9182a04d018b8838e57cb94a8862615878f4dd21d282d6ab66d9ec5b9408c4",
+      "expectedRemoteSha256": "e247847ea8ea5dfa47c40b4e6c1ebd6cac768d6df4ab5139cf303a05832f3efe"
+    },
+    {
+      "source": "dist/fonts/inter-latin.woff2",
+      "destination": "public_html/fonts/inter-latin.woff2",
+      "publicPath": "/fonts/inter-latin.woff2",
+      "contentType": "binary-asset",
+      "expectedSha256": "c940764593d0fe5d596be327ca7558855e018039fb78509aa21921fd3644c3e4",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/fonts/fraunces-latin.woff2",
+      "destination": "public_html/fonts/fraunces-latin.woff2",
+      "publicPath": "/fonts/fraunces-latin.woff2",
+      "contentType": "binary-asset",
+      "expectedSha256": "88e17be075f1be50ab67b057b99e3701b828f44ed28f9452df6c02645bb0cba9",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/favicon.ico",
+      "destination": "public_html/favicon.ico",
+      "publicPath": "/favicon.ico",
+      "contentType": "binary-asset",
+      "expectedSha256": "ad954f895da4bd0ac6533e8820043fd384655ff881c3df76287c35f04431fbb6",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-america-social.jpg",
+      "destination": "public_html/assets/rebuild/mission-america-social.jpg",
+      "publicPath": "/assets/rebuild/mission-america-social.jpg",
+      "contentType": "binary-asset",
+      "expectedSha256": "f8e30e6245b99a0009205782f31268bfea69a19f06435a2c1aa6983b11f4f89d",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-america-legacy-team-960.webp",
+      "destination": "public_html/assets/rebuild/mission-america-legacy-team-960.webp",
+      "publicPath": "/assets/rebuild/mission-america-legacy-team-960.webp",
+      "contentType": "binary-asset",
+      "expectedSha256": "5dc103241d2f10bc333efe51d87c6833276e8a4e88b12f4b491e6478c16c8588",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/assets/rebuild/mission-america-legacy-team-1600.webp",
+      "destination": "public_html/assets/rebuild/mission-america-legacy-team-1600.webp",
+      "publicPath": "/assets/rebuild/mission-america-legacy-team-1600.webp",
+      "contentType": "binary-asset",
+      "expectedSha256": "c86a4b216a908919e05c4243242dbb69c9cee07e245c1c456b9fa4787ab0a928",
+      "expectedRemoteAbsent": true
+    },
+    {
+      "source": "dist/robots.txt",
+      "destination": "public_html/robots.txt",
+      "publicPath": "/robots.txt",
+      "expectedSha256": "11e39bd839f0ea1a99e539f8ce982e02423d6dc4bf63ddd68cbaba4ebd95c8bf",
+      "expectedRemoteSha256": "11e39bd839f0ea1a99e539f8ce982e02423d6dc4bf63ddd68cbaba4ebd95c8bf"
+    },
+    {
+      "source": "dist/sitemap.xml",
+      "destination": "public_html/sitemap.xml",
+      "publicPath": "/sitemap.xml",
+      "expectedSha256": "55d2b4c244705c7d34bc967299aa25628ac6ebf9a5e31d5d895d33bf70dbb0ac",
+      "expectedRemoteSha256": "e9699dfea3ebe76a54b8c3798f3b214e4ad0e9e57210711a9ba84cb893b0a7d5"
+    },
+    {
+      "source": "dist/.htaccess",
+      "destination": "public_html/.htaccess",
+      "publicPath": "/",
+      "expectedSha256": "dee78415f8f940daedc7c4ddc2c3e083efaff13d37c7d709d1da1eea9695c793",
+      "expectedRemoteSha256": "e8d9e687a9a6ab28f1bba3563d0d0aa845907627f2e7591e30e2231aaab76d6b"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/seo.test.mjs",
+      "tests/rebuild-homepage.test.mjs",
+      "tests/retrospective-rebuild.test.mjs",
+      "tests/deploy-tooling.test.mjs",
+      "tests/portfolio-archive.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/accessibility/",
+      "/athletes/",
+      "/faq/",
+      "/fifty-runs/",
+      "/live-tracking.html",
+      "/partners/",
+      "/participation-terms/",
+      "/privacy/",
+      "/terms/",
+      "/the-run/",
+      "/updates/",
+      "/week-1/",
+      "/week-2/",
+      "/week-3/",
+      "/will/",
+      "/portfolio/mission-america-2026/",
+      "/portfolio/mission-america-2026/live-tracking.html"
+    ],
+    "apiChecks": [
+      {
+        "name": "Strava health remains independent",
+        "path": "/strava/health",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["status"]
+      },
+      {
+        "name": "Strava race status remains independent",
+        "path": "/strava/public/race-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["active", "raceWindowStart", "raceWindowEnd"]
+      },
+      {
+        "name": "Tracking status remains independent",
+        "path": "/strava/public/tracking-status",
+        "expectedStatus": 200,
+        "requiredJsonFields": ["available"]
+      }
+    ]
+  }
+}

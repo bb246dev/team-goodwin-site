@@ -6,11 +6,98 @@ import { applyRetrospectiveLegacyPage, createHistoricalMapRedirectPage } from ".
 const root = process.cwd();
 const dist = join(root, "dist");
 const missionAmericaContent = JSON.parse(readFileSync(join(root, "content", "mission-america-2026.json"), "utf8"));
+const siteOrigin = "https://goodwingoodge.com";
+const seoLastModified = "2026-11-11";
+const seoSocialImage = `${siteOrigin}/assets/rebuild/mission-america-social.jpg`;
+
+const seoPages = {
+  "index.html": {
+    path: "/",
+    title: "Mission America World Record | William Goodge & Goodwin",
+    description: "William Goodge completed 50 marathon-distance runs across all 50 U.S. states in a world-record 22 days, 17 hours, 16 minutes and 34 seconds, made possible by Goodwin.",
+  },
+  "the-run.html": {
+    path: "/the-run/",
+    title: "The Mission America World Record | William Goodge",
+    description: "How William Goodge completed 50 marathon-distance runs across 50 states in 22 days, 17 hours, 16 minutes and 34 seconds.",
+  },
+  "will.html": {
+    path: "/will/",
+    title: "William Goodge | Mission America World Record",
+    description: "The story of ultrarunner William Goodge, the purpose behind his miles, and his world-record Mission America journey across all 50 U.S. states.",
+    profile: true,
+  },
+  "fifty-runs.html": {
+    path: "/fifty-runs/",
+    title: "Mission America Route | 50 Marathons, 50 States",
+    description: "Explore the completed Mission America itinerary: 50 marathon-distance courses across all 50 U.S. states, from Hawaii to New York.",
+  },
+  "week-1.html": {
+    path: "/week-1/",
+    title: "Mission America Field Notes: Week 1",
+    description: "Historical Mission America field notes from the Hawaii launch through Alaska and the western states, October 9–15, 2026.",
+  },
+  "week-2.html": {
+    path: "/week-2/",
+    title: "Mission America Field Notes: Week 2",
+    description: "Historical Mission America field notes from the central stage of William Goodge’s 50-state world-record journey, October 16–24, 2026.",
+  },
+  "week-3.html": {
+    path: "/week-3/",
+    title: "Mission America Field Notes: Week 3",
+    description: "Historical Mission America field notes from the final eastern stages to the New York City finish on November 1, 2026.",
+  },
+  "faq.html": {
+    path: "/faq/",
+    title: "Mission America World Record FAQ",
+    description: "Answers about William Goodge’s completed 50-state Mission America world record, including logistics, recovery, verification and charitable purpose.",
+  },
+  "updates.html": {
+    path: "/updates/",
+    title: "Mission America Field Notes Archive",
+    description: "Captured public field notes from William Goodge’s completed Mission America journey across all 50 U.S. states.",
+  },
+  "athletes.html": {
+    path: "/athletes/",
+    title: "Team Goodwin Athletes | Goodwin Endurance",
+    description: "Meet the champions, Olympians and endurance athletes in the Team Goodwin roster, including Mission America world-record holder William Goodge.",
+  },
+  "partners.html": {
+    path: "/partners/",
+    title: "Mission America Partners | Goodwin Endurance",
+    description: "The aviation, hospitality, performance and media partners that helped make William Goodge’s Mission America world record possible.",
+  },
+  "privacy.html": {
+    path: "/privacy/",
+    title: "Privacy Policy | Mission America",
+    description: "Privacy policy for the Goodwin Mission America website.",
+    index: false,
+  },
+  "terms.html": {
+    path: "/terms/",
+    title: "Terms of Use | Mission America",
+    description: "Terms governing use of the Goodwin Mission America website.",
+    index: false,
+  },
+  "participation-terms.html": {
+    path: "/participation-terms/",
+    title: "Historical Participation Terms | Mission America",
+    description: "Archived participation terms from the completed Mission America event.",
+    index: false,
+  },
+  "accessibility.html": {
+    path: "/accessibility/",
+    title: "Accessibility | Mission America",
+    description: "Accessibility statement for the Goodwin Mission America website.",
+    index: false,
+  },
+};
 
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
 cpSync(join(root, "assets"), join(dist, "assets"), { recursive: true });
 cpSync(join(root, "fonts"), join(dist, "fonts"), { recursive: true });
+cpSync(join(root, "favicon.ico"), join(dist, "favicon.ico"));
 if (existsSync(join(root, "api"))) {
   cpSync(join(root, "api"), join(dist, "api"), {
     recursive: true,
@@ -78,6 +165,116 @@ function renderRebuildHomepage(html) {
     if (matches === 0) throw new Error(`Missing Mission America content hook: ${key}`);
   }
   return output;
+}
+
+function escapeHtmlAttribute(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function structuredDataForPage(config) {
+  const canonical = `${siteOrigin}${config.path}`;
+  const organization = {
+    "@type": "Organization",
+    "@id": `${siteOrigin}/#organization`,
+    name: "Goodwin",
+    alternateName: "Goodwin Company",
+    url: "https://teamgoodwin.com/",
+    logo: `${siteOrigin}/assets/goodwin-logo.png`,
+    sameAs: [
+      "https://www.linkedin.com/company/teamgoodwin/",
+      "https://x.com/goteamgoodwin",
+      "https://www.youtube.com/@goodwinsoftwarecompany",
+    ],
+  };
+  const person = {
+    "@type": "Person",
+    "@id": `${siteOrigin}/#william-goodge`,
+    name: "William Goodge",
+    url: `${siteOrigin}/will/`,
+    image: `${siteOrigin}/assets/rebuild/william-goodge-delaware-person.jpg`,
+    sameAs: [
+      "https://www.instagram.com/williamgoodge/",
+      "https://www.youtube.com/@goodge",
+    ],
+  };
+  const webSite = {
+    "@type": "WebSite",
+    "@id": `${siteOrigin}/#website`,
+    url: `${siteOrigin}/`,
+    name: "Mission America",
+    publisher: { "@id": `${siteOrigin}/#organization` },
+    inLanguage: "en-US",
+  };
+  const webPage = {
+    "@type": config.profile ? "ProfilePage" : "WebPage",
+    "@id": `${canonical}#webpage`,
+    url: canonical,
+    name: config.title,
+    description: config.description,
+    isPartOf: { "@id": `${siteOrigin}/#website` },
+    about: { "@id": `${siteOrigin}/#william-goodge` },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: seoSocialImage,
+      width: 1200,
+      height: 630,
+    },
+    dateModified: seoLastModified,
+    inLanguage: "en-US",
+  };
+  if (config.profile) webPage.mainEntity = { "@id": `${siteOrigin}/#william-goodge` };
+
+  const graph = [organization, person, webSite, webPage];
+  if (config.path !== "/") {
+    graph.push({
+      "@type": "BreadcrumbList",
+      "@id": `${canonical}#breadcrumb`,
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Mission America", item: `${siteOrigin}/` },
+        { "@type": "ListItem", position: 2, name: config.title, item: canonical },
+      ],
+    });
+  }
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replaceAll("</script", "<\\/script");
+}
+
+function applySeoMetadata(html, target) {
+  const config = seoPages[target];
+  if (!config) return html;
+  const canonical = `${siteOrigin}${config.path}`;
+  const robots = config.index === false
+    ? "noindex, follow"
+    : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+  const metadata = `
+  <title>${escapeHtmlAttribute(config.title)}</title>
+  <meta name="description" content="${escapeHtmlAttribute(config.description)}">
+  <meta name="robots" content="${robots}">
+  <link rel="canonical" href="${canonical}">
+  <meta property="og:site_name" content="Mission America">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="${escapeHtmlAttribute(config.title)}">
+  <meta property="og:description" content="${escapeHtmlAttribute(config.description)}">
+  <meta property="og:url" content="${canonical}">
+  <meta property="og:image" content="${seoSocialImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="William Goodge and the Mission America team in Times Square">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtmlAttribute(config.title)}">
+  <meta name="twitter:description" content="${escapeHtmlAttribute(config.description)}">
+  <meta name="twitter:image" content="${seoSocialImage}">
+  <script type="application/ld+json">${structuredDataForPage(config)}</script>`;
+
+  return html
+    .replace(/\s*<title\b[^>]*>[\s\S]*?<\/title>/gi, "")
+    .replace(/\s*<meta\b(?=[^>]*(?:name|property)=["'](?:description|robots|author|twitter:[^"']+|og:[^"']+)["'])[^>]*>/gi, "")
+    .replace(/\s*<link\b(?=[^>]*rel=["']canonical["'])[^>]*>/gi, "")
+    .replace(/\s*<script\b[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace("</head>", `${metadata}\n</head>`);
 }
 
 const videoIds = [
@@ -280,22 +477,6 @@ function localize(html, pageName) {
     );
   }
 
-  if (pageName === "partners.html") {
-    out = out.replace(
-      '<form class="mt-10 grid gap-4">',
-      '<form class="mt-10 grid gap-4" data-offline-partner-form>',
-    );
-    out = out.replace(
-      "</body>",
-      `<script>
-document.querySelector("[data-offline-partner-form]")?.addEventListener("submit", function (event) {
-  event.preventDefault();
-  this.outerHTML = '<div class="mt-10 p-8 border border-mint rounded-sm bg-background"><div class="font-display text-2xl text-mint">Received.</div><p class="mt-2 text-foreground/80">Thanks — a member of the Goodwin partnerships team will be in touch shortly.</p></div>';
-});
-</script></body>`,
-    );
-  }
-
   if (
     pageName === "updates.html" ||
     pageName === "faq.html" ||
@@ -349,13 +530,14 @@ for (const [source, target] of pages) {
   const html = readFileSync(join(root, source), "utf8");
   const destination = join(dist, target);
   mkdirSync(dirname(destination), { recursive: true });
-  const output = source === "rebuild-homepage.html"
+  const rendered = source === "rebuild-homepage.html"
     ? renderRebuildHomepage(html)
     : source === "restore-2026-09-30-live-tracking.html"
       ? createHistoricalMapRedirectPage()
     : source.startsWith("restore-2026-09-30-")
       ? applyRetrospectiveLegacyPage(localize(html, target), target)
       : localize(html, target);
+  const output = applySeoMetadata(rendered, target);
   writeFileSync(destination, output);
 }
 
@@ -385,6 +567,19 @@ for (const pageName of [
   "the-run", "will", "fifty-runs", "updates", "faq", "week-1", "week-2", "week-3",
   "privacy", "terms", "participation-terms", "accessibility",
 ]) writeNestedPage(pageName);
+
+const sitemapEntries = Object.values(seoPages)
+  .filter((config) => config.index !== false)
+  .map((config) => `  <url>\n    <loc>${siteOrigin}${config.path}</loc>\n    <lastmod>${seoLastModified}</lastmod>\n  </url>`)
+  .join("\n");
+writeFileSync(
+  join(dist, "sitemap.xml"),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries}\n</urlset>\n`,
+);
+writeFileSync(
+  join(dist, "robots.txt"),
+  `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`,
+);
 cpSync(join(root, "deploy", "retrospective-site.htaccess"), join(dist, ".htaccess"));
 
 writeFileSync(
@@ -436,6 +631,7 @@ function deployDirectoryAssetPaths(relativeDir) {
 }
 
 const deployAssetPaths = [
+  "favicon.ico",
   "assets/styles-ulvf0Dcj.css",
   "assets/index-CIGW-MKW.css",
   "assets/us-states-albers-10m.js",
@@ -461,15 +657,19 @@ const deployAssetPaths = [
   "assets/intro-close-portrait.jpg",
   "assets/intro-fence-stretch.jpg",
   "assets/intro-solo-track-running.jpg",
+  "assets/rebuild-ambient-scroll.css",
+  "assets/rebuild-ambient-scroll.js",
+  "assets/rebuild-homepage.css",
+  "assets/rebuild-homepage.js",
   "fonts/inter.css",
-  "fonts/font-8.ttf",
-  "fonts/font-9.ttf",
-  "fonts/font-10.ttf",
-  "fonts/font-11.ttf",
+  "fonts/inter-latin.woff2",
+  "fonts/offline-fonts.css",
+  "fonts/fraunces-latin.woff2",
   "assets/instagram/williamgoodge-01.jpg",
   "assets/instagram/williamgoodge-02.jpg",
   "assets/instagram/williamgoodge-03.jpg",
   "assets/instagram/williamgoodge-04.jpg",
+  ...deployDirectoryAssetPaths("assets/rebuild"),
   ...deployDirectoryAssetPaths("assets/partners"),
 ];
 
@@ -481,6 +681,8 @@ function contentType(pathname) {
   if (pathname.endsWith(".mp4")) return "video/mp4";
   if (pathname.endsWith(".png")) return "image/png";
   if (pathname.endsWith(".svg")) return "image/svg+xml";
+  if (pathname.endsWith(".woff2")) return "font/woff2";
+  if (pathname.endsWith(".ico")) return "image/x-icon";
   return "application/octet-stream";
 }
 

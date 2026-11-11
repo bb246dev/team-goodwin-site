@@ -242,6 +242,8 @@ test("secret detection catches definite credentials but permits explicit example
   assert.deepEqual(secretFindings('const videoUrl = "https://www.youtube.com/watch?v=abc123def45&si=public-share-id";'), []);
   assert.deepEqual(secretFindings('const iconUrl = "marker-icon.png";'), []);
   assert.deepEqual(secretFindings('const packageUrl = "https://github.com/mysqljs/sql-escaper?sponsor=1";'), []);
+  assert.deepEqual(secretFindings('const imageUrl = "https://goodwingoodge.com/assets/rebuild/mission-america-social.jpg";'), []);
+  assert.deepEqual(secretFindings('const imageUrl = "https://goodwingoodge.com/assets/rebuild/prod-secret-credential.jpg";'), ["credential assignment"]);
   assert.deepEqual(secretFindings('const STRAVA_CALLBACK_URL = `${STRAVA_PUBLIC_ORIGIN}/strava/callback`;'), []);
   assert.deepEqual(secretFindings('const HAPN_API_BASE_URL = `${HAPN_API_ORIGIN}/v1`;'), []);
   assert.deepEqual(secretFindings('const url = `${HAPN_API_BASE_URL}/devices/${encodeURIComponent(config.imei)}/status`;'), []);
@@ -373,6 +375,30 @@ test(".htaccess is protected and cannot use a Micro release", async (t) => {
     files: [{ source: "deploy/static/reviewed.htaccess", destination: "public_html/.htaccess", publicPath: "/", expectedSha256: sha256("RewriteEngine On\n"), expectedRemoteAbsent: true }],
   });
   await assert.rejects(validateManifestObject(manifest, { root }), /requires a major release/);
+});
+
+test("SEO root files and local font assets use a narrow static allowlist", async (t) => {
+  const root = await fixture(t);
+  await mkdir(join(root, "dist", "fonts"), { recursive: true });
+  await writeFile(join(root, "dist", "robots.txt"), "User-agent: *\nAllow: /\n");
+  await writeFile(join(root, "dist", "sitemap.xml"), "<urlset/>\n");
+  await writeFile(join(root, "dist", "favicon.ico"), "icon");
+  await writeFile(join(root, "dist", "fonts", "inter-latin.woff2"), "font");
+  const manifest = validManifest({
+    files: [
+      { source: "dist/robots.txt", destination: "public_html/robots.txt", publicPath: "/robots.txt", expectedRemoteAbsent: true },
+      { source: "dist/sitemap.xml", destination: "public_html/sitemap.xml", publicPath: "/sitemap.xml", expectedRemoteAbsent: true },
+      { source: "dist/favicon.ico", destination: "public_html/favicon.ico", publicPath: "/favicon.ico", expectedRemoteAbsent: true },
+      { source: "dist/fonts/inter-latin.woff2", destination: "public_html/fonts/inter-latin.woff2", publicPath: "/fonts/inter-latin.woff2", expectedRemoteAbsent: true },
+    ],
+  });
+  const accepted = await validateManifestObject(manifest, { root });
+  assert.equal(accepted.files.length, 4);
+
+  const arbitraryRoot = validManifest({
+    files: [{ source: "dist/robots.txt", destination: "public_html/random.txt", publicPath: "/random.txt", expectedRemoteAbsent: true }],
+  });
+  await assert.rejects(validateManifestObject(arbitraryRoot, { root }), /outside the allowlist/);
 });
 
 async function preparedRelease(t) {

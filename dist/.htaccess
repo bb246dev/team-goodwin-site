@@ -3,12 +3,29 @@ DirectoryIndex index.html
 
 RewriteEngine On
 
+# Consolidate the public site on one secure canonical origin.
+RewriteCond %{HTTP_HOST} ^www\.goodwingoodge\.com$ [NC]
+RewriteRule ^ https://goodwingoodge.com%{REQUEST_URI} [R=301,L,NE]
+
 # Independent archives, tracking experiments, and backend mounts keep their
 # own routing and deployment boundaries.
 RewriteRule ^(?:portfolio/mission-america-2026|tracking-preview|client-preview|strava|api)(?:/|$) - [L]
 
 # The former live tracker now resolves to the recorded, non-polling map.
 RewriteRule ^live-tracking(?:\.html|/)?$ /portfolio/mission-america-2026/live-tracking.html [R=301,L,NE]
+
+# Every public document has one trailing-slash canonical URL. Direct requests
+# for flat exports and nested index files permanently consolidate to it.
+RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+RewriteRule ^index\.html$ / [R=301,L,NE]
+
+RewriteCond %{THE_REQUEST} \s/+(.+?)/index\.html(?:[?\s]) [NC]
+RewriteRule ^(.+)/index\.html$ /$1/ [R=301,L,NE]
+
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.html(?:[?\s]) [NC]
+RewriteRule ^(.+)\.html$ /$1/ [R=301,L,NE]
+
+RewriteRule ^(accessibility|athletes|faq|fifty-runs|partners|participation-terms|privacy|terms|the-run|updates|week-1|week-2|week-3|will)$ /$1/ [R=301,L,NE]
 
 # Preserve clean production URLs for retained retrospective and legal pages.
 RewriteCond %{REQUEST_FILENAME} !-f

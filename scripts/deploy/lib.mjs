@@ -98,7 +98,9 @@ function trackingPreviewRelativePath(destination) {
 
 function isAllowedStaticDestination(destination) {
   if (destination === "public_html/.htaccess") return true;
+  if (["public_html/favicon.ico", "public_html/robots.txt", "public_html/sitemap.xml"].includes(destination)) return true;
   if (/^public_html\/[A-Za-z0-9][A-Za-z0-9._-]*\.html$/.test(destination)) return true;
+  if (/^public_html\/fonts\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(destination)) return true;
   if (trackingPreviewRelativePath(destination)) return true;
   return /^public_html\/(?:assets|data)\/[A-Za-z0-9][A-Za-z0-9._+@()/ -]*$/.test(destination);
 }
@@ -112,8 +114,14 @@ function isAllowedStaticSource(source, destination) {
   if (destination === "public_html/.htaccess") {
     return source === ".htaccess" || source === "dist/.htaccess" || source.startsWith("deploy/static/");
   }
+  if (["public_html/favicon.ico", "public_html/robots.txt", "public_html/sitemap.xml"].includes(destination)) {
+    return source === `dist/${basename(destination)}`;
+  }
   if (destination.endsWith(".html")) {
     return /^(?:dist\/)?[A-Za-z0-9][A-Za-z0-9._-]*\.html$/.test(source);
+  }
+  if (destination.startsWith("public_html/fonts/")) {
+    return /^dist\/fonts\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(source);
   }
   if (destination.startsWith("public_html/assets/")) {
     return /^(?:dist\/)?assets\/.+/.test(source);

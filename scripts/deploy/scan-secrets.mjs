@@ -47,7 +47,8 @@ function isCredentialFreeServiceUrl(value) {
     }
     const approvedPublicDocument = url.hostname === "docs.google.com"
       && /^\/spreadsheets\/d\/[A-Za-z0-9_-]{20,80}\/gviz\/tq$/.test(url.pathname);
-    if (!approvedPublicDocument && url.pathname.split("/").some((segment) => segment.length > 24)) return false;
+    const approvedPublicAsset = /^\/(?:assets|fonts)\/[A-Za-z0-9_./-]+\.(?:avif|gif|ico|jpe?g|png|webp|woff2?)$/i.test(url.pathname);
+    if (!approvedPublicDocument && !approvedPublicAsset && url.pathname.split("/").some((segment) => segment.length > 24)) return false;
     return !/(?:prod|live|secret|credential|signature|signed)/i.test(url.pathname);
   } catch {
     return false;

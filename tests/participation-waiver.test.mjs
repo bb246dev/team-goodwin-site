@@ -75,7 +75,7 @@ test("every existing waiver link preserves the public route", () => {
   assert.ok(generatedPages.length > 0);
   for (const file of generatedPages) {
     const html = readFileSync(new URL(`../dist/${file}`, import.meta.url), "utf8");
-    for (const match of html.matchAll(/href="([^"]*participation-terms[^"]*)"/g)) {
+    for (const match of html.matchAll(/<a\b[^>]*href="([^"]*participation-terms[^"]*)"/g)) {
       waiverLinks.push({ file, href: match[1] });
     }
   }
