@@ -149,9 +149,9 @@
       {
         "name": "Strava health documented production baseline",
         "path": "/strava/health",
-        "expectedStatus": 404,
+        "expectedStatus": 200,
         "requiredJsonFields": [
-          "error"
+          "status"
         ]
       },
       {
