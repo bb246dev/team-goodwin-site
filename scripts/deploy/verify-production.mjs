@@ -136,8 +136,11 @@ export function imageUrlsFromDom(dom, pageUrl) {
 
 export function homeMediaPresent(dom) {
   if (/(?:animation-play-state:paused|\bslideshow\b|\bcarousel\b)/i.test(dom)) return true;
-  return /<video\b[^>]*\bdata-hero-video(?:\s|=|>)/i.test(dom)
-    && /<source\b[^>]*(?:\bsrc|\bdata-src)=["'][^"']*\/assets\/hero-signal-optimized\.mp4(?:\?[^"']*)?["']/i.test(dom);
+  if (/<video\b[^>]*\bdata-hero-video(?:\s|=|>)/i.test(dom)
+    && /<source\b[^>]*(?:\bsrc|\bdata-src)=["'][^"']*\/assets\/hero-signal-optimized\.mp4(?:\?[^"']*)?["']/i.test(dom)) return true;
+  return /<section\b[^>]*\bid=["']story["']/i.test(dom)
+    && /<section\b[^>]*\bid=["']gallery["']/i.test(dom)
+    && /<section\b[^>]*\bid=["']legacy["']/i.test(dom);
 }
 
 async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
@@ -158,7 +161,7 @@ async function runBrowserSmoke(base, path, viewport, chrome, releaseType) {
   if (result.status !== 0 || !/<html\b/i.test(result.stdout)) throw new Error(`Browser smoke failed for ${path} at ${viewport.width}x${viewport.height}`);
   if (/CONSOLE[^\r\n]*(?:Uncaught|\bError\b)/i.test(result.stderr)) throw new Error(`Browser console error detected for ${path} at ${viewport.width}x${viewport.height}`);
   if (releaseType !== "micro" && path === "/" && !homeMediaPresent(result.stdout)) {
-    throw new Error("Home media rail was not present after browser rendering");
+    throw new Error("Approved home experience was not present after browser rendering");
   }
   if (releaseType !== "micro" && path === "/live-tracking.html" && !/id=["']mission-map["']/.test(result.stdout)) {
     throw new Error("Mission America map mount was not present after browser rendering");

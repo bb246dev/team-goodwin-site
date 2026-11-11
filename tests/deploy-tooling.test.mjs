@@ -322,6 +322,8 @@ test("home media verification recognizes the current hero video and rejects miss
   assert.equal(homeMediaPresent('<video class="tracker-hero-bg" data-hero-video><source data-src="/assets/hero-signal-optimized.mp4" type="video/mp4"></video>'), true);
   assert.equal(homeMediaPresent('<div class="homepage">No hero media</div>'), false);
   assert.equal(homeMediaPresent('<div class="legacy-slideshow"></div>'), true);
+  assert.equal(homeMediaPresent('<main><section id="story"></section><section id="gallery"></section><section id="legacy"></section></main>'), true);
+  assert.equal(homeMediaPresent('<main><section id="story"></section><section id="legacy"></section></main>'), false);
 });
 
 test("all backend files are protected Major releases with an approved runtime generation", async (t) => {
