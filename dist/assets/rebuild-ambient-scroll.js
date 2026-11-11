@@ -7,6 +7,7 @@
     ["#record", GREEN],
     ["#story", GREEN],
     [".people-section", LIGHT],
+    [".journey-gallery-section", DARK],
     ["#goodwin", GREEN],
     ["#legacy", DARK],
     [".site-footer", DARK],

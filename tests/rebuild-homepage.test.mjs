@@ -63,9 +63,9 @@ test("rebuild homepage presents the confirmed title with the official organizati
   assert.doesNotMatch(source, /legacy-brand/);
   assert.match(styles, /\.brand-mark \{[^}]*display:\s*none;[^}]*grayscale\(1\)[^}]*contrast\(10\)/);
   assert.match(source, /class="brand-wordmark" src="assets\/goodwin-logo\.png" alt=""/);
-  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261110-static-story-v6/);
+  assert.match(source, /assets\/rebuild-homepage\.css\?v=20261111-gallery-zoom-2x-v23/);
   assert.match(source, /assets\/rebuild-ambient-scroll\.css\?v=20261109-live-gradient-v1/);
-  assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261109-live-gradient-v1/);
+  assert.match(source, /assets\/rebuild-ambient-scroll\.js\?v=20261111-gallery-position-v3/);
   assert.match(styles, /\.brand-wordmark \{[^}]*filter:\s*brightness\(0\) invert\(1\)/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-wordmark \{ display: none; \}/);
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.brand-mark \{ display: block;/);
@@ -115,12 +115,40 @@ test("mobile legacy section places the revised group photo before its headline",
   assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.legacy-media \{ grid-row: 1;/);
 });
 
+test("gallery preview uses the requested image order and verified destination", () => {
+  const headlamp = source.indexOf("mission-gallery-headlamp-arizona.jpg");
+  const missouri = source.indexOf("mission-gallery-middle-missouri.jpg");
+  const hawaiiMotion = source.indexOf("mission-gallery-right-hawaii-motion.jpg");
+  assert.ok(headlamp > 0 && headlamp < missouri && missouri < hawaiiMotion);
+  const peopleSection = source.indexOf('<section class="people-section"');
+  const gallerySection = source.indexOf('<section class="journey-gallery-section"');
+  const logisticsSection = source.indexOf('<section class="goodwin-section"');
+  assert.ok(peopleSection > 0 && peopleSection < gallerySection && gallerySection < logisticsSection);
+  assert.match(source, /<section class="journey-gallery-section"[\s\S]*?<h2[^>]*>50 states<br>One unforgettable journey<\/h2>/);
+  assert.match(source, /<a class="journey-gallery-link" href="https:\/\/seanevansphotos\.pixieset\.com\/missionamerica\/" target="_blank" rel="noopener noreferrer">/);
+  assert.equal((source.match(/<a class="journey-gallery-card-link" href="https:\/\/seanevansphotos\.pixieset\.com\/missionamerica\/" target="_blank" rel="noopener noreferrer"/g) ?? []).length, 3);
+  assert.doesNotMatch(source, /data-gallery-link-pending/);
+  assert.match(styles, /\.journey-gallery-strip \{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
+  assert.match(styles, /\.journey-gallery-strip \{[^}]*margin-right: calc\(var\(--gutter\) \* -1\);[^}]*margin-left: calc\(var\(--gutter\) \* -1\);[^}]*gap: 0;/);
+  assert.match(styles, /@media \(max-width: 820px\) \{[\s\S]*?\.journey-gallery-strip \{[^}]*display: grid;[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);[^}]*gap: 0;[^}]*overflow: visible;/);
+  assert.doesNotMatch(styles, /scroll-snap-type:/);
+  assert.doesNotMatch(styles, /overflow-x: auto/);
+  assert.match(styles, /@media \(max-width: 560px\) \{[\s\S]*?\.journey-gallery-title \{[^}]*font-size: clamp\(2\.35rem, 10\.4vw, 3\.4rem\);/);
+  assert.doesNotMatch(styles, /\.journey-gallery-card:hover img/);
+  assert.doesNotMatch(styles, /\.journey-gallery-card img \{[^}]*transition:/);
+  assert.match(styles, /\.journey-gallery-card-missouri img \{[^}]*object-position: 50% 50%;[^}]*transform: translate3d\(0, 3\.6%, 0\) scale\(2\);[^}]*transform-origin: 50% 50%;/);
+  assert.doesNotMatch(source, />The Goodwin impact\s*</i);
+});
+
 test("homepage retains the live site's scrolling ambient gradient behavior", () => {
   assert.match(ambientStyles, /\.ambient-scroll-background \{/);
   assert.match(ambientStyles, /\.ambient-scroll-cloud-one \{/);
   assert.match(ambientStyles, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(ambientScript, /\["#home", DARK\]/);
   assert.match(ambientScript, /\["\.people-section", LIGHT\]/);
+  assert.match(ambientScript, /\["\.journey-gallery-section", DARK\]/);
+  assert.ok(ambientScript.indexOf('[".people-section", LIGHT]') < ambientScript.indexOf('[".journey-gallery-section", DARK]'));
+  assert.ok(ambientScript.indexOf('[".journey-gallery-section", DARK]') < ambientScript.indexOf('["#goodwin", GREEN]'));
   assert.match(ambientScript, /requestAnimationFrame\(render\)/);
   assert.match(ambientScript, /prefers-reduced-motion: reduce/);
 });

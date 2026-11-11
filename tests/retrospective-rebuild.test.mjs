@@ -62,12 +62,10 @@ test("redirect candidate protects archives, embeds, and backend namespaces", () 
   assert.match(redirects, /REQUEST_FILENAME.*!-d/);
 });
 
-test("current homepage labels the available film honestly and maps legacy hashes", () => {
+test("current homepage removes retired film promotion and maps legacy hashes", () => {
   const homepage = read("rebuild-homepage.html");
   const runtime = read("assets/rebuild-homepage.js");
-  assert.match(homepage, /Watch the original film/);
-  assert.match(homepage, /Original Mission America campaign film/);
-  assert.doesNotMatch(homepage, /Watch the story film|Watch the full story/);
+  assert.doesNotMatch(homepage, /Watch the (?:original|story|full story) film|Original Mission America campaign film|5OW3GNlPP2g|youtube-nocookie/i);
   assert.match(runtime, /#map.*portfolio\/mission-america-2026\/live-tracking\.html/s);
   assert.match(runtime, /#rsvp.*portfolio\/mission-america-2026\//s);
   assert.match(runtime, /#the-run.*#story/s);
