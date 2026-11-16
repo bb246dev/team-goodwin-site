@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "deploymentType": "static",
+  "releaseType": "micro",
+  "description": "Correct Mission America WebPage dateModified values to complete ISO 8601 datetimes and refresh the sitemap lastmod date without changing application code, APIs, tracking, backend, or server configuration.",
+  "protectedPathsApproved": [],
+  "files": [
+    {
+      "source": "dist/index.html",
+      "destination": "public_html/index.html",
+      "publicPath": "/",
+      "expectedSha256": "ff098bf396c65e559824ecfdf2ba8f86f5565bcb9213d961a5bd75a169841bf4",
+      "expectedRemoteSha256": "829b055aff8fbbe9caae07d944ff5edc9739c49ec6cc13403e9a1b9c7b5da955"
+    },
+    {
+      "source": "dist/accessibility.html",
+      "destination": "public_html/accessibility.html",
+      "publicPath": "/accessibility/",
+      "expectedSha256": "c879ccc3675262a1102eaafe97c964b1fe4608eb97f0a0eba28c8a2bc59a716a",
+      "expectedRemoteSha256": "d345f8361de74c35119450666a4772b711574d4b6444faa91e154c2e75e2444c"
+    },
+    {
+      "source": "dist/athletes.html",
+      "destination": "public_html/athletes.html",
+      "publicPath": "/athletes/",
+      "expectedSha256": "92ee12b258eaca203b5c69898a1aa3de31c3051558724e9bf9de51988dc92be0",
+      "expectedRemoteSha256": "6f4f22ec9787463feca8b9b90488c3d6e410075dd330350f0b2521bbc779d561"
+    },
+    {
+      "source": "dist/faq.html",
+      "destination": "public_html/faq.html",
+      "publicPath": "/faq/",
+      "expectedSha256": "2c3a7f2f270a799ab80b53ef2bf3b60b6438d020ecbc55d3305246200e422a44",
+      "expectedRemoteSha256": "a2308ad1eee355fbb8ea94b9d7e241a85a41327f49cf79fa965df1381b52c42a"
+    },
+    {
+      "source": "dist/fifty-runs.html",
+      "destination": "public_html/fifty-runs.html",
+      "publicPath": "/fifty-runs/",
+      "expectedSha256": "3f53fb30131c9e78db088160841f0708024dea4b66565254c95574f75e7a6498",
+      "expectedRemoteSha256": "a762af495a513f6db1d5cf817fbd3dccc37c4792b15da190fbfc42ffcfea44ab"
+    },
+    {
+      "source": "dist/participation-terms.html",
+      "destination": "public_html/participation-terms.html",
+      "publicPath": "/participation-terms/",
+      "expectedSha256": "31e5e3740f6e7886b0655918ebfdd99e132e4e7264a1b57f0a966b79498add07",
+      "expectedRemoteSha256": "346f4cb5d63517a052337796f351322645b43efd7241be0ccc710ce9ce0b8424"
+    },
+    {
+      "source": "dist/partners.html",
+      "destination": "public_html/partners.html",
+      "publicPath": "/partners/",
+      "expectedSha256": "bc234e7d5da9e10937b70ff7972f22fa7bf9f7c29c9195875c9544ee8a88e89f",
+      "expectedRemoteSha256": "932bbc44a1c8ecd9cf6bf5a5b0d6970d03515edd25f0270098b4e0a901908919"
+    },
+    {
+      "source": "dist/privacy.html",
+      "destination": "public_html/privacy.html",
+      "publicPath": "/privacy/",
+      "expectedSha256": "20d61fe7e4b062461206e41fd3aa5b2fdde22c50a591dce976cf289430f91f08",
+      "expectedRemoteSha256": "231b82d83c5297a84d24084b7328e61d2a546ee65a48e40693b24d5ac5991d6b"
+    },
+    {
+      "source": "dist/terms.html",
+      "destination": "public_html/terms.html",
+      "publicPath": "/terms/",
+      "expectedSha256": "90eabfbbadca0acbf6ad07aedd46152fd5919fbdeb6f8e87ffc740aefc2d46ac",
+      "expectedRemoteSha256": "6a4f21f43ad254b1939987f292764c18b17cf438425c06d5ed85f8421b128b03"
+    },
+    {
+      "source": "dist/the-run.html",
+      "destination": "public_html/the-run.html",
+      "publicPath": "/the-run/",
+      "expectedSha256": "e87907359bf24f6bba4377f4356fd7ddbdb1ea6b88012e7219677d49f65399fe",
+      "expectedRemoteSha256": "a5fcf6a32c32107a09393c44dc9bfc1b7d6d3174a9d17e8242ef9b25e5b9bc36"
+    },
+    {
+      "source": "dist/updates.html",
+      "destination": "public_html/updates.html",
+      "publicPath": "/updates/",
+      "expectedSha256": "a3e3ad83a87011244a096f582590d232f15ef95c341f77b40ab30bc97887a4ef",
+      "expectedRemoteSha256": "3346145701a5a89e722e76100bd17388b57122e4cc1a343e4d8030f4009624f7"
+    },
+    {
+      "source": "dist/week-1.html",
+      "destination": "public_html/week-1.html",
+      "publicPath": "/week-1/",
+      "expectedSha256": "d440020f87b17422f848a258c51d00c96bbdee07646163eb1d0ef2471d8b069a",
+      "expectedRemoteSha256": "8d3f9a7f27a00e6d8fb3881968db433a27e6284cf6609c920ea8aeaa42c91c63"
+    },
+    {
+      "source": "dist/week-2.html",
+      "destination": "public_html/week-2.html",
+      "publicPath": "/week-2/",
+      "expectedSha256": "bcad229fe811cf22fd0851a50fd1fc9ed6f97a58719a01f4f428acb85ffeef17",
+      "expectedRemoteSha256": "442ab24a8d6dd0d332d5e99235650a494b78890f5b066b7fb8f4a754d655d775"
+    },
+    {
+      "source": "dist/week-3.html",
+      "destination": "public_html/week-3.html",
+      "publicPath": "/week-3/",
+      "expectedSha256": "068b30c09b36552a62e7a0b4f2c8a5b14633ae6e6f63113a799734135d3b307e",
+      "expectedRemoteSha256": "992b2d5bb2787fc3c62074713bae4b201dbae07e8efa40e977c0517f8e25f220"
+    },
+    {
+      "source": "dist/will.html",
+      "destination": "public_html/will.html",
+      "publicPath": "/will/",
+      "expectedSha256": "f6dd1dcda8eafdff3746b3eb5539618b03d3885e0d311c3b392a3f4a882fd912",
+      "expectedRemoteSha256": "8ebd201be0bb73730d0a09a4bdb36e137f71b85527fbf1406b0a05d1f62b21c7"
+    },
+    {
+      "source": "dist/sitemap.xml",
+      "destination": "public_html/sitemap.xml",
+      "publicPath": "/sitemap.xml",
+      "expectedSha256": "e6cb9975ae591567a301567f16334c7374c521d083f275e080aaa6d3d3d94c95",
+      "expectedRemoteSha256": "55d2b4c244705c7d34bc967299aa25628ac6ebf9a5e31d5d895d33bf70dbb0ac"
+    }
+  ],
+  "validation": {
+    "targetedTests": [
+      "tests/seo.test.mjs",
+      "tests/deploy-tooling.test.mjs"
+    ],
+    "browserRoutes": [
+      "/",
+      "/will/",
+      "/privacy/"
+    ],
+    "apiChecks": []
+  }
+}

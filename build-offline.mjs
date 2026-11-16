@@ -7,7 +7,8 @@ const root = process.cwd();
 const dist = join(root, "dist");
 const missionAmericaContent = JSON.parse(readFileSync(join(root, "content", "mission-america-2026.json"), "utf8"));
 const siteOrigin = "https://goodwingoodge.com";
-const seoLastModified = "2026-11-11";
+const seoLastModifiedDate = "2026-11-16";
+const seoLastModifiedDateTime = `${seoLastModifiedDate}T00:00:00-04:00`;
 const seoSocialImage = `${siteOrigin}/assets/rebuild/mission-america-social.jpg`;
 
 const seoPages = {
@@ -223,7 +224,7 @@ function structuredDataForPage(config) {
       width: 1200,
       height: 630,
     },
-    dateModified: seoLastModified,
+    dateModified: seoLastModifiedDateTime,
     inLanguage: "en-US",
   };
   if (config.profile) webPage.mainEntity = { "@id": `${siteOrigin}/#william-goodge` };
@@ -570,7 +571,7 @@ for (const pageName of [
 
 const sitemapEntries = Object.values(seoPages)
   .filter((config) => config.index !== false)
-  .map((config) => `  <url>\n    <loc>${siteOrigin}${config.path}</loc>\n    <lastmod>${seoLastModified}</lastmod>\n  </url>`)
+  .map((config) => `  <url>\n    <loc>${siteOrigin}${config.path}</loc>\n    <lastmod>${seoLastModifiedDate}</lastmod>\n  </url>`)
   .join("\n");
 writeFileSync(
   join(dist, "sitemap.xml"),

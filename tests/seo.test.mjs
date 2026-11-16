@@ -40,6 +40,13 @@ test("every public content page has complete unique search and social metadata",
 
     const jsonLd = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
     assert.doesNotThrow(() => JSON.parse(jsonLd), `${page}: valid JSON-LD`);
+    const structuredData = JSON.parse(jsonLd);
+    const webPage = structuredData["@graph"].find((item) => ["WebPage", "ProfilePage"].includes(item["@type"]));
+    assert.match(
+      webPage.dateModified,
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/,
+      `${page}: dateModified is a complete ISO 8601 datetime`,
+    );
   }
 });
 
@@ -55,7 +62,7 @@ test("sitemap lists only canonical indexable URLs with last modified dates", () 
   const sitemap = read("dist/sitemap.xml");
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert.deepEqual(urls, indexable.map(([, path]) => `https://goodwingoodge.com${path}`));
-  assert.equal((sitemap.match(/<lastmod>2026-11-11<\/lastmod>/g) || []).length, indexable.length);
+  assert.equal((sitemap.match(/<lastmod>2026-11-16<\/lastmod>/g) || []).length, indexable.length);
   assert.doesNotMatch(sitemap, /portfolio|\.html|privacy|terms|accessibility/);
   assert.equal(read("dist/robots.txt"), "User-agent: *\nAllow: /\n\nSitemap: https://goodwingoodge.com/sitemap.xml\n");
 });
